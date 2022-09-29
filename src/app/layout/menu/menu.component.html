@@ -1,0 +1,25 @@
+<div *ngIf="menu" class="menu flex-column" [class.collapsed]="menu.collapsed">
+  <button class="menu-toggle primary f-14 pointer flex-row align-center f-400"
+          (click)="toggleMenu()">
+    <span>OpenMina</span>
+    <span fxFlex="20px" class="mina-icon" [class.flipped]="menu.collapsed">first_page</span>
+  </button>
+  <!--  <a class="item" routerLink="/resources" routerLinkActive="active">-->
+  <!--    <span class="item-content">-->
+  <!--      <span class="mina-icon">analytics</span>-->
+  <!--      <span>Resources</span>-->
+  <!--    </span>-->
+  <!--  </a>-->
+  <a class="item" routerLink="/network" routerLinkActive="active">
+    <span class="item-content">
+      <span class="mina-icon">account_tree</span>
+      <span>Network</span>
+    </span>
+  </a>
+  <!--    <a class="item" routerLink="/tracing" routerLinkActive="active">-->
+  <!--      <span class="item-content">-->
+  <!--        <span class="mina-icon">grid_view</span>-->
+  <!--        <span>Tracing</span>-->
+  <!--      </span>-->
+  <!--    </a>-->
+</div>

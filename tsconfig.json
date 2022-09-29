@@ -1,4 +1,3 @@
-/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
   "compileOnSave": false,
   "compilerOptions": {
@@ -9,6 +8,10 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
+    "resolveJsonModule": true,
+    "strictNullChecks": false,
+    "strictPropertyInitialization": false,
+    "suppressImplicitAnyIndexErrors": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "declaration": false,
@@ -18,15 +21,41 @@
     "importHelpers": true,
     "target": "es2020",
     "module": "es2020",
+    "types": [
+      "google"
+    ],
     "lib": [
       "es2020",
       "dom"
     ],
     "paths": {
-      "@app/*": ["src/app/*"],
-      "@core/*": ["src/app/core/*"],
-      "@shared/*": ["src/app/shared/*"],
-      "@environment/*": ["src/environments/*"]
+      "@app/*": [
+        "src/app/*"
+      ],
+      "@core/*": [
+        "src/app/core/*"
+      ],
+      "@shared/*": [
+        "src/app/shared/*"
+      ],
+      "@environment/*": [
+        "src/environments/*"
+      ],
+      "@resources/*": [
+        "src/app/features/resources/*"
+      ],
+      "@system-resources/*": [
+        "src/app/features/resources/system-resources/*"
+      ],
+      "@network/*": [
+        "src/app/features/network/*"
+      ],
+      "@error-preview/*": [
+        "src/app/layout/error-preview/*"
+      ],
+      "@tracing/*": [
+        "src/app/features/tracing/*"
+      ],
     }
   },
   "angularCompilerOptions": {

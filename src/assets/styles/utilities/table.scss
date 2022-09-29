@@ -1,0 +1,43 @@
+@import 'variables';
+@import 'layout';
+
+.mina-table {
+	@include flexColumn();
+
+	.row {
+		height: 36px;
+		display: grid;
+
+		&.row-even {
+			background-color: $base-container;
+		}
+
+		&.active {
+			background-color: $selected-container;
+
+			> span {
+				color: $selected-primary !important;
+			}
+		}
+
+		> span {
+			height: 36px;
+			line-height: 36px;
+			padding-left: 12px;
+		}
+
+		&:hover:not(.active):not(.head) {
+			background-color: $base-divider;
+			color: $base-primary !important;
+		}
+
+		.underline:hover {
+			text-decoration: underline;
+		}
+	}
+
+	&.active {
+		background-color: blue;
+		color: #fff;
+	}
+}

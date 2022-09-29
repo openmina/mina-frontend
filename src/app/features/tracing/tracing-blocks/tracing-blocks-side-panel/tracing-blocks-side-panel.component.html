@@ -1,0 +1,48 @@
+<ng-container *ngIf="activeTrace">
+
+  <div class="flex-row flex-between p-12" fxFlex="42px">
+    <span class="secondary f-600">
+      {{ activeTrace.source }} Transition {{ activeTrace.globalSlot }} - {{ activeTrace.status }}
+    </span>
+    <span (click)="closeSidePanel()"
+          class="mina-icon pointer tertiary primary-hover f-18">close
+    </span>
+  </div>
+  <div class="flex-row pl-12 pb-10" fxFlex="34px">
+    <button (click)="expandAll()" class="btn-primary mr-8">Expand All</button>
+    <button (click)="collapseAll()" class="btn-primary mr-8">Collapse All</button>
+  </div>
+  <div class="row head tertiary f-600" fxFlex="36px">
+    <span>Checkpoints</span>
+    <span>Started</span>
+    <span>Process</span>
+  </div>
+  <div class="flex-column flex-grow overflow-y-scroll">
+    <div class="group-list">
+      <ng-container *ngFor="let group of checkpoints">
+        <ng-container *ngTemplateOutlet="checkpointListTemplate; context: { checkpoint: group }"></ng-container>
+      </ng-container>
+    </div>
+  </div>
+
+</ng-container>
+
+<ng-template #checkpointListTemplate let-checkpoint="checkpoint">
+  <span class="checkpoint-row row tertiary">
+    <span (click)="toggleExpanding(checkpoint)"
+          [class.parent]="checkpoint.checkpoints.length"
+          class="title flex-row align-center">
+      <span [class.rotate]="expandedParents.includes(checkpoint.title)" class="icon-wrap">
+        <span class="mina-icon">arrow_right</span>
+      </span>
+      <span [tooltip]="checkpoint.metadata" class="truncate">{{ checkpoint.title }}</span>
+    </span>
+    <span class="tertiary">{{ checkpoint.startedAt }}</span>
+    <span [innerHTML]="checkpoint.duration | secDuration: true"></span>
+  </span>
+  <div *ngIf="checkpoint.checkpoints.length && expandedParents.includes(checkpoint.title)" class="checkpoint-list">
+    <ng-container *ngFor="let subCheckpoint of checkpoint.checkpoints">
+      <ng-container *ngTemplateOutlet="checkpointListTemplate; context: { checkpoint: subCheckpoint }"></ng-container>
+    </ng-container>
+  </div>
+</ng-template>

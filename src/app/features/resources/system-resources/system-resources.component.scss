@@ -1,0 +1,15 @@
+.mouse-listener {
+	top: 0;
+	left: 0;
+}
+
+.graph-wrapper {
+	border: 1px solid lightgray;
+	border-radius: 4px;
+	padding: 20px;
+	margin: 20px 20px 0;
+
+	&:last-child {
+		margin-bottom: 20px;
+	}
+}

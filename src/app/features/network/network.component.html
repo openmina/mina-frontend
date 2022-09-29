@@ -1,0 +1,17 @@
+<div class="flex-column h-100">
+  <mina-network-filters (onSizeChange)="checkVirtualScrollViewport()"></mina-network-filters>
+  <div class="flex-row flex-grow overflow-hidden p-relative" #table>
+    <mina-network-table [class.shrink]="isActiveRow"></mina-network-table>
+    <mina-horizontal-resizable-container (widthChange)="onWidthChange($event)"
+                                         (startResizing)="toggleResizing()"
+                                         (endResizing)="toggleResizing()"
+                                         [minWidth]="320"
+                                         [maxWidthElement]="table"
+                                         [class.show]="isActiveRow"
+                                         localStorageKey="network-side-panel-width"
+                                         class="no-transition">
+      <mina-network-side-panel></mina-network-side-panel>
+    </mina-horizontal-resizable-container>
+  </div>
+  <mina-network-table-footer fxFlex="36px" (onScrollTopClick)="scrollToTop()"></mina-network-table-footer>
+</div>

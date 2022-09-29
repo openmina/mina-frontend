@@ -1,0 +1,42 @@
+<div class="mina-table flex-grow overflow-x-auto"
+     [class.opacity-0]="!messages.length">
+  <div class="row head">
+    <span>ID</span>
+    <span>Datetime</span>
+    <span>Remote Address</span>
+    <span>Direction</span>
+    <span>Size</span>
+    <span>Stream Kind</span>
+    <span>Message Kind</span>
+  </div>
+  <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-auto"
+                               fxFlex="calc(100% - 36px)"
+                               [itemSize]="itemSize">
+    <div *cdkVirtualFor="let message of messages; let i=index"
+         (click)="onRowClick(message)"
+         [class.active]="activeRow?.id === message.id"
+         [class.row-even]="i % 2 === 0"
+         class="row">
+      <span class="tertiary">{{ message.id }}</span>
+      <span class="tertiary">{{ message.timestamp }}</span>
+      <span (click)="filterByConnectionID(message)"
+            class="underline">{{ message.address }}</span>
+      <span class="tertiary">{{ message.incoming }}</span>
+      <span class="tertiary" [innerHTML]="message.size | size"></span>
+      <span (click)="filterByCategory(message.streamKind)"
+            class="underline">{{ message.streamKind }}</span>
+      <span class="truncate">{{ message.messageKind }}</span>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>
+<div class="no-results p-absolute w-100 h-100 z-1 flex-column align-center flex-center"
+     *ngIf="attemptToGetMessagesFromRoute && !messages.length && activeFilters.length">
+  <h5 class="f-14 f-600 mt-0 mb-8">No Results Found</h5>
+  <p class="secondary m-0">Try adjusting your search or filter options to find what</p>
+  <p class="secondary m-0 pb-8">you're looking for</p>
+
+  <button class="flex-row align-center border-rad-4 mt-8" (click)="clearFilters()">
+    <span class="mina-icon tertiary f-18 mr-5">filter_list_off</span>
+    <span class="primary">Clear filters</span>
+  </button>
+</div>

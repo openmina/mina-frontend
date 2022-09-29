@@ -1,0 +1,13 @@
+<div #parent class="h-100 w-100 flex-row p-relative">
+  <mina-tracing-blocks-table [class.shrink]="isActiveTrace"></mina-tracing-blocks-table>
+  <mina-horizontal-resizable-container (endResizing)="toggleResizing()"
+                                       (startResizing)="toggleResizing()"
+                                       (widthChange)="onWidthChange($event)"
+                                       [class.show]="isActiveTrace"
+                                       [maxWidthElement]="parent"
+                                       [minWidth]="420"
+                                       class="no-transition"
+                                       localStorageKey="tracing-side-panel-width">
+    <mina-tracing-blocks-side-panel></mina-tracing-blocks-side-panel>
+  </mina-horizontal-resizable-container>
+</div>

@@ -1,0 +1,21 @@
+<div class="flex-row align-center">
+  <div class="mr-16 tertiary">Sort</div>
+  <button class="btn-primary mr-5 pl-8 pr-8" (click)="sort(SORT_DIRECTIONS.DSC)">Slowest First</button>
+  <button class="btn-primary pl-8 pr-8" (click)="sort(SORT_DIRECTIONS.ASC)">Fastest First</button>
+  <div class="ml-16 mr-16 pl-5 tertiary">Filters</div>
+  <button class="btn-primary mr-5 pl-8 pr-8">Internal</button>
+  <button class="btn-primary mr-5 pl-8 pr-8">External</button>
+  <button class="btn-primary pl-8 pr-8">Catchup</button>
+</div>
+<div class="flex-row">
+  <button class="condensed icon-btn border-rad-4 mr-8"
+       [class.active]="!condensedView"
+       (click)="toggleCondensedView(false)">
+    <span class="mina-icon f-20">grid_view</span>
+  </button>
+  <button class="condensed icon-btn border-rad-4 mr-10"
+       [class.active]="condensedView"
+       (click)="toggleCondensedView(true)">
+    <span class="mina-icon f-20">view_headline</span>
+  </button>
+</div>

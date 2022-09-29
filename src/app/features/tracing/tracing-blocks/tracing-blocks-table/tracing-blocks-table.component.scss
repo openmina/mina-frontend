@@ -1,0 +1,41 @@
+@import 'src/assets/styles/utilities/variables';
+
+.mina-table {
+	$col0: 96px;
+	$col1: 220px;
+	$col2: 150px;
+	$col3: 100px;
+	$col4: 80px;
+	$col5: 140px;
+	$col6: 400px;
+
+	.row {
+		grid-template-columns: $col0 auto $col2 $col3;
+		color: $base-secondary;
+
+		&:not(.head) {
+			cursor: pointer;
+		}
+
+		> span:nth-child(2) {
+			min-width: $col1;
+		}
+
+		.Success {
+			color: $success-secondary;
+		}
+
+		.Pending {
+			color: $selected-secondary;
+		}
+
+		.Failure {
+			color: $warn-primary;
+		}
+	}
+
+	.cdk-virtual-scroll-viewport {
+		min-width: $col0 + $col1 + $col2 + $col3;
+		overflow-x: hidden;
+	}
+}

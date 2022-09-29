@@ -1,0 +1,15 @@
+@import 'variables';
+
+:host {
+	width: 312px;
+	max-height: 30vh;
+	background-color: $base-surface-top;
+}
+
+.err {
+	color: $warn-primary;
+
+	&:not(:last-child) {
+		border-bottom: 1px solid $base-divider;
+	}
+}

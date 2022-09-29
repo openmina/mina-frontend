@@ -1,0 +1,101 @@
+@import 'variables';
+
+.menu {
+	.menu-toggle {
+		width: 160px;
+		height: 40px;
+		padding: 8px 12px;
+		border: none;
+		border-bottom: 1px solid $base-divider;
+		background-color: unset;
+		transition: width 200ms ease-out, background-color 80ms;
+
+		.mina-icon {
+			font-size: 20px;
+			color: $base-tertiary;
+			font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+			transition: transform 200ms ease-out, color 80ms;
+
+			&.flipped {
+				transform: rotateY(180deg);
+			}
+		}
+
+		span:nth-child(1) {
+			overflow: hidden;
+			max-width: 100px;
+			opacity: 1;
+			transition: 200ms ease-out;
+		}
+
+		&:hover {
+			background-color: $base-container;
+
+			.mina-icon {
+				color: $base-primary;
+			}
+		}
+	}
+
+	.item {
+		color: $base-secondary;
+		font-size: 12px;
+		height: 36px;
+		cursor: pointer;
+		padding: 4px;
+		display: flex;
+		align-items: center;
+
+		.item-content {
+			height: 24px;
+			width: 80%;
+			border-radius: 6px;
+			padding: 5px 7px;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			font-weight: 600;
+
+			.mina-icon {
+				font-size: 20px;
+				padding-right: 7px;
+				color: $base-tertiary;
+				font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+			}
+
+			span:nth-child(2) {
+				opacity: 1;
+				transition: opacity 200ms ease-out;
+			}
+		}
+
+		&:hover:not(.active) .item-content {
+			background-color: $base-container;
+			color: $base-secondary;
+		}
+
+		&.active .item-content {
+			color: $selected-primary;
+
+			.mina-icon {
+				color: $selected-primary;
+				font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+			}
+		}
+	}
+
+	&.collapsed {
+		.menu-toggle {
+			width: 44px;
+
+			span:nth-child(1) {
+				max-width: 0;
+				opacity: 0;
+			}
+		}
+
+		.item .item-content span:nth-child(2) {
+			opacity: 0;
+		}
+	}
+}
