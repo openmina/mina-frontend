@@ -1,0 +1,8 @@
+<button class="notification p-relative border-rad-4 flex-row align-center flex-between"
+        [class.opacity-0]="!errors.length"
+        [class.pointer-none]="!errors.length"
+        (click)="openErrorList(anchor, $event)">
+  <span class="message truncate text-left f-400"
+        [class.expanded]="newMessages.length > 0">{{ newError?.message }}</span>
+  <span class="mina-icon f-16" #anchor>error</span>
+</button>

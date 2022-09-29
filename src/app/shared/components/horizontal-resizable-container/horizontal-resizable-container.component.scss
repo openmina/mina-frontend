@@ -1,0 +1,18 @@
+@import 'variables';
+
+.bar {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 8px;
+	border-left-width: 1px;
+	border-left-style: solid;
+	border-left-color: $base-divider;
+	transition: 200ms;
+	cursor: ew-resize;
+
+	&:hover {
+		border-left-width: 3px;
+		border-left-color: $base-tertiary;
+	}
+}

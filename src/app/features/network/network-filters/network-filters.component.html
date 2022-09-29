@@ -1,0 +1,46 @@
+<mat-expansion-panel class="table-filter" [disabled]="true" [expanded]="filtersOpen" (afterCollapse)="onResize()"
+                     (afterExpand)="onResize()">
+  <mat-expansion-panel-header>
+    <div class="filter-row flex-row border-bottom">
+      <div fxFlex="32px">
+        <button class="toggle-filters border-rad-4 bg-container p-0 flex-row align-center flex-center mr-8"
+                [class.active]="filtersOpen"
+                (click)="toggleFilerPanel()">
+          <span class="mina-icon f-18">filter_list</span>
+        </button>
+      </div>
+      <div fxLayout="row wrap" class="align-center">
+        <button *ngFor="let filter of activeFilters"
+                (click)="toggleFilter(filter)"
+                class="active-filter f-12 border-rad-6 f-600 bg-selected-container selected-primary flex-row align-center">
+          <span>{{ filter.display }}</span>
+          <span class="mina-icon f-16">close</span>
+        </button>
+      </div>
+    </div>
+  </mat-expansion-panel-header>
+
+  <ng-template matExpansionPanelContent>
+    <div class="filters-container flex-column border-bottom f-12">
+      <div fxFlex="36px" class="flex-row flex-between align-center pr-10">
+        <div class="f-600 secondary align-center d-flex">Filters</div>
+        <span class="mina-icon pointer tertiary primary-hover f-18" (click)="toggleFilerPanel()">close</span>
+      </div>
+      <div class="flex-row" *ngFor="let row of availableFilters">
+        <div class="flex-row f-600 align-center flex-wrap"
+             *ngFor="let category of row">
+          <div class="category mr-10 pointer primary-hover"
+               [tooltip]="category.tooltip"
+               [showDelay]="700"
+               (click)="filterByCategory(category)">{{ category.name }}</div>
+          <div class="filter pointer bg-container pl-8 pr-8 border-rad-6 mr-5"
+               *ngFor="let filter of category.filters"
+               (click)="toggleFilter(filter)"
+               [tooltip]="filter.tooltip"
+               [showDelay]="700"
+               [class.active]="activeFilters.includes(filter)">{{ filter.display }}</div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</mat-expansion-panel>

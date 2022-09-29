@@ -1,21 +1,44 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { ThemingTestingComponent } from './theming-testing/theming-testing.component';
-import { AccountListComponent } from './account-list/account-list.component';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
+export const APP_TITLE = 'Open Mina';
 const routes: Routes = [
+  // {
+  //   path: 'resources',
+  //   loadChildren: () => import('./features/resources/resources.module').then(module => module.ResourcesModule),
+  //   title: APP_TITLE + ' - Resources',
+  // },
   {
-    path: 'theming',
-    component: ThemingTestingComponent,
+    path: 'network',
+    loadChildren: () => import('./features/network/network.module').then(module => module.NetworkModule),
+    title: APP_TITLE + ' - Network',
   },
   {
-    path: 'accounts',
-    component: AccountListComponent,
+    path: 'tracing',
+    loadChildren: () => import('./features/tracing/tracing.module').then(module => module.TracingModule),
+    title: APP_TITLE + ' - Tracing',
+  },
+  {
+    path: '',
+    redirectTo: 'network',
+    pathMatch: 'full',
+  },
+  {
+    path: '**',
+    redirectTo: 'network',
+    pathMatch: 'full',
   },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  imports: [
+    RouterModule.forRoot(routes, {
+      preloadingStrategy: PreloadAllModules,
+      relativeLinkResolution: 'legacy',
+      onSameUrlNavigation: 'ignore',
+      initialNavigation: 'enabledBlocking',
+    }),
+  ],
+  exports: [RouterModule],
 })
-export class AppRouting { }
+export class AppRouting {}

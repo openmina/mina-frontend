@@ -1,0 +1,22 @@
+<div class="mina-table flex-grow overflow-x-auto">
+  <div class="row head overflow-y-scroll overflow-x-hidden">
+    <span>Height</span>
+    <span>Hash</span>
+    <span>Source</span>
+    <span>Status</span>
+  </div>
+  <cdk-virtual-scroll-viewport [itemSize]="itemSize"
+                               class="border-bottom border-top h-100 overflow-y-auto"
+                               fxFlex="calc(100% - 36px)">
+    <div (click)="onRowClick(trace)"
+         *cdkVirtualFor="let trace of traces; let i=index"
+         [class.active]="activeTrace?.id === trace.id"
+         [class.row-even]="i % 2 === 0"
+         class="row">
+      <span>{{ trace.globalSlot }}</span>
+      <span class="tertiary truncate">{{ trace.hash | truncateMid }}</span>
+      <span class="tertiary">{{ trace.source }}</span>
+      <span [ngClass]="trace.status">{{ trace.status }}</span>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>

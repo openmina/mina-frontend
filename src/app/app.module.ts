@@ -6,49 +6,57 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ApolloModule } from 'apollo-angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatSliderModule } from '@angular/material/slider';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { ThemingTestingComponent } from './theming-testing/theming-testing.component';
-import { GRAPH_QL_PROVIDER } from '@core/services/graph-ql.service';
 import { AccountListComponent } from './account-list/account-list.component';
 import { StoreModule } from '@ngrx/store';
+import { GRAPH_QL_PROVIDER } from '@core/services/graph-ql.service';
 import { THEME_PROVIDER } from '@core/services/theme-switcher.service';
-import { ChartComponent } from './chart-component/chart.component';
+import { MenuComponent } from './layout/menu/menu.component';
+import { EagerLoadedSharedModule } from '@shared/shared.module';
+import { ToolbarComponent } from './layout/toolbar/toolbar.component';
+import { metaReducers, reducers } from '@app/app.setup';
+import { EffectsModule } from '@ngrx/effects';
+import { environment } from '@environment/environment';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { AppEffects } from '@app/app.effects';
+import { ErrorPreviewComponent } from '@error-preview/error-preview.component';
+import { ErrorListComponent } from '@error-preview/error-list/error-list.component';
+import { NETWORK_INTERCEPTOR } from '@core/interceptor/loading.interceptor';
+import { NgrxRouterStoreModule } from '@shared/router/ngrx-router.module';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    ThemingTestingComponent,
     AccountListComponent,
-    ChartComponent,
+    MenuComponent,
+    ToolbarComponent,
+    ErrorPreviewComponent,
+    ErrorListComponent,
   ],
   imports: [
     BrowserModule,
     AppRouting,
+    StoreModule.forRoot(reducers, {
+      metaReducers,
+      runtimeChecks: {
+        strictStateImmutability: true,
+        strictActionImmutability: true,
+        strictActionWithinNgZone: true,
+        strictStateSerializability: true,
+      },
+    }),
+    EffectsModule.forRoot([AppEffects]),
+    NgrxRouterStoreModule,
+    !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : [],
     HttpClientModule,
     ApolloModule,
     BrowserAnimationsModule,
-    MatSliderModule,
-    MatButtonModule,
-    MatTabsModule,
-    MatIconModule,
-    MatDividerModule,
-    MatToolbarModule,
-    MatSlideToggleModule,
-    ReactiveFormsModule,
-    FlexLayoutModule,
-    StoreModule.forRoot({}, {}),
+    EagerLoadedSharedModule,
   ],
   providers: [
     GRAPH_QL_PROVIDER,
     THEME_PROVIDER,
+    NETWORK_INTERCEPTOR,
   ],
   bootstrap: [AppComponent],
 })

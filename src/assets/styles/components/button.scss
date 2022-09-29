@@ -1,0 +1,47 @@
+@import 'variables';
+@import 'layout';
+
+button {
+	line-height: 21px;
+	border: none;
+	font-family: inherit;
+	font-weight: 600;
+	height: 24px;
+	font-size: inherit;
+	outline: none;
+
+	&:not([disabled]) {
+		cursor: pointer;
+	}
+
+	&.btn-selected {
+		border-radius: 4px;
+		background-color: $selected-container;
+		color: $selected-primary;
+	}
+
+	&.btn-primary {
+		border-radius: 4px;
+		background-color: $base-container;
+		color: $base-primary;
+
+		&:hover {
+			background-color: $base-divider;
+		}
+	}
+
+	&.btn-secondary {
+		border-radius: 4px;
+		background-color: $base-container;
+		color: $base-secondary;
+
+		&:hover {
+			background-color: $base-divider;
+		}
+	}
+
+	&.icon-btn {
+		width: 24px;
+		@include flexRowFullCenter();
+	}
+}

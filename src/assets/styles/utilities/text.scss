@@ -1,173 +1,123 @@
-//.text-capitalize {
-//  text-transform: capitalize;
-//}
-//
-//.text-uppercase {
-//  text-transform: uppercase;
-//}
-//
-//.text-italic {
-//  font-style: italic;
-//}
-//
-//.text-normal {
-//  text-transform: unset !important;
-//}
-//
-//.text-nowrap {
-//  white-space: nowrap;
-//}
-//
-//.text-no-decoration {
-//  text-decoration: none !important;
-//}
-//
-//.text-underline {
-//  text-decoration: underline !important;
-//}
-//
-//.text-decoration-underline-hover:hover {
-//  text-decoration: underline;
-//}
-//
-//.f-10 {
-//  font-size: 10px;
-//}
-//
-//.f-12 {
-//  font-size: 12px;
-//}
-//
-//.f-14 {
-//  font-size: 14px;
-//}
-//
-//.font-600 {
-//  font-weight: 600;
-//}
-//
-//.font-500 {
-//  font-weight: 500;
-//}
-//
-//.font-400 {
-//  font-weight: 400;
-//}
-//
-//.font-300 {
-//  font-weight: 300;
-//}
-//
-//.text-right {
-//  text-align: right;
-//}
-//
-//.text-center {
-//  text-align: center;
-//}
-//
-//.pointer {
-//  cursor: pointer;
-//}
-//
-//.context-menu {
-//  cursor: context-menu !important;
-//}
-//
-//.pointer-none {
-//  pointer-events: none;
-//}
-//
-//@mixin truncate() {
-//  @extend .truncate;
-//}
-//
-//.truncate {
-//  white-space: nowrap;
-//  overflow: hidden;
-//  text-overflow: ellipsis;
-//}
-//
-//.foreground {
-//  color: $foreground !important;
-//}
-//
-//.foreground-1 {
-//  color: $foreground-1 !important;
-//}
-//
-//.foreground-2 {
-//  color: $foreground-2 !important;
-//}
-//
-//.foreground-4 {
-//  color: $foreground-4 !important;
-//}
-//
-//.foreground-5 {
-//  color: $foreground-5 !important;
-//}
-//
-//.foreground-6 {
-//  color: $foreground-6 !important;
-//}
-//
-//.foreground-7 {
-//  color: $foreground-7 !important;
-//}
-//
-//.foreground-9 {
-//  color: $foreground-9 !important;
-//}
-//
-//.foreground-hover:hover {
-//  color: $foreground !important;
-//}
-//
-//.foreground-hover-1:hover {
-//  color: $foreground-1 !important;
-//}
-//
-//.foreground-hover-2:hover {
-//  color: $foreground-2 !important;
-//}
-//
-//.foreground-hover-4:hover {
-//  color: $foreground-4 !important;
-//}
-//
-//.foreground-hover-5:hover {
-//  color: $foreground-5 !important;
-//}
-//
-//.foreground-hover-6:hover {
-//  color: $foreground-6 !important;
-//}
-//
-//.foreground-hover-7:hover {
-//  color: $foreground-7 !important;
-//}
-//
-//.foreground-hover-9:hover {
-//  color: $foreground-9 !important;
-//}
-//
-//.text-red {
-//  color: #ff453a !important;
-//  fill: #ff453a !important;
-//}
-//
-//.text-orange {
-//  color: #d96629 !important;
-//  fill: #d96629 !important;
-//}
-//
-//.text-yellow {
-//  color: #ff9f0a !important;
-//  fill: #ff9f0a !important;
-//}
-//
-//.text-green {
-//  color: #32d74b !important;
-//  fill: #32d74b !important;
-//}
+.text-capitalize {
+  text-transform: capitalize;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.text-italic {
+  font-style: italic;
+}
+
+.text-normal {
+  text-transform: unset !important;
+}
+
+.text-nowrap {
+  white-space: nowrap;
+}
+
+.break-word {
+  word-break: break-all;
+}
+
+.text-no-decoration {
+  text-decoration: none !important;
+}
+
+.text-underline {
+  text-decoration: underline !important;
+}
+
+.text-decoration-underline-hover:hover {
+  text-decoration: underline;
+}
+
+.monospace {
+  font-family: "IBM Plex Mono", monospace;
+
+  //font-family: monospace;
+}
+
+.f-10 {
+  font-size: 10px !important;
+}
+
+.f-12 {
+  font-size: 12px !important;
+}
+
+.f-14 {
+  font-size: 14px !important;
+}
+
+.f-14 {
+  font-size: 14px !important;
+}
+
+.f-16 {
+  font-size: 16px !important;
+}
+
+.f-18 {
+  font-size: 18px !important;
+}
+
+.f-20 {
+  font-size: 20px !important;
+}
+
+.f-22 {
+  font-size: 22px !important;
+}
+
+.f-600 {
+  font-weight: 600;
+}
+
+.f-500 {
+  font-weight: 500;
+}
+
+.f-400 {
+  font-weight: 400;
+}
+
+.f-300 {
+  font-weight: 300;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.context-menu {
+  cursor: context-menu !important;
+}
+
+.pointer-none {
+  pointer-events: none;
+}
+
+@mixin truncate() {
+  @extend .truncate;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

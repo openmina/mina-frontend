@@ -1,0 +1,10 @@
+<div (clickOutside)="close()" class="flex-column">
+  <div class="err p-12" *ngFor="let error of errors">
+    <div class="flex-row flex-between align-center">
+      <div class="f-600">{{ error.title }}</div>
+      <div class="tertiary">{{ error.timestamp }}</div>
+    </div>
+    <div class="tertiary" *ngIf="error.status">{{ error.status }}</div>
+    <div class="secondary">{{ error.message }}</div>
+  </div>
+</div>

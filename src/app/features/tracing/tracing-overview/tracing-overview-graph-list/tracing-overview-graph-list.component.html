@@ -1,0 +1,7 @@
+<div class="overflow-y-scroll h-100 pl-8 flex-row flex-wrap align-content-start">
+  <div *ngFor="let checkpoint of checkpoints" class="mr-8 mb-8 test">
+    <mina-tracing-overview-graph [checkpoint]="checkpoint"
+                                 [condensedView]="condensedView"
+                                 [menuCollapsed]="menuCollapsed"></mina-tracing-overview-graph>
+  </div>
+</div>

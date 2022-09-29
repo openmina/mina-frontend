@@ -1,2 +1,13 @@
-<router-outlet></router-outlet>
-<pre>{{response | json}}</pre>
+<mat-sidenav-container [hasBackdrop]="false" class="w-100 h-100">
+  <mat-sidenav mode="side" [opened]="menu?.open"
+               [class.collapsed]="menu.collapsed">
+    <mina-menu></mina-menu>
+  </mat-sidenav>
+  <mat-sidenav-content *ngIf="menu" class="flex-column"
+                       [style.marginLeft.px]="!menu.collapsed ? 160 : 44">
+    <mina-toolbar></mina-toolbar>
+    <div class="mina-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
