@@ -1,6 +1,7 @@
 export interface ThemeCssCategory {
   base: { [p: BaseCssVariable]: string };
   success: { [p: SuccessCssVariable]: string };
+  aware: { [p: AwareCssVariable]: string };
   warn: { [p: WarnCssVariable]: string };
   selected: { [p: SelectedCssVariable]: string };
   special: { [p: SpecialCssVariable]: string };
@@ -10,6 +11,7 @@ export interface ThemeCssCategory {
 
 export const BASE_CSS_PREFIX = '--base-';
 export const SUCCESS_CSS_PREFIX = '--success-';
+export const AWARE_CSS_PREFIX = '--aware-';
 export const WARN_CSS_PREFIX = '--warn-';
 export const SELECTED_CSS_PREFIX = '--selected-';
 export const SPECIAL_CSS_PREFIX = '--special-';
@@ -18,6 +20,7 @@ export const CODE_CSS_PREFIX = '--code-';
 
 type BaseCssVariable = `${typeof BASE_CSS_PREFIX}${string}`;
 type SuccessCssVariable = `${typeof SUCCESS_CSS_PREFIX}${string}`;
+type AwareCssVariable = `${typeof AWARE_CSS_PREFIX}${string}`;
 type WarnCssVariable = `${typeof WARN_CSS_PREFIX}${string}`;
 type SelectedCssVariable = `${typeof SELECTED_CSS_PREFIX}${string}`;
 type SpecialCssVariable = `${typeof SPECIAL_CSS_PREFIX}${string}`;

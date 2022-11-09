@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 import { ApolloQueryResult, DefaultOptions, InMemoryCache } from '@apollo/client/core';
 import { OperationVariables } from '@apollo/client/core/types';
 import { HttpLink } from 'apollo-angular/http';
-import { environment } from '@environment/environment';
+import { CONFIG } from '@shared/constants/config';
 
 @Injectable({
   providedIn: 'root',
@@ -54,7 +54,7 @@ export const GRAPH_QL_PROVIDER: Provider = {
   useFactory: (httpLink: HttpLink) => {
 
     const link = httpLink.create({
-      uri: environment.backend + '/graphql',
+      uri: CONFIG.backend + '/graphql',
     });
 
     const defaultOptions: DefaultOptions = {

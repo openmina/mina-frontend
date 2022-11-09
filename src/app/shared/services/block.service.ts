@@ -1,16 +1,21 @@
 import { Injectable } from '@angular/core';
 import { GraphQLService } from '@core/services/graph-ql.service';
 import { map, Observable } from 'rxjs';
-import { AppNodeStatus } from '@shared/types/app/app-node-status.type';
+import { NodeStatus } from '@shared/types/app/node-status.type';
+import { HttpClient } from '@angular/common/http';
+import { CONFIG } from '@shared/constants/config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BlockService {
 
-  constructor(private graphQL: GraphQLService) { }
+  private readonly DEBUGGER: string = CONFIG.debugger;
 
-  getNodeStatus(): Observable<{ lastBlockLevel: number, status: AppNodeStatus, timestamp: number }> {
+  constructor(private graphQL: GraphQLService,
+              private http: HttpClient) { }
+
+  getNodeStatus(): Observable<NodeStatus> {
     return this.graphQL.query<any>('blockStatus', `{
     daemonStatus {
       blockchainLength
@@ -22,11 +27,15 @@ export class BlockService {
       .pipe(
         map(response => {
           return ({
-            lastBlockLevel: Number(response.daemonStatus.blockchainLength ? response.daemonStatus.blockchainLength : 0),
+            blockLevel: Number(response.daemonStatus.blockchainLength ? response.daemonStatus.blockchainLength : 0),
             status: response.daemonStatus.syncStatus,
             timestamp: Number(response.daemonStatus ? response.daemonStatus.consensusTimeNow.startTime : 0),
-          });
+          } as NodeStatus);
         }),
       );
+  }
+
+  getDebuggerStatus(): Observable<boolean> {
+    return this.http.get<string>(`${this.DEBUGGER}/version`).pipe(map(r => !!r))
   }
 }

@@ -9,19 +9,18 @@ button {
 	height: 24px;
 	font-size: inherit;
 	outline: none;
+	border-radius: 4px;
 
 	&:not([disabled]) {
 		cursor: pointer;
 	}
 
 	&.btn-selected {
-		border-radius: 4px;
 		background-color: $selected-container;
 		color: $selected-primary;
 	}
 
 	&.btn-primary {
-		border-radius: 4px;
 		background-color: $base-container;
 		color: $base-primary;
 
@@ -31,7 +30,6 @@ button {
 	}
 
 	&.btn-secondary {
-		border-radius: 4px;
 		background-color: $base-container;
 		color: $base-secondary;
 
@@ -43,5 +41,10 @@ button {
 	&.icon-btn {
 		width: 24px;
 		@include flexRowFullCenter();
+	}
+
+	&:disabled {
+		opacity: 0.4;
+		pointer-events: none;
 	}
 }

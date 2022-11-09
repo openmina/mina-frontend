@@ -1,0 +1,16 @@
+<div class="flex-column h-100">
+<!--  <mina-network-connections-toolbar></mina-network-connections-toolbar>-->
+  <div class="flex-row flex-grow overflow-hidden p-relative" #table>
+    <mina-network-connections-table [class.shrink]="isActiveRow"></mina-network-connections-table>
+    <mina-horizontal-resizable-container (widthChange)="onWidthChange($event)"
+                                         (startResizing)="toggleResizing()"
+                                         (endResizing)="toggleResizing()"
+                                         [minWidth]="320"
+                                         [maxWidthElement]="table"
+                                         [class.show]="isActiveRow"
+                                         localStorageKey="network-connections-side-panel-width"
+                                         class="no-transition">
+      <mina-network-connections-side-panel></mina-network-connections-side-panel>
+    </mina-horizontal-resizable-container>
+  </div>
+</div>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GraphQLService } from '@core/services/graph-ql.service';
-import { map, Observable, of } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { TracingOverviewCheckpoint } from '@shared/types/tracing/overview/tracing-overview-checkpoint.type';
 import { TracingOverviewCheckpointColumn } from '@shared/types/tracing/overview/tracing-overview-checkpoint-column.type';
 
@@ -13,13 +13,18 @@ export class TracingOverviewService {
 
   getStatistics(): Observable<TracingOverviewCheckpoint[]> {
     return this.graphQL.query<any>('blockTracesDistribution', '{ blockTracesDistribution }').pipe(
+      tap(response => {
+        if (!response?.blockTracesDistribution) {
+          throw new Error(response.errors[0].message);
+        }
+      }),
       map(response => this.mapStatisticsResponse(response.blockTracesDistribution)),
     );
   }
 
   private mapStatisticsResponse(response: any[]): TracingOverviewCheckpoint[] {
     return response.reverse().map(r => ({
-      title: r.checkpoint.split('_').join(' '),
+      title: r.identity.split('_').join(' '),
       totalTime: r.totalTime,
       totalCount: r.count,
       columns: this.getColumns(r),
@@ -27,7 +32,7 @@ export class TracingOverviewService {
   }
 
   private getColumns(response: any): TracingOverviewCheckpointColumn[] {
-    delete response.checkpoint;
+    delete response.identity;
     delete response.totalTime;
     delete response.count;
     return Object.keys(response).map((key: string) => ({

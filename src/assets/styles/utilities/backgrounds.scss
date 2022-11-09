@@ -1,0 +1,33 @@
+@import 'variables';
+
+.bg-base {
+	background-color: $base-background;
+}
+
+.bg-surface {
+	background-color: $base-surface;
+}
+
+.bg-surface-top {
+	background-color: $base-surface-top;
+}
+
+.bg-container {
+	background-color: $base-container;
+}
+
+.bg-selected-container {
+	background-color: $selected-container;
+}
+
+.bg-transparent {
+	background-color: transparent;
+}
+
+.bg-warn-container {
+	background-color: $warn-container;
+}
+
+.bg-aware-container {
+	background-color: $aware-container;
+}

@@ -1,12 +1,18 @@
-import { APP_CHANGE_MENU_COLLAPSING, APP_CHANGE_SUB_MENUS, APP_GET_NODE_STATUS_SUCCESS, AppActions } from '@app/app.actions';
+import { APP_CHANGE_MENU_COLLAPSING, APP_CHANGE_SUB_MENUS, APP_GET_NODE_STATUS_SUCCESS, APP_UPDATE_DEBUGGER_STATUS, AppActions } from '@app/app.actions';
 import { AppState } from '@app/app.state';
-import { AppNodeStatus } from '@shared/types/app/app-node-status.type';
+import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 
 
 const initialState: AppState = {
-  lastBlockLevel: undefined,
-  status: AppNodeStatus.CONNECTING,
-  timestamp: 0,
+  nodeStatus: {
+    blockLevel: undefined,
+    status: AppNodeStatusTypes.CONNECTING,
+    timestamp: 0,
+  },
+  debuggerStatus: {
+    isOnline: false,
+    failed: undefined,
+  },
   menu: {
     collapsed: JSON.parse(localStorage.getItem('menu_collapsed')) || false,
     isMobile: false,
@@ -21,9 +27,17 @@ export function reducer(state: AppState = initialState, action: AppActions): App
     case APP_GET_NODE_STATUS_SUCCESS: {
       return {
         ...state,
-        lastBlockLevel: action.payload.lastBlockLevel,
-        status: action.payload.status,
-        timestamp: action.payload.timestamp,
+        nodeStatus: action.payload,
+      };
+    }
+
+    case APP_UPDATE_DEBUGGER_STATUS: {
+      return {
+        ...state,
+        debuggerStatus: {
+          isOnline: action.payload.isOnline !== undefined ? action.payload.isOnline : state.debuggerStatus.isOnline,
+          failed: action.payload.failed !== undefined ? action.payload.failed : state.debuggerStatus.failed,
+        },
       };
     }
 

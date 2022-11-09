@@ -1,0 +1,40 @@
+<div class="wallet-toolbar flex-row align-center border-bottom pl-12">
+  <button class="btn-selected flex-row flex-between align-center mr-5"
+          #dropdownTrigger
+          (click)="openDropdown($event)">
+    <div class="flex-row align-center">
+      <span class="mina-icon f-20 mr-5">account_balance_wallet</span>
+      <span class="mr-8" *ngIf="activeWallet">{{ activeWallet.minaTokens | number: '1.0-3' }} MINA</span>
+    </div>
+    <div class="flex-row align-center">
+      <span class="selected-secondary monospace">{{ activeWallet?.publicKey | truncateMid }}</span>
+      <span class="mina-icon">arrow_drop_down</span>
+    </div>
+  </button>
+  <div [tooltip]="'Action is not available when node is in catchup state'"
+       [tooltipDisabled]="nodeStatus !== 'CATCHUP'"
+       [globalTooltip]="false">
+    <button class="btn-primary mr-5" routerLink="/web-node/wallet/new-transaction"
+            [disabled]="nodeStatus === 'CATCHUP'">Send Mina
+    </button>
+  </div>
+  <button class="btn-primary mr-5" [copyToClipboard]="activeWallet?.publicKey">Copy Address</button>
+  <button class="btn-primary mr-5" [copyToClipboard]="activeWallet?.privateKey">Copy Private Key</button>
+  <button class="btn-primary" routerLink="/web-node/wallet/new">Add Wallet</button>
+</div>
+
+<ng-template #walletDropdown>
+  <div class="dropdown border-rad-4 popup-box-shadow-weak flex-column border bg-surface overflow-hidden"
+       (clickOutside)="detachOverlay()">
+    <div class="overflow-auto h-100 p-10">
+      <div *ngFor="let wallet of wallets"
+           class="dropdown-item flex-row flex-between align-center pointer pl-8 pr-8 border-rad-4 mb-5"
+           [class.active]="activeWallet.publicKey === wallet.publicKey"
+           (click)="changeWallet(wallet)">
+        <span class="mina-icon f-20">check_small</span>
+        <span>{{ wallet.minaTokens | number: '1.0-3' }} MINA</span>
+        <span class="monospace">{{ wallet.publicKey | truncateMid }}</span>
+      </div>
+    </div>
+  </div>
+</ng-template>

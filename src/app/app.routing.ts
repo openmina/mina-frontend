@@ -1,27 +1,38 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { FeatureGuard } from '@shared/guards/feature.guard';
 
-export const APP_TITLE = 'Open Mina';
-const routes: Routes = [
-  // {
-  //   path: 'resources',
-  //   loadChildren: () => import('./features/resources/resources.module').then(module => module.ResourcesModule),
-  //   title: APP_TITLE + ' - Resources',
-  // },
+const APP_TITLE: string = 'Open Mina';
+
+export const RESOURCES_TITLE: string = APP_TITLE + ' - Resources';
+export const NETWORK_TITLE: string = APP_TITLE + ' - Network';
+export const TRACING_TITLE: string = APP_TITLE + ' - Tracing';
+export const WEB_NODE_TITLE: string = APP_TITLE + ' - Web Node';
+
+export const routes: Routes = [
+  {
+    path: 'resources',
+    loadChildren: () => import('./features/resources/resources.module').then(module => module.ResourcesModule),
+    title: RESOURCES_TITLE,
+    canActivate: [FeatureGuard],
+  },
   {
     path: 'network',
     loadChildren: () => import('./features/network/network.module').then(module => module.NetworkModule),
-    title: APP_TITLE + ' - Network',
+    title: NETWORK_TITLE,
+    canActivate: [FeatureGuard],
   },
   {
     path: 'tracing',
     loadChildren: () => import('./features/tracing/tracing.module').then(module => module.TracingModule),
-    title: APP_TITLE + ' - Tracing',
+    title: TRACING_TITLE,
+    canActivate: [FeatureGuard],
   },
   {
-    path: '',
-    redirectTo: 'network',
-    pathMatch: 'full',
+    path: 'web-node',
+    loadChildren: () => import('./features/web-node/web-node.module').then(module => module.WebNodeModule),
+    title: WEB_NODE_TITLE,
+    canActivate: [FeatureGuard],
   },
   {
     path: '**',

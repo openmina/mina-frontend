@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { NetworkComponent } from '@app/features/network/network.component';
-import { APP_TITLE } from '@app/app.routing';
+import { NetworkComponent } from '@network/network.component';
+import { NETWORK_TITLE } from '@app/app.routing';
 
 const routes: Routes = [
   {
@@ -9,9 +9,19 @@ const routes: Routes = [
     component: NetworkComponent,
     children: [
       {
-        path: ':messageId',
-        component: NetworkComponent,
-        title: APP_TITLE + ' - Network',
+        path: 'messages',
+        loadChildren: () => import('./messages/network-messages.module').then(m => m.NetworkMessagesModule),
+        title: NETWORK_TITLE,
+      },
+      {
+        path: 'connections',
+        loadChildren: () => import('./connections/network-connections.module').then(m => m.NetworkConnectionsModule),
+        title: NETWORK_TITLE,
+      },
+      {
+        path: '**',
+        redirectTo: 'messages',
+        pathMatch: 'full',
       },
     ],
   },
@@ -26,4 +36,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class NetworkRouting {}
+export class NetworkRoutingModule {}

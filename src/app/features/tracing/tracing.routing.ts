@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TracingComponent } from '@app/features/tracing/tracing.component';
-import { APP_TITLE } from '@app/app.routing';
+import { TRACING_TITLE } from '@app/app.routing';
 
 const routes: Routes = [
   {
@@ -9,14 +9,14 @@ const routes: Routes = [
     component: TracingComponent,
     children: [
       {
-        path: 'blocks',
-        loadChildren: () => import('./tracing-blocks/tracing-blocks.module').then(m => m.TracingBlocksModule),
-        title: APP_TITLE + ' - Tracing',
-      },
-      {
         path: 'overview',
         loadChildren: () => import('./tracing-overview/tracing-overview.module').then(m => m.TracingOverviewModule),
-        title: APP_TITLE + ' - Tracing',
+        title: TRACING_TITLE,
+      },
+      {
+        path: 'blocks',
+        loadChildren: () => import('./tracing-blocks/tracing-blocks.module').then(m => m.TracingBlocksModule),
+        title: TRACING_TITLE,
       },
       {
         path: '',

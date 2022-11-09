@@ -1,0 +1,9 @@
+@import 'variables';
+
+.list > div {
+	height: 36px;
+
+	span {
+		color: $base-primary;
+	}
+}

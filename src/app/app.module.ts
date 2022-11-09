@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule, Provider } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRouting } from './app.routing';
@@ -11,17 +11,25 @@ import { StoreModule } from '@ngrx/store';
 import { GRAPH_QL_PROVIDER } from '@core/services/graph-ql.service';
 import { THEME_PROVIDER } from '@core/services/theme-switcher.service';
 import { MenuComponent } from './layout/menu/menu.component';
-import { EagerLoadedSharedModule } from '@shared/shared.module';
+import { EagerSharedModule } from '@shared/eager-shared.module';
 import { ToolbarComponent } from './layout/toolbar/toolbar.component';
 import { metaReducers, reducers } from '@app/app.setup';
 import { EffectsModule } from '@ngrx/effects';
-import { environment } from '@environment/environment';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { AppEffects } from '@app/app.effects';
 import { ErrorPreviewComponent } from '@error-preview/error-preview.component';
 import { ErrorListComponent } from '@error-preview/error-list/error-list.component';
 import { NETWORK_INTERCEPTOR } from '@core/interceptor/loading.interceptor';
 import { NgrxRouterStoreModule } from '@shared/router/ngrx-router.module';
+import * as Sentry from '@sentry/angular';
+import { ServerStatusComponent } from './layout/server-status/server-status.component';
+import { CONFIG } from '@shared/constants/config';
+
+
+export const SENTRY_PROVIDER: Provider = {
+  provide: ErrorHandler,
+  useValue: Sentry.createErrorHandler(),
+};
 
 
 @NgModule({
@@ -32,6 +40,7 @@ import { NgrxRouterStoreModule } from '@shared/router/ngrx-router.module';
     ToolbarComponent,
     ErrorPreviewComponent,
     ErrorListComponent,
+    ServerStatusComponent,
   ],
   imports: [
     BrowserModule,
@@ -47,16 +56,17 @@ import { NgrxRouterStoreModule } from '@shared/router/ngrx-router.module';
     }),
     EffectsModule.forRoot([AppEffects]),
     NgrxRouterStoreModule,
-    !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : [],
+    !CONFIG.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : [],
     HttpClientModule,
     ApolloModule,
     BrowserAnimationsModule,
-    EagerLoadedSharedModule,
+    EagerSharedModule,
   ],
   providers: [
     GRAPH_QL_PROVIDER,
     THEME_PROVIDER,
     NETWORK_INTERCEPTOR,
+    SENTRY_PROVIDER,
   ],
   bootstrap: [AppComponent],
 })

@@ -2,7 +2,7 @@
   <section *ngFor="let segment of segments"
            [class.ml]="internalDepth < paddingLimitForNestedElements"
            [ngClass]="['segment', 'segment-type-' + segment.type]">
-    <section (click)="toggle(segment)"
+    <section (click)="onExpandToggle(segment)"
              [ngClass]="{
                 'segment-main': true,
                 'expandable': isExpandable(segment),
@@ -16,6 +16,7 @@
     <section *ngIf="segment.expanded && isExpandable(segment)">
       <mina-json-viewer [json]="segment.value"
                         [expanded]="expanded"
+                        [expandTracking]="expandTracking ? expandTracking[segment.key] : null"
                         [internalDepth]="internalDepth"
                         [paddingLimitForNestedElements]="paddingLimitForNestedElements"></mina-json-viewer>
     </section>

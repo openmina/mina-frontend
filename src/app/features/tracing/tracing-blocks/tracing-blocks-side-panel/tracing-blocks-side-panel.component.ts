@@ -11,6 +11,14 @@ import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-gr
 import { TracingTraceCheckpoint } from '@shared/types/tracing/blocks/tracing-trace-checkpoint.type';
 import { selectTracingActiveTraceDetails, selectTracingActiveTraceGroups } from '@tracing/tracing-blocks/tracing-blocks.state';
 import { TRACING_BLOCKS_SELECT_ROW, TracingBlocksSelectRow } from '@tracing/tracing-blocks/tracing-blocks.actions';
+import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
+
+const timeColorScheme: SecDurationConfig = {
+  red: 1,
+  orange: 0.3,
+  yellow: 0.1,
+  color: true,
+};
 
 @UntilDestroy()
 @Component({
@@ -21,6 +29,8 @@ import { TRACING_BLOCKS_SELECT_ROW, TracingBlocksSelectRow } from '@tracing/trac
   host: { class: 'h-100 flex-column border-left' },
 })
 export class TracingBlocksSidePanelComponent extends ManualDetection implements OnInit {
+
+  readonly timeColorScheme: SecDurationConfig = timeColorScheme;
 
   activeTrace: TracingBlockTrace;
   groups: TracingTraceGroup[];

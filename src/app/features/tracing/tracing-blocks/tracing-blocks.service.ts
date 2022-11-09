@@ -4,6 +4,7 @@ import { map, Observable } from 'rxjs';
 import { TracingBlockTrace } from '@shared/types/tracing/blocks/tracing-block-trace.type';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
+import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 
 @Injectable({
   providedIn: 'root',
@@ -17,10 +18,11 @@ export class TracingBlocksService {
       .pipe(
         map((response: any) =>
           response.blockTraces.traces.reverse().map((trace: any, id: number) => ({
-            globalSlot: Number(trace.global_slot ?? trace.blockchain_length ?? trace.height), //TODO: get only one property. Check backend response
+            height: Number(trace.blockchain_length), //TODO: get only one property. Check backend response
             source: trace.source,
             hash: trace.state_hash,
             status: trace.status,
+            totalTime: trace.total_time,
             id,
           } as TracingBlockTrace)),
         ));
@@ -29,7 +31,7 @@ export class TracingBlocksService {
   getBlockTraceGroups(hash: string): Observable<TracingTraceGroup[]> {
     const getCheckpoints = (checkpointParent: any) => checkpointParent.checkpoints.map((checkpoint: any) => ({
       title: checkpoint.checkpoint.split('_').join(' '),
-      startedAt: toReadableDate(checkpoint.started_at * 1000, 'HH:mm:ss.SSS'),
+      startedAt: toReadableDate(checkpoint.started_at * ONE_THOUSAND, 'HH:mm:ss.SSS'),
       duration: checkpoint.duration,
       metadata: checkpoint.metadata,
       checkpoints: getCheckpoints(checkpoint),

@@ -1,6 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit } from '@angular/core';
 import { NgxJsonViewerComponent } from 'ngx-json-viewer';
 import { Segment } from 'ngx-json-viewer/src/ngx-json-viewer/ngx-json-viewer.component';
+
+export interface ExpandTracking {
+  [p: string]: ExpandTracking;
+}
 
 @Component({
   selector: 'mina-json-viewer',
@@ -12,8 +16,7 @@ export class MinaJsonViewerComponent extends NgxJsonViewerComponent implements O
 
   @Input() paddingLimitForNestedElements: number = 1000;
   @Input() internalDepth: number = 0;
-
-  constructor(private cdRef: ChangeDetectorRef) { super(); }
+  @Input() expandTracking: ExpandTracking;
 
   ngOnInit(): void {
     this.internalDepth++;
@@ -33,6 +36,32 @@ export class MinaJsonViewerComponent extends NgxJsonViewerComponent implements O
     } else {
       this.segments.push(this.customParseKeyValue(`(${typeof this.json})`, this.json));
     }
+
+    if (this.expandTracking) {
+      Object.keys(this.expandTracking).forEach((key: string) => {
+        const segmentToToggle: Segment = this.segments.find(segment => key === segment.key);
+        if (segmentToToggle && !segmentToToggle.expanded) {
+          this.toggle(segmentToToggle);
+        }
+      });
+    }
+  }
+
+  onExpandToggle(segment: Segment): void {
+    this.toggle(segment);
+    this.appendExpandingToExpandTrackingElement(segment);
+  }
+
+  private appendExpandingToExpandTrackingElement(segment: Segment): void {
+    if (!this.expandTracking || !this.isExpandable(segment)) {
+      return;
+    }
+
+    if (this.expandTracking[segment.key]) {
+      delete this.expandTracking[segment.key];
+    } else {
+      this.expandTracking[segment.key] = {};
+    }
   }
 
   private customParseKeyValue(key: any, value: any): Segment {
@@ -44,11 +73,24 @@ export class MinaJsonViewerComponent extends NgxJsonViewerComponent implements O
     return segment;
   }
 
-  toggleAll(expand: boolean): void {
+  toggleAll(expand: boolean): ExpandTracking {
+    const newExpandTracking = {};
     this.segments.forEach((segment: Segment) => {
       segment.expanded = expand;
+      if (expand) {
+        this.appendExpandingRecursively(segment.value, segment.key, newExpandTracking);
+      }
     });
-    this.expanded = expand;
-    this.cdRef.detectChanges();
+    return newExpandTracking;
+  }
+
+  private appendExpandingRecursively(value: any, keyOfValue: string, tracking: ExpandTracking): void {
+    const isExpandable = (v: any) => typeof v === 'object' || Array.isArray(v);
+    if (value !== null && isExpandable(value)) {
+      tracking[keyOfValue] = {};
+      Object.keys(value).forEach(key => {
+        this.appendExpandingRecursively(value[key], key, tracking[keyOfValue]);
+      });
+    }
   }
 }

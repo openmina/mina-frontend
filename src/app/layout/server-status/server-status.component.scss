@@ -1,0 +1,101 @@
+@import 'variables';
+
+.debugger-status {
+	padding-left: 2px;
+	padding-right: 2px;
+	background-color: $success-container;
+	color: $success-primary;
+
+	&.offline {
+		background-color: $warn-container;
+		color: $warn-primary;
+	}
+
+	&.failed {
+		background-color: $aware-container;
+		color: $aware-primary;
+	}
+}
+
+.web-node-status {
+	padding-left: 2px;
+	padding-right: 2px;
+	background-color: $success-container;
+	color: $success-primary;
+
+	&.offline {
+		background-color: $warn-container;
+		color: $warn-primary;
+	}
+}
+
+.node-status {
+	padding: 1px;
+
+	.shining-border {
+		top: -300%;
+		left: -50%;
+		z-index: -1;
+		height: 800%;
+		width: 200%;
+		transform: rotate(-45deg);
+		background: linear-gradient(to right, transparent 20%, transparent 40%, $base-container 45%, $base-divider 46%, $aware-tertiary 50%, $base-divider 54%, $base-container 55%, transparent 55%, transparent 100%);
+		background-size: 200% auto;
+		animation: shine 7s linear infinite;
+	}
+
+	.block-level {
+		background-color: $warn-container;
+		color: $warn-primary;
+
+		.p-relative {
+			padding-right: 73px;
+			height: 14px;
+
+			.p-absolute {
+				top: 0;
+				right: 0;
+				width: 73px;
+			}
+
+			.ago {
+				width: 19px;
+			}
+		}
+
+		&.synced {
+			background-color: $success-container;
+			color: $success-secondary;
+
+			.status {
+				color: $success-primary;
+			}
+		}
+
+		&.connecting,
+		&.listening {
+			background-color: $base-container;
+			color: $base-secondary;
+
+			.status {
+				color: $base-primary;
+			}
+		}
+
+		&.bootstrap,
+		&.catchup {
+			background-color: $aware-container;
+			color: $aware-secondary;
+
+			.status {
+				color: $aware-primary;
+			}
+		}
+	}
+}
+
+@keyframes shine {
+	to {
+		background-position: 200% center;
+	}
+}

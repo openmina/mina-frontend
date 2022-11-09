@@ -1,0 +1,35 @@
+<div class="mina-table flex-grow overflow-x-auto">
+  <div class="row head">
+    <span>ID</span>
+    <span>Datetime</span>
+    <span>Remote Address</span>
+    <span>PID</span>
+    <span>FD</span>
+    <span>Incoming</span>
+    <span>Alias</span>
+    <span>Decrypted In</span>
+    <span>Decrypted Out</span>
+  </div>
+  <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-auto"
+                               fxFlex="calc(100% - 36px)"
+                               [itemSize]="itemSize">
+    <div *cdkVirtualFor="let connection of connections; let i=index"
+         (click)="onRowClick(connection)"
+         [class.active]="activeRow?.connectionId === connection.connectionId"
+         [class.row-even]="i % 2 === 0"
+         class="row">
+      <span class="tertiary">{{ connection.connectionId }}</span>
+      <span class="tertiary">{{ connection.date }}</span>
+      <span (click)="goToNetworkMessages(connection.addr)"
+            [tooltip]="'See messages for this address'"
+            [showDelay]="1000"
+            class="underline">{{ connection.addr }}</span>
+      <span class="tertiary">{{ connection.pid }}</span>
+      <span class="tertiary">{{ connection.fd }}</span>
+      <span class="tertiary">{{ connection.incoming }}</span>
+      <span class="tertiary">{{ connection.alias }}</span>
+      <span>{{ connection.stats_in.decrypted_bytes * 100 / connection.stats_in.total_bytes | number: '1.0-1' }}%</span>
+      <span>{{ connection.stats_out.decrypted_bytes * 100 / connection.stats_out.total_bytes | number: '1.0-1' }}%</span>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>

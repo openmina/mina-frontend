@@ -7,9 +7,13 @@
 }
 
 .err {
-	color: $warn-primary;
+	min-height: 105px;
 
 	&:not(:last-child) {
 		border-bottom: 1px solid $base-divider;
+	}
+
+	.message {
+		word-wrap: break-word;
 	}
 }

@@ -1,0 +1,54 @@
+@import 'variables';
+
+.wallet-toolbar {
+	height: 36px;
+
+	.btn-selected {
+		min-width: 230px;
+
+		&:hover {
+			filter: brightness(120%);
+		}
+	}
+}
+
+.dropdown {
+	box-sizing: border-box;
+	max-height: 200px;
+
+	.dropdown-item {
+		height: 24px;
+		display: grid;
+		grid-template-columns: 27px 110px 110px;
+		color: $base-tertiary;
+		box-sizing: border-box;
+
+		span:nth-child(2), span:nth-child(4):hover {
+			color: $base-primary;
+		}
+
+		&:hover:not(.active) {
+			background-color: $base-container;
+		}
+
+		&.active {
+			background-color: $selected-container;
+
+			span:nth-child(1), span:nth-child(2), span:nth-child(4):hover {
+				color: $selected-primary;
+			}
+
+			span:nth-child(3), span:nth-child(4) {
+				color: $selected-secondary;
+			}
+		}
+
+		&:not(.active) .mina-icon {
+			color: $base-divider;
+		}
+
+		&:last-child {
+			margin-bottom: 0 !important;
+		}
+	}
+}

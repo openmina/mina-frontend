@@ -1,0 +1,57 @@
+@import 'src/assets/styles/utilities/layout';
+@import 'src/assets/styles/utilities/variables';
+
+.live-button,
+.pause-button,
+.icon-button {
+	border-radius: 6px;
+	width: 62.5px;
+	@include flexRowFullCenter();
+}
+
+.live-button {
+	background-color: unset;
+	color: $base-secondary;
+
+	&.active {
+		color: $success-primary;
+	}
+
+	&:hover,
+	&.active {
+		background-color: $success-container;
+	}
+}
+
+.pause-button {
+	background-color: unset;
+	color: $base-secondary;
+
+	&.active,
+	&:hover {
+		color: $selected-primary;
+		background-color: $selected-container;
+	}
+}
+
+.icon-button {
+	width: 24px;
+	background: $base-container;
+	color: $base-tertiary;
+
+	&:hover:not([disabled]) {
+		color: $base-secondary;
+		background: $base-divider;
+	}
+}
+
+.icon-wrap {
+	width: 24px;
+	height: 24px;
+	margin-right: -10px;
+
+	&:hover {
+		background-color: $selected-container;
+		filter: brightness(160%);
+	}
+}

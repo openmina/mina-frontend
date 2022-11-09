@@ -1,0 +1,133 @@
+<div fxFlex="36px">
+  <button class="mt-5 ml-12 flex-row align-center secondary primary-hover bg-transparent"
+          routerLink="/web-node/peers">
+    <span class="mina-icon f-20 mr-8">arrow_back</span>
+    <span>Back to Peers</span>
+  </button>
+</div>
+
+<div class="flex-column align-center pt-12 flex-grow">
+  <mina-stepper [stepHeaders]="['Receive Peer ID', 'Generate Offer', 'Receive Answer', 'Confirm Connection']"
+                [steps]="[step1, step2, step3, step4]"
+                [activeStep]="activeStep"
+                [footerTemplate]="stepperFooter"
+                [height]="380"
+                [style.max-width.px]="600"></mina-stepper>
+</div>
+
+<ng-template #step1>
+  <div class="border-rad-6 border p-12 flex-column h-100">
+    <div class="flex-column flex-center align-center flex-grow">
+      <span class="mina-icon icon-100 paste-icon">conversion_path</span>
+    </div>
+    <div class="p-relative">
+      <span class="p-absolute pl-12 h-100 flex-row align-center selected-primary"
+            [class.success-primary]="!peerIdMessage && formControl.value"
+            [class.error]="peerIdMessage">Peer ID
+      </span>
+      <input #firstInput type="text"
+             class="mina-input h-36 w-100 border-rad-4 text-right pr-12 p-relative input-selected"
+             [class.input-error]="peerIdMessage"
+             [class.input-success]="!peerIdMessage && formControl.value"
+             [formControl]="formControl">
+    </div>
+    <div class="flex-row tertiary align-center pt-12">
+      <ng-container *ngIf="peerIdMessage; else noError">
+        <span class="error flex-row align-center">
+          <span class="mina-icon f-20 mr-5 icon-100">error</span>
+          {{ peerIdMessage }}
+        </span>
+      </ng-container>
+      <ng-template #noError>
+        <ng-container *ngIf="!formControl.value; else successValueInInput">
+          <span class="mina-icon f-20 mr-5 icon-100">info</span>
+          Ask the peer to share their ID and paste it here
+        </ng-container>
+        <ng-template #successValueInInput>
+          <span class="success-primary flex-row align-center">
+            <span class="mina-icon f-20 mr-5 icon-100">check_circle</span>
+            Success, valid ID entered
+          </span>
+        </ng-template>
+      </ng-template>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #step2>
+  <div class="border-rad-6 border p-12 flex-column h-100">
+    <ng-container *ngIf="!copiedOffer; else copied">
+      <div class="flex-column flex-grow bg-container border-rad-4 p-12 h-100">
+        <div class="f-600 h-32">Initial Offer</div>
+        <div class="flex-column flex-grow overflow-auto transparent-scrollbar-track">
+          <mina-json-viewer [json]="offer" [expanded]="true"></mina-json-viewer>
+        </div>
+      </div>
+      <div class="flex-row tertiary align-center pt-12">
+        <span class="mina-icon f-20 mr-5 icon-100">info</span>
+        Copy the offer and share it with a node you want to connect to and wait for the answer
+      </div>
+    </ng-container>
+    <ng-template #copied>
+      <div class="flex-column flex-center align-center h-100">
+        <span class="help-icon mina-icon mb-16 icon-100">check_circle</span>
+        <div class="text-center">
+          Generated offer copied to clipboard.
+          <br>
+          Send the offer back to a peer via email, message, ...
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</ng-template>
+
+<ng-template #step3>
+  <div class="border-rad-6 border p-12 flex-column flex-center align-center h-100">
+    <div fxFlex="50" class="flex-column bg-container border-rad-4 p-12 w-100 mb-5">
+      <div fxFlex="24px" class="f-600">Initial Offer</div>
+      <div class="flex-column flex-grow overflow-auto transparent-scrollbar-track">
+        <mina-json-viewer [json]="offer" [expanded]="true"></mina-json-viewer>
+      </div>
+    </div>
+    <div fxFlex="50" class="flex-column bg-container border-rad-4 p-12 w-100">
+      <div fxFlex="24px" class="f-600">Received Answer</div>
+      <div class="flex-grow flex-column align-center flex-center tertiary">
+        <span class="paste-icon mina-icon mb-5 icon-100">content_paste</span>
+        <span>Paste answer here</span>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #step4>
+  <div class="border-rad-6 border p-12 flex-column h-100">
+    <div fxFlex="50" class="flex-column bg-container border-rad-4 p-12 w-100 mb-5">
+      <div fxFlex="24px" class="f-600">Initial Offer</div>
+      <div class="flex-column flex-grow overflow-auto transparent-scrollbar-track">
+        <mina-json-viewer [json]="offer" [expanded]="true"></mina-json-viewer>
+      </div>
+    </div>
+    <div fxFlex="50" class="flex-column bg-container border-rad-4 p-12 w-100">
+      <div fxFlex="24px" class="f-600">Received Answer</div>
+      <div class="flex-column flex-grow overflow-auto transparent-scrollbar-track">
+        <mina-json-viewer [json]="answer" [expanded]="true"></mina-json-viewer>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #stepperFooter>
+  <div class="flex-row flex-between mt-16">
+    <button class="action-btn btn-primary pl-12 pr-12 h-32" (click)="prevStep()" [disabled]="activeStep === 0">
+      Back
+    </button>
+    <button class="action-btn btn-selected pl-12 pr-12 h-32" (click)="nextStep()"
+            [disabled]="peerIdMessage">
+      {{ activeStep === 0
+      ? !pastedPeerId ? 'Paste ID from Clipboard' : 'Continue'
+      : activeStep === 1 ?
+        !copiedOffer ? 'Copy Offer to Clipboard' : 'Continue'
+        : activeStep === 2 ? 'Paste answer from clipboard' : 'Confirm' }}
+    </button>
+  </div>
+</ng-template>
