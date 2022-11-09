@@ -22,7 +22,9 @@
     "target": "es2020",
     "module": "es2020",
     "types": [
-      "google"
+      "google",
+      "cypress",
+      "cypress-real-events"
     ],
     "lib": [
       "es2020",
@@ -55,6 +57,9 @@
       ],
       "@tracing/*": [
         "src/app/features/tracing/*"
+      ],
+      "@web-node/*": [
+        "src/app/features/web-node/*"
       ],
     }
   },

@@ -1,15 +1,18 @@
 import { Injectable, Provider } from '@angular/core';
 import { HTTP_INTERCEPTORS, HttpEvent, HttpEventType, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
-import { catchError, map, Observable } from 'rxjs';
+import { catchError, map, Observable, tap } from 'rxjs';
 import { LoadingService } from '@core/services/loading.service';
 
 const SKIPPED_URLS: string[] = [
   '/messages?limit=',
   '/connection/',
+  '/blocks?',
+  '/version',
 ];
 
-const GRAPHQL_OPERATION_NAMES: string[] = [
+const SKIPPED_GRAPHQL_NAMES: string[] = [
   'blockStatus',
+  'pooledUserCommands',
 ];
 
 @Injectable({
@@ -20,10 +23,10 @@ export class LoadingInterceptor implements HttpInterceptor {
   constructor(private loadingService: LoadingService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (
-      (request.url.includes('/graphql') && GRAPHQL_OPERATION_NAMES.some(opName => opName === request.body.operationName))
-      || SKIPPED_URLS.some(url => request.url.includes(url))
-    ) {
+    const skipLoadingIndication: boolean = (request.url.includes('/graphql') && SKIPPED_GRAPHQL_NAMES.some(opName => opName === request.body.operationName))
+      || SKIPPED_URLS.some(url => request.url.includes(url));
+
+    if (skipLoadingIndication) {
       return next.handle(request);
     }
 

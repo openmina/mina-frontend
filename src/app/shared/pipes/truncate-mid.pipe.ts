@@ -1,12 +1,15 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'truncateMid'
+  name: 'truncateMid',
 })
 export class TruncateMidPipe implements PipeTransform {
 
-  transform(value: string, ):string {
-    return value.length > 22 ? value.slice(0, 15) + '...' + value.slice(value.length - 6) : value;
+  transform(value: string, firstSlice: number = 6): string {
+    if (!value) {
+      return '';
+    }
+    return value.length > (firstSlice + 7) ? value.slice(0, firstSlice) + '...' + value.slice(value.length - 6) : value;
   }
 
 }

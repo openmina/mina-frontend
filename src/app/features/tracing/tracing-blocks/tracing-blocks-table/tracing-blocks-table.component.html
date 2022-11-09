@@ -1,9 +1,14 @@
 <div class="mina-table flex-grow overflow-x-auto">
-  <div class="row head overflow-y-scroll overflow-x-hidden">
-    <span>Height</span>
-    <span>Hash</span>
-    <span>Source</span>
-    <span>Status</span>
+  <div class="row head overflow-y-scroll overflow-x-hidden" *ngIf="currentSort$ | async as sort">
+    <span *ngFor="let tableHead of tableHeads"
+          (click)="sortTable(tableHead.sort ?? tableHead.name)"
+          [class.active]="sort.sortBy === (tableHead.sort ?? tableHead.name)"
+          class="pointer">
+      {{ tableHead.name }}
+      <span [class.flip]="sort.sortDirection === 'descending'"
+            [class.show]="sort.sortBy === (tableHead.sort ?? tableHead.name)"
+            class="mina-icon f-18 icon-200">arrow_upward</span>
+    </span>
   </div>
   <cdk-virtual-scroll-viewport [itemSize]="itemSize"
                                class="border-bottom border-top h-100 overflow-y-auto"
@@ -13,9 +18,10 @@
          [class.active]="activeTrace?.id === trace.id"
          [class.row-even]="i % 2 === 0"
          class="row">
-      <span>{{ trace.globalSlot }}</span>
-      <span class="tertiary truncate">{{ trace.hash | truncateMid }}</span>
-      <span class="tertiary">{{ trace.source }}</span>
+      <span>{{ trace.height }}</span>
+      <span class="tertiary truncate">{{ trace.hash | truncateMid: 15 }}</span>
+      <span [innerHTML]="trace.totalTime | secDuration: secDurationConfig"></span>
+      <span>{{ trace.source }}</span>
       <span [ngClass]="trace.status">{{ trace.status }}</span>
     </div>
   </cdk-virtual-scroll-viewport>

@@ -1,0 +1,37 @@
+<mina-web-node-peers-toolbar></mina-web-node-peers-toolbar>
+<div #parent fxFlex="calc(100% - 36px)" class="w-100 flex-row p-relative">
+  <div #table class="table-wrapper p-relative"
+       [class.shrink]="activePeer">
+    <div class="mina-table flex-grow overflow-x-auto h-100">
+      <div class="row head">
+        <span>ID</span>
+        <span>Datetime</span>
+        <span>Type</span>
+        <span>Message</span>
+      </div>
+      <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-scroll"
+                                   fxFlex="calc(100% - 36px)"
+                                   itemSize="32">
+        <div *cdkVirtualFor="let message of peers; let i=index"
+             (click)="onRowClick(message)"
+             [class.active]="activePeer?.id === message.id"
+             [class.row-even]="i % 2 === 0"
+             class="row">
+          <span class="tertiary">{{ message.id }}</span>
+          <span class="tertiary">{{ message.date }}</span>
+          <span class="secondary">{{ message.type }}</span>
+          <span class="tertiary truncate">{{ message.summary }}</span>
+        </div>
+      </cdk-virtual-scroll-viewport>
+    </div>
+  </div>
+  <mina-horizontal-resizable-container (endResizing)="toggleResizing()"
+                                       (startResizing)="toggleResizing()"
+                                       (widthChange)="onWidthChange($event)"
+                                       [class.show]="activePeer"
+                                       [maxWidthElement]="parent"
+                                       [minWidth]="400"
+                                       localStorageKey="web-node-peers-side-panel-width">
+    <mina-web-node-peers-side-panel></mina-web-node-peers-side-panel>
+  </mina-horizontal-resizable-container>
+</div>

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 
 @Component({
   selector: 'mina-error-list',
@@ -9,10 +10,15 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 })
 export class ErrorListComponent {
 
+  readonly errorIconMap = {
+    [MinaErrorType.GRAPH_QL]: 'dns',
+    [MinaErrorType.DEBUGGER]: 'code',
+    [MinaErrorType.WEB_NODE]: 'language',
+    [MinaErrorType.GENERIC]: 'error',
+  };
+
   @Input() errors: any[];
   @Output() onConfirm: EventEmitter<any> = new EventEmitter<any>();
-
-  constructor() { }
 
   close(): void {
     this.onConfirm.emit();

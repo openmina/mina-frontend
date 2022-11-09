@@ -1,10 +1,17 @@
 <div (clickOutside)="close()" class="flex-column">
-  <div class="err p-12" *ngFor="let error of errors">
-    <div class="flex-row flex-between align-center">
-      <div class="f-600">{{ error.title }}</div>
-      <div class="tertiary">{{ error.timestamp }}</div>
+  <div class="err p-12 flex-row align-start" *ngFor="let error of errors">
+    <div fxFlex="24px" class="bg-warn-container flex-row align-center flex-center mr-10 h-24">
+      <span class="mina-icon icon-200 f-20 warn-primary">{{ errorIconMap[error.type] }}</span>
     </div>
-    <div class="tertiary" *ngIf="error.status">{{ error.status }}</div>
-    <div class="secondary">{{ error.message }}</div>
+    <div fxFlex="calc(100% - 34px)" class="h-100">
+      <div class="flex-row flex-between align-center h-24 mb-8">
+        <div class="f-600 warn-primary">{{ error.type }} Error</div>
+        <div class="tertiary f-300">{{ error.timestamp }}</div>
+      </div>
+      <div class="message secondary overflow-y-auto transparent-scrollbar-track">
+        <div class="tertiary mb-5" *ngIf="error.status">{{ error.status }}</div>
+        {{ error.message }}
+      </div>
+    </div>
   </div>
 </div>

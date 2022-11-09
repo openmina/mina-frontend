@@ -1,3 +1,12 @@
+export function isStringAValidJson(str: string): boolean {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 export function downloadJson(toDownload: object | string, fileName: string): void {
   const jsonString = typeof toDownload === 'object' ? JSON.stringify(toDownload) : toDownload;
   const href = 'data:text/json;charset=UTF-8,' + encodeURIComponent(jsonString);
@@ -10,13 +19,13 @@ export function downloadJsonFromURL(url: string, fileName: string, cancelCallbac
   }
   fetch(url)
     .then(response => response.blob())
-    .then(blob => {
+    .then((blob: Blob) => {
       if (!cancelCallback()) {
         const blobURL = URL.createObjectURL(blob);
         downloadFromAnchorElement(blobURL, fileName);
       }
       if (element) {
-        element.textContent = 'Save';
+        element.textContent = 'Save JSON';
       }
     });
 }

@@ -3,15 +3,12 @@
 .mina-table {
 	$col0: 96px;
 	$col1: 220px;
-	$col2: 150px;
-	$col3: 100px;
-	$col4: 80px;
-	$col5: 140px;
-	$col6: 400px;
+	$col2: 120px;
+	$col3: 120px;
+	$col4: 120px;
 
 	.row {
-		grid-template-columns: $col0 auto $col2 $col3;
-		color: $base-secondary;
+		grid-template-columns: $col0 auto $col2 $col3 $col4;
 
 		&:not(.head) {
 			cursor: pointer;
@@ -35,7 +32,7 @@
 	}
 
 	.cdk-virtual-scroll-viewport {
-		min-width: $col0 + $col1 + $col2 + $col3;
+		min-width: $col0 + $col1 + $col2 + $col3 + $col4;
 		overflow-x: hidden;
 	}
 }

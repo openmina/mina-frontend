@@ -7,6 +7,8 @@ import { filter, take } from 'rxjs';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { ErrorListComponent } from '@error-preview/error-list/error-list.component';
+import { MinaError } from '@shared/types/error-preview/mina-error.type';
+import { MARK_ERRORS_AS_SEEN, MarkErrorsAsSeen } from '@error-preview/error-preview.actions';
 
 @Component({
   selector: 'mina-error-preview',
@@ -16,9 +18,11 @@ import { ErrorListComponent } from '@error-preview/error-list/error-list.compone
 })
 export class ErrorPreviewComponent extends ManualDetection implements OnInit {
 
-  errors: any[] = [];
+  errors: MinaError[] = [];
   newMessages: void[] = [];
-  newError: any;
+  newError: MinaError;
+  unreadErrors: boolean;
+  openedOverlay: boolean;
 
   private overlayRef: OverlayRef;
   private errorListComponent: ComponentRef<ErrorListComponent>;
@@ -32,23 +36,27 @@ export class ErrorPreviewComponent extends ManualDetection implements OnInit {
 
   private listenToNewErrors(): void {
     this.store.select(selectErrorPreviewErrors)
-      .pipe(
-        filter(errors => !!errors.length),
-      )
-      .subscribe((errors: any[]) => {
-        this.newError = errors[0];
+      .pipe(filter(errors => !!errors.length))
+      .subscribe((errors: MinaError[]) => {
+        if (errors.length !== this.errors.length) {
+          this.newError = errors[0];
+          this.newMessages.push(void 0);
+          setTimeout(() => {
+            this.newMessages.pop();
+            this.detect();
+          }, 3000);
+        }
+
         this.errors = errors;
-        this.newMessages.push(void 0);
-        setTimeout(() => {
-          this.newMessages.pop();
-          this.detect();
-        }, 3000);
+        this.unreadErrors = errors.some(e => !e.seen);
         this.detect();
       });
   }
 
-  openErrorList(anchor: HTMLSpanElement, $event: MouseEvent): void {
+  openErrorList(anchor: HTMLSpanElement, event: MouseEvent): void {
+    this.openedOverlay = true;
     if (this.overlayRef?.hasAttached()) {
+      this.openedOverlay = false;
       this.overlayRef.detach();
       return;
     }
@@ -62,11 +70,15 @@ export class ErrorPreviewComponent extends ManualDetection implements OnInit {
           originY: 'bottom',
           overlayX: 'start',
           overlayY: 'top',
-          offsetX: 0,
+          offsetX: -10,
           offsetY: 14,
         }]),
     });
-    $event.stopPropagation();
+    event.stopPropagation();
+
+    if (this.unreadErrors) {
+      this.store.dispatch<MarkErrorsAsSeen>({ type: MARK_ERRORS_AS_SEEN });
+    }
 
     const portal = new ComponentPortal(ErrorListComponent);
     this.errorListComponent = this.overlayRef.attach<ErrorListComponent>(portal);
@@ -79,6 +91,8 @@ export class ErrorPreviewComponent extends ManualDetection implements OnInit {
   private detachOverlay(): void {
     if (this.overlayRef?.hasAttached()) {
       this.overlayRef.detach();
+      this.openedOverlay = false;
+      this.detect();
     }
   }
 }

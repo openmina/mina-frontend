@@ -1,8 +1,8 @@
 @import 'variables';
 
 .notification {
-	background-color: $warn-container;
-	color: $warn-primary;
+	color: $base-secondary;
+	background-color: transparent;
 	padding-left: 4px;
 	padding-right: 4px;
 
@@ -14,5 +14,14 @@
 			width: 200px;
 			padding-left: 2px;
 		}
+	}
+
+	&:hover:not(.unread-errors) {
+		background-color: $base-container;
+	}
+
+	&.unread-errors {
+		background-color: $warn-container;
+		color: $warn-primary;
 	}
 }

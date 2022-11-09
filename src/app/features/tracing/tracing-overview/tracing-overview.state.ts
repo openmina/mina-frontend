@@ -10,7 +10,6 @@ export interface TracingOverviewState {
   condensedView: boolean;
 }
 
-
 const select = <T>(selector: (state: TracingOverviewState) => T): MemoizedSelector<MinaState, T> => createSelector(
   selectTracingOverviewState,
   selector,

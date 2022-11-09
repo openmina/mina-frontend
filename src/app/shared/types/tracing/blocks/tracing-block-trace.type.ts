@@ -1,7 +1,8 @@
 export interface TracingBlockTrace {
   id: number;
   source: string;
-  globalSlot: number;
+  height: number;
   hash: string;
   status: 'Pending' | 'Failure' | 'Success';
+  totalTime: number;
 }

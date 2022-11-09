@@ -143,17 +143,17 @@ export class SystemResourcesComponent implements OnInit {
   ngOnInit(): void {
 
     this.service.getResources().subscribe(resources => {
-      this.resources = resources;
-      // this.lineChartData.labels = resources.cpu.map((cpu: any) => cpu.timestamp);
-      // this.lineChartData.datasets[0].data = resources.cpu.map((cpu: any) => cpu.node);
-      // this.lineChartData.datasets[1].data = resources.cpu.map((cpu: any) => cpu.validators);
-      // this.lineChartData.datasets[2].data = resources.cpu.map((cpu: any) => cpu.total);
-      resources.cpu.forEach((cpu: any) => {
-        this.chartData.push([new Date(cpu.timestamp), cpu.node, cpu.validators]);
+        this.resources = resources;
+        // this.lineChartData.labels = resources.cpu.map((cpu: any) => cpu.timestamp);
+        // this.lineChartData.datasets[0].data = resources.cpu.map((cpu: any) => cpu.node);
+        // this.lineChartData.datasets[1].data = resources.cpu.map((cpu: any) => cpu.validators);
+        // this.lineChartData.datasets[2].data = resources.cpu.map((cpu: any) => cpu.total);
+        resources.cpu.forEach((cpu: any) => {
+          this.chartData.push([new Date(cpu.timestamp), cpu.node, cpu.validators]);
+        });
+        this.makeChart();
+        this.cdRef.detectChanges();
       });
-      this.makeChart();
-      this.cdRef.detectChanges();
-    });
   }
 
   private makeChart(): void {

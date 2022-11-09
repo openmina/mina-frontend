@@ -59,6 +59,6 @@ export class SystemResourcesService {
       });
     });
 
-    return resources
+    return resources;
   }
 }

@@ -16,6 +16,7 @@
 	box-sizing: border-box;
 	opacity: 0;
 	transform: translate(-50%, -30%);
+	transition: opacity 3000ms;
 	pointer-events: none;
 	animation-timing-function: ease-out;
 	animation-duration: 0.18s;

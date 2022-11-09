@@ -10,7 +10,9 @@
 	.submenus {
 		margin-left: 24px;
 
-		button {
+		a {
+			height: 24px;
+			line-height: 24px;
 			min-width: 88px;
 			background-color: transparent;
 			color: $base-secondary;
@@ -29,8 +31,6 @@
 
 	.switcher {
 		background-color: $base-container;
-		width: 24px;
-		height: 24px;
 
 		.mina-icon {
 			color: $base-secondary;
@@ -46,88 +46,37 @@
 		}
 	}
 
-	.block-level {
-		height: 24px;
-		background-color: $warn-container;
-		color: $warn-primary;
+	.percentage {
+		width: 200px;
 
-		.circle {
-			width: 8px;
-			height: 8px;
-			border-radius: 10px;
-			background-color: $warn-primary;
-		}
-
-		.p-relative {
-			padding-right: 74px;
-			height: 14px;
-
-			.p-absolute {
-				top: 0;
-				right: 0;
-				width: 73px;
-			}
-
-			.ago {
-				width: 19px;
-			}
-		}
-
-		&.synced {
-			background-color: $success-container;
-			color: $success-secondary;
-
-			.status {
-				color: $success-primary;
-			}
-
-			.circle {
-				background-color: $success-primary;
-			}
-		}
-
-		&.connecting,
-		&.listening {
-			background-color: $base-container;
-			color: $base-secondary;
-
-			.status {
-				color: $base-primary;
-			}
-
-			.circle {
-				background-color: $base-secondary;
-			}
-		}
-
-		&.bootstrap,
-		&.catchup {
-			background-color: $selected-container;
-			color: $selected-secondary;
-
-			.status {
-				color: $selected-primary;
-			}
-
-			.circle {
-				background-color: $selected-primary;
-			}
+		span {
+			width: 18px;
 		}
 	}
 
 	.loading {
-		height: 2px;
+		height: 1px;
 		width: 25%;
 		border-radius: 4px;
 		background-color: $selected-primary;
 		bottom: -1px;
 		left: 0;
-		animation: bar 1.5s infinite;
+		animation: loading 1.5s infinite;
 		animation-timing-function: linear;
+	}
+
+	.definite-loading {
+		height: 1px;
+		width: 0;
+		border-radius: 4px;
+		background-color: $selected-primary;
+		bottom: -1px;
+		left: 0;
+		transition: width 100ms;
 	}
 }
 
-@keyframes bar {
+@keyframes loading {
 	0% {
 		left: -15%;
 		opacity: 0;

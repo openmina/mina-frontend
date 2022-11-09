@@ -1,0 +1,271 @@
+@import 'variables';
+
+
+//$inout: cubic-bezier(0.55, -0.3, 0.20, 1.3);
+
+//.loading-container {
+//	width: 100px;
+//	height: 100px;
+//	animation: rotate-box 2s infinite $inout;
+//	transform: rotate(0deg);
+//
+//	.browser-wrapper,
+//	.terminal-wrapper {
+//		width: 46px;
+//		height: 46px;
+//		border-radius: 40px;
+//	}
+//
+//	.browser-wrapper {
+//		top: 0;
+//		left: 0;
+//		scale: 0.7;
+//		transition: 400ms;
+//		animation: rotate-browser 2s infinite $inout;
+//	}
+//
+//	.terminal-wrapper {
+//		bottom: 0;
+//		right: 0;
+//		animation: rotate-terminal 2s infinite $inout;
+//	}
+//
+//	.browser,
+//	.terminal {
+//		border-radius: 40px;
+//		width: 46px;
+//		height: 46px;
+//
+//		.mina-icon {
+//			font-size: 40px;
+//			font-variation-settings: 'FILL' 0, 'wght' 100, 'GRAD' -25, 'opsz' 48;
+//
+//			&.add {
+//				position: absolute;
+//				color: $chart-classic-yellow-light;
+//				font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' -25, 'opsz' 48;
+//				opacity: 0;
+//			}
+//		}
+//	}
+//
+//	&.end {
+//		animation-play-state: paused;
+//
+//		.browser-wrapper,
+//		.terminal-wrapper {
+//			animation-play-state: paused;
+//			animation: none !important;
+//		}
+//
+//		.browser-wrapper {
+//			scale: 0.7;
+//
+//			.browser {
+//				transition: 400ms;
+//			}
+//		}
+//
+//		.terminal-wrapper .terminal {
+//			transition: 400ms;
+//		}
+//	}
+//
+//	&.combine {
+//		animation: none !important;
+//
+//		.browser-wrapper {
+//			left: 10px;
+//			top: 10px;
+//			scale: 1;
+//			background-color: $success-container;
+//			border-radius: 0;
+//			transition: 400ms;
+//
+//			.browser {
+//				border-radius: 0;
+//				color: $success-primary;
+//			}
+//		}
+//
+//		.terminal-wrapper {
+//			right: 10px;
+//			bottom: 10px;
+//			background-color: $selected-container;
+//			border-radius: 0;
+//			transition: 400ms;
+//
+//			.terminal {
+//				border-radius: 0;
+//				color: $selected-primary;
+//			}
+//		}
+//
+//
+//		.browser .add {
+//			&:nth-child(2) {
+//				left: 2px;
+//				top: 2px;
+//				font-size: 12px;
+//				animation-delay: 150ms;
+//				animation: shine 2s infinite ease-in;
+//			}
+//
+//			&:nth-child(3) {
+//				left: 1px;
+//				top: 38px;
+//				font-size: 7px;
+//				animation-delay: 150ms;
+//				animation: shine2 2s infinite ease-in;
+//			}
+//
+//			&:nth-child(4) {
+//				left: 44px;
+//				top: -6px;
+//				font-size: 8px;
+//				animation-delay: 150ms;
+//				animation: shine3 2s infinite ease-in;
+//			}
+//		}
+//
+//		.terminal .add {
+//			&:nth-child(2) {
+//				left: -11px;
+//				top: 43px;
+//				font-size: 12px;
+//				animation: shine 2s infinite ease-in;
+//			}
+//
+//			&:nth-child(3) {
+//				left: 34px;
+//				top: 34px;
+//				font-size: 8px;
+//				animation: shine3 2s infinite ease-in;
+//			}
+//
+//			&:nth-child(4) {
+//				left: 37px;
+//				top: -4px;
+//				font-size: 13px;
+//				animation: shine2 2s infinite ease-in;
+//			}
+//		}
+//	}
+//}
+
+//.bottom-info {
+//	height: 100px;
+//
+//	.btn-selected {
+//		height: 32px;
+//
+//		&:hover {
+//			filter: brightness(120%);
+//		}
+//	}
+//}
+//
+//@keyframes rotate-box {
+//	0% {
+//		transform: rotate(0deg);
+//	}
+//	50% {
+//		transform: rotate(-180deg);
+//	}
+//	100% {
+//		transform: rotate(-360deg);
+//	}
+//}
+//
+//@keyframes rotate-browser {
+//	0% {
+//		rotate: 0;
+//		scale: .6;
+//		color: $base-divider;
+//	}
+//	50% {
+//		rotate: 180deg;
+//		scale: 1;
+//		color: $base-primary;
+//	}
+//	100% {
+//		rotate: 360deg;
+//		scale: .6;
+//		color: $base-divider;
+//	}
+//}
+//
+//@keyframes rotate-terminal {
+//	0% {
+//		rotate: 0;
+//		scale: 1;
+//		color: $base-primary;
+//	}
+//	50% {
+//		rotate: 180deg;
+//		scale: .6;
+//		color: $base-divider;
+//	}
+//	100% {
+//		rotate: 360deg;
+//		scale: 1;
+//		color: $base-primary;
+//	}
+//}
+//
+//@keyframes shine {
+//	0% {
+//		opacity: 0.8;
+//		scale: 1;
+//	}
+//	33% {
+//		opacity: 0.3;
+//		scale: 1.3;
+//	}
+//	66% {
+//		opacity: 1;
+//		scale: 0.8;
+//	}
+//	100% {
+//		opacity: 0.8;
+//		scale: 1;
+//	}
+//}
+//
+//@keyframes shine2 {
+//	0% {
+//		opacity: 0.3;
+//		scale: 0.9;
+//	}
+//	30% {
+//		opacity: 0.8;
+//		scale: 0.7;
+//	}
+//	56% {
+//		opacity: 1;
+//		scale: 1.4;
+//	}
+//	100% {
+//		opacity: 0.3;
+//		scale: 0.9;
+//	}
+//}
+//
+//@keyframes shine3 {
+//	0% {
+//		opacity: 1;
+//		scale: 1;
+//	}
+//	20% {
+//		opacity: 0.8;
+//		scale: 0.7;
+//	}
+//	75% {
+//		opacity: 1;
+//		scale: 1.6;
+//	}
+//	100% {
+//		opacity: 1;
+//		scale: 1;
+//	}
+//}

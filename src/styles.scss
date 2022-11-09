@@ -5,8 +5,13 @@
 @import 'utilities/design';
 @import 'utilities/table';
 @import 'utilities/text';
+@import 'utilities/text-colors';
+@import 'utilities/backgrounds';
+@import 'utilities/font';
 @import 'components/button';
 @import 'components/tooltip';
+@import 'components/input';
+@import 'components/stepper';
 @import 'material/material-accordion';
 @import 'material/material-icons';
 @import 'material/material-popups';
@@ -40,6 +45,14 @@ span {
 	color: inherit;
 }
 
+* {
+	box-sizing: border-box;
+}
+
+p {
+	margin-top: 0;
+	margin-bottom: 0;
+}
 /* User Select */
 ::-moz-selection {
 	color: $base-primary;
@@ -88,4 +101,8 @@ body.light {
 	border-style: solid;
 	border-color: transparent;
 	background-clip: content-box;
+}
+
+.transparent-scrollbar-track::-webkit-scrollbar-track {
+	background-color: transparent;
 }

@@ -1,0 +1,23 @@
+@import 'variables';
+
+.mina-table {
+	$col0: 80px;
+	$col1: 80px;
+	$col2: 150px;
+	$col3: 150px;
+	$col4: 300px;
+
+	.row {
+		grid-template-columns: $col1 $col2 $col3 1fr;
+		color: $base-secondary;
+
+		&:not(.head) {
+			cursor: pointer;
+		}
+	}
+
+	.cdk-virtual-scroll-viewport {
+		min-width: $col1 + $col2 + $col3 + $col4;
+		overflow-x: hidden;
+	}
+}

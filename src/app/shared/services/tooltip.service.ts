@@ -7,6 +7,8 @@ import { DOCUMENT } from '@angular/common';
 })
 export class TooltipService {
 
+  openTooltipsWithClipboardClick: number[] = [];
+
   readonly onTooltipChange$: ReplaySubject<boolean> = new ReplaySubject<boolean>();
 
   private readonly tooltipDisabledKey: string = 'tooltipDisabled';

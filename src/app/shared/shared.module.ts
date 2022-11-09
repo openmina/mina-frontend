@@ -1,8 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
@@ -11,50 +7,27 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { MatTabsModule } from '@angular/material/tabs';
 import { HorizontalResizeDirective } from './directives/horizontal-resize.directive';
 import { HorizontalResizableContainerComponent } from './components/horizontal-resizable-container/horizontal-resizable-container.component';
-import { OverlayModule } from '@angular/cdk/overlay';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ClickOutsideDirective } from '@shared/directives/click-outside.directive';
 import { SizePipe } from './pipes/size.pipe';
-import { MinaTooltipDirective } from './directives/mina-tooltip.directive';
 import { TruncateMidPipe } from './pipes/truncate-mid.pipe';
 import { SecDurationPipe } from './pipes/sec-duration.pipe';
 import { ThousandPipe } from '@shared/pipes/thousand.pipe';
+import { StepperComponent } from './components/stepper/stepper.component';
+import { CopyToClipboardDirective } from './directives/copy-to-clipboard.directive';
+import { IntervalSelectComponent } from '@shared/components/interval-select/interval-select.component';
+import { EagerSharedModule } from '@shared/eager-shared.module';
 
-const EAGER_MODULES = [
-  CommonModule,
-  MatSidenavModule,
-  FlexLayoutModule,
-  MatButtonToggleModule,
-  OverlayModule,
-];
-
-const EAGER_DIRECTIVES = [
-  ClickOutsideDirective,
-  MinaTooltipDirective,
-];
-
-/* The role of this module is to eagerly load all modules required by app.component */
-@NgModule({
-  imports: [
-    ...EAGER_MODULES,
-  ],
-  exports: [
-    ...EAGER_MODULES,
-    ...EAGER_DIRECTIVES,
-  ],
-  declarations: [
-    ...EAGER_DIRECTIVES,
-  ],
-})
-export class EagerLoadedSharedModule {}
 
 const COMPONENTS = [
   MinaJsonViewerComponent,
   HorizontalResizableContainerComponent,
+  StepperComponent,
+  IntervalSelectComponent,
 ];
 
 const DIRECTIVES = [
   HorizontalResizeDirective,
+  CopyToClipboardDirective,
 ];
 
 const PIPES = [
@@ -65,7 +38,7 @@ const PIPES = [
 ];
 
 const MODULES = [
-  EagerLoadedSharedModule,
+  EagerSharedModule,
   ScrollingModule,
   MatExpansionModule,
   ClipboardModule,

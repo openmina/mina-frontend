@@ -3,6 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import { Theme } from '@shared/types/core/theme/theme.type';
 import { ThemeType } from '@shared/types/core/theme/theme-types.type';
 import {
+  AWARE_CSS_PREFIX,
   BASE_CSS_PREFIX,
   CHART_CSS_PREFIX,
   CODE_CSS_PREFIX,
@@ -31,6 +32,12 @@ const DARK_THEME: Theme = {
       [`${SUCCESS_CSS_PREFIX}tertiary`]: 'rgba(129,224,108,0.4)',
       [`${SUCCESS_CSS_PREFIX}divider`]: 'rgba(129,224,108,0.2)',
       [`${SUCCESS_CSS_PREFIX}container`]: 'rgba(129,224,108,0.05)',
+    },
+    aware: {
+      [`${AWARE_CSS_PREFIX}primary`]: '#FFCC00',
+      [`${AWARE_CSS_PREFIX}secondary`]: 'rgba(255,204,0,0.6)',
+      [`${AWARE_CSS_PREFIX}tertiary`]: 'rgba(255,204,0,0.4)',
+      [`${AWARE_CSS_PREFIX}container`]: 'rgba(255,204,0,0.1)',
     },
     warn: {
       [`${WARN_CSS_PREFIX}primary`]: '#ea4646',
@@ -98,6 +105,12 @@ const LIGHT_THEME: Theme = {
       [`${SUCCESS_CSS_PREFIX}tertiary`]: 'rgba(129,224,108,0.4)',
       [`${SUCCESS_CSS_PREFIX}divider`]: 'rgba(129,224,108,0.2)',
       [`${SUCCESS_CSS_PREFIX}container`]: 'rgba(129,224,108,0.05)',
+    },
+    aware: {
+      [`${AWARE_CSS_PREFIX}primary`]: '#252726',
+      [`${AWARE_CSS_PREFIX}secondary`]: 'rgba(37,39,38,0.6)',
+      [`${AWARE_CSS_PREFIX}tertiary`]: 'rgba(37,39,38,0.4)',
+      [`${AWARE_CSS_PREFIX}container`]: 'rgba(255,184,0,0.3)',
     },
     warn: {
       [`${WARN_CSS_PREFIX}primary`]: '#bb1515',

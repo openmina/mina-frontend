@@ -2,7 +2,7 @@
 
   <div class="flex-row flex-between p-12" fxFlex="42px">
     <span class="secondary f-600">
-      {{ activeTrace.source }} Transition {{ activeTrace.globalSlot }} - {{ activeTrace.status }}
+      {{ activeTrace.source }} Transition {{ activeTrace.height }} - {{ activeTrace.status }}
     </span>
     <span (click)="closeSidePanel()"
           class="mina-icon pointer tertiary primary-hover f-18">close
@@ -38,7 +38,7 @@
       <span [tooltip]="checkpoint.metadata" class="truncate">{{ checkpoint.title }}</span>
     </span>
     <span class="tertiary">{{ checkpoint.startedAt }}</span>
-    <span [innerHTML]="checkpoint.duration | secDuration: true"></span>
+    <span [innerHTML]="checkpoint.duration | secDuration: timeColorScheme"></span>
   </span>
   <div *ngIf="checkpoint.checkpoints.length && expandedParents.includes(checkpoint.title)" class="checkpoint-list">
     <ng-container *ngFor="let subCheckpoint of checkpoint.checkpoints">

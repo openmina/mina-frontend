@@ -4,22 +4,13 @@
     <span>OpenMina</span>
     <span fxFlex="20px" class="mina-icon" [class.flipped]="menu.collapsed">first_page</span>
   </button>
-  <!--  <a class="item" routerLink="/resources" routerLinkActive="active">-->
-  <!--    <span class="item-content">-->
-  <!--      <span class="mina-icon">analytics</span>-->
-  <!--      <span>Resources</span>-->
-  <!--    </span>-->
-  <!--  </a>-->
-  <a class="item" routerLink="/network" routerLinkActive="active">
+  <a *ngFor="let item of menuItems"
+     [routerLink]="'/' + item.name.toLowerCase().split(' ').join('-')"
+     routerLinkActive="active"
+     class="item">
     <span class="item-content">
-      <span class="mina-icon">account_tree</span>
-      <span>Network</span>
+      <span class="mina-icon">{{ item.icon }}</span>
+      <span class="text-nowrap">{{ item.name }}</span>
     </span>
   </a>
-  <!--    <a class="item" routerLink="/tracing" routerLinkActive="active">-->
-  <!--      <span class="item-content">-->
-  <!--        <span class="mina-icon">grid_view</span>-->
-  <!--        <span>Tracing</span>-->
-  <!--      </span>-->
-  <!--    </a>-->
 </div>

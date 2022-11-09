@@ -17,8 +17,9 @@ export class MinaTooltipDirective implements OnInit, OnDestroy {
   @Input() tooltipDisabled: boolean = false;
   @Input() globalTooltip: boolean = true;
 
-  private popup: HTMLElement = this.document.getElementById('mina-tooltip');
+  private popup: HTMLDivElement = this.document.getElementById('mina-tooltip') as HTMLDivElement;
   private timer: number;
+  private cancelShowing: boolean = false;
 
   constructor(private el: ElementRef,
               @Inject(DOCUMENT) private document: Document,
@@ -41,24 +42,9 @@ export class MinaTooltipDirective implements OnInit, OnDestroy {
       return;
     }
     this.timer = setTimeout(() => {
-      this.popup.innerHTML = this.tooltip;
-      const boundingClientRect = this.el.nativeElement.getBoundingClientRect();
-      let x = boundingClientRect.left + (this.el.nativeElement.offsetWidth / 2) - (this.popup.offsetWidth / 2);
-      let y = boundingClientRect.top + this.el.nativeElement.offsetHeight + TOOLTIP_OFFSET;
-
-      let pos: 'top' | 'bottom' = 'top';
-      if ((y + this.popup.offsetHeight) > window.innerHeight) {
-        y = boundingClientRect.top - this.popup.offsetHeight - TOOLTIP_OFFSET;
-        pos = 'bottom';
+      if (!this.cancelShowing) {
+        MinaTooltipDirective.showTooltip(this.popup, this.el.nativeElement, this.tooltip);
       }
-
-      if ((x + this.popup.offsetWidth) > window.innerWidth) {
-        x = window.innerWidth - this.popup.offsetWidth - TOOLTIP_OFFSET;
-      } else if (x < 0) {
-        x = TOOLTIP_OFFSET;
-      }
-
-      this.showTooltip(x, y, pos);
     }, this.showDelay);
   }
 
@@ -67,22 +53,40 @@ export class MinaTooltipDirective implements OnInit, OnDestroy {
     if (this.timer) {
       clearTimeout(this.timer);
     }
-    setTimeout(() => this.hideTooltip(), this.hideDelay);
-  }
-
-  private showTooltip(x: number, y: number, position: 'top' | 'bottom'): void {
-    this.popup.style.top = y.toString() + 'px';
-    this.popup.style.left = x.toString() + 'px';
-    this.popup.style.animationName = `tooltip-slide-${position}`;
+    setTimeout(() => MinaTooltipDirective.hideTooltip(this.popup), this.hideDelay);
   }
 
   ngOnDestroy(): void {
-    this.hideTooltip();
+    this.cancelShowing = true;
+    MinaTooltipDirective.hideTooltip(this.popup);
   }
 
-  private hideTooltip(): void {
-    if (this.popup) {
-      this.popup.setAttribute('style', 'top:-1000px;left-1000px');
+  static showTooltip(popup: HTMLDivElement, nativeElement: HTMLElement, message: string): void {
+    popup.innerHTML = message;
+    const boundingClientRect = nativeElement.getBoundingClientRect();
+    let x = boundingClientRect.left + (nativeElement.offsetWidth / 2) - (popup.offsetWidth / 2);
+    let y = boundingClientRect.top + nativeElement.offsetHeight + TOOLTIP_OFFSET;
+
+    let pos: 'top' | 'bottom' = 'top';
+    if ((y + popup.offsetHeight) > window.innerHeight) {
+      y = boundingClientRect.top - popup.offsetHeight - TOOLTIP_OFFSET;
+      pos = 'bottom';
+    }
+
+    if ((x + popup.offsetWidth) > window.innerWidth) {
+      x = window.innerWidth - popup.offsetWidth - TOOLTIP_OFFSET;
+    } else if (x < 0) {
+      x = TOOLTIP_OFFSET;
+    }
+
+    popup.style.top = y.toString() + 'px';
+    popup.style.left = x.toString() + 'px';
+    popup.style.animationName = `tooltip-slide-${pos}`;
+  }
+
+  static hideTooltip(popup: HTMLDivElement): void {
+    if (popup) {
+      popup.setAttribute('style', 'top:-1000px;left-1000px');
     }
   }
 }

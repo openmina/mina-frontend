@@ -2,30 +2,23 @@
   <div class="flex-row align-center">
     <span class="f-600 f-14">{{ title }}</span>
     <div class="submenus flex-row">
-      <button *ngFor="let subMenu of subMenus"
-              [class.active]="activeSubMenu === subMenu"
-              (click)="navigateToSubMenu(subMenu)"
-              class="text-capitalize mr-5">{{ subMenu }}</button>
+      <a *ngFor="let subMenu of subMenus"
+         [class.active]="activeSubMenu === subMenu"
+         [routerLink]="baseRoute + '/' + subMenu"
+         class="text-capitalize mr-5 text-center f-600">{{ subMenu }}</a>
     </div>
   </div>
-  <div class="flex-row flex-end" (click)="toggleTooltips()">
+  <div class="flex-row flex-end align-center">
     <mina-error-preview></mina-error-preview>
-    <div class="block-level mr-8 ml-8 flex-row align-center pl-8 pr-8 border-rad-6"
-         [tooltip]="tooltip"
-         [ngClass]="status">
-      <span class="circle mr-8"></span>
-      <span class="status text-capitalize">{{ status }}</span>
-      <span class="p-relative" *ngIf="timeIsPresent">
-        <span>&nbsp;|&nbsp;</span>
-        <span *ngIf="blockLevel > 0">Block {{ blockLevel }},&nbsp;</span>
-        <span class="p-absolute text-light" [innerHTML]="elapsedTime$ | async"></span>
-        <span class="p-absolute ago">ago</span>
-      </span>
+    <div class="percentage text-right flex-end pr-5 selected-primary flex-row align-center" *ngIf="definiteLoading">
+      {{ definiteLoading.remaining }} remaining, <span>{{ definiteLoading.percentage }}</span>% completed
     </div>
-    <button class="switcher border-rad-4 flex-row align-center flex-center p-0 mr-10"
+    <mina-server-status></mina-server-status>
+    <button class="switcher icon-btn p-0 mr-10"
             (click)="changeTheme()">
       <span class="mina-icon f-18">{{ currentTheme === 'light' ? 'dark_mode' : 'wb_sunny' }}</span>
     </button>
   </div>
-  <div *ngIf="loading" class="loading p-absolute"></div>
+  <div #loadingRef id="loadingRef" class="loading p-absolute" [class.opacity-0]="!!definiteLoading"></div>
+  <div *ngIf="definiteLoading" class="definite-loading p-absolute" [style.width.%]="definiteLoading.percentage"></div>
 </div>

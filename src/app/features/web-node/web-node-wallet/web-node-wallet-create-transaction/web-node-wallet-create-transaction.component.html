@@ -1,0 +1,111 @@
+<div fxFlex="36px">
+  <button class="mt-5 ml-12 flex-row align-center secondary primary-hover bg-transparent"
+          routerLink="/web-node/wallet/transactions">
+    <span class="mina-icon f-20 mr-8">arrow_back</span>
+    <span>Send Mina</span>
+  </button>
+</div>
+
+<div class="flex-column align-center pt-12 flex-grow">
+  <mina-stepper [stepHeaders]="['Tx Details', 'Submit', 'Overview']"
+                [steps]="[step1, step2, step3]"
+                [activeStep]="activeStep"
+                [footerTemplate]="stepperFooter"
+                [style.max-width.px]="600"></mina-stepper>
+</div>
+
+<ng-template #step1>
+  <form [formGroup]="formGroup" class="h-100 w-100 border-rad-6 border p-12 flex-column">
+    <div class="dropdown flex-row flex-between align-center pointer border-rad-4 pr-8 pl-8"
+         #dropdownTrigger
+         (click)="openDropdown($event)">
+      <span class="tertiary">Recipient</span>
+      <span class="flex-row align-center monospace">
+        <span>{{ formGroup.value.recipient }}</span>
+        <span class="mina-icon secondary f-20 ml-5">arrow_drop_down</span>
+      </span>
+    </div>
+    <div class="p-relative mt-8">
+      <span class="placeholder tertiary">Amount (MINA)</span>
+      <input type="number" class="mina-input w-100 text-right pr-12" formControlName="amount">
+    </div>
+    <div class="p-relative mt-8">
+      <span class="placeholder tertiary">Fee (MINA)</span>
+      <input type="number" class="mina-input w-100 text-right pr-12" formControlName="fee">
+    </div>
+    <div class="p-relative mt-8">
+      <span class="placeholder tertiary">Nonce</span>
+      <input type="number" class="mina-input w-100 text-right pr-12 secondary" formControlName="nonce">
+    </div>
+    <textarea formControlName="memo" cols="30" rows="10" placeholder="Memo (optional)"
+              class="mina-input mt-8 p-8 w-100"></textarea>
+  </form>
+</ng-template>
+
+<ng-template #step2>
+  <div class="border-rad-6 border p-12 flex-column flex-center align-center h-100 w-100">
+    <span class="help-icon mina-icon mb-16">help</span>
+    <div class="mt-5 mb-8">
+      Send {{ formGroup.value.amount }}
+      <span class="tertiary">MINA with</span>
+      Fee {{ formGroup.value.fee }}
+      <span class="tertiary">MINA</span>
+    </div>
+    <div>
+      <span class="tertiary">To</span>
+      {{ formGroup.value.recipient }}
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #step3>
+  <div class="border-rad-6 border p-12 flex-column flex-between h-100 w-100">
+    <div class="flex-column flex-center align-center">
+      <span class="help-icon mina-icon mb-16">check_circle</span>
+      <span class="mb-10">Success</span>
+      <div class="mt-5 mb-8">
+        Sent {{ formGroup.value.amount }}
+        <span class="tertiary">MINA with</span>
+        Fee {{ formGroup.value.fee }}
+        <span class="tertiary">MINA</span>
+      </div>
+      <div>
+        <span class="tertiary">To</span>
+        {{ formGroup.value.recipient }}
+      </div>
+    </div>
+    <div class="flex-row tertiary flex-center align-center">
+      <span class="mina-icon mr-5 f-16">info</span>
+      It is going to take up to 3 minutes to include the transaction into a block.
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #stepperFooter>
+  <div class="flex-row flex-between mt-16">
+    <button class="btn-primary pl-12 pr-12 h-32" (click)="prevStep()"
+            [disabled]="activeStep === 0 || activeStep === 2">
+      Back
+    </button>
+    <button class="btn-selected pl-12 pr-12 h-32" (click)="nextStep()"
+            [disabled]="!formGroup.value.amount || !formGroup.value.fee || (formGroup.value.nonce === null)">
+      {{ activeStep === 0 ? 'Continue' : activeStep === 1 ? 'Submit' : 'See transactions' }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #dropdownTemplate>
+  <div
+      class="dropdown-wrapper w-100 bg-surface-top border-rad-4 popup-box-shadow-weak border-remove pl-5 pr-5 pt-10 pb-10">
+    <div class="overflow-y-auto h-100"
+         (clickOutside)="detachOverlay()">
+      <div *ngFor="let wallet of wallets"
+           class="flex-row flex-between align-center dropdown-item pl-8 pointer pr-8 border-rad-4 mb-5"
+           [class.active]="formGroup.value.recipient === wallet.publicKey"
+           (click)="selectRecipient(wallet)">
+        <span class="mina-icon f-20">check_small</span>
+        <span class="pr-8 monospace">{{ wallet.publicKey }}</span>
+      </div>
+    </div>
+  </div>
+</ng-template>

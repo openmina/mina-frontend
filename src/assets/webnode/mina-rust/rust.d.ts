@@ -1,0 +1,146 @@
+/* tslint:disable */
+/* eslint-disable */
+/**
+* @param {Function} on_event
+* @returns {Promise<JsHandle>}
+*/
+export function start(on_event: Function): Promise<JsHandle>;
+/**
+*/
+export class Crypto {
+  free(): void;
+/**
+* @returns {Uint8Array}
+*/
+  pub_key_as_protobuf(): Uint8Array;
+/**
+* @returns {string}
+*/
+  peer_id_as_b58(): string;
+/**
+* @param {Uint8Array} msg
+* @returns {Uint8Array}
+*/
+  sign(msg: Uint8Array): Uint8Array;
+/**
+* @param {Uint8Array} pub_key_as_protobuf
+* @returns {string}
+*/
+  pub_key_as_protobuf_to_peer_id_as_b58(pub_key_as_protobuf: Uint8Array): string;
+/**
+* @param {Uint8Array} pub_key_as_protobuf
+* @param {Uint8Array} msg
+* @param {Uint8Array} sig
+*/
+  assert_signature(pub_key_as_protobuf: Uint8Array, msg: Uint8Array, sig: Uint8Array): void;
+/**
+* @param {Uint8Array} pub_key_as_protobuf
+* @param {string} expected_peer_id
+*/
+  pub_key_as_protobuf_to_peer_id(pub_key_as_protobuf: Uint8Array, expected_peer_id: string): void;
+}
+/**
+*/
+export class JsHandle {
+  free(): void;
+/**
+* @returns {ManualConnector}
+*/
+  manual_connector(): ManualConnector;
+/**
+* @param {string} id
+*/
+  is_peer_id_valid(id: string): void;
+/**
+* @param {string} peer_id
+* @returns {Promise<void>}
+*/
+  peer_disconnect(peer_id: string): Promise<void>;
+/**
+* @param {any} js_msg
+*/
+  request_send_message(js_msg: any): void;
+/**
+* @returns {any}
+*/
+  generate_account_keys(): any;
+/**
+* @param {any} data
+* @returns {any}
+*/
+  payment_sign_and_inject(data: any): any;
+}
+/**
+*/
+export class ManualConnector {
+  free(): void;
+/**
+* @param {string} peer_id
+* @returns {Promise<any>}
+*/
+  dial(peer_id: string): Promise<any>;
+/**
+* @returns {any}
+*/
+  listen(): any;
+}
+
+export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
+
+export interface InitOutput {
+  readonly memory: WebAssembly.Memory;
+  readonly __wbg_manualconnector_free: (a: number) => void;
+  readonly manualconnector_dial: (a: number, b: number, c: number, d: number) => void;
+  readonly manualconnector_listen: (a: number) => number;
+  readonly __wbg_jshandle_free: (a: number) => void;
+  readonly jshandle_manual_connector: (a: number) => number;
+  readonly jshandle_is_peer_id_valid: (a: number, b: number, c: number, d: number) => void;
+  readonly jshandle_peer_disconnect: (a: number, b: number, c: number) => number;
+  readonly jshandle_request_send_message: (a: number, b: number) => void;
+  readonly jshandle_generate_account_keys: (a: number) => number;
+  readonly jshandle_payment_sign_and_inject: (a: number, b: number, c: number) => void;
+  readonly start: (a: number) => number;
+  readonly __wbg_crypto_free: (a: number) => void;
+  readonly crypto_pub_key_as_protobuf: (a: number, b: number) => void;
+  readonly crypto_peer_id_as_b58: (a: number, b: number) => void;
+  readonly crypto_sign: (a: number, b: number, c: number, d: number) => void;
+  readonly crypto_pub_key_as_protobuf_to_peer_id_as_b58: (a: number, b: number, c: number, d: number) => void;
+  readonly crypto_assert_signature: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => void;
+  readonly crypto_pub_key_as_protobuf_to_peer_id: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  readonly __wbindgen_malloc: (a: number) => number;
+  readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
+  readonly __wbindgen_export_2: WebAssembly.Table;
+  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h3bb6f667c6ce1a91: (a: number, b: number, c: number) => void;
+  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hc065c0a1b513a5a2: (a: number, b: number) => void;
+  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h99dcb8ea1aa8cd83: (a: number, b: number) => void;
+  readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
+  readonly __wbindgen_free: (a: number, b: number) => void;
+  readonly __wbindgen_exn_store: (a: number) => void;
+  readonly wasm_bindgen__convert__closures__invoke2_mut__h3c65b2aab8dcbcaa: (a: number, b: number, c: number, d: number) => void;
+}
+
+export type SyncInitInput = BufferSource | WebAssembly.Module;
+/**
+* Instantiates the given `module`, which can either be bytes or
+* a precompiled `WebAssembly.Module`.
+*
+* @param {SyncInitInput} module
+*
+* @returns {InitOutput}
+*/
+export function initSync(module: SyncInitInput): InitOutput;
+
+/**
+* If `module_or_path` is {RequestInfo} or {URL}, makes a request and
+* for everything else, calls `WebAssembly.instantiate` directly.
+*
+* @param {InitInput | Promise<InitInput>} module_or_path
+*
+* @returns {Promise<InitOutput>}
+*/
+export default function init (module_or_path?: InitInput | Promise<InitInput>): Promise<InitOutput>;
+
+
+export type WasmLoadProgressEvent = Pick<ProgressEvent, 'total' | 'loaded'>
+import { Subject } from 'rxjs';
+export const onProgress$: Subject<WasmLoadProgressEvent>;
