@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, filter, map, Observable, ReplaySubject, switchMap } from 'rxjs';
 import init, { JsHandle, start } from '../../../assets/webnode/mina-rust';
-
-import * as base from 'base-x';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { WebNodeLog } from '@shared/types/web-node/logs/web-node-log.type';
 import { WebNodeTransaction } from '@shared/types/web-node/wallet/web-node-transaction.type';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
+import * as base from 'base-x';
 
 @Injectable({
   providedIn: 'root',

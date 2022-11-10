@@ -31,8 +31,12 @@
 			color: $base-primary !important;
 		}
 
-		.underline:hover {
-			text-decoration: underline;
+		.underline {
+			line-height: 12px;
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 
 		&.head {
@@ -64,7 +68,7 @@
 					}
 				}
 
-				&:hover, &.active {
+				&.sorting:hover, &.active {
 					color: $base-primary;
 					transition: 200ms;
 

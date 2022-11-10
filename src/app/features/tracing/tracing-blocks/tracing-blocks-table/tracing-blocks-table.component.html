@@ -1,5 +1,5 @@
 <div class="mina-table flex-grow overflow-x-auto">
-  <div class="row head overflow-y-scroll overflow-x-hidden" *ngIf="currentSort$ | async as sort">
+  <div class="row head sorting overflow-y-scroll overflow-x-hidden" *ngIf="currentSort$ | async as sort">
     <span *ngFor="let tableHead of tableHeads"
           (click)="sortTable(tableHead.sort ?? tableHead.name)"
           [class.active]="sort.sortBy === (tableHead.sort ?? tableHead.name)"

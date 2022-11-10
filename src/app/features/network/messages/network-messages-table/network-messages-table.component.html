@@ -17,21 +17,20 @@
          [class.active]="activeRow?.id === message.id"
          [class.row-even]="i % 2 === 0"
          class="row">
-      <span class="tertiary">{{ message.id }}</span>
-      <span class="tertiary">{{ message.timestamp }}</span>
-      <span (click)="filterByAddress(message)"
-            class="addr flex-row align-center">
+      <span>{{ message.id }}</span>
+      <span>{{ message.timestamp }}</span>
+      <span class="flex-row align-center secondary">
         <span *ngIf="message.failedToDecryptPercentage"
               [tooltip]="message.failedToDecryptPercentage + '% messages failed to decrypt'"
               class="border-rad-6 bg-aware-container flex-row align-center flex-center p-5 h-24 w-24 mr-5">
           <span class="mina-icon icon-200 aware-primary f-20">error</span>
         </span>
-        <span>{{ message.address }}</span>
+        <span class="underline" (click)="filterByAddress(message)">{{ message.address }}</span>
       </span>
-      <span class="tertiary">{{ message.incoming }}</span>
-      <span class="tertiary" [innerHTML]="message.size | size"></span>
-      <span>{{ message.streamKind }}</span>
-      <span class="truncate">{{ message.messageKind }}</span>
+      <span>{{ message.incoming }}</span>
+      <span [innerHTML]="message.size | size"></span>
+      <span class="secondary">{{ message.streamKind }}</span>
+      <span class="truncate secondary">{{ message.messageKind }}</span>
     </div>
   </cdk-virtual-scroll-viewport>
 </div>

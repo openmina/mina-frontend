@@ -1,0 +1,47 @@
+<div class="rotated-label text-nowrap primary p-relative"
+     fxFlex="50px" fxHide.lt-md>
+  <span>Count</span>
+</div>
+<div fxFlex="calc(100% - 50px)" fxFlex.lt-md="100" class="inner-graph-container h-100 d-flex flex-column">
+  <div class="p-relative flex-row flex-grow w-100" #columnContainer>
+    <div class="y-grid-marks p-absolute h-100 w-100 secondary">
+      <div *ngFor="let yTick of yAxisValues"
+           class="y-tick-line border-top"
+           [style.height]="'calc(100% / ' + (yAxisValues.length - 1) + ')'">
+        <div class="p-relative text-right">{{ yTick }}</div>
+      </div>
+    </div>
+    <div class="flex-row h-100 w-100 z-1" *ngIf="chartColumns">
+      <div *ngFor="let column of chartColumns"
+           (mouseenter)="openDetailsOverlay(column, $event)"
+           (mouseleave)="detachOverlay()"
+           [style.width.%]="100 / (xTicksValuesLength)"
+           class="histo-col">
+        <div class="histo-bar"
+             [style.height.px]="maxHeight * column.value / yAxisValues[0] || 0"></div>
+      </div>
+    </div>
+  </div>
+  <div fxFlex="10" class="flex-row secondary padding-top-10">
+    <div *ngFor="let tick of xTicksValues"
+         [style.width.%]="100 / xTicksValuesLength">
+      {{ tick }}
+    </div>
+  </div>
+</div>
+
+<ng-template #tooltipTemplate let-range="range" let-count="count">
+  <div class="p-8 bg-surface-top popup-box-shadow-weak border-rad-6 border">
+    <div class="secondary">
+      <div class="pb-10">
+        <span class="tertiary">Range:</span>
+        {{ range }}
+      </div>
+      <div>
+        <span class="tertiary">Count:</span>
+        {{ count }}
+      </div>
+    </div>
+  </div>
+</ng-template>
+

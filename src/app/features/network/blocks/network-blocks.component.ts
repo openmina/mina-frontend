@@ -5,6 +5,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
   templateUrl: './network-blocks.component.html',
   styleUrls: ['./network-blocks.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'h-100' },
 })
 export class NetworkBlocksComponent implements OnInit {
 

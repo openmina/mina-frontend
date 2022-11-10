@@ -118,7 +118,7 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
     const fileName = this.activeRow.id + '_binary.bin';
     this.cancelDownload = false;
     const URL = CONFIG.debugger + '/message_bin/' + this.activeRow.id;
-    downloadJsonFromURL(URL, fileName, null);
+    downloadJsonFromURL(URL, fileName, () => null);
   }
 
   private setToCopy(): void {
@@ -146,7 +146,7 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
 
   selectTab(tabNum: number): void {
     this.cancelDownload = true;
-    this.saveButton.nativeElement.textContent = 'Save';
+    this.saveButton.nativeElement.textContent = 'Save JSON';
     this.selectedTabIndex = tabNum;
     this.store.dispatch<NetworkChangeTab>({ type: NETWORK_CHANGE_TAB, payload: tabNum });
     this.setToCopy();

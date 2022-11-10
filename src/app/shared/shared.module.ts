@@ -16,6 +16,7 @@ import { StepperComponent } from './components/stepper/stepper.component';
 import { CopyToClipboardDirective } from './directives/copy-to-clipboard.directive';
 import { IntervalSelectComponent } from '@shared/components/interval-select/interval-select.component';
 import { EagerSharedModule } from '@shared/eager-shared.module';
+import { BarGraphComponent } from '@shared/components/bar-graph/bar-graph.component';
 
 
 const COMPONENTS = [
@@ -23,6 +24,7 @@ const COMPONENTS = [
   HorizontalResizableContainerComponent,
   StepperComponent,
   IntervalSelectComponent,
+  BarGraphComponent,
 ];
 
 const DIRECTIVES = [

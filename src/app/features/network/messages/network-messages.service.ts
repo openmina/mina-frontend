@@ -88,14 +88,15 @@ export class NetworkMessagesService {
   }
 
   private static getMessageKind(message: any): string {
-    const messageKind = message[1].message[0]?.message?.type
-      ?? message[1].message[0]?.type
-      ?? message[1].message.type
-      ?? message[1].message.action;
-    if (messageKind) {
-      return messageKind;
-    }
-    return typeof message[1].message === 'string' ? message[1].message : 'Error Report';
+    return message[1].message;
+    // const messageKind = message[1].message[0]?.message?.type
+    //   ?? message[1].message[0]?.type
+    //   ?? message[1].message.type
+    //   ?? message[1].message.action;
+    // if (messageKind) {
+    //   return messageKind;
+    // }
+    // return typeof message[1].message === 'string' ? message[1].message : 'Error Report';
   }
 
   private static mapNetworkConnectionResponse(connection: any): NetworkMessageConnection {

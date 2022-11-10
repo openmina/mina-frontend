@@ -13,7 +13,6 @@ import { skip } from 'rxjs';
 import { TimestampInterval } from '@shared/types/shared/timestamp-interval.type';
 
 
-// add yamux filer same as mplex
 export const networkAvailableFilters: NetworkMessagesFilterCategory[][] = [
   [
     {
@@ -28,6 +27,13 @@ export const networkAvailableFilters: NetworkMessagesFilterCategory[][] = [
       tooltip: '',
       filters: [
         { type: NetworkMessagesFilterTypes.STREAM_KIND, display: 'Coda mplex', value: '/coda/mplex/1.0.0', tooltip: '' },
+      ],
+    },
+    {
+      name: '/coda/yamux/1.0.0',
+      tooltip: '',
+      filters: [
+        { type: NetworkMessagesFilterTypes.STREAM_KIND, display: 'Coda yamux', value: '/coda/yamux/1.0.0', tooltip: '' },
       ],
     },
   ],

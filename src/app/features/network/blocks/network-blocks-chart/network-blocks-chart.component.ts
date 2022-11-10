@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, Renderer2 } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { ThemeSwitcherService } from '@core/services/theme-switcher.service';
 import { Theme } from '@shared/types/core/theme/theme.type';
 import { BASE_CSS_PREFIX, SELECTED_CSS_PREFIX } from '@shared/types/core/theme/theme-css-category.type';
+import { NetworkBlocksService } from '@network/blocks/network-blocks.service';
 import ColumnChartOptions = google.visualization.ColumnChartOptions;
 
 declare const google: any;
@@ -15,24 +16,31 @@ declare const google: any;
 })
 export class NetworkBlocksChartComponent implements OnInit {
 
+  blocks: any[];
+
   constructor(private themeSwitcherService: ThemeSwitcherService,
+              private el: ElementRef,
+              private networkBlocksService: NetworkBlocksService,
               private renderer: Renderer2) { }
 
   ngOnInit(): void {
-    this.initChart();
+    this.networkBlocksService.getBlocks().subscribe(blocks => {
+      this.blocks = blocks;
+      this.initChart();
+
+    });
   }
 
   private initChart(): void {
     const theme: Theme = this.themeSwitcherService.getThemeConfiguration();
 
-
     const drawMultSeries = () => {
-      // var data = new google.visualization.DataTable();
-      // data.addColumn('timeofday', 'Time of Day');
-      // data.addColumn('number', 'Motivation Level');
-      // data.addColumn('number', 'Energy Level');
+      // var dataTable = new google.visualization.DataTable();
+      // dataTable.addColumn('timeofday', 'Time of Day');
+      // dataTable.addColumn('number', 'Motivation Level');
+      // dataTable.addColumn('number', 'Energy Level');
 
-      // data.addRows([
+      // dataTable.addRows([
       //   [{v: [8, 0, 0], f: '8 am'}, 1, .25],
       //   [{v: [9, 0, 0], f: '9 am'}, 2, .5],
       //   [{v: [10, 0, 0], f:'10 am'}, 3, 1],
@@ -45,28 +53,59 @@ export class NetworkBlocksChartComponent implements OnInit {
       //   [{v: [17, 0, 0], f: '5 pm'}, 10, 10],
       // ]);
 
-      const data = google.visualization.arrayToDataTable([
-        ['Block height', 'Time (s)', { role: 'style' }],
-        [181000, 14, theme.categories.base[`${BASE_CSS_PREFIX}surface-top`]],
-        [181001, 53, theme.categories.base[`${BASE_CSS_PREFIX}surface-top`]],
-        [181002, 5, theme.categories.base[`${BASE_CSS_PREFIX}surface-top`]],
-        [181003, 8, theme.categories.base[`${BASE_CSS_PREFIX}surface-top`]],
-        [181004, 1, theme.categories.base[`${BASE_CSS_PREFIX}surface-top`]],
-        [181005, 13, theme.categories.base[`${BASE_CSS_PREFIX}surface-top`]],
-        [181006, 48, theme.categories.base[`${BASE_CSS_PREFIX}surface-top`]],
-        [181007, 83, theme.categories.base[`${BASE_CSS_PREFIX}surface-top`]],
-        [181008, 5, theme.categories.base[`${BASE_CSS_PREFIX}surface-top`]],
-        [181009, 36, theme.categories.base[`${BASE_CSS_PREFIX}surface-top`]],
-        [181010, 20, theme.categories.selected[`${SELECTED_CSS_PREFIX}primary`]],
-        [181011, 3, theme.categories.base[`${BASE_CSS_PREFIX}surface-top`]],
-        [181012, 20, theme.categories.base[`${BASE_CSS_PREFIX}surface-top`]],
+      const dataTable = new google.visualization.DataTable();
+      dataTable.addColumn('number', 'Block height');
+      dataTable.addColumn('number', 'Time (s)');
+      dataTable.addColumn({ role: 'style' });
+      dataTable.addColumn({ 'type': 'string', 'role': 'tooltip', 'p': { 'html': true } });
+
+      const getTooltip = (blockHeight: number, seconds: number) => {
+        return `
+          <div class="bg-surface-top popup-box-shadow-weak border-remove border-rad-4 p-8 secondary">
+            <div class="mb-5">${blockHeight}</div>
+            <div>Time (s): ${seconds}</div>
+          </div>
+        `;
+      };
+
+      const blocks = this.blocks.map(bl => [bl.blockLevel, bl.received])
+      //   [
+      //   [181000, 14],
+      //   [181001, 53],
+      //   [181002, 5],
+      //   [181003, 8],
+      //   [181004, 1],
+      //   [181005, 13],
+      //   [181006, 48],
+      //   [181007, 83],
+      //   [181008, 5],
+      //   [181009, 36],
+      //   [181010, 20],
+      //   [181011, 3],
+      //   [181012, 20],
+      // ];
+
+      dataTable.addRows([
+        [blocks[0][0], blocks[0][1], theme.categories.base[`${BASE_CSS_PREFIX}surface-top`], getTooltip(blocks[0][0], blocks[0][1])],
+        [blocks[1][0], blocks[1][1], theme.categories.base[`${BASE_CSS_PREFIX}surface-top`], getTooltip(blocks[1][0], blocks[1][1])],
+        [blocks[2][0], blocks[2][1], theme.categories.base[`${BASE_CSS_PREFIX}surface-top`], getTooltip(blocks[2][0], blocks[2][1])],
+        [blocks[3][0], blocks[3][1], theme.categories.base[`${BASE_CSS_PREFIX}surface-top`], getTooltip(blocks[3][0], blocks[3][1])],
+        [blocks[4][0], blocks[4][1], theme.categories.base[`${BASE_CSS_PREFIX}surface-top`], getTooltip(blocks[4][0], blocks[4][1])],
+        [blocks[5][0], blocks[5][1], theme.categories.base[`${BASE_CSS_PREFIX}surface-top`], getTooltip(blocks[5][0], blocks[5][1])],
+        [blocks[6][0], blocks[6][1], theme.categories.base[`${BASE_CSS_PREFIX}surface-top`], getTooltip(blocks[6][0], blocks[6][1])],
+        [blocks[7][0], blocks[7][1], theme.categories.base[`${BASE_CSS_PREFIX}surface-top`], getTooltip(blocks[7][0], blocks[7][1])],
+        [blocks[8][0], blocks[8][1], theme.categories.base[`${BASE_CSS_PREFIX}surface-top`], getTooltip(blocks[8][0], blocks[8][1])],
+        [blocks[9][0], blocks[9][1], theme.categories.base[`${BASE_CSS_PREFIX}surface-top`], getTooltip(blocks[9][0], blocks[9][1])],
+        [blocks[10][0], blocks[10][1], theme.categories.selected[`${SELECTED_CSS_PREFIX}primary`], getTooltip(blocks[10][0], blocks[10][1])],
+        [blocks[11][0], blocks[11][1], theme.categories.base[`${BASE_CSS_PREFIX}surface-top`], getTooltip(blocks[11][0], blocks[11][1])],
+        [blocks[12][0], blocks[12][1], theme.categories.base[`${BASE_CSS_PREFIX}surface-top`], getTooltip(blocks[12][0], blocks[12][1])],
       ]);
 
       const options: ColumnChartOptions = {
-        width: 600,
-        height: 400,
+        width: this.el.nativeElement.offsetWidth,
+        height: this.el.nativeElement.offsetHeight,
         legend: 'none',
-        bar: { groupWidth: '90%' },
+        bar: { groupWidth: '100%' },
         isStacked: true,
         backgroundColor: 'transparent',
         hAxis: {
@@ -88,6 +127,9 @@ export class NetworkBlocksChartComponent implements OnInit {
             opacity: getOpacityFromColor(theme.categories.base[`${BASE_CSS_PREFIX}tertiary`]),
           },
         },
+        tooltip: {
+          isHtml: true,
+        },
 
       };
 
@@ -99,7 +141,7 @@ export class NetworkBlocksChartComponent implements OnInit {
         });
       });
 
-      chart.draw(data, options);
+      chart.draw(dataTable, options);
     };
 
     google.charts.load('current', { packages: ['corechart', 'bar'] });

@@ -1,0 +1,31 @@
+<div class="mina-table flex-grow overflow-x-auto"
+     [class.opacity-0]="!blocks.length">
+  <div class="row head">
+    <span>Block hash</span>
+    <span>Producer</span>
+    <span>Sender</span>
+    <span>Receiver</span>
+    <span>Received</span>
+    <span>Broadcasted</span>
+    <span>Processed</span>
+    <span>Message</span>
+  </div>
+  <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-auto"
+                               fxFlex="calc(100% - 36px)"
+                               [itemSize]="itemSize">
+    <div *cdkVirtualFor="let message of blocks; let i=index"
+         (click)="onRowClick(message)"
+         [class.active]="activeRow?.id === message.id"
+         [class.row-even]="i % 2 === 0"
+         class="row">
+      <span class="tertiary truncate">{{ message.blockHash }}</span>
+      <span class="tertiary truncate">{{ message.producer }}</span>
+      <span class="tertiary truncate">{{ message.sender }}</span>
+      <span class="tertiary truncate">{{ message.receiver }}</span>
+      <span class="tertiary" [innerHTML]="message.received | secDuration"></span>
+      <span class="tertiary" [innerHTML]="message.broadcasted | secDuration"></span>
+      <span class="tertiary" [innerHTML]="message.processed | secDuration"></span>
+      <span class="tertiary">{{ message.message }}</span>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>

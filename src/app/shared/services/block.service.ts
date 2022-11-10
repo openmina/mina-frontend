@@ -29,7 +29,7 @@ export class BlockService {
           return ({
             blockLevel: Number(response.daemonStatus.blockchainLength ? response.daemonStatus.blockchainLength : 0),
             status: response.daemonStatus.syncStatus,
-            timestamp: Number(response.daemonStatus ? response.daemonStatus.consensusTimeNow.startTime : 0),
+            timestamp: Number(response.daemonStatus ? response.daemonStatus.consensusTimeNow?.startTime : 0),
           } as NodeStatus);
         }),
       );
