@@ -19,6 +19,11 @@ const routes: Routes = [
         title: NETWORK_TITLE,
       },
       {
+        path: 'blocks',
+        loadChildren: () => import('./blocks/network-blocks.module').then(m => m.NetworkBlocksModule),
+        title: NETWORK_TITLE,
+      },
+      {
         path: '**',
         redirectTo: 'messages',
         pathMatch: 'full',

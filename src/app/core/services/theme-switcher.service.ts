@@ -34,7 +34,7 @@ const DARK_THEME: Theme = {
       [`${SUCCESS_CSS_PREFIX}container`]: 'rgba(129,224,108,0.05)',
     },
     aware: {
-      [`${AWARE_CSS_PREFIX}primary`]: '#FFCC00',
+      [`${AWARE_CSS_PREFIX}primary`]: '#ffcc00',
       [`${AWARE_CSS_PREFIX}secondary`]: 'rgba(255,204,0,0.6)',
       [`${AWARE_CSS_PREFIX}tertiary`]: 'rgba(255,204,0,0.4)',
       [`${AWARE_CSS_PREFIX}container`]: 'rgba(255,204,0,0.1)',
@@ -170,6 +170,10 @@ export class ThemeSwitcherService {
   constructor(@Inject(DOCUMENT) private document: Document,
               rendererFactory: RendererFactory2) {
     this.renderer = rendererFactory.createRenderer(null, null);
+  }
+
+  getThemeConfiguration(): Theme {
+    return this.document.body.classList.contains(ThemeType.LIGHT) ? LIGHT_THEME : DARK_THEME;
   }
 
   loadThemes(): Promise<void> {

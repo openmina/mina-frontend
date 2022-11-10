@@ -10,10 +10,10 @@ import { selectNetworkActiveRow, selectNetworkConnection, selectNetworkFullMessa
 import { downloadJson, downloadJsonFromURL } from '@shared/helpers/user-input.helper';
 import { filter } from 'rxjs';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { isNumber } from 'chart.js/helpers';
 import { Router } from '@angular/router';
 import { Routes } from '@shared/enums/routes.enum';
 import { CONFIG } from '@shared/constants/config';
+import { isNumber } from '@ngrx/store/src/meta-reducers/utils';
 
 @UntilDestroy()
 @Component({
@@ -72,7 +72,7 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
     this.store.select(selectNetworkFullMessage)
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((message: any) => {
-        this.jsonTooBig = isNumber(message) ? Number(message) > 10485760 : false;
+        this.jsonTooBig = !isNaN(message) ? Number(message) > 10485760 : false;
         this.activeRowFullMessage = message;
         this.setToCopy();
         this.detect();

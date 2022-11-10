@@ -42,7 +42,6 @@
     "angular-google-charts": "^2.2.3",
     "apollo-angular": "^3.0.1",
     "base-x": "^4.0.0",
-    "chart.js": "^3.8.0",
     "firebase": "^9.12.1",
     "graphql": "^16.5.0",
     "graphql-ws": "^5.10.1",
