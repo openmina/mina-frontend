@@ -1,8 +1,8 @@
 <div class="rotated-label text-nowrap primary p-relative"
-     fxFlex="50px" fxHide.lt-md>
-  <span>Count</span>
+     fxFlex="40px" fxHide.lt-md>
+  <span>{{ yAxisLabel }}</span>
 </div>
-<div fxFlex="calc(100% - 50px)" fxFlex.lt-md="100" class="inner-graph-container h-100 d-flex flex-column">
+<div fxFlex="calc(100% - 40px)" fxFlex.lt-md="100" class="inner-graph-container h-100 d-flex flex-column pl-12">
   <div class="p-relative flex-row flex-grow w-100" #columnContainer>
     <div class="y-grid-marks p-absolute h-100 w-100 secondary">
       <div *ngFor="let yTick of yAxisValues"
@@ -15,7 +15,7 @@
       <div *ngFor="let column of chartColumns"
            (mouseenter)="openDetailsOverlay(column, $event)"
            (mouseleave)="detachOverlay()"
-           [style.width.%]="100 / (xTicksValuesLength)"
+           [style.width.%]="100 / (xTicksLength)"
            class="histo-col">
         <div class="histo-bar"
              [style.height.px]="maxHeight * column.value / yAxisValues[0] || 0"></div>
@@ -23,8 +23,8 @@
     </div>
   </div>
   <div fxFlex="10" class="flex-row secondary padding-top-10">
-    <div *ngFor="let tick of xTicksValues"
-         [style.width.%]="100 / xTicksValuesLength">
+    <div *ngFor="let tick of ticks | async"
+         [style.width.%]="100 / xTicksLength">
       {{ tick }}
     </div>
   </div>

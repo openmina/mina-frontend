@@ -18,6 +18,7 @@ import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { getXTicks } from '@shared/helpers/graph.helper';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 class ChartColumn {
   name: string;
@@ -36,31 +37,36 @@ class ChartColumn {
 })
 export class BarGraphComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
-  @Input() times: number[];
+  @Input() values: number[];
   @Input() columnStep: number = 1;
   @Input() yAxisValues: number[] = [];
-  @Input() xTicksValuesLength: number = 20;
+  @Input() xTicksLength: number = 20;
+  @Input() yTicksLength: number = 10;
+  @Input() um: string;
+  @Input() yAxisLabel: string;
 
   chartColumns: ChartColumn[];
-  xTicksValues: string[];
+  ticks: Observable<string[]>;
   maxHeight: number;
 
   @ViewChild('tooltipTemplate') private tooltipTemplate: TemplateRef<{ count: number, range: string }>;
   @ViewChild('columnContainer') private columnContainer: ElementRef<HTMLDivElement>;
 
-  private steps: number[];
+  private bars: number[];
   private overlayRef: OverlayRef;
-  private initialXTicksValuesLength: number;
+  private initialXTicksLength: number;
+  private xTicksValues$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
 
   constructor(private breakpointObserver: BreakpointObserver,
               private viewContainerRef: ViewContainerRef,
               private overlay: Overlay) { }
 
   ngOnInit(): void {
-    this.initialXTicksValuesLength = this.xTicksValuesLength;
-    this.steps = this.xSteps;
+    this.initialXTicksLength = this.xTicksLength;
+    this.bars = this.getBars;
     this.chartColumns = this.initChartColumns();
-    this.xTicksValues = this.getXTicks();
+    this.xTicksValues$.next(this.xTicks);
+    this.ticks = this.xTicksValues$.asObservable();
     this.listenToResizeEvent();
     this.update();
   }
@@ -70,25 +76,25 @@ export class BarGraphComponent implements OnInit, AfterViewInit, OnChanges, OnDe
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.steps && changes['times']?.currentValue !== changes['times']?.previousValue) {
+    if (this.bars && changes['values']?.currentValue !== changes['values']?.previousValue) {
       this.update();
-      this.yAxisValues = this.getYTicks();
+      this.yAxisValues = this.yTicks;
     }
   }
 
   private initChartColumns(): ChartColumn[] {
-    const seriesObj: { [p: number]: { value: number, range: string } } = this.steps.reduce((acc, curr: number, i: number) => ({
+    const seriesObj: { [p: number]: { value: number, range: string } } = this.bars.reduce((acc, curr: number, i: number) => ({
       ...acc,
       [curr]: {
         value: 0,
-        range: i === this.steps.length - 1
-          ? `> ${this.columnStep * 5}s`
-          : `${curr}s - ${(curr + this.columnStep)}s`,
+        range: i === this.bars.length - 1
+          ? `> ${curr}${this.um}`
+          : `${curr}${this.um} - ${(curr + this.columnStep)}${this.um}`,
       },
     }), {});
 
     return Object.keys(seriesObj).map((key: string) => ({
-      name: Number(key) + 's',
+      name: Number(key) + this.um,
       value: seriesObj[key].value,
       range: seriesObj[key].range,
       step: Number(key),
@@ -97,20 +103,20 @@ export class BarGraphComponent implements OnInit, AfterViewInit, OnChanges, OnDe
 
   private update(): void {
     this.chartColumns.forEach(col => col.value = 0);
-    this.times?.forEach(time => {
+    this.values?.forEach(time => {
       const column = this.findClosestSmallerStep(time);
       column.value++;
     });
   }
 
-  private getXTicks(): string[] {
-    return getXTicks(this.chartColumns, Math.min(this.chartColumns.length, this.xTicksValuesLength), 'name');
+  private get xTicks(): string[] {
+    return getXTicks(this.chartColumns, Math.min(this.chartColumns.length, this.xTicksLength), 'name');
   }
 
-  private get xSteps(): number[] {
+  private get getBars(): number[] {
     const res = [0];
     let i = this.columnStep;
-    while (i <= this.xTicksValuesLength * this.columnStep) {
+    while (i <= this.xTicksLength * this.columnStep) {
       res.push(i);
       i = i + this.columnStep;
     }
@@ -135,12 +141,26 @@ export class BarGraphComponent implements OnInit, AfterViewInit, OnChanges, OnDe
       .pipe(untilDestroyed(this))
       .subscribe((value: BreakpointState) => {
         if (value.breakpoints[MIN_WIDTH_700]) {
-          this.xTicksValuesLength = this.initialXTicksValuesLength;
+          this.xTicksLength = this.initialXTicksLength;
         } else {
-          this.xTicksValuesLength = 6;
+          this.xTicksLength = 6;
         }
-        this.xTicksValues = this.getXTicks();
+        this.xTicksValues$.next(this.xTicks);
       });
+  }
+
+  private get yTicks(): number[] {
+    const numbers = this.chartColumns.map(c => c.value);
+    const max = Math.max(...numbers);
+    const min = Math.min(...numbers);
+    const [tickSpacing, yMaxTick] = niceYScale(min, max, this.yTicksLength);
+    const yTicks = [];
+
+    for (let i = yMaxTick; i >= 0; i -= tickSpacing) {
+      yTicks.push(i);
+    }
+
+    return yTicks;
   }
 
   openDetailsOverlay(column: ChartColumn, event: MouseEvent): void {
@@ -181,61 +201,22 @@ export class BarGraphComponent implements OnInit, AfterViewInit, OnChanges, OnDe
   ngOnDestroy(): void {
     this.detachOverlay();
   }
-
-  private getYTicks(): number[] {
-    const numbers = this.chartColumns.map(c => c.value);
-    const max = Math.max(...numbers);
-    const min = Math.min(...numbers);
-    setMinMaxPoints(min, max);
-    const x = niceScale(min, max);
-    const tickSpacing = x.tickSpacing;
-    const yTicks = [];
-
-    for (let i = 0; i <= x.niceMaximum; i += tickSpacing) {
-      yTicks.push(i);
-    }
-
-    return yTicks.reverse();
-  }
 }
-
-var minPoint: any;
-var maxPoint: any;
-var maxTicks = 10;
-var tickSpacing: any;
-var range: any;
-var niceMin: any;
-var niceMax: any;
 
 /**
  * Instantiates a new instance of the NiceScale class.
  *
- *  min the minimum data point on the axis
- *  max the maximum data point on the axis
- */
-function niceScale(min: any, max: any) {
-  minPoint = min;
-  maxPoint = max;
-  calculate();
-  return {
-    tickSpacing: tickSpacing,
-    niceMinimum: niceMin,
-    niceMaximum: niceMax,
-  };
-}
-
-
-/**
  * Calculate and update values for tick spacing and nice
  * minimum and maximum data points on the axis.
  */
-function calculate() {
-  range = niceNum(maxPoint - minPoint, false);
-  tickSpacing = niceNum(range / (maxTicks - 1), true);
-  niceMin =
-    Math.floor(minPoint / tickSpacing) * tickSpacing;
-  niceMax =
-    Math.ceil(maxPoint / tickSpacing) * tickSpacing;
+function niceYScale(min: number, max: number, maxTicks: number): [tickSpacing: number, niceMax: number, niceMin: number] {
+  const minPoint = min;
+  const maxPoint = max;
+  const range = niceNum(maxPoint - minPoint, false);
+  const tickSpacing = niceNum(range / (maxTicks - 1), true);
+  const niceMin = Math.floor(minPoint / tickSpacing) * tickSpacing;
+  const niceMax = Math.ceil(maxPoint / tickSpacing) * tickSpacing;
+  return [tickSpacing, niceMax, niceMin];
 }
 
 /**
@@ -246,12 +227,13 @@ function calculate() {
  *  round whether to round the result
  *  a "nice" number to be used for the data range
  */
-function niceNum(localRange: any, round: any) {
-  var exponent;
+function niceNum(localRange: number, round: boolean): number {
   /** exponent of localRange */
-  var fraction;
+  let exponent: number;
   /** fractional part of localRange */
-  var niceFraction; /** nice, rounded fraction */
+  let fraction: number;
+  /** nice, rounded fraction */
+  let niceFraction: number;
 
   exponent = Math.floor(Math.log10(localRange));
   fraction = localRange / Math.pow(10, exponent);
@@ -277,26 +259,4 @@ function niceNum(localRange: any, round: any) {
   }
 
   return niceFraction * Math.pow(10, exponent);
-}
-
-/**
- * Sets the minimum and maximum data points for the axis.
- *
- *  minPoint the minimum data point on the axis
- *  maxPoint the maximum data point on the axis
- */
-function setMinMaxPoints(localMinPoint: any, localMaxPoint: any) {
-  minPoint = localMinPoint;
-  maxPoint = localMaxPoint;
-  calculate();
-}
-
-/**
- * Sets maximum number of tick marks we're comfortable with
- *
- *  maxTicks the maximum number of tick marks for the axis
- */
-function setMaxTicks(localMaxTicks: any) {
-  maxTicks = localMaxTicks;
-  calculate();
 }
