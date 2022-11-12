@@ -5,7 +5,9 @@
 }
 
 .toolbar {
-	padding-left: 12px;
+	.mobile-toggle {
+		width: 40px;
+	}
 
 	.submenus {
 		margin-left: 24px;

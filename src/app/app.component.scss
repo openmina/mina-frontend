@@ -11,6 +11,9 @@ mat-sidenav {
 	border-right: 1px solid $base-divider;
 	background-color: $base-background;
 	transition: 200ms ease-out;
+	visibility: visible !important;
+	display: block !important;
+	transform: translateX(-100%) !important;
 
 	&.collapsed {
 		width: 44px;
@@ -19,24 +22,21 @@ mat-sidenav {
 	::ng-deep .mat-drawer-inner-container {
 		overflow: hidden;
 	}
-}
 
-mat-sidenav,
-.mat-drawer-container {
-	color: inherit;
-}
-
-.mat-drawer-content {
-	overflow: hidden;
-}
-
-.mat-drawer {
-	color: inherit;
+	&.mat-drawer-opened {
+		transform: translateX(0) !important;
+	}
 }
 
 mat-sidenav-content {
+	transition: 200ms ease-out !important;
+	overflow: hidden;
+}
+
+mat-sidenav-container,
+mat-sidenav-content {
+	color: inherit;
 	background-color: $base-surface;
-	transition: 200ms ease-out;
 }
 
 .mina-content {

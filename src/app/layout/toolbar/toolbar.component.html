@@ -1,5 +1,10 @@
-<div class="toolbar h-100 flex-row flex-between align-center w-100 p-relative">
+<div class="toolbar h-100 flex-row flex-between align-center w-100 p-relative"
+     [class.pl-12]="!isMobile">
   <div class="flex-row align-center">
+    <button *ngIf="isMobile" (click)="toggleMenu()"
+            class="mobile-toggle btn-transparent h-40 flex-row align-center flex-center">
+      <span class="mina-icon f-22 icon-200 primary">menu</span>
+    </button>
     <span class="f-600 f-14">{{ title }}</span>
     <div class="submenus flex-row">
       <a *ngFor="let subMenu of subMenus"

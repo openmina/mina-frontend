@@ -5,7 +5,7 @@ import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { selectAppMenu } from '@app/app.state';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AppMenu } from '@shared/types/app/app-menu.type';
-import { APP_CHANGE_MENU_COLLAPSING, AppChangeMenuCollapsing } from '@app/app.actions';
+import { APP_CHANGE_MENU_COLLAPSING, APP_TOGGLE_MENU_OPENING, AppChangeMenuCollapsing, AppToggleMenuOpening } from '@app/app.actions';
 import { CONFIG } from '@shared/constants/config';
 
 class MenuItem {
@@ -52,6 +52,10 @@ export class MenuComponent extends ManualDetection implements OnInit {
   }
 
   toggleMenu(): void {
+    if (this.menu.isMobile) {
+      this.store.dispatch<AppToggleMenuOpening>({ type: APP_TOGGLE_MENU_OPENING });
+      return;
+    }
     this.store.dispatch<AppChangeMenuCollapsing>({ type: APP_CHANGE_MENU_COLLAPSING, payload: !this.menu.collapsed });
   }
 }

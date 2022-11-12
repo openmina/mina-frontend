@@ -2,7 +2,7 @@
      fxFlex="40px" fxHide.lt-md>
   <span>{{ yAxisLabel }}</span>
 </div>
-<div fxFlex="calc(100% - 40px)" fxFlex.lt-md="100" class="inner-graph-container h-100 d-flex flex-column pl-12">
+<div fxFlex="calc(100% - 40px)" fxFlex.lt-md="100" class="h-100 d-flex flex-column pl-12">
   <div class="p-relative flex-row flex-grow w-100" #columnContainer>
     <div class="y-grid-marks p-absolute h-100 w-100 secondary">
       <div *ngFor="let yTick of yAxisValues"
@@ -32,13 +32,13 @@
 
 <ng-template #tooltipTemplate let-range="range" let-count="count">
   <div class="p-8 bg-surface-top popup-box-shadow-weak border-rad-6 border">
-    <div class="secondary">
+    <div class="secondary text-nowrap">
       <div class="pb-10">
         <span class="tertiary">Range:</span>
         {{ range }}
       </div>
       <div>
-        <span class="tertiary">Count:</span>
+        <span class="tertiary">{{ yAxisLabel }}:</span>
         {{ count }}
       </div>
     </div>

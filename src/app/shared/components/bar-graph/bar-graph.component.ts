@@ -18,7 +18,7 @@ import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { getXTicks } from '@shared/helpers/graph.helper';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 class ChartColumn {
   name: string;

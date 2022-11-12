@@ -1,4 +1,12 @@
-import { APP_CHANGE_MENU_COLLAPSING, APP_CHANGE_SUB_MENUS, APP_GET_NODE_STATUS_SUCCESS, APP_UPDATE_DEBUGGER_STATUS, AppActions } from '@app/app.actions';
+import {
+  APP_CHANGE_MENU_COLLAPSING,
+  APP_CHANGE_SUB_MENUS,
+  APP_GET_NODE_STATUS_SUCCESS,
+  APP_TOGGLE_MENU_OPENING,
+  APP_TOGGLE_MOBILE,
+  APP_UPDATE_DEBUGGER_STATUS,
+  AppActions,
+} from '@app/app.actions';
 import { AppState } from '@app/app.state';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 
@@ -56,6 +64,27 @@ export function reducer(state: AppState = initialState, action: AppActions): App
       return {
         ...state,
         subMenus: action.payload,
+      };
+    }
+
+    case APP_TOGGLE_MOBILE: {
+      return {
+        ...state,
+        menu: {
+          ...state.menu,
+          isMobile: action.payload.isMobile,
+          open: !action.payload.isMobile,
+        },
+      };
+    }
+
+    case APP_TOGGLE_MENU_OPENING: {
+      return {
+        ...state,
+        menu: {
+          ...state.menu,
+          open: !state.menu.open,
+        },
       };
     }
 

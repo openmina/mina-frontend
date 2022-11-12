@@ -5,13 +5,15 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { delay, filter, map } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { selectAppSubMenus } from '@app/app.state';
+import { selectAppMenu, selectAppSubMenus } from '@app/app.state';
 import { TooltipService } from '@shared/services/tooltip.service';
 import { LoadingService } from '@core/services/loading.service';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
 import { LoadingEvent } from '@shared/types/core/loading/loading-event.type';
+import { AppMenu } from '@shared/types/app/app-menu.type';
+import { APP_TOGGLE_MENU_OPENING, AppToggleMenuOpening } from '@app/app.actions';
 
 @Component({
   selector: 'mina-toolbar',
@@ -29,6 +31,7 @@ export class ToolbarComponent extends ManualDetection implements OnInit {
   subMenus: string[] = [];
   activeSubMenu: string;
   baseRoute: string;
+  isMobile: boolean;
 
   @ViewChild('loadingRef') private loadingRef: ElementRef<HTMLDivElement>;
 
@@ -43,6 +46,7 @@ export class ToolbarComponent extends ManualDetection implements OnInit {
     this.listenToTitleChange();
     this.listenToRouteChange();
     this.listenToSubMenuChange();
+    this.listenToMenuChange();
     this.listenToLoading();
   }
 
@@ -93,12 +97,11 @@ export class ToolbarComponent extends ManualDetection implements OnInit {
         return path.split('?')[0];
       }
       return path;
-    }
+    };
     this.store.select(getMergedRoute)
       .subscribe((route: MergedRoute) => {
         this.baseRoute = removeParams(route.url.split('/')[1]);
         this.activeSubMenu = removeParams(route.url.split('/')[2]);
-
         this.detect();
       });
   }
@@ -111,6 +114,14 @@ export class ToolbarComponent extends ManualDetection implements OnInit {
       });
   }
 
+  private listenToMenuChange(): void {
+    this.store.select(selectAppMenu)
+      .pipe(filter(menu => menu.isMobile !== this.isMobile))
+      .subscribe((menu: AppMenu) => {
+        this.isMobile = menu.isMobile;
+        this.detect();
+      });
+  }
 
   private listenToTitleChange(): void {
     this.router.events
@@ -139,4 +150,7 @@ export class ToolbarComponent extends ManualDetection implements OnInit {
   // navigateToSubMenu(subMenu: string): void {
   //   this.router.navigate([this.baseRoute, subMenu]);
   // }
+  toggleMenu(): void {
+    this.store.dispatch<AppToggleMenuOpening>({ type: APP_TOGGLE_MENU_OPENING });
+  }
 }

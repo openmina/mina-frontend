@@ -38,6 +38,10 @@ button {
 		}
 	}
 
+	&.btn-transparent {
+		background-color: unset;
+	}
+
 	&.icon-btn {
 		width: 24px;
 		@include flexRowFullCenter();

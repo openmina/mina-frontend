@@ -9,6 +9,8 @@ enum AppActionTypes {
   APP_UPDATE_DEBUGGER_STATUS = 'APP_UPDATE_DEBUGGER_STATUS',
   APP_CHANGE_MENU_COLLAPSING = 'APP_CHANGE_MENU_COLLAPSING',
   APP_CHANGE_SUB_MENUS = 'APP_CHANGE_SUB_MENUS',
+  APP_TOGGLE_MOBILE = 'APP_TOGGLE_MOBILE',
+  APP_TOGGLE_MENU_OPENING = 'APP_TOGGLE_MENU_OPENING',
 }
 
 export const APP_INIT = AppActionTypes.APP_INIT;
@@ -18,6 +20,8 @@ export const APP_GET_DEBUGGER_STATUS = AppActionTypes.APP_GET_DEBUGGER_STATUS;
 export const APP_UPDATE_DEBUGGER_STATUS = AppActionTypes.APP_UPDATE_DEBUGGER_STATUS;
 export const APP_CHANGE_MENU_COLLAPSING = AppActionTypes.APP_CHANGE_MENU_COLLAPSING;
 export const APP_CHANGE_SUB_MENUS = AppActionTypes.APP_CHANGE_SUB_MENUS;
+export const APP_TOGGLE_MOBILE = AppActionTypes.APP_TOGGLE_MOBILE;
+export const APP_TOGGLE_MENU_OPENING = AppActionTypes.APP_TOGGLE_MENU_OPENING;
 
 export interface AppAction extends FeatureAction<AppActionTypes> {
   readonly type: AppActionTypes;
@@ -59,6 +63,16 @@ export class AppChangeSubMenus implements AppAction {
   constructor(public payload: string[]) { }
 }
 
+export class AppToggleMobile implements AppAction {
+  readonly type = APP_TOGGLE_MOBILE;
+
+  constructor(public payload: { isMobile: boolean }) { }
+}
+
+export class AppToggleMenuOpening implements AppAction {
+  readonly type = APP_TOGGLE_MENU_OPENING;
+}
+
 export type AppActions =
   | AppInit
   | AppGetNodeStatus
@@ -67,4 +81,6 @@ export type AppActions =
   | AppUpdateDebuggerStatus
   | AppChangeMenuCollapsing
   | AppChangeSubMenus
+  | AppToggleMobile
+  | AppToggleMenuOpening
   ;
