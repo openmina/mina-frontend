@@ -24,18 +24,18 @@ import {
   NETWORK_SET_TIMESTAMP_INTERVAL,
   NETWORK_TOGGLE_FILTER,
   NetworkMessagesActions,
-  NetworkChangeTab,
-  NetworkGetConnection,
-  NetworkGetFullMessage,
-  NetworkGetMessageHex,
-  NetworkGetMessages,
-  NetworkGetPaginatedMessages,
-  NetworkGetSpecificMessage,
-  NetworkGoLive,
-  NetworkInit,
-  NetworkSetActiveRow,
-  NetworkSetTimestampInterval,
-  NetworkToggleFilter,
+  NetworkMessagesChangeTab,
+  NetworkMessagesGetConnection,
+  NetworkMessagesGetFullMessage,
+  NetworkMessagesGetMessageHex,
+  NetworkMessagesGetMessages,
+  NetworkMessagesGetPaginatedMessages,
+  NetworkMessagesGetSpecificMessage,
+  NetworkMessagesGoLive,
+  NetworkMessagesInit,
+  NetworkMessagesSetActiveRow,
+  NetworkMessagesSetTimestampInterval,
+  NetworkMessagesToggleFilter,
 } from '@network/messages/network-messages.actions';
 import { Effect, NonDispatchableEffect } from '@shared/types/store/effect.type';
 import { catchError, EMPTY, filter, forkJoin, map, mergeMap, of, repeat, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
@@ -73,7 +73,7 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
 
     this.init$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_INIT),
-      this.latestActionState<NetworkInit>(),
+      this.latestActionState<NetworkMessagesInit>(),
       tap(({ action, state }) => this.streamActive = state.network.messages.stream),
       switchMap(({ action, state }) =>
         timer(0, 10000).pipe(
@@ -86,7 +86,7 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
 
     this.getMessages$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_GET_MESSAGES, NETWORK_GO_LIVE, NETWORK_GET_PAGINATED_MESSAGES, NETWORK_TOGGLE_FILTER, NETWORK_SET_TIMESTAMP_INTERVAL),
-      this.latestActionState<NetworkGetMessages | NetworkGoLive | NetworkGetPaginatedMessages | NetworkToggleFilter | NetworkSetTimestampInterval>(),
+      this.latestActionState<NetworkMessagesGetMessages | NetworkMessagesGoLive | NetworkMessagesGetPaginatedMessages | NetworkMessagesToggleFilter | NetworkMessagesSetTimestampInterval>(),
       tap(({ state }) => this.streamActive = state.network.messages.stream),
       tap(() => this.waitingForServer = true),
       switchMap(({ action, state }) =>
@@ -107,7 +107,7 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
 
     this.getSpecificMessage$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_GET_SPECIFIC_MESSAGE),
-      this.latestActionState<NetworkGetSpecificMessage>(),
+      this.latestActionState<NetworkMessagesGetSpecificMessage>(),
       tap(({ state }) => this.streamActive = state.network.messages.stream),
       switchMap(({ action, state }) =>
         forkJoin([
@@ -143,7 +143,7 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
 
     this.setActiveRow$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_SET_ACTIVE_ROW, NETWORK_CHANGE_TAB),
-      this.latestActionState<NetworkSetActiveRow | NetworkChangeTab>(),
+      this.latestActionState<NetworkMessagesSetActiveRow | NetworkMessagesChangeTab>(),
       filter(({ state }) => !!state.network.messages.activeRow),
       switchMap(({ state }) => {
         const activeTab = state.network.messages.activeTab;
@@ -157,7 +157,7 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
 
     this.getFullMessage$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_GET_FULL_MESSAGE),
-      this.latestActionState<NetworkGetFullMessage>(),
+      this.latestActionState<NetworkMessagesGetFullMessage>(),
       mergeMap(({ action }) => this.networkMessagesService.getNetworkFullMessage(action.payload.id)),
       map((payload: any) => ({ type: NETWORK_GET_FULL_MESSAGE_SUCCESS, payload })),
       catchError((err: Error) => of({ type: NETWORK_GET_FULL_MESSAGE_SUCCESS, payload: err.message })),
@@ -165,14 +165,14 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
 
     this.getMessageHex$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_GET_MESSAGE_HEX),
-      this.latestActionState<NetworkGetMessageHex>(),
+      this.latestActionState<NetworkMessagesGetMessageHex>(),
       switchMap(({ action }) => this.networkMessagesService.getNetworkMessageHex(action.payload.id)),
       map((payload: string) => ({ type: NETWORK_GET_MESSAGE_HEX_SUCCESS, payload })),
     ));
 
     this.getConnection$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_GET_CONNECTION),
-      this.latestActionState<NetworkGetConnection>(),
+      this.latestActionState<NetworkMessagesGetConnection>(),
       switchMap(({ action }) => this.networkMessagesService.getNetworkConnection(action.payload.id)),
       map((payload: NetworkMessageConnection) => ({ type: NETWORK_GET_CONNECTION_SUCCESS, payload })),
     ));
@@ -184,7 +184,7 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
 
     this.goLive$ = createNonDispatchableEffect(() => this.actions$.pipe(
       ofType(NETWORK_GO_LIVE),
-      this.latestActionState<NetworkGoLive>(),
+      this.latestActionState<NetworkMessagesGoLive>(),
       tap(() => this.streamActive = true),
     ));
 

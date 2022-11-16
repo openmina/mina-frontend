@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, NgZone, OnInit } from '@angular/core';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
-import { selectAppDebuggerStatus, selectAppNodeStatus } from '@app/app.state';
+import { selectAppDebuggerStatus, selectAppMenu, selectAppNodeStatus } from '@app/app.state';
 import { BehaviorSubject, filter } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
@@ -11,6 +11,7 @@ import { WebNodeStatus } from '@shared/types/app/web-node-status.type';
 import { selectWebNodeLogs, selectWebNodePeers } from '@web-node/web-node.state';
 import { WebNodeLog } from '@shared/types/web-node/logs/web-node-log.type';
 import { CONFIG } from '@shared/constants/config';
+import { AppMenu } from '@shared/types/app/app-menu.type';
 
 const TOOLTIP_MESSAGES: { [p: string]: string } = {
   [AppNodeStatusTypes.OFFLINE.toLowerCase()]: 'Is when the node has not received any messages for a while',
@@ -36,12 +37,13 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
   status: string = AppNodeStatusTypes.CONNECTING.toLowerCase();
   timeIsPresent: boolean;
   nodeTooltip: string = TOOLTIP_MESSAGES[this.status];
+  isMobile: boolean;
 
   readonly enabledDebugger: boolean = !!CONFIG.debugger;
   debuggerStatus: DebuggerStatus;
   debuggerTooltip: string;
 
-  readonly enabledWebNode: boolean = !!CONFIG.features.includes('web-node');
+  readonly enabledWebNode: boolean = CONFIG.features.includes('web-node');
   webNodeStatus: WebNodeStatus;
   webNodeTooltip: string;
 
@@ -57,6 +59,7 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
     this.listenToNodeStatusChange();
     this.listenToDebuggerStatusChange();
     this.listenToWebNodeStatusChange();
+    this.listenToMenuChange();
   }
 
   private createTimer(): void {
@@ -134,6 +137,15 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
           messages: logs.length,
         };
         getTooltip();
+        this.detect();
+      });
+  }
+
+  private listenToMenuChange(): void {
+    this.store.select(selectAppMenu)
+      .pipe(filter(menu => menu.isMobile !== this.isMobile))
+      .subscribe((menu: AppMenu) => {
+        this.isMobile = menu.isMobile;
         this.detect();
       });
   }

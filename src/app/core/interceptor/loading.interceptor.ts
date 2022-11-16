@@ -1,10 +1,11 @@
 import { Injectable, Provider } from '@angular/core';
 import { HTTP_INTERCEPTORS, HttpEvent, HttpEventType, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
-import { catchError, map, Observable, tap } from 'rxjs';
+import { catchError, map, Observable } from 'rxjs';
 import { LoadingService } from '@core/services/loading.service';
 
 const SKIPPED_URLS: string[] = [
   '/messages?limit=',
+  '/connections?limit=',
   '/connection/',
   '/blocks?',
   '/version',

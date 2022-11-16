@@ -5,12 +5,14 @@
             class="mobile-toggle btn-transparent h-40 flex-row align-center flex-center">
       <span class="mina-icon f-22 icon-200 primary">menu</span>
     </button>
-    <span class="f-600 f-14">{{ title }}</span>
-    <div class="submenus flex-row">
-      <a *ngFor="let subMenu of subMenus"
-         [class.active]="activeSubMenu === subMenu"
-         [routerLink]="baseRoute + '/' + subMenu"
-         class="text-capitalize mr-5 text-center f-600">{{ subMenu }}</a>
+    <span class="f-600 f-14" [class.pr-12]="!isMobile">{{ title }}</span>
+    <div class="submenus flex-row align-center pl-12">
+      <ng-container *ngFor="let subMenu of subMenus; let i=index">
+        <a [class.active]="activeSubMenu === subMenu"
+           [routerLink]="baseRoute + '/' + subMenu"
+           class="text-capitalize text-center f-600">{{ subMenu }}</a>
+        <div *ngIf="i < subMenus.length - 1" class="border-left"></div>
+      </ng-container>
     </div>
   </div>
   <div class="flex-row flex-end align-center">

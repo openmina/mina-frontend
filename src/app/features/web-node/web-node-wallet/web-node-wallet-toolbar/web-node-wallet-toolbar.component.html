@@ -12,10 +12,10 @@
     </div>
   </button>
   <div [tooltip]="'Action is not available when node is in catchup state'"
-       [tooltipDisabled]="nodeStatus !== 'CATCHUP'"
+       [tooltipDisabled]="nodeStatus === 'SYNCED'"
        [globalTooltip]="false">
     <button class="btn-primary mr-5" routerLink="/web-node/wallet/new-transaction"
-            [disabled]="nodeStatus === 'CATCHUP'">Send Mina
+            [disabled]="nodeStatus !== 'SYNCED'">Send Mina
     </button>
   </div>
   <button class="btn-primary mr-5" [copyToClipboard]="activeWallet?.publicKey">Copy Address</button>

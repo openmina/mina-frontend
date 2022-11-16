@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { NETWORK_CHANGE_TAB, NETWORK_SET_ACTIVE_ROW, NetworkChangeTab, NetworkSetActiveRow } from '@network/messages/network-messages.actions';
+import { NETWORK_CHANGE_TAB, NETWORK_SET_ACTIVE_ROW, NetworkMessagesChangeTab, NetworkMessagesSetActiveRow } from '@network/messages/network-messages.actions';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NetworkMessage } from '@shared/types/network/messages/network-message.type';
 import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/custom-components/mina-json-viewer/mina-json-viewer.component';
@@ -131,7 +131,7 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
 
   closeSidePanel(): void {
     this.router.navigate([Routes.NETWORK, Routes.MESSAGES], { queryParamsHandling: 'merge' });
-    this.store.dispatch<NetworkSetActiveRow>({ type: NETWORK_SET_ACTIVE_ROW, payload: undefined });
+    this.store.dispatch<NetworkMessagesSetActiveRow>({ type: NETWORK_SET_ACTIVE_ROW, payload: undefined });
   }
 
   expandEntireJSON(): void {
@@ -148,7 +148,7 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
     this.cancelDownload = true;
     this.saveButton.nativeElement.textContent = 'Save JSON';
     this.selectedTabIndex = tabNum;
-    this.store.dispatch<NetworkChangeTab>({ type: NETWORK_CHANGE_TAB, payload: tabNum });
+    this.store.dispatch<NetworkMessagesChangeTab>({ type: NETWORK_CHANGE_TAB, payload: tabNum });
     this.setToCopy();
   }
 }

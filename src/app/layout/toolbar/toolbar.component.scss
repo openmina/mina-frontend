@@ -6,12 +6,10 @@
 
 .toolbar {
 	.mobile-toggle {
-		width: 40px;
+		width: 46px;
 	}
 
 	.submenus {
-		margin-left: 24px;
-
 		a {
 			height: 24px;
 			line-height: 24px;
@@ -19,6 +17,7 @@
 			background-color: transparent;
 			color: $base-secondary;
 			border-radius: 6px;
+			position: relative;
 
 			&:hover {
 				background-color: $base-container;
@@ -28,6 +27,13 @@
 				color: $selected-primary;
 				background-color: $selected-container;
 			}
+		}
+
+		div {
+			margin-right: 4px;
+			margin-left: 4px;
+			height: 20px;
+			width: 1px;
 		}
 	}
 

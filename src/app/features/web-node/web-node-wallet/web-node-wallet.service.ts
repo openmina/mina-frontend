@@ -77,7 +77,7 @@ export class WebNodeWalletService {
   }
 
   createTransaction(transaction: WebNodeTransaction): Observable<WebNodeTransaction> {
-    return of(this.webNodeService.createTransaction(transaction));
+    return this.webNodeService.createTransaction(transaction);
   }
 
   getTransactions(publicKey: string): Observable<WebNodeTransaction[]> {

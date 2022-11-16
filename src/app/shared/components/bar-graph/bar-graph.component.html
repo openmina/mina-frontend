@@ -15,7 +15,7 @@
       <div *ngFor="let column of chartColumns"
            (mouseenter)="openDetailsOverlay(column, $event)"
            (mouseleave)="detachOverlay()"
-           [style.width.%]="100 / (xTicksLength)"
+           [style.width.%]="100 / xTicksLength"
            class="histo-col">
         <div class="histo-bar"
              [style.height.px]="maxHeight * column.value / yAxisValues[0] || 0"></div>

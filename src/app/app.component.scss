@@ -19,6 +19,10 @@ mat-sidenav {
 		width: 44px;
 	}
 
+	&.mobile {
+		width: 220px;
+	}
+
 	::ng-deep .mat-drawer-inner-container {
 		overflow: hidden;
 	}

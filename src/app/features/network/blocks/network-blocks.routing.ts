@@ -6,7 +6,12 @@ const routes: Routes = [
   {
     path: '',
     component: NetworkBlocksComponent,
-    children: [],
+    children: [
+      {
+        path: ':hash',
+        component: NetworkBlocksComponent,
+      },
+    ],
   },
   {
     path: '**',
@@ -17,6 +22,6 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class NetworkBlocksRouting { }
+export class NetworkBlocksRouting {}

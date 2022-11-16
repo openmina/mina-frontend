@@ -9,4 +9,5 @@ export enum Routes {
   LOGS = 'logs',
   PEERS = 'peers',
   WALLET = 'wallet',
+  STATE = 'state',
 }

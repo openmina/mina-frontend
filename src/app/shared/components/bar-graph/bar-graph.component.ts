@@ -19,6 +19,9 @@ import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { getXTicks } from '@shared/helpers/graph.helper';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { ManualDetection } from '@shared/base-classes/manual-detection.class';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { CommonModule } from '@angular/common';
 
 class ChartColumn {
   name: string;
@@ -29,21 +32,24 @@ class ChartColumn {
 
 @UntilDestroy()
 @Component({
+  standalone: true,
   selector: 'mina-bar-graph',
+  imports: [CommonModule, FlexLayoutModule],
   templateUrl: './bar-graph.component.html',
   styleUrls: ['./bar-graph.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'h-100 p-12' },
 })
-export class BarGraphComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+export class BarGraphComponent extends ManualDetection implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
-  @Input() values: number[];
+  @Input() values: number[] = [];
   @Input() columnStep: number = 1;
   @Input() yAxisValues: number[] = [];
   @Input() xTicksLength: number = 20;
   @Input() yTicksLength: number = 10;
   @Input() um: string;
   @Input() yAxisLabel: string;
+  @Input() decimals: number = 1;
 
   chartColumns: ChartColumn[];
   ticks: Observable<string[]>;
@@ -59,7 +65,7 @@ export class BarGraphComponent implements OnInit, AfterViewInit, OnChanges, OnDe
 
   constructor(private breakpointObserver: BreakpointObserver,
               private viewContainerRef: ViewContainerRef,
-              private overlay: Overlay) { }
+              private overlay: Overlay) { super(); }
 
   ngOnInit(): void {
     this.initialXTicksLength = this.xTicksLength;
@@ -78,35 +84,38 @@ export class BarGraphComponent implements OnInit, AfterViewInit, OnChanges, OnDe
   ngOnChanges(changes: SimpleChanges): void {
     if (this.bars && changes['values']?.currentValue !== changes['values']?.previousValue) {
       this.update();
-      this.yAxisValues = this.yTicks;
     }
   }
 
   private initChartColumns(): ChartColumn[] {
-    const seriesObj: { [p: number]: { value: number, range: string } } = this.bars.reduce((acc, curr: number, i: number) => ({
-      ...acc,
-      [curr]: {
-        value: 0,
-        range: i === this.bars.length - 1
-          ? `> ${curr}${this.um}`
-          : `${curr}${this.um} - ${(curr + this.columnStep)}${this.um}`,
-      },
-    }), {});
+    const seriesObj: { [p: number]: { value: number, range: string } } = this.bars.reduce((acc, curr: number, i: number) => {
+      return ({
+        ...acc,
+        [curr]: {
+          value: 0,
+          range: i === this.bars.length - 1
+            ? `> ${curr.toFixed(this.decimals)}${this.um}`
+            : `${curr.toFixed(this.decimals)}${this.um} - ${(curr + this.columnStep).toFixed(this.decimals)}${this.um}`,
+        },
+      });
+    }, {});
 
     return Object.keys(seriesObj).map((key: string) => ({
-      name: Number(key) + this.um,
+      name: Number(key).toFixed(this.decimals) + this.um,
       value: seriesObj[key].value,
       range: seriesObj[key].range,
-      step: Number(key),
+      step: Number(Number(key).toFixed(this.decimals)),
     } as ChartColumn));
   }
 
-  private update(): void {
+  public update(): void {
     this.chartColumns.forEach(col => col.value = 0);
-    this.values?.forEach(time => {
+    this.values.forEach(time => {
       const column = this.findClosestSmallerStep(time);
       column.value++;
     });
+    this.yAxisValues = this.yTicks;
+    this.maxHeight = this.columnContainer?.nativeElement.offsetHeight;
   }
 
   private get xTicks(): string[] {
@@ -156,7 +165,7 @@ export class BarGraphComponent implements OnInit, AfterViewInit, OnChanges, OnDe
     const [tickSpacing, yMaxTick] = niceYScale(min, max, this.yTicksLength);
     const yTicks = [];
 
-    for (let i = yMaxTick; i >= 0; i -= tickSpacing) {
+    for (let i = Math.max(yMaxTick, this.yTicksLength); i >= 0; i -= Math.max(1, tickSpacing)) {
       yTicks.push(i);
     }
 

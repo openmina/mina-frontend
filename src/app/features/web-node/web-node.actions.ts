@@ -36,7 +36,7 @@ export class WebNodeSharedGetPeers implements WebNodeSharedAction {
 export class WebNodeSharedGetPeersSuccess implements WebNodeSharedAction {
   readonly type = WEB_NODE_SHARED_GET_PEERS_SUCCESS;
 
-  constructor(public payload: WebNodeLog) {}
+  constructor(public payload: WebNodeLog[]) {}
 }
 
 export class WebNodeSharedGetLogs implements WebNodeSharedAction {
@@ -46,7 +46,7 @@ export class WebNodeSharedGetLogs implements WebNodeSharedAction {
 export class WebNodeSharedGetLogsSuccess implements WebNodeSharedAction {
   readonly type = WEB_NODE_SHARED_GET_LOGS_SUCCESS;
 
-  constructor(public payload: WebNodeLog) {}
+  constructor(public payload: WebNodeLog[]) {}
 }
 
 export type WebNodeSharedActions =

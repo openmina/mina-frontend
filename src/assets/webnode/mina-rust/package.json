@@ -1,12 +1,13 @@
 {
-  "name": "rust",
+  "name": "wasm",
   "version": "0.1.0",
+  "license": "Apache-2.0",
   "files": [
-    "rust_bg.wasm",
-    "rust.js",
-    "rust.d.ts"
+    "wasm_bg.wasm",
+    "wasm.js",
+    "wasm.d.ts"
   ],
-  "module": "rust.js",
-  "types": "rust.d.ts",
+  "module": "wasm.js",
+  "types": "wasm.d.ts",
   "sideEffects": false
 }

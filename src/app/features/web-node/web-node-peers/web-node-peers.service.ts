@@ -16,7 +16,7 @@ export class WebNodePeersService {
 
   constructor(private webNodeService: WebNodeService) { }
 
-  getPeers(): Observable<WebNodeLog> {
+  getPeers(): Observable<WebNodeLog[]> {
     return this.webNodeService.peers$;
   }
 

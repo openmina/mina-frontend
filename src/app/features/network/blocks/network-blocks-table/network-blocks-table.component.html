@@ -1,31 +1,52 @@
 <div class="mina-table flex-grow overflow-x-auto"
      [class.opacity-0]="!blocks.length">
   <div class="row head">
-    <span>Block hash</span>
-    <span>Producer</span>
-    <span>Sender</span>
-    <span>Receiver</span>
-    <span>Received</span>
-    <span>Broadcasted</span>
-    <span>Processed</span>
-    <span>Message</span>
+    <span>Datetime</span>
+    <span>Block</span>
+    <span>From</span>
+    <span>To</span>
+    <span>Sent time</span>
+    <span>Recv. time</span>
+    <span>Producer ID</span>
+    <span>Message Kind</span>
+    <span>Message ID</span>
+    <span>Height</span>
+    <span>Global slot</span>
   </div>
   <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-auto"
                                fxFlex="calc(100% - 36px)"
                                [itemSize]="itemSize">
-    <div *cdkVirtualFor="let message of blocks; let i=index"
-         (click)="onRowClick(message)"
-         [class.active]="activeRow?.id === message.id"
+    <div *cdkVirtualFor="let block of blocks; let i=index"
+         (click)="onRowClick(block)"
+         [class.active]="activeRow?.hash === block.hash"
          [class.row-even]="i % 2 === 0"
          class="row">
-      <span class="tertiary truncate">{{ message.blockHash }}</span>
-      <span class="tertiary truncate">{{ message.producer }}</span>
-      <span class="tertiary truncate">{{ message.sender }}</span>
-      <span class="tertiary truncate">{{ message.receiver }}</span>
-      <span class="tertiary" [innerHTML]="message.received | secDuration"></span>
-      <span class="tertiary" [innerHTML]="message.broadcasted | secDuration"></span>
-      <span class="tertiary" [innerHTML]="message.processed | secDuration"></span>
-      <span class="tertiary">{{ message.message }}</span>
+      <span class="tertiary">{{ block.date }}</span>
+      <span>{{ block.hash | truncateMid }}</span>
+      <span class="secondary">
+        <span (click)="seeMessagesForAddress(block.sender)"
+              [tooltip]="'See messages for this address'"
+              [showDelay]="1000"
+              class="underline">{{ block.sender }}</span>
+      </span>
+      <span class="secondary">
+        <span (click)="seeMessagesForAddress(block.receiver)"
+              [tooltip]="'See messages for this address'"
+              [showDelay]="1000"
+              class="underline">{{ block.receiver }}</span>
+      </span>
+      <span>{{ block.sentLatency | secDuration: secConfig }}</span>
+      <span>{{ block.receivedLatency | secDuration: secConfig }}</span>
+      <span class="tertiary">{{ block.producerId | truncateMid }}</span>
+      <span class="tertiary">{{ block.messageKind }}</span>
+      <span>
+        <span class="underline tertiary"
+              tooltip="See message details"
+              [showDelay]="1000"
+              (click)="seeMessageInMessages(block.messageId)">{{ block.messageId }}</span>
+      </span>
+      <span class="tertiary">{{ block.height }}</span>
+      <span class="tertiary">{{ block.globalSlot }}</span>
     </div>
   </cdk-virtual-scroll-viewport>
 </div>

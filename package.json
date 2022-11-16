@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:phone": "ng serve --host 192.168.1.184",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "build:prod": "ng build --configuration production",
@@ -16,7 +17,9 @@
     "deploy:network-v2": "npm run build:debug-v2 && rmdir /S /q D:\\mina\\firebase-deployments\\openmina-network-v2\\dist && Xcopy /E/I D:\\mina\\mina-frontend\\dist D:\\mina\\firebase-deployments\\openmina-network-v2\\dist && cd D:\\mina\\firebase-deployments\\openmina-network-v2 && firebase deploy",
     "deploy:tracing": "npm run build:tracing && rmdir /S /q D:\\mina\\firebase-deployments\\openmina-tracing\\dist && Xcopy /E/I D:\\mina\\mina-frontend\\dist D:\\mina\\firebase-deployments\\openmina-tracing\\dist && cd D:\\mina\\firebase-deployments\\openmina-tracing && firebase deploy",
     "deploy:webnode": "npm run build:webnode && rmdir /S /q D:\\mina\\firebase-deployments\\openmina-webnode\\dist && Xcopy /E/I D:\\mina\\mina-frontend\\dist D:\\mina\\firebase-deployments\\openmina-webnode\\dist && cd D:\\mina\\firebase-deployments\\openmina-webnode && firebase deploy",
-    "open tests": "npx cypress open"
+    "open tests": "npx cypress open",
+    "build:stats": "ng build --stats-json",
+    "analyze": "webpack-bundle-analyzer dist/mina-frontend/stats.json"
   },
   "private": true,
   "dependencies": {
@@ -68,6 +71,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
-    "typescript": "~4.7.2"
+    "typescript": "~4.7.2",
+    "webpack-bundle-analyzer": "^4.7.0"
   }
 }

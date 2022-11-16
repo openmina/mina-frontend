@@ -1,4 +1,4 @@
-<div class="debugger-status h-24 ml-8 mr-8 border-rad-4 flex-row align-center"
+<div class="debugger-status h-24 ml-8 border-rad-4 flex-row align-center"
      *ngIf="enabledDebugger"
      [tooltip]="debuggerTooltip"
      [class.failed]="debuggerStatus.failed"
@@ -8,7 +8,7 @@
   <div *ngIf="!debuggerStatus.isOnline" class="ml-5 mr-5">Offline</div>
 </div>
 
-<div class="web-node-status h-24 mr-8 border-rad-4 flex-row align-center"
+<div class="web-node-status h-24 ml-8 border-rad-4 flex-row align-center"
      *ngIf="webNodeStatus"
      [tooltip]="webNodeTooltip"
      [class.offline]="!webNodeStatus.peers && !webNodeStatus.messages">
@@ -16,7 +16,7 @@
   <div class="ml-5 mr-5">{{ webNodeStatus.peers }} peer{{ webNodeStatus.peers === 1 ? '' : 's' }}, {{ webNodeStatus.messages }} message{{ webNodeStatus.messages === 1 ? '' : 's' }}</div>
 </div>
 
-<div class="node-status mr-8 border-rad-4 p-relative overflow-hidden">
+<div class="node-status ml-8 mr-8 border-rad-4 p-relative overflow-hidden">
   <div *ngIf="status === 'catchup' || status === 'bootstrap'"
        class="shining-border p-absolute overflow-hidden"></div>
   <div class="bg-surface border-rad-4">
@@ -27,7 +27,7 @@
         <span class="mina-icon icon-200 f-20">dns</span>
         &nbsp;{{ status }}
       </span>
-      <span class="p-relative" *ngIf="timeIsPresent">
+      <span class="p-relative" *ngIf="timeIsPresent && !isMobile">
         <span *ngIf="blockLevel > 0">#{{ blockLevel }}&nbsp;</span>
         <span class="p-absolute text-light" [innerHTML]="elapsedTime$ | async"></span>
         <span class="p-absolute ago">ago</span>

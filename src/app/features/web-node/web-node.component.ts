@@ -32,7 +32,7 @@ export class WebNodeComponent extends ManualDetection implements OnInit, AfterVi
               private webNodeService: WebNodeService) { super(); }
 
   ngOnInit(): void {
-    this.store.dispatch<AppChangeSubMenus>({ type: APP_CHANGE_SUB_MENUS, payload: [Routes.WALLET, Routes.PEERS, Routes.LOGS] });
+    this.store.dispatch<AppChangeSubMenus>({ type: APP_CHANGE_SUB_MENUS, payload: [Routes.WALLET, Routes.PEERS, Routes.LOGS, Routes.STATE] });
     this.store.dispatch<WebNodeSharedInit>({ type: WEB_NODE_SHARED_INIT });
   };
 

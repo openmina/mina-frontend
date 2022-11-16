@@ -8,6 +8,7 @@ interface SecDurationConfigDefinition {
   yellow: number;
   color: boolean;
   onlySeconds: boolean;
+  undefinedAlternative: string | number | undefined;
 }
 
 export type SecDurationConfig = Partial<SecDurationConfigDefinition>;
@@ -29,7 +30,7 @@ export class SecDurationPipe implements PipeTransform {
     let response;
 
     if (!value) {
-      return value === 0 ? `${value}s` : value;
+      return value === 0 ? `${value}s` : config.undefinedAlternative !== undefined ? config.undefinedAlternative : value;
     }
 
     if (value >= 1 || config.onlySeconds) {

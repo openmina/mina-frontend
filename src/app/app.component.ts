@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { APP_INIT, APP_TOGGLE_MOBILE, AppInit, AppToggleMobile } from '@app/app.actions';
+import { APP_INIT, APP_TOGGLE_MENU_OPENING, APP_TOGGLE_MOBILE, AppInit, AppToggleMenuOpening, AppToggleMobile } from '@app/app.actions';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { AppMenu } from '@shared/types/app/app-menu.type';
 import { selectAppMenu } from '@app/app.state';
@@ -46,5 +46,9 @@ export class AppComponent extends ManualDetection implements OnInit {
       .subscribe((bs: BreakpointState) => {
         this.store.dispatch<AppToggleMobile>({ type: APP_TOGGLE_MOBILE, payload: { isMobile: !bs.matches } });
       });
+  }
+
+  toggleMenu(): void {
+    this.store.dispatch<AppToggleMenuOpening>({ type: APP_TOGGLE_MENU_OPENING });
   }
 }

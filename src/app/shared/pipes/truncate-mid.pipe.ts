@@ -5,11 +5,11 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class TruncateMidPipe implements PipeTransform {
 
-  transform(value: string, firstSlice: number = 6): string {
+  transform(value: string, firstSlice: number = 6, secondSlice: number = 6): string {
     if (!value) {
       return '';
     }
-    return value.length > (firstSlice + 7) ? value.slice(0, firstSlice) + '...' + value.slice(value.length - 6) : value;
+    return value.length > (firstSlice + 7) ? value.slice(0, firstSlice) + '...' + value.slice(value.length - secondSlice) : value;
   }
 
 }

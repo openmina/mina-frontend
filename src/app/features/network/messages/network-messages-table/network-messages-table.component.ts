@@ -9,11 +9,11 @@ import {
   NETWORK_SET_ACTIVE_ROW,
   NETWORK_SET_TIMESTAMP_INTERVAL,
   NETWORK_TOGGLE_FILTER,
-  NetworkGetSpecificMessage,
-  NetworkPause,
-  NetworkSetActiveRow,
-  NetworkSetTimestampInterval,
-  NetworkToggleFilter,
+  NetworkMessagesGetSpecificMessage,
+  NetworkMessagesPause,
+  NetworkMessagesSetActiveRow,
+  NetworkMessagesSetTimestampInterval,
+  NetworkMessagesToggleFilter,
 } from '@network/messages/network-messages.actions';
 import { selectNetworkActiveFilters, selectNetworkActiveRow, selectNetworkMessages, selectNetworkStream } from '@network/messages/network-messages.state';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -85,17 +85,17 @@ export class NetworkMessagesTableComponent extends ManualDetection implements On
 
           if (isValidIdInRoute) {
             this.idFromRoute = idFromRoute;
-            this.store.dispatch<NetworkGetSpecificMessage>({
+            this.store.dispatch<NetworkMessagesGetSpecificMessage>({
               type: NETWORK_GET_SPECIFIC_MESSAGE,
               payload: { id: idFromRoute, filters, type: 'add', timestamp, direction },
             });
           } else if (filters.length) {
-            this.store.dispatch<NetworkToggleFilter>({
+            this.store.dispatch<NetworkMessagesToggleFilter>({
               type: NETWORK_TOGGLE_FILTER,
               payload: { filters, type: 'add', timestamp, direction },
             });
           } else {
-            this.store.dispatch<NetworkSetTimestampInterval>({
+            this.store.dispatch<NetworkMessagesSetTimestampInterval>({
               type: NETWORK_SET_TIMESTAMP_INTERVAL,
               payload: { timestamp, direction },
             });
@@ -189,7 +189,7 @@ export class NetworkMessagesTableComponent extends ManualDetection implements On
   onRowClick(row: NetworkMessage): void {
     if (row.id !== this.activeRow?.id) {
       this.router.navigate([Routes.NETWORK, Routes.MESSAGES, row.id], { queryParamsHandling: 'merge' });
-      this.store.dispatch<NetworkSetActiveRow>({ type: NETWORK_SET_ACTIVE_ROW, payload: row });
+      this.store.dispatch<NetworkMessagesSetActiveRow>({ type: NETWORK_SET_ACTIVE_ROW, payload: row });
     }
   }
 
@@ -204,7 +204,7 @@ export class NetworkMessagesTableComponent extends ManualDetection implements On
       .reduce((found: NetworkMessagesFilterCategory, curr: NetworkMessagesFilterCategory[]) => found ?? curr.find(c => c.name === category), null)
       .filters;
     const type = filters.every(f => this.activeFilters.includes(f)) ? 'remove' : 'add';
-    this.store.dispatch<NetworkToggleFilter>({ type: NETWORK_TOGGLE_FILTER, payload: { filters, type } });
+    this.store.dispatch<NetworkMessagesToggleFilter>({ type: NETWORK_TOGGLE_FILTER, payload: { filters, type } });
   }
 
   private static getFilter(message: NetworkMessage): NetworkMessagesFilter {
@@ -216,11 +216,11 @@ export class NetworkMessagesTableComponent extends ManualDetection implements On
   }
 
   private sendFilterAction(filters: NetworkMessagesFilter[], type: 'remove' | 'add'): void {
-    this.store.dispatch<NetworkToggleFilter>({ type: NETWORK_TOGGLE_FILTER, payload: { filters, type } });
+    this.store.dispatch<NetworkMessagesToggleFilter>({ type: NETWORK_TOGGLE_FILTER, payload: { filters, type } });
   }
 
   private pause(): void {
-    this.store.dispatch<NetworkPause>({ type: NETWORK_PAUSE });
+    this.store.dispatch<NetworkMessagesPause>({ type: NETWORK_PAUSE });
   }
 
   clearFilters(): void {

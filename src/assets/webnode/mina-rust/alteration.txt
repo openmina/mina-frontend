@@ -1,0 +1,60 @@
+// in wasm.js put this
+
+
+
+import { ReplaySubject } from 'rxjs';
+const onProgress$ = new ReplaySubject();
+
+async function init(input) {
+    if (typeof input === 'undefined') {
+        input = new URL('rust_bg.wasm', import.meta.url);
+    }
+    const imports = getImports();
+
+    if (typeof input === 'string' || (typeof Request === 'function' && input instanceof Request) || (typeof URL === 'function' && input instanceof URL)) {
+        input = new Promise((resolve, reject) => {
+            const request = new XMLHttpRequest();
+            request.responseType = 'arraybuffer';
+            request.open('get', input, true);
+            request.onload = function () {
+                if (request.status >= 200 && request.status < 300) {
+                    resolve(request.response);
+                } else {
+                    reject({
+                        status: this.status,
+                        statusText: request.statusText
+                    });
+                }
+            };
+            request.onerror = function () {
+                reject({
+                    status: this.status,
+                    statusText: request.statusText
+                });
+            };
+            request.onprogress = function (e) {
+                onProgress$.next({ total: e.total, loaded: e.loaded });
+            };
+            request.send();
+        });
+    }
+
+    initMemory(imports);
+
+    const { instance, module } = await load(await input, imports);
+
+    return finalizeInit(instance, module);
+}
+
+export { initSync, onProgress$ }
+export default init;
+
+
+
+
+// in wasm.d.ts put this:
+
+
+export type WasmLoadProgressEvent = Pick<ProgressEvent, 'total' | 'loaded'>
+import { Subject } from 'rxjs';
+export const onProgress$: Subject<WasmLoadProgressEvent>;

@@ -12,7 +12,7 @@
       <div fxLayout="row wrap" class="align-center">
         <button *ngFor="let filter of activeFilters"
                 (click)="toggleFilter(filter)"
-                class="active-filter f-12 border-rad-6 f-600 bg-selected-container selected-primary flex-row align-center">
+                class="active-filter border-rad-6 f-600 bg-selected-container selected-primary flex-row align-center">
           <span>{{ filter.display }}</span>
           <span class="mina-icon f-16">close</span>
         </button>
@@ -21,7 +21,7 @@
   </mat-expansion-panel-header>
 
   <ng-template matExpansionPanelContent>
-    <div class="filters-container flex-column border-bottom f-12">
+    <div class="filters-container flex-column border-bottom">
       <div fxFlex="36px" class="flex-row flex-between align-center pr-10">
         <div class="f-600 secondary align-center d-flex">Filters</div>
         <span class="mina-icon pointer tertiary primary-hover f-18" (click)="toggleFilerPanel()">close</span>
