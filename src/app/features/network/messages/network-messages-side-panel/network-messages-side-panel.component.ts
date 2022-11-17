@@ -13,7 +13,6 @@ import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { Router } from '@angular/router';
 import { Routes } from '@shared/enums/routes.enum';
 import { CONFIG } from '@shared/constants/config';
-import { isNumber } from '@ngrx/store/src/meta-reducers/utils';
 
 @UntilDestroy()
 @Component({

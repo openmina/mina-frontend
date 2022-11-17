@@ -27,10 +27,12 @@ export class NetworkBlocksGraphComponent extends ManualDetection implements OnIn
   async ngOnInit(): Promise<void> {
     await import('@shared/components/bar-graph/bar-graph.component').then(c => {
       this.component = this.minaBarGraphRef.createComponent<BarGraphComponent>(c.BarGraphComponent).instance;
-      this.component.columnStep = 0.2;
-      this.component.xTicksLength = 20;
+      this.component.xStep = 1;
+      this.component.xTicksLength = 15;
+      this.component.yTicksLength = 6;
       this.component.um = 's';
       this.component.yAxisLabel = 'Count';
+      this.component.decimals = 0;
       this.component.ngOnInit();
     });
     this.listenToNetworkBlocks();

@@ -7,6 +7,8 @@ import { NetworkBlocksTableComponent } from './network-blocks-table/network-bloc
 import { NetworkBlocksGraphComponent } from './network-blocks-graph/network-blocks-graph.component';
 import { EffectsModule } from '@ngrx/effects';
 import { NetworkBlocksEffects } from '@network/blocks/network-blocks.effects';
+import { NetworkBlocksSidePanelComponent } from './network-blocks-side-panel/network-blocks-side-panel.component';
+import { NetworkBlocksToolbarComponent } from './network-blocks-toolbar/network-blocks-toolbar.component';
 
 
 @NgModule({
@@ -14,6 +16,8 @@ import { NetworkBlocksEffects } from '@network/blocks/network-blocks.effects';
     NetworkBlocksComponent,
     NetworkBlocksTableComponent,
     NetworkBlocksGraphComponent,
+    NetworkBlocksSidePanelComponent,
+    NetworkBlocksToolbarComponent,
   ],
   imports: [
     SharedModule,

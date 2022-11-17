@@ -13,7 +13,10 @@ export class LoadingService {
   readonly progressLoadingSub$: BehaviorSubject<LoadingEvent> = new BehaviorSubject<LoadingEvent>({ percentage: 0 });
 
   setLoading(loading: boolean, url: string): void {
-    if (loading) {
+    if (document.hidden) {
+      this.loadingMap.clear();
+      this.loadingSub$.next(false);
+    } else if (loading) {
       this.loadingMap.set(url, loading);
       this.loadingSub$.next(true);
     } else if (!loading && this.loadingMap.has(url)) {

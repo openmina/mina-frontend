@@ -1,21 +1,20 @@
 @import 'variables';
 
-.rotated-label span {
-	transform: rotate(-90deg) translate(-50%, -50%);
-	transform-origin: 0% 0%;
-	position: absolute;
-	top: 50%;
-	left: 30%;
-}
+//
+//.rotated-label span {
+//	transform: rotate(-90deg) translate(-50%, -50%);
+//	transform-origin: 0% 0%;
+//	position: absolute;
+//	top: 50%;
+//	left: 30%;
+//}
 
 .y-grid-marks {
 	padding-right: 2px;
 
 	.y-tick-line {
 		div {
-			left: -32px;
-			top: -8px;
-			width: 27px;
+			top: -22px;
 		}
 	}
 }

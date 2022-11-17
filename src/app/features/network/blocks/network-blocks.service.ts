@@ -15,8 +15,8 @@ export class NetworkBlocksService {
 
   constructor(private http: HttpClient) { }
 
-  getBlocks(): Observable<NetworkBlock[]> {
-    return this.http.get<any[]>(this.API + '/block/latest').pipe(
+  getBlockMessages(height: number): Observable<NetworkBlock[]> {
+    return this.http.get<any[]>(this.API + '/block/' + height).pipe(
       map((blocks: any) => {
         return blocks.events.map((block: any) => {
           return {

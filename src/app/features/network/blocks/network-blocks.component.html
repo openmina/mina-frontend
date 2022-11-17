@@ -1,6 +1,16 @@
 <div class="flex-column h-100">
-  <mina-network-blocks-graph fxFlex="30"></mina-network-blocks-graph>
-  <div class="flex-row flex-grow overflow-hidden p-relative w-100">
-    <mina-network-blocks-table></mina-network-blocks-table>
+  <mina-network-blocks-toolbar></mina-network-blocks-toolbar>
+  <div #parent class="h-100 w-100 flex-row p-relative">
+    <mina-network-blocks-table [class.shrink]="isSidePanelOpen"></mina-network-blocks-table>
+    <mina-horizontal-resizable-container (endResizing)="toggleResizing()"
+                                         (startResizing)="toggleResizing()"
+                                         (widthChange)="onWidthChange($event)"
+                                         [class.show]="isSidePanelOpen"
+                                         [maxWidthElement]="parent"
+                                         [minWidth]="500"
+                                         class="no-transition"
+                                         localStorageKey="network-blocks-side-panel-width">
+      <mina-network-blocks-side-panel></mina-network-blocks-side-panel>
+    </mina-horizontal-resizable-container>
   </div>
 </div>

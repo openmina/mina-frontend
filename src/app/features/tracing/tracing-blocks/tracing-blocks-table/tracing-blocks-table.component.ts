@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
-import { filter, Observable, tap } from 'rxjs';
+import { filter, Observable } from 'rxjs';
 import { Routes } from '@shared/enums/routes.enum';
 import { selectTracingActiveTrace, selectTracingBlocksSorting, selectTracingTraces } from '@tracing/tracing-blocks/tracing-blocks.state';
 import { TRACING_BLOCKS_SELECT_ROW, TRACING_BLOCKS_SORT, TracingBlocksSelectRow, TracingBlocksSort } from '@tracing/tracing-blocks/tracing-blocks.actions';
@@ -46,12 +46,11 @@ export class TracingBlocksTableComponent extends ManualDetection implements OnIn
 
   traces: TracingBlockTrace[] = [];
   activeTrace: TracingBlockTrace;
-  currentSort$: Observable<TableSort>;
+  currentSort: TableSort;
 
   @ViewChild(CdkVirtualScrollViewport) private scrollViewport: CdkVirtualScrollViewport;
   private hashFromRoute: string;
   private preselect: boolean;
-  private currentSort: TableSort;
 
   constructor(private store: Store<MinaState>,
               private router: Router) { super(); }
@@ -138,7 +137,15 @@ export class TracingBlocksTableComponent extends ManualDetection implements OnIn
   }
 
   private listenToSortingChanges(): void {
-    this.currentSort$ = this.store.select(selectTracingBlocksSorting)
-      .pipe(tap(sort => this.currentSort = sort));
+    this.store.select(selectTracingBlocksSorting)
+      .pipe(untilDestroyed(this))
+      .subscribe(sort => {
+        this.currentSort = sort;
+        this.detect();
+      });
+  }
+
+  seeBlockInNetwork(height: number) : void{
+
   }
 }

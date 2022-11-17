@@ -38,12 +38,12 @@ class ChartColumn {
   templateUrl: './bar-graph.component.html',
   styleUrls: ['./bar-graph.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'h-100 p-12' },
+  host: { class: 'h-100 mt-10 pt-12 flex-column' },
 })
 export class BarGraphComponent extends ManualDetection implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
   @Input() values: number[] = [];
-  @Input() columnStep: number = 1;
+  @Input() xStep: number;
   @Input() yAxisValues: number[] = [];
   @Input() xTicksLength: number = 20;
   @Input() yTicksLength: number = 10;
@@ -62,6 +62,7 @@ export class BarGraphComponent extends ManualDetection implements OnInit, AfterV
   private overlayRef: OverlayRef;
   private initialXTicksLength: number;
   private xTicksValues$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  private internalXStep: number;
 
   constructor(private breakpointObserver: BreakpointObserver,
               private viewContainerRef: ViewContainerRef,
@@ -88,24 +89,28 @@ export class BarGraphComponent extends ManualDetection implements OnInit, AfterV
   }
 
   private initChartColumns(): ChartColumn[] {
-    const seriesObj: { [p: number]: { value: number, range: string } } = this.bars.reduce((acc, curr: number, i: number) => {
-      return ({
-        ...acc,
-        [curr]: {
-          value: 0,
-          range: i === this.bars.length - 1
-            ? `> ${curr.toFixed(this.decimals)}${this.um}`
-            : `${curr.toFixed(this.decimals)}${this.um} - ${(curr + this.columnStep).toFixed(this.decimals)}${this.um}`,
-        },
-      });
-    }, {});
+    const map = new Map<number, { value: number, range: string }>();
 
-    return Object.keys(seriesObj).map((key: string) => ({
-      name: Number(key).toFixed(this.decimals) + this.um,
-      value: seriesObj[key].value,
-      range: seriesObj[key].range,
-      step: Number(Number(key).toFixed(this.decimals)),
-    } as ChartColumn));
+    this.bars.forEach((curr: number, i: number) => {
+      const value = {
+        value: 0,
+        range: i === this.bars.length - 1
+          ? `> ${curr.toFixed(this.decimals)}${this.um}`
+          : `${curr.toFixed(this.decimals)}${this.um} - ${(curr + this.internalXStep).toFixed(this.decimals)}${this.um}`,
+      };
+      map.set(curr, value);
+    });
+
+    const chartColumns = [];
+    for (const [key, value] of map.entries()) {
+      chartColumns.push({
+        name: Number(key).toFixed(this.decimals) + this.um,
+        value: value.value,
+        range: value.range,
+        step: Number(Number(key).toFixed(this.decimals)),
+      } as ChartColumn);
+    }
+    return chartColumns;
   }
 
   public update(): void {
@@ -123,13 +128,23 @@ export class BarGraphComponent extends ManualDetection implements OnInit, AfterV
   }
 
   private get getBars(): number[] {
-    const res = [0];
-    let i = this.columnStep;
-    while (i <= this.xTicksLength * this.columnStep) {
-      res.push(i);
-      i = i + this.columnStep;
-    }
-    return res;
+      this.internalXStep = this.xStep;
+      const res = [0];
+      let i = this.xStep;
+      while (i <= this.xTicksLength * this.xStep) {
+        res.push(i);
+        i = i + this.xStep;
+      }
+      return res;
+    //get steps and ticks automatically
+    // const [xStep, yMaxTick] = niceYScale(0, 30, this.xTicksLength);
+    // this.internalXStep = xStep;
+    // const xTicks = [];
+    //
+    // for (let i = 0; i <= yMaxTick; i += xStep) {
+    //   xTicks.push(i);
+    // }
+    // return xTicks;
   }
 
   private findClosestSmallerStep(value: number): ChartColumn {
@@ -156,20 +171,6 @@ export class BarGraphComponent extends ManualDetection implements OnInit, AfterV
         }
         this.xTicksValues$.next(this.xTicks);
       });
-  }
-
-  private get yTicks(): number[] {
-    const numbers = this.chartColumns.map(c => c.value);
-    const max = Math.max(...numbers);
-    const min = Math.min(...numbers);
-    const [tickSpacing, yMaxTick] = niceYScale(min, max, this.yTicksLength);
-    const yTicks = [];
-
-    for (let i = Math.max(yMaxTick, this.yTicksLength); i >= 0; i -= Math.max(1, tickSpacing)) {
-      yTicks.push(i);
-    }
-
-    return yTicks;
   }
 
   openDetailsOverlay(column: ChartColumn, event: MouseEvent): void {
@@ -205,6 +206,20 @@ export class BarGraphComponent extends ManualDetection implements OnInit, AfterV
     if (this.overlayRef?.hasAttached()) {
       this.overlayRef.detach();
     }
+  }
+
+  private get yTicks(): number[] {
+    const numbers = this.chartColumns.map(c => c.value);
+    const max = Math.max(...numbers);
+    const min = Math.min(...numbers);
+    const [ySpacing, yMaxTick] = niceYScale(min, max, this.yTicksLength);
+    const yTicks = [];
+
+    for (let i = Math.max(yMaxTick, this.yTicksLength); i >= 0; i -= Math.max(1, ySpacing)) {
+      yTicks.push(i);
+    }
+
+    return yTicks;
   }
 
   ngOnDestroy(): void {

@@ -1,24 +1,32 @@
 <div class="mina-table flex-grow overflow-x-auto">
-  <div class="row head sorting overflow-y-scroll overflow-x-hidden" *ngIf="currentSort$ | async as sort">
+  <div class="row head sorting overflow-y-scroll overflow-x-hidden" *ngIf="currentSort">
     <span *ngFor="let tableHead of tableHeads"
           (click)="sortTable(tableHead.sort ?? tableHead.name)"
-          [class.active]="sort.sortBy === (tableHead.sort ?? tableHead.name)"
+          [class.active]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
           class="pointer">
       {{ tableHead.name }}
-      <span [class.flip]="sort.sortDirection === 'descending'"
-            [class.show]="sort.sortBy === (tableHead.sort ?? tableHead.name)"
-            class="mina-icon f-18 icon-200">arrow_upward</span>
+      <span [class.flip]="currentSort.sortDirection === 'descending'"
+            [class.show]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
+            class="mina-icon f-18 icon-200">arrow_upward
+      </span>
     </span>
   </div>
-  <cdk-virtual-scroll-viewport [itemSize]="itemSize"
-                               class="border-bottom border-top h-100 overflow-y-auto"
-                               fxFlex="calc(100% - 36px)">
-    <div (click)="onRowClick(trace)"
-         *cdkVirtualFor="let trace of traces; let i=index"
+  <cdk-virtual-scroll-viewport class="border-bottom border-top h-100 overflow-y-auto"
+                               fxFlex="calc(100% - 36px)"
+                               [itemSize]="itemSize">
+    <div *cdkVirtualFor="let trace of traces; let i=index"
+         (click)="onRowClick(trace)"
          [class.active]="activeTrace?.id === trace.id"
          [class.row-even]="i % 2 === 0"
          class="row">
-      <span>{{ trace.height }}</span>
+      <span>
+        <a class="underline primary"
+           [tooltip]="'See block in network'"
+           [showDelay]="500"
+           [href]="'https://openmina-network.web.app/network/blocks/' + trace.height"
+           target="_blank"
+           (click)="seeBlockInNetwork(trace.height)">{{ trace.height }}</a>
+      </span>
       <span class="tertiary truncate">{{ trace.hash | truncateMid: 15 }}</span>
       <span [innerHTML]="trace.totalTime | secDuration: secDurationConfig"></span>
       <span>{{ trace.source }}</span>

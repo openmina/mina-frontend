@@ -18,6 +18,10 @@ button {
 	&.btn-selected {
 		background-color: $selected-container;
 		color: $selected-primary;
+
+		&:hover {
+			filter: brightness(120%);
+		}
 	}
 
 	&.btn-primary {

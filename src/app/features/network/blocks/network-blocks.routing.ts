@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NetworkBlocksComponent } from '@network/blocks/network-blocks.component';
+import { NETWORK_TITLE } from '@app/app.routing';
 
 const routes: Routes = [
   {
@@ -8,8 +9,9 @@ const routes: Routes = [
     component: NetworkBlocksComponent,
     children: [
       {
-        path: ':hash',
+        path: ':height',
         component: NetworkBlocksComponent,
+        title: NETWORK_TITLE,
       },
     ],
   },

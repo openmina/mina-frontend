@@ -199,14 +199,6 @@ export class NetworkMessagesTableComponent extends ManualDetection implements On
     this.sendFilterAction([filter], type);
   }
 
-  filterByCategory(category: string): void {
-    const filters = networkAvailableFilters
-      .reduce((found: NetworkMessagesFilterCategory, curr: NetworkMessagesFilterCategory[]) => found ?? curr.find(c => c.name === category), null)
-      .filters;
-    const type = filters.every(f => this.activeFilters.includes(f)) ? 'remove' : 'add';
-    this.store.dispatch<NetworkMessagesToggleFilter>({ type: NETWORK_TOGGLE_FILTER, payload: { filters, type } });
-  }
-
   private static getFilter(message: NetworkMessage): NetworkMessagesFilter {
     return {
       type: NetworkMessagesFilterTypes.ADDRESS,

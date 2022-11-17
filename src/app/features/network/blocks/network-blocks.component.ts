@@ -1,11 +1,26 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { NETWORK_BLOCKS_GET_BLOCKS, NetworkBlocksGetBlocks } from '@network/blocks/network-blocks.actions';
+import {
+  NETWORK_BLOCKS_CLOSE,
+  NETWORK_BLOCKS_INIT,
+  NETWORK_BLOCKS_SET_ACTIVE_BLOCK,
+  NetworkBlocksClose,
+  NetworkBlocksInit,
+  NetworkBlocksSetActiveBlock,
+} from '@network/blocks/network-blocks.actions';
 import { selectAppNodeStatus } from '@app/app.state';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, map } from 'rxjs';
+import { filter, map, take } from 'rxjs';
 import { NodeStatus } from '@shared/types/app/node-status.type';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
+import { NetworkBlocksTableComponent } from '@network/blocks/network-blocks-table/network-blocks-table.component';
+import { selectNetworkBlocksSidePanelOpen } from '@network/blocks/network-blocks.state';
+import { ManualDetection } from '@shared/base-classes/manual-detection.class';
+import { getMergedRoute } from '@shared/router/router-state.selectors';
+import { MergedRoute } from '@shared/router/merged-route';
+import { Router } from '@angular/router';
+import { Routes } from '@shared/enums/routes.enum';
 
 @UntilDestroy()
 @Component({
@@ -13,29 +28,88 @@ import { NodeStatus } from '@shared/types/app/node-status.type';
   templateUrl: './network-blocks.component.html',
   styleUrls: ['./network-blocks.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'h-100' },
+  host: { class: 'h-100 w-100' },
 })
-export class NetworkBlocksComponent implements OnInit {
+export class NetworkBlocksComponent extends ManualDetection implements OnInit, AfterViewInit, OnDestroy {
 
-  private blockLevel: number;
+  isSidePanelOpen: boolean;
 
-  constructor(private store: Store<MinaState>) { }
+  private blockHeight: number;
+  private removedClass: boolean;
+
+  @ViewChild(NetworkBlocksTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
+  @ViewChild(HorizontalResizableContainerComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
+
+  constructor(private store: Store<MinaState>,
+              private router: Router) { super(); }
 
   ngOnInit(): void {
-    // this.store.dispatch<NetworkBlocksGetBlocks>({ type: NETWORK_BLOCKS_GET_BLOCKS });
-    this.listenToActiveBlockChange();
+    this.listenToRouteChange();
+    this.listenToActiveBlockChangeFromNode();
   }
 
-  private listenToActiveBlockChange(): void {
+  ngAfterViewInit(): void {
+    this.listenToSidePanelOpeningChange();
+  }
+
+  toggleResizing(): void {
+    this.tableRef.nativeElement.classList.toggle('no-transition');
+  }
+
+  onWidthChange(width: number): void {
+    this.horizontalResizableContainer.nativeElement.style.right = (width * -1) + 'px';
+    this.tableRef.nativeElement.style.width = `calc(100% - ${width}px)`;
+  }
+
+  private listenToRouteChange(): void {
+    this.store.select(getMergedRoute)
+      .pipe(
+        untilDestroyed(this),
+        take(1),
+        filter(route => route.params['height']),
+      )
+      .subscribe((route: MergedRoute) => {
+        this.blockHeight = Number(route.params['height']);
+        this.store.dispatch<NetworkBlocksSetActiveBlock>({
+          type: NETWORK_BLOCKS_SET_ACTIVE_BLOCK,
+          payload: { height: this.blockHeight },
+        });
+        this.store.dispatch<NetworkBlocksInit>({ type: NETWORK_BLOCKS_INIT });
+      });
+  }
+
+  private listenToActiveBlockChangeFromNode(): void {
     this.store.select(selectAppNodeStatus)
       .pipe(
         untilDestroyed(this),
         map((node: NodeStatus) => node.blockLevel),
-        filter(blockLevel => this.blockLevel !== blockLevel),
+        filter(Boolean),
+        filter(blockLevel => this.blockHeight !== blockLevel),
       )
       .subscribe((blockLevel: number) => {
-        this.blockLevel = blockLevel;
-        this.store.dispatch<NetworkBlocksGetBlocks>({ type: NETWORK_BLOCKS_GET_BLOCKS });
+        if (!this.blockHeight) {
+          this.router.navigate([Routes.NETWORK, Routes.BLOCKS, blockLevel]);
+          this.store.dispatch<NetworkBlocksSetActiveBlock>({ type: NETWORK_BLOCKS_SET_ACTIVE_BLOCK, payload: { height: blockLevel } });
+          this.store.dispatch<NetworkBlocksInit>({ type: NETWORK_BLOCKS_INIT });
+        }
+        this.blockHeight = blockLevel;
       });
+  }
+
+  private listenToSidePanelOpeningChange(): void {
+    this.store.select(selectNetworkBlocksSidePanelOpen)
+      .pipe(untilDestroyed(this))
+      .subscribe((open: boolean) => {
+        this.isSidePanelOpen = open;
+        if (!this.removedClass) {
+          this.removedClass = true;
+          this.horizontalResizableContainer.nativeElement.classList.remove('no-transition');
+        }
+        this.detect();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.store.dispatch<NetworkBlocksClose>({ type: NETWORK_BLOCKS_CLOSE });
   }
 }
