@@ -21,7 +21,6 @@ import { selectNetworkBlocksSidePanelOpen } from '@network/blocks/network-blocks
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
-import { Router } from '@angular/router';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 
 @UntilDestroy()
@@ -42,8 +41,7 @@ export class NetworkBlocksComponent extends ManualDetection implements OnInit, A
   @ViewChild(NetworkBlocksTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
   @ViewChild(HorizontalResizableContainerComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
 
-  constructor(private store: Store<MinaState>,
-              private router: Router) { super(); }
+  constructor(private store: Store<MinaState>) { super(); }
 
   ngOnInit(): void {
     this.listenToRouteChange();

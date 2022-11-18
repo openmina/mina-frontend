@@ -60,8 +60,7 @@ export class NetworkBlocksEffects extends MinaBaseEffect<NetworkBlocksActions> {
         return block$.pipe(
           tap(height => this.router.navigate([Routes.NETWORK, Routes.BLOCKS, height])),
           switchMap(height => {
-            const actions = [];
-            actions.push({ type: NETWORK_BLOCKS_SET_EARLIEST_BLOCK, payload: { height } });
+            const actions: NetworkBlocksActions[] = [{ type: NETWORK_BLOCKS_SET_EARLIEST_BLOCK, payload: { height } }];
             if (!state.network.blocks.activeBlock) {
               actions.push({ type: NETWORK_BLOCKS_SET_ACTIVE_BLOCK, payload: { height } });
               actions.push({ type: NETWORK_BLOCKS_INIT });

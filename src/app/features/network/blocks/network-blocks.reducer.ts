@@ -29,7 +29,6 @@ const initialState: NetworkBlocksState = {
 
 export function reducer(state: NetworkBlocksState = initialState, action: NetworkBlocksActions): NetworkBlocksState {
 
-
   switch (action.type) {
 
     case NETWORK_BLOCKS_GET_BLOCKS_SUCCESS: {

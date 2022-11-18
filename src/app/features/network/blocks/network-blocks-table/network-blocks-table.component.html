@@ -21,7 +21,6 @@
                                fxFlex="calc(100% - 36px)"
                                [itemSize]="itemSize">
     <div *cdkVirtualFor="let block of blocks; let i=index"
-         (click)="onRowClick(block)"
          [class.row-even]="i % 2 === 0"
          class="row">
       <span>
@@ -38,15 +37,17 @@
             [showDelay]="500">{{ block.height }}</span>
       <span class="secondary">
         <span (click)="seeMessagesForAddress(block.sender)"
+              [class.underline]="block.sender !== LOCAL_NODE"
               [tooltip]="'See messages for this address'"
-              [showDelay]="1000"
-              class="underline">{{ block.sender }}</span>
+              [tooltipDisabled]="block.sender === LOCAL_NODE"
+              [showDelay]="1000">{{ block.sender }}</span>
       </span>
       <span class="secondary">
         <span (click)="seeMessagesForAddress(block.receiver)"
+              [class.underline]="block.receiver !== LOCAL_NODE"
               [tooltip]="'See messages for this address'"
-              [showDelay]="1000"
-              class="underline">{{ block.receiver }}</span>
+              [tooltipDisabled]="block.receiver === LOCAL_NODE"
+              [showDelay]="1000">{{ block.receiver }}</span>
       </span>
       <span [innerHTML]="block.receivedLatency | secDuration: secConfig"></span>
       <span [innerHTML]="block.sentLatency | secDuration: secConfig"></span>

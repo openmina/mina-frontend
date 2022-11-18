@@ -36,7 +36,8 @@ export class NetworkBlocksSidePanelComponent extends ManualDetection implements 
     this.store.select(selectNetworkBlocks)
       .pipe(untilDestroyed(this))
       .subscribe((blocks: NetworkBlock[]) => {
-        this.firstSentTime = Math.min(...blocks.map(b => b.sentLatency).filter(Boolean));
+        const values = blocks.map(b => b.sentLatency).filter(Boolean);
+        this.firstSentTime = values.length ? Math.min(...values) : undefined;
         this.detect();
       });
   }

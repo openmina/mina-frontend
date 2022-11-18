@@ -48,7 +48,6 @@
     "firebase": "^9.12.1",
     "graphql": "^16.5.0",
     "graphql-ws": "^5.10.1",
-    "moment": "^2.29.4",
     "ngx-json-viewer": "^3.1.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",

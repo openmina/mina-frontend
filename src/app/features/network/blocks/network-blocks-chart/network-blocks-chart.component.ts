@@ -24,7 +24,7 @@ export class NetworkBlocksChartComponent implements OnInit {
               private renderer: Renderer2) { }
 
   ngOnInit(): void {
-    this.networkBlocksService.getBlockMessages().subscribe(blocks => {
+    this.networkBlocksService.getBlockMessages(600).subscribe(blocks => {
       this.blocks = blocks;
       this.initChart();
 
