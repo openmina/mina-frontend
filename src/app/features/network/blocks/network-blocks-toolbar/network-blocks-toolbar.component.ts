@@ -2,7 +2,12 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { selectNetworkBlocksActiveBlock, selectNetworkBlocksActiveFilters, selectNetworkBlocksAllFilters } from '@network/blocks/network-blocks.state';
+import {
+  selectNetworkBlocksActiveBlock,
+  selectNetworkBlocksActiveFilters,
+  selectNetworkBlocksAllFilters,
+  selectNetworkBlocksEarliestBlock,
+} from '@network/blocks/network-blocks.state';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import {
   NETWORK_BLOCKS_SET_ACTIVE_BLOCK,
@@ -10,9 +15,7 @@ import {
   NetworkBlocksSetActiveBlock,
   NetworkBlocksToggleFilter,
 } from '@network/blocks/network-blocks.actions';
-import { selectAppNodeStatus } from '@app/app.state';
-import { filter, map } from 'rxjs';
-import { NodeStatus } from '@shared/types/app/node-status.type';
+import { filter } from 'rxjs';
 import { Routes } from '@shared/enums/routes.enum';
 import { Router } from '@angular/router';
 
@@ -66,15 +69,14 @@ export class NetworkBlocksToolbarComponent extends ManualDetection implements On
         this.detect();
       });
 
-    this.store.select(selectAppNodeStatus)
+    this.store.select(selectNetworkBlocksEarliestBlock)
       .pipe(
         untilDestroyed(this),
-        map((node: NodeStatus) => node.blockLevel),
         filter(Boolean),
-        filter(newBlock => this.earliestBlock !== newBlock),
+        filter(earliestBlock => this.earliestBlock !== earliestBlock),
       )
-      .subscribe((newBlock: number) => {
-        this.earliestBlock = newBlock;
+      .subscribe((earliestBlock: number) => {
+        this.earliestBlock = earliestBlock;
         this.detect();
       });
   }

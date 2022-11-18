@@ -50,6 +50,7 @@ export class BarGraphComponent extends ManualDetection implements OnInit, AfterV
   @Input() um: string;
   @Input() yAxisLabel: string;
   @Input() decimals: number = 1;
+  @Input() responsive: boolean = true;
 
   chartColumns: ChartColumn[];
   ticks: Observable<string[]>;
@@ -128,14 +129,14 @@ export class BarGraphComponent extends ManualDetection implements OnInit, AfterV
   }
 
   private get getBars(): number[] {
-      this.internalXStep = this.xStep;
-      const res = [0];
-      let i = this.xStep;
-      while (i <= this.xTicksLength * this.xStep) {
-        res.push(i);
-        i = i + this.xStep;
-      }
-      return res;
+    this.internalXStep = this.xStep;
+    const res = [0];
+    let i = this.xStep;
+    while (i <= this.xTicksLength * this.xStep) {
+      res.push(i);
+      i = i + this.xStep;
+    }
+    return res;
     //get steps and ticks automatically
     // const [xStep, yMaxTick] = niceYScale(0, 30, this.xTicksLength);
     // this.internalXStep = xStep;
@@ -160,6 +161,9 @@ export class BarGraphComponent extends ManualDetection implements OnInit, AfterV
   }
 
   private listenToResizeEvent(): void {
+    if (!this.responsive) {
+      return;
+    }
     this.breakpointObserver
       .observe(MIN_WIDTH_700)
       .pipe(untilDestroyed(this))

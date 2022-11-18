@@ -3,15 +3,17 @@ import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import {
   NETWORK_BLOCKS_CLOSE,
+  NETWORK_BLOCKS_GET_EARLIEST_BLOCK,
   NETWORK_BLOCKS_INIT,
   NETWORK_BLOCKS_SET_ACTIVE_BLOCK,
   NetworkBlocksClose,
+  NetworkBlocksGetEarliestBlock,
   NetworkBlocksInit,
   NetworkBlocksSetActiveBlock,
 } from '@network/blocks/network-blocks.actions';
 import { selectAppNodeStatus } from '@app/app.state';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, map, take } from 'rxjs';
+import { filter, take } from 'rxjs';
 import { NodeStatus } from '@shared/types/app/node-status.type';
 import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 import { NetworkBlocksTableComponent } from '@network/blocks/network-blocks-table/network-blocks-table.component';
@@ -20,7 +22,7 @@ import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
 import { Router } from '@angular/router';
-import { Routes } from '@shared/enums/routes.enum';
+import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 
 @UntilDestroy()
 @Component({
@@ -82,17 +84,11 @@ export class NetworkBlocksComponent extends ManualDetection implements OnInit, A
     this.store.select(selectAppNodeStatus)
       .pipe(
         untilDestroyed(this),
-        map((node: NodeStatus) => node.blockLevel),
         filter(Boolean),
-        filter(blockLevel => this.blockHeight !== blockLevel),
+        filter((node: NodeStatus) => node.status !== AppNodeStatusTypes.CONNECTING),
       )
-      .subscribe((blockLevel: number) => {
-        if (!this.blockHeight) {
-          this.router.navigate([Routes.NETWORK, Routes.BLOCKS, blockLevel]);
-          this.store.dispatch<NetworkBlocksSetActiveBlock>({ type: NETWORK_BLOCKS_SET_ACTIVE_BLOCK, payload: { height: blockLevel } });
-          this.store.dispatch<NetworkBlocksInit>({ type: NETWORK_BLOCKS_INIT });
-        }
-        this.blockHeight = blockLevel;
+      .subscribe((node: NodeStatus) => {
+        this.store.dispatch<NetworkBlocksGetEarliestBlock>({ type: NETWORK_BLOCKS_GET_EARLIEST_BLOCK, payload: node });
       });
   }
 

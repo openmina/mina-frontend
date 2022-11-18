@@ -2,7 +2,7 @@ import { NetworkBlocksState } from '@network/blocks/network-blocks.state';
 import {
   NETWORK_BLOCKS_CLOSE,
   NETWORK_BLOCKS_GET_BLOCKS_SUCCESS,
-  NETWORK_BLOCKS_SET_ACTIVE_BLOCK,
+  NETWORK_BLOCKS_SET_ACTIVE_BLOCK, NETWORK_BLOCKS_SET_EARLIEST_BLOCK,
   NETWORK_BLOCKS_SORT,
   NETWORK_BLOCKS_TOGGLE_FILTER,
   NETWORK_BLOCKS_TOGGLE_SIDE_PANEL,
@@ -17,6 +17,7 @@ const initialState: NetworkBlocksState = {
   filteredBlocks: [],
   stream: true,
   activeBlock: undefined,
+  earliestBlock: undefined,
   sort: {
     sortBy: 'messageId',
     sortDirection: SortDirection.ASC,
@@ -27,6 +28,8 @@ const initialState: NetworkBlocksState = {
 };
 
 export function reducer(state: NetworkBlocksState = initialState, action: NetworkBlocksActions): NetworkBlocksState {
+
+
   switch (action.type) {
 
     case NETWORK_BLOCKS_GET_BLOCKS_SUCCESS: {
@@ -34,7 +37,7 @@ export function reducer(state: NetworkBlocksState = initialState, action: Networ
       return {
         ...state,
         blocks,
-        filteredBlocks: blocks,
+        filteredBlocks: getFilteredBlocks(blocks, state.activeFilters),
         allFilters: Array.from(new Set(action.payload.map(b => b.hash))),
       };
     }
@@ -61,7 +64,7 @@ export function reducer(state: NetworkBlocksState = initialState, action: Networ
       return {
         ...state,
         activeFilters,
-        filteredBlocks: activeFilters.length > 0 ? state.blocks.filter(b => activeFilters.includes(b.hash)) : state.blocks,
+        filteredBlocks: getFilteredBlocks(state.blocks, activeFilters),
       };
     }
 
@@ -73,12 +76,23 @@ export function reducer(state: NetworkBlocksState = initialState, action: Networ
       };
     }
 
+    case NETWORK_BLOCKS_SET_EARLIEST_BLOCK: {
+      return {
+        ...state,
+        earliestBlock: action.payload.height,
+      };
+    }
+
     case NETWORK_BLOCKS_CLOSE:
       return initialState;
 
     default:
       return state;
   }
+}
+
+function getFilteredBlocks(allBlocks: NetworkBlock[], activeFilters: string[]): NetworkBlock[] {
+  return activeFilters.length > 0 ? allBlocks.filter(b => activeFilters.includes(b.hash)) : allBlocks;
 }
 
 function sortBlocks(blocks: NetworkBlock[], tableSort: TableSort): NetworkBlock[] {

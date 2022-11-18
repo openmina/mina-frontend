@@ -1,6 +1,7 @@
 import { FeatureAction } from '@shared/types/store/feature-action.type';
 import { NetworkBlock } from '@shared/types/network/blocks/network-block.type';
 import { TableSort } from '@shared/types/shared/table-sort.type';
+import { NodeStatus } from '@shared/types/app/node-status.type';
 
 enum NetworkBlocksActionTypes {
   NETWORK_BLOCKS_INIT = 'NETWORK_BLOCKS_INIT',
@@ -11,6 +12,8 @@ enum NetworkBlocksActionTypes {
   NETWORK_BLOCKS_TOGGLE_SIDE_PANEL = 'NETWORK_BLOCKS_TOGGLE_SIDE_PANEL',
   NETWORK_BLOCKS_TOGGLE_FILTER = 'NETWORK_BLOCKS_TOGGLE_FILTER',
   NETWORK_BLOCKS_SET_ACTIVE_BLOCK = 'NETWORK_BLOCKS_SET_ACTIVE_BLOCK',
+  NETWORK_BLOCKS_GET_EARLIEST_BLOCK = 'NETWORK_BLOCKS_GET_EARLIEST_BLOCK',
+  NETWORK_BLOCKS_SET_EARLIEST_BLOCK = 'NETWORK_BLOCKS_SET_EARLIEST_BLOCK',
 }
 
 export const NETWORK_BLOCKS_INIT = NetworkBlocksActionTypes.NETWORK_BLOCKS_INIT;
@@ -21,6 +24,8 @@ export const NETWORK_BLOCKS_SORT = NetworkBlocksActionTypes.NETWORK_BLOCKS_SORT;
 export const NETWORK_BLOCKS_TOGGLE_SIDE_PANEL = NetworkBlocksActionTypes.NETWORK_BLOCKS_TOGGLE_SIDE_PANEL;
 export const NETWORK_BLOCKS_TOGGLE_FILTER = NetworkBlocksActionTypes.NETWORK_BLOCKS_TOGGLE_FILTER;
 export const NETWORK_BLOCKS_SET_ACTIVE_BLOCK = NetworkBlocksActionTypes.NETWORK_BLOCKS_SET_ACTIVE_BLOCK;
+export const NETWORK_BLOCKS_GET_EARLIEST_BLOCK = NetworkBlocksActionTypes.NETWORK_BLOCKS_GET_EARLIEST_BLOCK;
+export const NETWORK_BLOCKS_SET_EARLIEST_BLOCK = NetworkBlocksActionTypes.NETWORK_BLOCKS_SET_EARLIEST_BLOCK;
 
 export interface NetworkBlocksAction extends FeatureAction<NetworkBlocksActionTypes> {
   readonly type: NetworkBlocksActionTypes;
@@ -68,6 +73,18 @@ export class NetworkBlocksSetActiveBlock implements NetworkBlocksAction {
   constructor(public payload: { height: number, fetchNew?: boolean }) { }
 }
 
+export class NetworkBlocksGetEarliestBlock implements NetworkBlocksAction {
+  readonly type = NETWORK_BLOCKS_GET_EARLIEST_BLOCK;
+
+  constructor(public payload: NodeStatus) { }
+}
+
+export class NetworkBlocksSetEarliestBlock implements NetworkBlocksAction {
+  readonly type = NETWORK_BLOCKS_SET_EARLIEST_BLOCK;
+
+  constructor(public payload: { height: number }) { }
+}
+
 
 export type NetworkBlocksActions =
   | NetworkBlocksInit
@@ -78,4 +95,6 @@ export type NetworkBlocksActions =
   | NetworkBlocksToggleSidePanel
   | NetworkBlocksToggleFilter
   | NetworkBlocksSetActiveBlock
+  | NetworkBlocksGetEarliestBlock
+  | NetworkBlocksSetEarliestBlock
   ;

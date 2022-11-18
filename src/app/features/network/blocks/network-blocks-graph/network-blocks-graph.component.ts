@@ -33,6 +33,7 @@ export class NetworkBlocksGraphComponent extends ManualDetection implements OnIn
       this.component.um = 's';
       this.component.yAxisLabel = 'Count';
       this.component.decimals = 0;
+      this.component.responsive = false;
       this.component.ngOnInit();
     });
     this.listenToNetworkBlocks();

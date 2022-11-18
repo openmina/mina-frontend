@@ -13,6 +13,7 @@ export interface NetworkBlocksState {
   allFilters: string[];
   activeFilters: string[];
   activeBlock: number;
+  earliestBlock: number;
 }
 
 const select = <T>(selector: (state: NetworkBlocksState) => T): MemoizedSelector<MinaState, T> => createSelector(
@@ -22,6 +23,7 @@ const select = <T>(selector: (state: NetworkBlocksState) => T): MemoizedSelector
 
 export const selectNetworkBlocks = select((network: NetworkBlocksState): NetworkBlock[] => network.filteredBlocks);
 export const selectNetworkBlocksActiveBlock = select((network: NetworkBlocksState): number => network.activeBlock);
+export const selectNetworkBlocksEarliestBlock = select((network: NetworkBlocksState): number => network.earliestBlock);
 export const selectNetworkBlocksSorting = select((network: NetworkBlocksState): TableSort => network.sort);
 export const selectNetworkBlocksSidePanelOpen = select((network: NetworkBlocksState): boolean => network.openSidePanel);
 export const selectNetworkBlocksAllFilters = select((network: NetworkBlocksState): string[] => network.allFilters);

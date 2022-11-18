@@ -16,24 +16,30 @@ export class NetworkBlocksService {
   constructor(private http: HttpClient) { }
 
   getBlockMessages(height: number): Observable<NetworkBlock[]> {
-    return this.http.get<any[]>(this.API + '/block/' + height).pipe(
-      map((blocks: any) => {
-        return blocks.events.map((block: any) => {
-          return {
-            messageKind: block.message_kind,
-            producerId: block.producer_id,
-            hash: block.hash,
-            date: toReadableDate((block.time.secs_since_epoch * ONE_THOUSAND) + block.time.nanos_since_epoch / ONE_MILLION),
-            sender: block.sender_addr,
-            receiver: block.receiver_addr,
-            height: block.block_height,
-            globalSlot: block.global_slot,
-            messageId: block.message_id,
-            incoming: block.incoming ? 'Incoming' : 'Outgoing',
-            [block.incoming ? 'receivedLatency' : 'sentLatency']: !block.latency ? undefined : block.latency.secs + block.latency.nanos / ONE_BILLION,
-          } as NetworkBlock;
-        });
-      }),
+    return this.http.get<any>(this.API + '/block/' + height).pipe(
+      map((blocks: any) => this.mapBlocks(blocks)),
     );
+  }
+
+  getEarliestBlockHeight(): Observable<number> {
+    return this.http.get<any>(this.API + '/block/latest').pipe(
+      map((blocks: any) => blocks.height),
+    );
+  }
+
+  private mapBlocks(blocks: any): NetworkBlock[] {
+    return !blocks ? [] : blocks.events.map((block: any) => ({
+      messageKind: block.message_kind,
+      producerId: block.producer_id,
+      hash: block.hash,
+      date: toReadableDate((block.time.secs_since_epoch * ONE_THOUSAND) + block.time.nanos_since_epoch / ONE_MILLION),
+      sender: block.sender_addr,
+      receiver: block.receiver_addr,
+      height: block.block_height,
+      globalSlot: block.global_slot,
+      messageId: block.message_id,
+      incoming: block.incoming ? 'Incoming' : 'Outgoing',
+      [block.incoming ? 'receivedLatency' : 'sentLatency']: !block.latency ? undefined : block.latency.secs + block.latency.nanos / ONE_BILLION,
+    } as NetworkBlock));
   }
 }

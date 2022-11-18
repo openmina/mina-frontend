@@ -17,13 +17,13 @@ export class BlockService {
 
   getNodeStatus(): Observable<NodeStatus> {
     return this.graphQL.query<any>('blockStatus', `{
-    daemonStatus {
-      blockchainLength
-      syncStatus
-      consensusTimeNow {
-        startTime
-      }
-    }}`)
+      daemonStatus {
+        blockchainLength
+        syncStatus
+        consensusTimeNow {
+          startTime
+        }
+      }}`)
       .pipe(
         map(response => {
           return ({
@@ -36,6 +36,6 @@ export class BlockService {
   }
 
   getDebuggerStatus(): Observable<boolean> {
-    return this.http.get<string>(`${this.DEBUGGER}/version`).pipe(map(r => !!r))
+    return this.http.get<string>(`${this.DEBUGGER}/version`).pipe(map(r => !!r));
   }
 }
