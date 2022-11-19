@@ -1,0 +1,11 @@
+<div class="submenus flex-row align-center flex-stretch w-100 h-100 pl-5 pr-5">
+  <ng-container *ngFor="let subMenu of subMenus; let i=index">
+    <div class="a-wrap flex-row align-center w-100">
+      <a [class.active]="activeSubMenu === subMenu"
+         [routerLink]="baseRoute + '/' + subMenu"
+         [class.ml-8]="i > 0"
+         class="text-capitalize f-600 flex-center flex-row flex-grow">{{ subMenu }}</a>
+      <div *ngIf="i < subMenus.length - 1" class="bar border-right"></div>
+    </div>
+  </ng-container>
+</div>
