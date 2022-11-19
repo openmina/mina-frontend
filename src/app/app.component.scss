@@ -45,4 +45,8 @@ mat-sidenav-content {
 
 .mina-content {
 	height: calc(100% - 40px);
+
+	&.mobile {
+		height: calc(100% - 84px);
+	}
 }

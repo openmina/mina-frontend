@@ -1,5 +1,5 @@
 <div *ngIf="menu" class="menu flex-column" [class.collapsed]="menu.collapsed && !menu.isMobile">
-  <button class="menu-toggle primary f-14 pointer flex-row align-center f-400"
+  <button class="menu-toggle primary pointer flex-row align-center f-400"
           [class.flex-between]="menu.isMobile"
           (click)="toggleMenu()">
     <span>OpenMina</span>
@@ -16,3 +16,8 @@
     </span>
   </a>
 </div>
+
+<button class="switcher icon-btn p-0 ml-10"
+        (click)="changeTheme()">
+  <span class="mina-icon f-18">{{ currentTheme === 'light' ? 'dark_mode' : 'wb_sunny' }}</span>
+</button>

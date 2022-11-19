@@ -24,6 +24,7 @@ import { NgrxRouterStoreModule } from '@shared/router/ngrx-router.module';
 import * as Sentry from '@sentry/angular';
 import { ServerStatusComponent } from './layout/server-status/server-status.component';
 import { CONFIG } from '@shared/constants/config';
+import { SubmenuTabsComponent } from './layout/submenu-tabs/submenu-tabs.component';
 
 
 export const SENTRY_PROVIDER: Provider = {
@@ -41,6 +42,7 @@ export const SENTRY_PROVIDER: Provider = {
     ErrorPreviewComponent,
     ErrorListComponent,
     ServerStatusComponent,
+    SubmenuTabsComponent,
   ],
   imports: [
     BrowserModule,

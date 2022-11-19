@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
@@ -7,6 +7,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AppMenu } from '@shared/types/app/app-menu.type';
 import { APP_CHANGE_MENU_COLLAPSING, APP_TOGGLE_MENU_OPENING, AppChangeMenuCollapsing, AppToggleMenuOpening } from '@app/app.actions';
 import { CONFIG } from '@shared/constants/config';
+import { ThemeType } from '@shared/types/core/theme/theme-types.type';
+import { DOCUMENT } from '@angular/common';
 
 class MenuItem {
   name: string;
@@ -26,16 +28,33 @@ const MENU_ITEMS: MenuItem[] = [
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'flex-column flex-between h-100 pb-12'}
 })
 export class MenuComponent extends ManualDetection implements OnInit {
 
   readonly menuItems: MenuItem[] = this.allowedMenuItems;
   menu: AppMenu;
+  currentTheme: ThemeType;
 
-  constructor(private store: Store<MinaState>) { super(); }
+  constructor(@Inject(DOCUMENT) private readonly document: Document,
+              private store: Store<MinaState>) { super(); }
 
   ngOnInit(): void {
+    this.currentTheme = localStorage.getItem('theme') as ThemeType;
     this.listenToCollapsingMenu();
+  }
+
+  changeTheme(): void {
+    const theme: ThemeType = this.document.body.classList.contains(ThemeType.LIGHT) ? ThemeType.DARK : ThemeType.LIGHT;
+    this.currentTheme = theme;
+    const transitionToken: string = 'theme-transition';
+
+    this.document.body.classList.add(transitionToken);
+    this.document.body.classList.remove(ThemeType.DARK, ThemeType.LIGHT);
+    this.document.body.classList.add(theme);
+
+    localStorage.setItem('theme', theme);
+    setTimeout(() => this.document.body.classList.remove(transitionToken), 700);
   }
 
   private listenToCollapsingMenu(): void {
