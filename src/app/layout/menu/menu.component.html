@@ -8,6 +8,8 @@
   </button>
   <a *ngFor="let item of menuItems"
      [routerLink]="'/' + item.name.toLowerCase().split(' ').join('-')"
+     [tooltip]="item.name"
+     [tooltipDisabled]="!menu.collapsed && !menu.isMobile"
      routerLinkActive="active"
      class="item">
     <span class="item-content">

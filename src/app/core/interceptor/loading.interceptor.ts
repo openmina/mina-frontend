@@ -50,7 +50,7 @@ export class LoadingInterceptor implements HttpInterceptor {
   }
 }
 
-export const NETWORK_INTERCEPTOR: Provider = {
+export const INTERCEPTOR_PROVIDER: Provider = {
   provide: HTTP_INTERCEPTORS,
   useClass: LoadingInterceptor,
   multi: true,

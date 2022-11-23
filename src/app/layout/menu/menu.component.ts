@@ -2,15 +2,16 @@ import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/cor
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { selectAppMenu } from '@app/app.state';
+import { selectActiveNode, selectAppMenu } from '@app/app.state';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AppMenu } from '@shared/types/app/app-menu.type';
 import { APP_CHANGE_MENU_COLLAPSING, APP_TOGGLE_MENU_OPENING, AppChangeMenuCollapsing, AppToggleMenuOpening } from '@app/app.actions';
-import { CONFIG } from '@shared/constants/config';
 import { ThemeType } from '@shared/types/core/theme/theme-types.type';
 import { DOCUMENT } from '@angular/common';
+import { MinaNode } from '@shared/types/core/environment/mina-env.type';
+import { filter } from 'rxjs';
 
-class MenuItem {
+interface MenuItem {
   name: string;
   icon: string;
 }
@@ -20,6 +21,7 @@ const MENU_ITEMS: MenuItem[] = [
   { name: 'Network', icon: 'account_tree' },
   { name: 'Tracing', icon: 'grid_view' },
   { name: 'Web Node', icon: 'blur_circular' },
+  { name: 'Stressing', icon: 'dynamic_form' },
 ];
 
 @UntilDestroy()
@@ -28,13 +30,15 @@ const MENU_ITEMS: MenuItem[] = [
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'flex-column flex-between h-100 pb-12'}
+  host: { class: 'flex-column flex-between h-100 pb-12' },
 })
 export class MenuComponent extends ManualDetection implements OnInit {
 
-  readonly menuItems: MenuItem[] = this.allowedMenuItems;
+  menuItems: MenuItem[] = [];
   menu: AppMenu;
   currentTheme: ThemeType;
+
+  private activeNode: MinaNode;
 
   constructor(@Inject(DOCUMENT) private readonly document: Document,
               private store: Store<MinaState>) { super(); }
@@ -42,6 +46,7 @@ export class MenuComponent extends ManualDetection implements OnInit {
   ngOnInit(): void {
     this.currentTheme = localStorage.getItem('theme') as ThemeType;
     this.listenToCollapsingMenu();
+    this.listenToActiveNodeChange();
   }
 
   changeTheme(): void {
@@ -66,8 +71,21 @@ export class MenuComponent extends ManualDetection implements OnInit {
       });
   }
 
+  private listenToActiveNodeChange(): void {
+    this.store.select(selectActiveNode)
+      .pipe(
+        untilDestroyed(this),
+        filter(Boolean),
+      )
+      .subscribe((node: MinaNode) => {
+        this.activeNode = node;
+        this.menuItems = this.allowedMenuItems;
+        this.detect();
+      });
+  }
+
   private get allowedMenuItems(): MenuItem[] {
-    return MENU_ITEMS.filter((opt: MenuItem) => CONFIG.features.find(f => f === opt.name.toLowerCase().split(' ').join('-')));
+    return MENU_ITEMS.filter((opt: MenuItem) => this.activeNode.features.find(f => f === opt.name.toLowerCase().split(' ').join('-')));
   }
 
   toggleMenu(): void {

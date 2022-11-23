@@ -13,11 +13,6 @@ export class TracingOverviewService {
 
   getStatistics(): Observable<TracingOverviewCheckpoint[]> {
     return this.graphQL.query<any>('blockTracesDistribution', '{ blockTracesDistribution }').pipe(
-      tap(response => {
-        if (!response?.blockTracesDistribution) {
-          throw new Error(response.errors[0].message);
-        }
-      }),
       map(response => this.mapStatisticsResponse(response.blockTracesDistribution)),
     );
   }

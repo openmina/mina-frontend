@@ -24,10 +24,18 @@
 	background-color: transparent;
 }
 
+.bg-success-container {
+	background-color: $success-container;
+}
+
 .bg-warn-container {
 	background-color: $warn-container;
 }
 
 .bg-aware-container {
 	background-color: $aware-container;
+}
+
+.bg-container-hover:hover {
+	background-color: $base-container;
 }

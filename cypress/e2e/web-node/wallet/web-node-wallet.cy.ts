@@ -80,13 +80,13 @@ describe('WEB NODE WALLET', () => {
       });
   });
 
-  it('create a transaction', () => {
+  it('create a stressing', () => {
     cy.window()
       .its('store')
       .then(getWebNodeWallet)
       .get('.wallet-toolbar div button')
       .click()
-      .then(() => cy.url().should('include', '/wallet/new-transaction'))
+      .then(() => cy.url().should('include', '/wallet/new-stressing'))
       .get('form')
       .find('input')
       .eq(0)

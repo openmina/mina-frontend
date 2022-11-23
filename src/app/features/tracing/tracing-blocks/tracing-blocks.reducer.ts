@@ -1,7 +1,7 @@
 import { TracingBlocksState } from '@tracing/tracing-blocks/tracing-blocks.state';
 import {
   TRACING_BLOCKS_CLOSE,
-  TRACING_BLOCKS_GET_DETAILS_SUCCESS,
+  TRACING_BLOCKS_GET_DETAILS_SUCCESS, TRACING_BLOCKS_GET_TRACES,
   TRACING_BLOCKS_GET_TRACES_SUCCESS,
   TRACING_BLOCKS_SELECT_ROW,
   TRACING_BLOCKS_SORT,
@@ -12,7 +12,7 @@ import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
 import { sort } from '@shared/helpers/sorting.helper';
 
 const initialState: TracingBlocksState = {
-  traces: [],
+  traces: undefined,
   activeTrace: undefined,
   activeTraceGroups: [],
   sort: {
@@ -23,6 +23,13 @@ const initialState: TracingBlocksState = {
 
 export function reducer(state: TracingBlocksState = initialState, action: TracingBlocksActions): TracingBlocksState {
   switch (action.type) {
+
+    case TRACING_BLOCKS_GET_TRACES: {
+      return {
+        ...state,
+        activeTrace: undefined,
+      }
+    }
 
     case TRACING_BLOCKS_GET_TRACES_SUCCESS: {
       return {
@@ -63,5 +70,5 @@ export function reducer(state: TracingBlocksState = initialState, action: Tracin
 }
 
 function sortTraces(blocks: TracingBlockTrace[], tableSort: TableSort): TracingBlockTrace[] {
-  return sort<TracingBlockTrace>(blocks, tableSort, ['source', 'hash', 'status']);
+  return sort(blocks, tableSort, ['source', 'hash', 'status']);
 }

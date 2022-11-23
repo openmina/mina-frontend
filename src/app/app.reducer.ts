@@ -1,7 +1,9 @@
 import {
+  APP_CHANGE_ACTIVE_NODE,
   APP_CHANGE_MENU_COLLAPSING,
   APP_CHANGE_SUB_MENUS,
   APP_GET_NODE_STATUS_SUCCESS,
+  APP_INIT,
   APP_TOGGLE_MENU_OPENING,
   APP_TOGGLE_MOBILE,
   APP_UPDATE_DEBUGGER_STATUS,
@@ -9,6 +11,7 @@ import {
 } from '@app/app.actions';
 import { AppState } from '@app/app.state';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
+import { CONFIG } from '@shared/constants/config';
 
 
 const initialState: AppState = {
@@ -27,10 +30,27 @@ const initialState: AppState = {
     open: true,
   },
   subMenus: [],
+  nodes: [],
+  activeNode: undefined,
 };
 
 export function reducer(state: AppState = initialState, action: AppActions): AppState {
   switch (action.type) {
+
+    case APP_INIT: {
+      return {
+        ...state,
+        nodes: CONFIG.nodes,
+        activeNode: CONFIG.nodes[0],
+      };
+    }
+
+    case APP_CHANGE_ACTIVE_NODE: {
+      return {
+        ...state,
+        activeNode: action.payload,
+      };
+    }
 
     case APP_GET_NODE_STATUS_SUCCESS: {
       return {

@@ -8,6 +8,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TracingBlockTrace } from '@shared/types/tracing/blocks/tracing-block-trace.type';
 import { TRACING_BLOCKS_CLOSE, TRACING_BLOCKS_GET_TRACES, TracingBlocksClose, TracingBlocksGetTraces } from '@tracing/tracing-blocks/tracing-blocks.actions';
 import { selectTracingActiveTrace } from '@tracing/tracing-blocks/tracing-blocks.state';
+import { selectActiveNode } from '@app/app.state';
+import { filter } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -29,8 +31,16 @@ export class TracingBlocksComponent extends ManualDetection implements OnInit, O
   constructor(private store: Store<MinaState>) { super(); }
 
   ngOnInit(): void {
-    this.store.dispatch<TracingBlocksGetTraces>({ type: TRACING_BLOCKS_GET_TRACES });
+    this.listenToActiveNodeChange();
     this.listenToActiveRowChange();
+  }
+
+  private listenToActiveNodeChange(): void {
+    this.store.select(selectActiveNode)
+      .pipe(untilDestroyed(this), filter(Boolean))
+      .subscribe(() => {
+        this.store.dispatch<TracingBlocksGetTraces>({ type: TRACING_BLOCKS_GET_TRACES });
+      });
   }
 
   toggleResizing(): void {

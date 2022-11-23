@@ -95,7 +95,7 @@ export class TracingBlocksTableComponent extends ManualDetection implements OnIn
     this.store.select(selectTracingTraces)
       .pipe(
         untilDestroyed(this),
-        filter(traces => !!traces.length),
+        filter(Boolean),
       )
       .subscribe((traces: TracingBlockTrace[]) => {
         this.traces = traces;

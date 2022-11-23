@@ -1,8 +1,11 @@
 import { FeatureAction } from '@shared/types/store/feature-action.type';
 import { NodeStatus } from '@shared/types/app/node-status.type';
+import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 
 enum AppActionTypes {
   APP_INIT = 'APP_INIT',
+  // APP_INIT_SUCCESS = 'APP_INIT_SUCCESS',
+  APP_CHANGE_ACTIVE_NODE = 'APP_CHANGE_ACTIVE_NODE',
   APP_GET_NODE_STATUS = 'APP_GET_NODE_STATUS',
   APP_GET_NODE_STATUS_SUCCESS = 'APP_GET_NODE_STATUS_SUCCESS',
   APP_GET_DEBUGGER_STATUS = 'APP_GET_DEBUGGER_STATUS',
@@ -14,6 +17,8 @@ enum AppActionTypes {
 }
 
 export const APP_INIT = AppActionTypes.APP_INIT;
+// export const APP_INIT_SUCCESS = AppActionTypes.APP_INIT_SUCCESS;
+export const APP_CHANGE_ACTIVE_NODE = AppActionTypes.APP_CHANGE_ACTIVE_NODE;
 export const APP_GET_NODE_STATUS = AppActionTypes.APP_GET_NODE_STATUS;
 export const APP_GET_NODE_STATUS_SUCCESS = AppActionTypes.APP_GET_NODE_STATUS_SUCCESS;
 export const APP_GET_DEBUGGER_STATUS = AppActionTypes.APP_GET_DEBUGGER_STATUS;
@@ -29,6 +34,16 @@ export interface AppAction extends FeatureAction<AppActionTypes> {
 
 export class AppInit implements AppAction {
   readonly type = APP_INIT;
+}
+
+// export class AppInitSuccess implements AppAction {
+//   readonly type = APP_INIT_SUCCESS;
+// }
+
+export class AppChangeActiveNode implements AppAction {
+  readonly type = APP_CHANGE_ACTIVE_NODE;
+
+  constructor(public payload: MinaNode) { }
 }
 
 export class AppGetNodeStatus implements AppAction {
@@ -75,6 +90,8 @@ export class AppToggleMenuOpening implements AppAction {
 
 export type AppActions =
   | AppInit
+  // | AppInitSuccess
+  | AppChangeActiveNode
   | AppGetNodeStatus
   | AppGetNodeStatusSuccess
   | AppGetDebuggerStatus

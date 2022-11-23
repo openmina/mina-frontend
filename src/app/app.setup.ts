@@ -5,6 +5,7 @@ import * as fromNetwork from '@network/network.reducer';
 import * as fromApp from '@app/app.reducer';
 import * as fromTracing from '@tracing/tracing.reducer';
 import * as fromWebNode from '@web-node/web-node.reducer';
+import * as fromStressing from '@stressing/stressing.reducer';
 
 import { AppState } from '@app/app.state';
 import { ErrorPreviewState } from '@error-preview/error-preview.state';
@@ -16,6 +17,8 @@ import { ErrorPreviewAction } from '@error-preview/error-preview.actions';
 import { NetworkAction } from '@network/network.reducer';
 import { TracingAction } from '@tracing/tracing.reducer';
 import { WebNodeAction } from '@web-node/web-node.reducer';
+import { StressingState } from '@app/features/stressing/stressing.state';
+import { StressingAction } from '@app/features/stressing/stressing.actions';
 
 export interface MinaState {
   app: AppState;
@@ -23,6 +26,7 @@ export interface MinaState {
   network: NetworkState;
   tracing: TracingState;
   webNode: WebNodeState;
+  stressing: StressingState;
 }
 
 type MinaAction = AppAction
@@ -30,6 +34,7 @@ type MinaAction = AppAction
   & NetworkAction
   & TracingAction
   & WebNodeAction
+  & StressingAction
   ;
 
 export const reducers: ActionReducerMap<MinaState, MinaAction> = {
@@ -38,6 +43,7 @@ export const reducers: ActionReducerMap<MinaState, MinaAction> = {
   network: fromNetwork.reducer,
   tracing: fromTracing.reducer,
   webNode: fromWebNode.reducer,
+  stressing: fromStressing.reducer,
 };
 
 export const metaReducers: MetaReducer<MinaState, MinaAction>[] = [];

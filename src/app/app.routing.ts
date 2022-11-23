@@ -8,6 +8,7 @@ export const RESOURCES_TITLE: string = APP_TITLE + ' - Resources';
 export const NETWORK_TITLE: string = APP_TITLE + ' - Network';
 export const TRACING_TITLE: string = APP_TITLE + ' - Tracing';
 export const WEB_NODE_TITLE: string = APP_TITLE + ' - Web Node';
+export const STRESSING_TITLE: string = APP_TITLE + ' - Stressing';
 
 export const routes: Routes = [
   {
@@ -32,6 +33,12 @@ export const routes: Routes = [
     path: 'web-node',
     loadChildren: () => import('./features/web-node/web-node.module').then(module => module.WebNodeModule),
     title: WEB_NODE_TITLE,
+    canActivate: [FeatureGuard],
+  },
+  {
+    path: 'stressing',
+    loadChildren: () => import('./features/stressing/stressing.module').then(module => module.StressingModule),
+    title: STRESSING_TITLE,
     canActivate: [FeatureGuard],
   },
   {

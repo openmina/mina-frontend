@@ -1,0 +1,7 @@
+<div class="h-40 flex-row align-center flex-between pl-12 pr-12 secondary border-bottom">
+  <div>{{ batch }} transactions are sent every {{ interval / 1000 | number: '1.0-2' }} seconds</div>
+  <div>{{ transactions.length }} Transactions</div>
+</div>
+<div class="flex-grow flex-column">
+  <router-outlet></router-outlet>
+</div>

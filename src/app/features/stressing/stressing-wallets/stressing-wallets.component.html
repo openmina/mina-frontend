@@ -1,0 +1,19 @@
+<div class="h-40 flex-row align-center pl-12 border-bottom">
+  <button class="btn-primary mr-10" (click)="sendTransaction()">Send transaction</button>
+</div>
+<div class="mina-table flex-grow overflow-x-auto">
+  <div class="row head">
+    <span>Public Key</span>
+    <span>Balance</span>
+  </div>
+  <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-auto"
+                               fxFlex="calc(100% - 36px)"
+                               [itemSize]="32">
+    <div *cdkVirtualFor="let wallet of wallets; let i=index"
+         [class.row-even]="i % 2 === 0"
+         class="row">
+      <span>{{ wallet.publicKey }}</span>
+      <span>{{ wallet.minaTokens }}</span>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>

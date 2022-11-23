@@ -3,26 +3,30 @@ import { MinaState, selectMinaState } from '@app/app.setup';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaBaseEffect } from '@shared/base-classes/mina-base.effect';
-import { Effect } from '@shared/types/store/effect.type';
+import { Effect, NonDispatchableEffect } from '@shared/types/store/effect.type';
 import { catchError, filter, map, mergeMap, repeat, switchMap, tap, timer } from 'rxjs';
 import {
+  APP_CHANGE_ACTIVE_NODE,
   APP_GET_DEBUGGER_STATUS,
   APP_GET_NODE_STATUS,
   APP_GET_NODE_STATUS_SUCCESS,
   APP_INIT,
   APP_UPDATE_DEBUGGER_STATUS,
   AppAction,
+  AppChangeActiveNode,
   AppGetDebuggerStatus,
   AppGetNodeStatus,
+  AppInit,
   AppUpdateDebuggerStatus,
 } from '@app/app.actions';
 import { BlockService } from '@shared/services/block.service';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { HttpErrorResponse } from '@angular/common/http';
-import { addError } from '@shared/constants/store-functions';
+import { addError, createNonDispatchableEffect } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import { NodeStatus } from '@shared/types/app/node-status.type';
 import { CONFIG } from '@shared/constants/config';
+import { GraphQLService } from '@core/services/graph-ql.service';
 
 @Injectable({
   providedIn: 'root',
@@ -30,12 +34,14 @@ import { CONFIG } from '@shared/constants/config';
 export class AppEffects extends MinaBaseEffect<AppAction> {
 
   readonly init$: Effect;
+  readonly onNodeChange$: NonDispatchableEffect;
   readonly getNodeStatus$: Effect;
   readonly getDebuggerStatus$: Effect;
 
   private readonly updateDebuggerStatus = (isOnline: boolean): AppUpdateDebuggerStatus => ({ type: APP_UPDATE_DEBUGGER_STATUS, payload: { isOnline } });
 
   constructor(private actions$: Actions,
+              private graphQL: GraphQLService,
               private blockService: BlockService,
               store: Store<MinaState>) {
 
@@ -43,6 +49,8 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
 
     this.init$ = createEffect(() => this.actions$.pipe(
       ofType(APP_INIT),
+      this.latestActionState<AppInit>(),
+      tap(({ state }) => this.graphQL.changeGraphQlProvider(state.app.activeNode.name)),
       switchMap(() =>
         timer(0, 10000).pipe(
           switchMap(() => [
@@ -51,6 +59,12 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
           ]),
         ),
       ),
+    ));
+
+    this.onNodeChange$ = createNonDispatchableEffect(() => this.actions$.pipe(
+      ofType(APP_CHANGE_ACTIVE_NODE),
+      this.latestActionState<AppChangeActiveNode>(),
+      tap(({ state }) => this.graphQL.changeGraphQlProvider(state.app.activeNode.name)),
     ));
 
     this.getNodeStatus$ = createEffect(() => this.actions$.pipe(

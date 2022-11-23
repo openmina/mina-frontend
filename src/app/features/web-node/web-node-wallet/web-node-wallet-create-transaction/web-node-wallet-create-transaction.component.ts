@@ -28,7 +28,7 @@ interface TransactionForm {
 
 @UntilDestroy()
 @Component({
-  selector: 'mina-web-node-wallet-create-transaction',
+  selector: 'mina-web-node-wallet-create-stressing',
   templateUrl: './web-node-wallet-create-transaction.component.html',
   styleUrls: ['./web-node-wallet-create-transaction.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

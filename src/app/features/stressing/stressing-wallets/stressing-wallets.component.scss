@@ -1,0 +1,20 @@
+@import 'src/assets/styles/utilities/variables';
+
+.mina-table {
+	$col0: 500px;
+	$col1: 170px;
+
+	.row {
+		grid-template-columns: $col0 $col1;
+		color: $base-tertiary;
+
+		&:not(.head) {
+			cursor: pointer;
+		}
+	}
+
+	.cdk-virtual-scroll-viewport {
+		min-width: $col0 + $col1;
+		overflow-x: hidden;
+	}
+}

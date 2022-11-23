@@ -13,4 +13,5 @@ export const environment: Readonly<MinaEnv> = {
     dsn: '',
     tracingOrigins: [],
   },
+  nodes: [],
 };

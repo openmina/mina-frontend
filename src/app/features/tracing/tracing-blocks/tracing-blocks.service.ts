@@ -18,7 +18,7 @@ export class TracingBlocksService {
       .pipe(
         map((response: any) =>
           response.blockTraces.traces.reverse().map((trace: any, id: number) => ({
-            height: Number(trace.blockchain_length), //TODO: get only one property. Check backend response
+            height: Number(trace.blockchain_length),
             source: trace.source,
             hash: trace.state_hash,
             status: trace.status,

@@ -33,7 +33,7 @@ export class SubmenuTabsComponent extends ManualDetection implements OnInit {
 
   private listenToRouteChange(): void {
     const removeParams = (path: string): string => {
-      if (path.includes('?')) {
+      if (path?.includes('?')) {
         return path.split('?')[0];
       }
       return path;

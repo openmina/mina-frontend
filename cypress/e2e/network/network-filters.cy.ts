@@ -254,7 +254,7 @@ describe('NETWORK FILTERS', () => {
   });
 
   // failing - broken backend
-  it('filter messages by transaction pool diff and answer sync ledger query', () => {
+  it('filter messages by stressing pool diff and answer sync ledger query', () => {
     cy.get('.toggle-filters')
       .click()
       .get('.filters-container div:nth-child(6) .flex-row:nth-child(1) .filter:nth-child(7)')

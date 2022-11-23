@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, NgZone, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
-import { selectAppDebuggerStatus, selectAppMenu, selectAppNodeStatus } from '@app/app.state';
+import { selectActiveNode, selectAppDebuggerStatus, selectAppMenu, selectAppNodeStatus, selectNodes } from '@app/app.state';
 import { BehaviorSubject, filter } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
@@ -12,6 +12,10 @@ import { selectWebNodeLogs, selectWebNodePeers } from '@web-node/web-node.state'
 import { WebNodeLog } from '@shared/types/web-node/logs/web-node-log.type';
 import { CONFIG } from '@shared/constants/config';
 import { AppMenu } from '@shared/types/app/app-menu.type';
+import { MinaNode } from '@shared/types/core/environment/mina-env.type';
+import { TemplatePortal } from '@angular/cdk/portal';
+import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { APP_CHANGE_ACTIVE_NODE, AppChangeActiveNode } from '@app/app.actions';
 
 const TOOLTIP_MESSAGES: { [p: string]: string } = {
   [AppNodeStatusTypes.OFFLINE.toLowerCase()]: 'Is when the node has not received any messages for a while',
@@ -39,6 +43,9 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
   nodeTooltip: string = TOOLTIP_MESSAGES[this.status];
   isMobile: boolean;
 
+  nodes: MinaNode[] = [];
+  activeNode: MinaNode;
+
   readonly enabledDebugger: boolean = !!CONFIG.debugger;
   debuggerStatus: DebuggerStatus;
   debuggerTooltip: string;
@@ -47,12 +54,18 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
   webNodeStatus: WebNodeStatus;
   webNodeTooltip: string;
 
+  @ViewChild('nodePicker') private nodePickerTemplate: TemplateRef<void>;
+  @ViewChild('overlayOpener') private overlayOpener: ElementRef<HTMLDivElement>;
+
   private interval: number;
   private secondsPassed: number = 0;
   private timeReference: number = 0;
+  private overlayRef: OverlayRef;
 
-  constructor(private store: Store<MinaState>,
-              private zone: NgZone) { super(); }
+  constructor(private zone: NgZone,
+              private overlay: Overlay,
+              private store: Store<MinaState>,
+              private viewContainerRef: ViewContainerRef) { super(); }
 
   ngOnInit(): void {
     this.createTimer();
@@ -60,6 +73,7 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
     this.listenToDebuggerStatusChange();
     this.listenToWebNodeStatusChange();
     this.listenToMenuChange();
+    this.listenToNodeChanges();
   }
 
   private createTimer(): void {
@@ -77,18 +91,15 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
   private listenToNodeStatusChange(): void {
     this.store.select(selectAppNodeStatus)
       .pipe(
-        filter(node => this.blockLevel !== node.blockLevel
-          || this.status.toLowerCase() !== node.status.toLowerCase()
+        filter(node => this.status.toLowerCase() !== node.status.toLowerCase()
           || this.timeReference !== node.timestamp,
         ),
       )
       .subscribe((node: NodeStatus) => {
         this.timeIsPresent = !!node.timestamp;
-        if (this.blockLevel !== node.blockLevel) {
-          this.timeReference = node.timestamp;
-          this.secondsPassed = (Date.now() - this.timeReference) / 1000;
-          this.elapsedTime$.next(ServerStatusComponent.getFormattedTimeToDisplay(this.secondsPassed));
-        }
+        this.timeReference = node.timestamp;
+        this.secondsPassed = (Date.now() - this.timeReference) / 1000;
+        this.elapsedTime$.next(ServerStatusComponent.getFormattedTimeToDisplay(this.secondsPassed));
 
         this.blockLevel = node.blockLevel;
         this.status = node.status.toLowerCase();
@@ -150,6 +161,21 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
       });
   }
 
+  private listenToNodeChanges(): void {
+    this.store.select(selectNodes)
+      .pipe(filter(nodes => nodes.length > 0))
+      .subscribe((nodes: MinaNode[]) => {
+        this.nodes = nodes;
+        this.detect();
+      });
+    this.store.select(selectActiveNode)
+      .pipe(filter(Boolean))
+      .subscribe((activeNode: MinaNode) => {
+        this.activeNode = activeNode;
+        this.detect();
+      });
+  }
+
   private static getFormattedTimeToDisplay(next: number): string {
     const twoDigit = (val: number) => val < 10 ? `0${val}` : val;
     let time = '';
@@ -163,5 +189,46 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
       time += twoDigit(hour) + 'h ' + twoDigit(min) + 'm';
     }
     return time;
+  }
+
+  openNodePicker(event: MouseEvent): void {
+    event.stopImmediatePropagation();
+    if (this.overlayRef?.hasAttached()) {
+      this.overlayRef.detach();
+      return;
+    }
+
+    this.overlayRef = this.overlay.create({
+      hasBackdrop: false,
+      width: 'auto',
+      minWidth: '220px',
+      scrollStrategy: this.overlay.scrollStrategies.close(),
+      positionStrategy: this.overlay.position()
+        .flexibleConnectedTo(this.overlayOpener.nativeElement)
+        .withPositions([{
+          originX: 'end',
+          originY: 'bottom',
+          overlayX: 'center',
+          overlayY: 'top',
+          offsetY: 10,
+          offsetX: -10,
+        }]),
+    });
+
+    const portal = new TemplatePortal(this.nodePickerTemplate, this.viewContainerRef);
+    this.overlayRef.attach(portal);
+  }
+
+  detachOverlay(): void {
+    if (this.overlayRef?.hasAttached()) {
+      this.overlayRef.detach();
+    }
+  }
+
+  selectNode(node: MinaNode): void {
+    this.detachOverlay();
+    if (node !== this.activeNode) {
+      this.store.dispatch<AppChangeActiveNode>({ type: APP_CHANGE_ACTIVE_NODE, payload: node });
+    }
   }
 }

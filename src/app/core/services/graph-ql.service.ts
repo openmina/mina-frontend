@@ -1,20 +1,47 @@
 import { Injectable, Provider } from '@angular/core';
-import { Apollo, APOLLO_OPTIONS, gql } from 'apollo-angular';
+import { Apollo, APOLLO_NAMED_OPTIONS, ApolloBase, gql, NamedOptions } from 'apollo-angular';
 import { map, Observable } from 'rxjs';
-import { ApolloQueryResult, DefaultOptions, InMemoryCache } from '@apollo/client/core';
+import { ApolloLink, ApolloQueryResult, createHttpLink, DefaultOptions, InMemoryCache } from '@apollo/client/core';
 import { OperationVariables } from '@apollo/client/core/types';
 import { HttpLink } from 'apollo-angular/http';
 import { CONFIG } from '@shared/constants/config';
+import { MinaNode } from '@shared/types/core/environment/mina-env.type';
+import { onError } from '@apollo/client/link/error';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GraphQLService {
 
-  constructor(private apollo: Apollo) { }
+  private apollo: ApolloBase;
+
+  constructor(private apolloProvider: Apollo) { }
+
+  changeGraphQlProvider(name: string): void {
+    this.apollo = this.apolloProvider.use(name);
+  }
 
   query<T>(queryName: string, query: string, variables?: OperationVariables): Observable<T> {
     query = `query ${queryName} ${query}`;
+    return this.apollo
+      .watchQuery<T>({
+        query: gql(query),
+        variables,
+        errorPolicy: 'all',
+      })
+      .valueChanges
+      .pipe(
+        map((response: ApolloQueryResult<T>) => {
+          if (response.data) {
+            return response.data;
+          }
+          throw new Error(response.errors[0].message);
+        }),
+      );
+  }
+
+  mutation<T>(queryName: string, query: string, variables?: OperationVariables): Observable<T> {
+    query = `mutation ${queryName} ${query}`;
     return this.apollo
       .watchQuery<T>({
         query: gql(query),
@@ -49,25 +76,20 @@ export class GraphQLService {
 }
 
 
+const defaultOptions: DefaultOptions = {
+  watchQuery: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'ignore',
+  },
+  query: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  },
+};
+
 export const GRAPH_QL_PROVIDER: Provider = {
-  provide: APOLLO_OPTIONS,
-  useFactory: (httpLink: HttpLink) => {
-
-    const link = httpLink.create({
-      uri: CONFIG.backend + '/graphql',
-    });
-
-    const defaultOptions: DefaultOptions = {
-      watchQuery: {
-        fetchPolicy: 'no-cache',
-        errorPolicy: 'ignore',
-      },
-      query: {
-        fetchPolicy: 'no-cache',
-        errorPolicy: 'all',
-      },
-    };
-
+  provide: APOLLO_NAMED_OPTIONS,
+  useFactory: (): NamedOptions => {
     // const ws = new GraphQLWsLink(
     //   createClient({
     //     url: `ws://localhost:3085/graphql`,
@@ -85,12 +107,19 @@ export const GRAPH_QL_PROVIDER: Provider = {
     //   // ws,
     //   http,
     // );
-
-    return {
-      link,
-      defaultOptions,
-      cache: new InMemoryCache(),
-    };
+    return CONFIG.nodes.reduce((acc: NamedOptions, curr: MinaNode) => ({
+      ...acc,
+      [curr.name]: {
+        link: ApolloLink.from([
+          onError((): void => {}),
+          createHttpLink({
+            uri: curr.backend + '/graphql',
+          }),
+        ]),
+        defaultOptions,
+        cache: new InMemoryCache(),
+      },
+    }), {});
   },
   deps: [HttpLink],
 };

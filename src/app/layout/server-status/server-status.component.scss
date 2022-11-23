@@ -44,30 +44,15 @@
 		animation: shine 7s linear infinite;
 	}
 
-	.block-level {
+	.background-wrap {
 		background-color: $warn-container;
 		color: $warn-primary;
-
-		.p-relative {
-			padding-right: 73px;
-			height: 14px;
-
-			.p-absolute {
-				top: 0;
-				right: 0;
-				width: 73px;
-			}
-
-			.ago {
-				width: 19px;
-			}
-		}
 
 		&.synced {
 			background-color: $success-container;
 			color: $success-secondary;
 
-			.status {
+			.strong-text {
 				color: $success-primary;
 			}
 		}
@@ -77,7 +62,7 @@
 			background-color: $base-container;
 			color: $base-secondary;
 
-			.status {
+			.strong-text {
 				color: $base-primary;
 			}
 		}
@@ -87,8 +72,37 @@
 			background-color: $aware-container;
 			color: $aware-secondary;
 
-			.status {
+			.strong-text {
 				color: $aware-primary;
+			}
+		}
+
+		.block-level {
+			.p-relative {
+				padding-right: 73px;
+				height: 14px;
+
+				.p-absolute {
+					top: 0;
+					right: 0;
+					width: 73px;
+				}
+
+				.ago {
+					width: 19px;
+				}
+			}
+		}
+
+		.node-switcher {
+			border-left: 2px solid $base-surface;
+
+			.mina-icon {
+				width: 16px;
+			}
+
+			&:hover {
+				background-color: $base-container;
 			}
 		}
 	}

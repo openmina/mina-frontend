@@ -10,4 +10,13 @@ export const environment: Readonly<MinaEnv> = {
     dsn: 'https://c664d3516f94438d87f6f5813cf438e8@o4504056952127488.ingest.sentry.io/4504056966676480',
     tracingOrigins: ['https://openmina-network.web.app'],
   },
+  nodes: [
+    {
+      backend: 'https://debug.dev.tezedge.com:3086',
+      debugger: 'https://debug.dev.tezedge.com',
+      minaExplorer: 'https://devnet.api.minaexplorer.com',
+      features: ['network'],
+      name: 'debug',
+    },
+  ],
 };

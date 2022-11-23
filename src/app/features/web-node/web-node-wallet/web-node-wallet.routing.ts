@@ -24,7 +24,7 @@ const routes: Routes = [
         title: WEB_NODE_TITLE,
       },
       {
-        path: 'new-transaction',
+        path: 'new-stressing',
         component: WebNodeWalletCreateTransactionComponent,
         title: WEB_NODE_TITLE,
       },
