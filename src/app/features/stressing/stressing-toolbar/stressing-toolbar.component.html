@@ -1,0 +1,10 @@
+<form [formGroup]="formGroup" class="h-100 flex-row align-center flex-between pl-12 pr-12 secondary border-bottom">
+  <div class="flex-row align-center">
+    <div>Send</div>
+    <input type="number" fxFlex="40px" class="mina-input mr-10 ml-10 text-center" formControlName="batch">
+    <div>tx. every</div>
+    <input type="number" fxFlex="40px" class="mina-input mr-10 ml-10 text-center" formControlName="interval">
+    <div>seconds</div>
+  </div>
+  <div>{{ transactionLength }} Transactions</div>
+</form>

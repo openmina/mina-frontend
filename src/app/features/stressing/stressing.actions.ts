@@ -9,6 +9,10 @@ enum StressingActionTypes {
   STRESSING_GET_WALLETS_SUCCESS = 'STRESSING_GET_WALLETS_SUCCESS',
   STRESSING_GET_TRANSACTIONS = 'STRESSING_GET_TRANSACTIONS',
   STRESSING_GET_TRANSACTIONS_SUCCESS = 'STRESSING_GET_TRANSACTIONS_SUCCESS',
+  STRESSING_SEND_TRANSACTIONS = 'STRESSING_SEND_TRANSACTIONS',
+  STRESSING_SEND_TRANSACTIONS_SUCCESS = 'STRESSING_SEND_TRANSACTIONS_SUCCESS',
+  STRESSING_CHANGE_TRANSACTION_BATCH = 'STRESSING_CHANGE_TRANSACTION_BATCH',
+  STRESSING_CHANGE_TRANSACTION_SENDING_INTERVAL = 'STRESSING_CHANGE_TRANSACTION_SENDING_INTERVAL',
 }
 
 export const STRESSING_INIT = StressingActionTypes.STRESSING_INIT;
@@ -17,6 +21,10 @@ export const STRESSING_GET_WALLETS = StressingActionTypes.STRESSING_GET_WALLETS;
 export const STRESSING_GET_WALLETS_SUCCESS = StressingActionTypes.STRESSING_GET_WALLETS_SUCCESS;
 export const STRESSING_GET_TRANSACTIONS = StressingActionTypes.STRESSING_GET_TRANSACTIONS;
 export const STRESSING_GET_TRANSACTIONS_SUCCESS = StressingActionTypes.STRESSING_GET_TRANSACTIONS_SUCCESS;
+export const STRESSING_SEND_TRANSACTIONS = StressingActionTypes.STRESSING_SEND_TRANSACTIONS;
+export const STRESSING_SEND_TRANSACTIONS_SUCCESS = StressingActionTypes.STRESSING_SEND_TRANSACTIONS_SUCCESS;
+export const STRESSING_CHANGE_TRANSACTION_BATCH = StressingActionTypes.STRESSING_CHANGE_TRANSACTION_BATCH;
+export const STRESSING_CHANGE_TRANSACTION_SENDING_INTERVAL = StressingActionTypes.STRESSING_CHANGE_TRANSACTION_SENDING_INTERVAL;
 
 export interface StressingAction extends FeatureAction<StressingActionTypes> {
   readonly type: StressingActionTypes;
@@ -50,6 +58,28 @@ export class StressingGetTransactionsSuccess implements StressingAction {
   constructor(public payload: StressingTransaction[]) {}
 }
 
+export class StressingSendTransactions implements StressingAction {
+  readonly type = STRESSING_SEND_TRANSACTIONS;
+}
+
+export class StressingSendTransactionsSuccess implements StressingAction {
+  readonly type = STRESSING_SEND_TRANSACTIONS_SUCCESS;
+
+  constructor(public payload: any) {}
+}
+
+export class StressingChangeTransactionBatch implements StressingAction {
+  readonly type = STRESSING_CHANGE_TRANSACTION_BATCH;
+
+  constructor(public payload: number) {}
+}
+
+export class StressingChangeTransactionSendingInterval implements StressingAction {
+  readonly type = STRESSING_CHANGE_TRANSACTION_SENDING_INTERVAL;
+
+  constructor(public payload: number) {}
+}
+
 
 export type StressingActions =
   | StressingInit
@@ -58,4 +88,8 @@ export type StressingActions =
   | StressingGetWalletsSuccess
   | StressingGetTransactions
   | StressingGetTransactionsSuccess
+  | StressingSendTransactions
+  | StressingSendTransactionsSuccess
+  | StressingChangeTransactionBatch
+  | StressingChangeTransactionSendingInterval
   ;

@@ -131,9 +131,9 @@ export class WebNodeWalletService {
     return newWallet;
   }
 
-  addTokensToWallet(publicKey: string): Observable<any> {
+  addTokensToWallet(publicKey: string, network: string = 'devnet'): Observable<any> {
     return this.http.post(this.BACKEND + '/faucet', {
-      network: 'devnet',
+      network,
       address: publicKey,
     }, { headers: { 'Content-Type': 'application/json' } });
   }

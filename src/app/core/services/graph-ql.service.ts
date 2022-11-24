@@ -46,10 +46,16 @@ export class GraphQLService {
       .watchQuery<T>({
         query: gql(query),
         variables,
+        errorPolicy: 'all',
       })
       .valueChanges
       .pipe(
-        map((response: ApolloQueryResult<T>) => response.data),
+        map((response: ApolloQueryResult<T>) => {
+          if (response.data) {
+            return response.data;
+          }
+          throw new Error(response.errors[0].message);
+        }),
       );
   }
 

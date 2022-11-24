@@ -6,6 +6,7 @@ import { StressingWalletsComponent } from './stressing-wallets/stressing-wallets
 import { StressingTransactionsComponent } from './stressing-transactions/stressing-transactions.component';
 import { EffectsModule } from '@ngrx/effects';
 import { StressingEffects } from '@stressing/stressing.effects';
+import { StressingToolbarComponent } from './stressing-toolbar/stressing-toolbar.component';
 
 
 @NgModule({
@@ -13,6 +14,7 @@ import { StressingEffects } from '@stressing/stressing.effects';
     StressingComponent,
     StressingWalletsComponent,
     StressingTransactionsComponent,
+    StressingToolbarComponent,
   ],
   imports: [
     SharedModule,

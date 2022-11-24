@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { STRESSING_GET_WALLETS, StressingGetWallets } from '@stressing/stressing.actions';
 import { StressingWallet } from '@shared/types/stressing/stressing-wallet.type';
-import { selectStressingFetchingValues, selectStressingWallets } from '@stressing/stressing.state';
+import { selectStressingWallets } from '@stressing/stressing.state';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +24,6 @@ export class StressingWalletsComponent extends ManualDetection implements OnInit
               private store: Store<MinaState>) { super(); }
 
   ngOnInit(): void {
-    this.store.dispatch<StressingGetWallets>({ type: STRESSING_GET_WALLETS });
     this.listenToWalletChanges();
   }
 
@@ -38,7 +37,7 @@ export class StressingWalletsComponent extends ManualDetection implements OnInit
   }
 
   sendTransaction(): void {
-    this.stressingService.createTransaction();
+    this.stressingService.createTransaction(this.wallets[0], this.wallets[1].publicKey);
   }
 }
 
