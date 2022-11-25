@@ -8,8 +8,7 @@ import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { NodeStatus } from '@shared/types/app/node-status.type';
 import { DebuggerStatus } from '@shared/types/app/debugger-status.type';
 import { WebNodeStatus } from '@shared/types/app/web-node-status.type';
-import { selectWebNodeLogs, selectWebNodePeers } from '@web-node/web-node.state';
-import { WebNodeLog } from '@shared/types/web-node/logs/web-node-log.type';
+import { selectWebNodeSummary } from '@web-node/web-node.state';
 import { CONFIG } from '@shared/constants/config';
 import { AppMenu } from '@shared/types/app/app-menu.type';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
@@ -129,24 +128,13 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
       this.webNodeTooltip = 'Web Node is ' + ((this.webNodeStatus.peers || this.webNodeStatus.messages) ? 'online' : 'offline');
     };
 
-    this.store.select(selectWebNodePeers)
-      .pipe(filter(Boolean))
-      .subscribe((peers: WebNodeLog[]) => {
-        this.webNodeStatus = {
-          ...this.webNodeStatus,
-          peers: peers.length,
-        };
-        getTooltip();
-        this.detect();
-      });
-
-    this.store.select(selectWebNodeLogs)
-      .pipe(filter(Boolean))
-      .subscribe((logs: WebNodeLog[]) => {
-        this.webNodeStatus = {
-          ...this.webNodeStatus,
-          messages: logs.length,
-        };
+    this.store.select(selectWebNodeSummary)
+      .pipe(
+        filter(Boolean),
+        filter(s => s.peers !== this.webNodeStatus?.peers || s.messages !== this.webNodeStatus?.messages),
+      )
+      .subscribe((status: WebNodeStatus) => {
+        this.webNodeStatus = status;
         getTooltip();
         this.detect();
       });

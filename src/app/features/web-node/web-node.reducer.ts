@@ -15,6 +15,7 @@ import {
   WebNodeSharedAction,
   WebNodeSharedActions,
 } from '@web-node/web-node.actions';
+import { PEER_CONNECTED, PEER_DISCONNECTED } from '@web-node/web-node.service';
 
 export type WebNodeActions = WebNodePeersActions & WebNodeLogsActions & WebNodeWalletActions & WebNodeSharedActions;
 export type WebNodeAction = WebNodePeersAction & WebNodeLogsAction & WebNodeWalletAction & WebNodeSharedAction;
@@ -29,6 +30,7 @@ export const reducer: ActionReducer<WebNodeState, WebNodeActions> = combineReduc
 
 const initialState: WebNodeSharedState = {
   peers: undefined,
+  summary: undefined,
   logs: undefined,
   isOpen: false,
 };
@@ -47,6 +49,10 @@ function sharedReducer(state: WebNodeSharedState = initialState, action: WebNode
       return {
         ...state,
         peers: action.payload,
+        summary: {
+          ...state.summary,
+          peers: action.payload.filter(p => p.kind === PEER_CONNECTED).length - action.payload.filter(p => p.kind === PEER_DISCONNECTED).length,
+        },
       };
     }
 
@@ -54,6 +60,10 @@ function sharedReducer(state: WebNodeSharedState = initialState, action: WebNode
       return {
         ...state,
         logs: action.payload,
+        summary: {
+          ...state.summary,
+          messages: action.payload.filter(p => p.kind.startsWith('P2pPubsub') || p.kind.startsWith('P2pRpc')).length,
+        },
       };
     }
 

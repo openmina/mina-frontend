@@ -1,50 +1,50 @@
-<div class="w-100 h-100 flex-row p-relative">
-  <div class="table-wrapper p-relative">
-    <div class="mina-table flex-grow overflow-x-auto h-100">
-      <div class="row head">
-        <span>Transaction ID</span>
-        <span>From</span>
-        <span>To</span>
-        <span>Amount</span>
-        <span>Fee</span>
-        <span>Nonce</span>
-        <span>Memo</span>
-        <span>Status</span>
-        <span>Stressing Tx.</span>
-      </div>
-      <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-auto"
-                                   fxFlex="calc(100% - 36px)"
-                                   [itemSize]="32">
-        <div *cdkVirtualFor="let transaction of transactions; let i=index"
-             [class.row-even]="i % 2 === 0"
-             class="row">
-          <span class="tertiary">{{ transaction.id | truncateMid }}</span>
-          <span class="secondary">{{ transaction.from | truncateMid }}</span>
-          <span class="secondary">{{ transaction.to | truncateMid }}</span>
-          <span class="secondary">{{ transaction.amount }}</span>
-          <span class="secondary">{{ transaction.fee }}</span>
-          <span class="tertiary">{{ transaction.nonce }}</span>
-          <span class="tertiary">{{ transaction.memo || '-' | truncateMid }}</span>
-          <span>
-            <span class="status border-rad-4 pl-5 pr-5 text-capitalize"
-                  [ngClass]="transaction.status">{{ transaction.status }}</span>
-          </span>
-          <span class="primary flex-row align-center">
-            <span [ngClass]="transaction.isOurWallet ? 'success-primary' : 'warn-primary'"
-                  class="mina-icon icon-200">{{ transaction.isOurWallet ? 'task_alt' : 'cancel' }}</span>
-          </span>
-        </div>
-      </cdk-virtual-scroll-viewport>
+<div class="flex-column h-100">
+  <div class="h-40 flex-row align-center flex-between pl-12 pr-12 tertiary border-bottom">
+    <div class="flex-row align-center">
+      <div class="mr-10 f-600">Filters</div>
+      <button *ngFor="let filter of allFilters"
+              (click)="toggleFilter(filter.value)"
+              class="mr-5 border-rad-6 f-600 flex-row align-center"
+              [ngClass]="activeFilters.includes(filter.value) ? 'btn-selected' : 'btn-primary'">
+        <span>{{ filter.name }}</span>
+      </button>
     </div>
-
-    <div class="no-results p-absolute w-100 h-100 z-1 flex-column align-center flex-center"
-         *ngIf="!transactions.length">
-      <span class="mina-icon mb-16 icon-100 f-40">send</span>
-      <span class="f-600 f-14">No Transactions yet</span>
-      <span class="tertiary mt-8 text-center">
-        If there is a new transaction it will appear here when the next block is produced (~3min)
-      </span>
-    </div>
-
+    <div>{{ transactions.length }} transactions</div>
   </div>
+  <div class="mina-table overflow-x-auto flex-column flex-grow">
+    <div class="row head">
+      <span>Transaction ID</span>
+      <span>Height</span>
+      <span>From</span>
+      <span>To</span>
+      <span>Amount</span>
+      <span>Fee</span>
+      <span>Nonce</span>
+      <span>Memo</span>
+      <span>Status</span>
+      <span [tooltip]="'Check whether the Tx. was sent from our stressing module or not.'">Stressing Tx.</span>
+    </div>
+    <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-auto"
+                                 fxFlex="calc(100% - 36px)"
+                                 [itemSize]="32">
+      <div *cdkVirtualFor="let transaction of transactions; let i=index"
+           [class.row-even]="i % 2 === 0"
+           class="row">
+        <span class="tertiary">{{ transaction.id | truncateMid }}</span>
+        <span class="primary">{{ transaction.blockHeight || '-' }}</span>
+        <span class="secondary">{{ transaction.from | truncateMid }}</span>
+        <span class="secondary">{{ transaction.to | truncateMid }}</span>
+        <span class="secondary">{{ transaction.amount }}</span>
+        <span class="secondary">{{ transaction.fee }}</span>
+        <span class="tertiary">{{ transaction.nonce }}</span>
+        <span class="tertiary">{{ transaction.memo || '-' | truncateMid }}</span>
+        <span>
+          <span class="status border-rad-4 pl-5 pr-5 text-capitalize"
+                [ngClass]="transaction.status">{{ transaction.status }}</span>
+        </span>
+        <span class="tertiary flex-row align-center">{{ transaction.isOurWallet ? 'Yes' : 'No' }}</span>
+      </div>
+    </cdk-virtual-scroll-viewport>
+  </div>
+
 </div>

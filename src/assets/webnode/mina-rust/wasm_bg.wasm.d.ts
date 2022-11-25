@@ -1,10 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
-export function __wbg_inmemlog_free(a: number): void;
-export function inmemlog_get(a: number, b: number, c: number, d: number): void;
-export function inmemlog_id(a: number): number;
-export function inmemlog_as_json(a: number, b: number): void;
 export function __wbg_manualconnector_free(a: number): void;
 export function manualconnector_dial(a: number, b: number, c: number): number;
 export function manualconnector_listen(a: number): number;
@@ -18,6 +14,10 @@ export function jshandle_peer_connect(a: number, b: number, c: number): number;
 export function jshandle_pubsub_publish(a: number, b: number, c: number, d: number): number;
 export function jshandle_generate_account_keys(a: number): number;
 export function jshandle_payment_sign_and_inject(a: number, b: number): number;
+export function __wbg_inmemlog_free(a: number): void;
+export function inmemlog_get(a: number, b: number, c: number, d: number): void;
+export function inmemlog_id(a: number): number;
+export function inmemlog_as_json(a: number, b: number): void;
 export function __wbg_crypto_free(a: number): void;
 export function crypto_pub_key_as_protobuf(a: number, b: number): void;
 export function crypto_peer_id_as_b58(a: number, b: number): void;

@@ -74,7 +74,10 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
     this.init$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_INIT),
       this.latestActionState<NetworkMessagesInit>(),
-      tap(({ action, state }) => this.streamActive = state.network.messages.stream),
+      tap(({ action, state }) => {
+        this.streamActive = state.network.messages.stream;
+        this.networkDestroy$ = new Subject<void>();
+      }),
       switchMap(({ action, state }) =>
         timer(0, 10000).pipe(
           takeUntil(this.networkDestroy$),

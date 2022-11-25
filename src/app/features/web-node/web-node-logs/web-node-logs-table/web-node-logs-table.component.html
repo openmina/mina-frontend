@@ -17,7 +17,7 @@
       <span>{{ log.id }}</span>
       <span>{{ log.date }}</span>
       <span class="secondary truncate">{{ log.kind }}</span>
-      <span class="truncate">{{ log.summary }}</span>
+      <span class="truncate">{{ log.summary || '-' }}</span>
       <span class="secondary truncate">{{ log.level }}</span>
     </div>
   </cdk-virtual-scroll-viewport>

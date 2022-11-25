@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GraphQLService } from '@core/services/graph-ql.service';
 import Client from 'mina-signer';
 import { WebNodeWalletService } from '@web-node/web-node-wallet/web-node-wallet.service';
-import { first, forkJoin, map, Observable } from 'rxjs';
+import { first, forkJoin, map, Observable, tap } from 'rxjs';
 import { Payment, Signed } from 'mina-signer/dist/src/TSTypes';
 import { HttpClient } from '@angular/common/http';
 import { CONFIG } from '@shared/constants/config';
@@ -438,10 +438,6 @@ export class StressingService {
       );
   }
 
-  createBulkTransactions(wallets: { from: StressingWallet, to: string }[]): Observable<any> {
-    return forkJoin(wallets.map(wallet => this.createTransaction(wallet.from, wallet.to)));
-  }
-
   createTransaction(from: StressingWallet, to: string): Observable<any> {
     const payment: Payment = {
       from: from.publicKey,
@@ -452,12 +448,11 @@ export class StressingService {
       nonce: from.nonce.toString(),
       validUntil: '4294967295',
     };
-    console.log({ from, to });
     const signedPayment = this.client.signPayment(payment, from.privateKey);
     return this.sendTx(payment, signedPayment);
   }
 
-  sendTx(transaction: Payment, signedPayment: Signed<Payment>): Observable<any> {
+  private sendTx(transaction: Payment, signedPayment: Signed<Payment>): Observable<any> {
     const variables = getGQLVariables(transaction, signedPayment, true);
     const txBody: string = sendTxGraphQLMutationBody();
     return this.graphQL.mutation('sendTx', txBody, variables);
@@ -500,6 +495,19 @@ export class StressingService {
     ]).pipe(
       map((response: [any[], any[]]) => [...response[1], ...response[0]]),
     );
+  }
+
+  getTransactionStatuses(transactionIds: string[]): Observable<{ [id: string]: string }> {
+    const mapResponse = {};
+    const observables = transactionIds.map((id: string) =>
+      this.graphQL.query<any>('transactionStatus', `{ transactionStatus(payment: "${id}") }`)
+        .pipe(
+          first(),
+          tap((response: any) => mapResponse[id] = response.transactionStatus.toLowerCase()),
+        ),
+    );
+
+    return forkJoin(observables).pipe(map(() => mapResponse));
   }
 
   // createWalletAndAddFunds(): void {

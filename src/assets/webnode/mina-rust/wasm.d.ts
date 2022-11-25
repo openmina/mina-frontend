@@ -118,10 +118,6 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly __wbg_inmemlog_free: (a: number) => void;
-  readonly inmemlog_get: (a: number, b: number, c: number, d: number) => void;
-  readonly inmemlog_id: (a: number) => number;
-  readonly inmemlog_as_json: (a: number, b: number) => void;
   readonly __wbg_manualconnector_free: (a: number) => void;
   readonly manualconnector_dial: (a: number, b: number, c: number) => number;
   readonly manualconnector_listen: (a: number) => number;
@@ -135,6 +131,10 @@ export interface InitOutput {
   readonly jshandle_pubsub_publish: (a: number, b: number, c: number, d: number) => number;
   readonly jshandle_generate_account_keys: (a: number) => number;
   readonly jshandle_payment_sign_and_inject: (a: number, b: number) => number;
+  readonly __wbg_inmemlog_free: (a: number) => void;
+  readonly inmemlog_get: (a: number, b: number, c: number, d: number) => void;
+  readonly inmemlog_id: (a: number) => number;
+  readonly inmemlog_as_json: (a: number, b: number) => void;
   readonly __wbg_crypto_free: (a: number) => void;
   readonly crypto_pub_key_as_protobuf: (a: number, b: number) => void;
   readonly crypto_peer_id_as_b58: (a: number, b: number) => void;
@@ -174,8 +174,6 @@ export function initSync(module: SyncInitInput): InitOutput;
 * @returns {Promise<InitOutput>}
 */
 export default function init (module_or_path?: InitInput | Promise<InitInput>): Promise<InitOutput>;
-
-
 
 export type WasmLoadProgressEvent = Pick<ProgressEvent, 'total' | 'loaded'>
 import { Subject } from 'rxjs';

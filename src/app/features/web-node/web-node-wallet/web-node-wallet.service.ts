@@ -9,10 +9,10 @@ import { GraphQLService } from '@core/services/graph-ql.service';
 
 
 const DEFAULT_WALLETS = [
-  {
-    priv_key: '3c6850502d348fec34dca20739629ac95877dfaf1822abb9be155aa1a1bdf353',
-    pub_key: 'B62qkzCCgvnnySwE3iwBi5d5fj5uNXvnUXXkoZGhUjos3VgZqRzh94U',
-  },
+  // {
+  //   priv_key: '3c6850502d348fec34dca20739629ac95877dfaf1822abb9be155aa1a1bdf353',
+  //   pub_key: 'B62qkzCCgvnnySwE3iwBi5d5fj5uNXvnUXXkoZGhUjos3VgZqRzh94U',
+  // },
   {
     priv_key: '02aae0a83fecc9ff0fec19d7f5c914810f60e6a3e32a83fc4c4aebac42769dda',
     pub_key: 'B62qqhCawV18yp1jYd7efF6gyDuJPBLYqKEnq3XJp4MaPMdQreWo4Go',
@@ -60,7 +60,8 @@ export class WebNodeWalletService {
       localStorage.setItem('wallets', JSON.stringify(DEFAULT_WALLETS));
     }
 
-    const wallets = JSON.parse(localStorage.getItem('wallets')) as any[];
+    let wallets = JSON.parse(localStorage.getItem('wallets')) as any[];
+    wallets = wallets.filter(w => w.pub_key !== 'B62qkzCCgvnnySwE3iwBi5d5fj5uNXvnUXXkoZGhUjos3VgZqRzh94U'); //broken wallet...
 
     return forkJoin(wallets.map(wallet => this.getAccount(wallet.pub_key)))
       .pipe(

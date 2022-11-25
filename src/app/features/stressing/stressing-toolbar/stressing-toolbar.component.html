@@ -1,10 +1,18 @@
-<form [formGroup]="formGroup" class="h-100 flex-row align-center flex-between pl-12 pr-12 secondary border-bottom">
+<form [formGroup]="formGroup" class="h-40 flex-row align-center flex-between pl-12 pr-12 secondary border-bottom">
   <div class="flex-row align-center">
+    <button (click)="goLive()"
+            class="live-button"
+            [class.active]="sendStreaming">{{ sendStreaming ? 'Sending' : 'Send' }}
+    </button>
+    <button (click)="pause()"
+            class="ml-8 mr-10 pause-button"
+            [class.active]="!sendStreaming">{{ !sendStreaming ? 'Paused' : 'Pause' }}
+    </button>
     <div>Send</div>
-    <input type="number" fxFlex="40px" class="mina-input mr-10 ml-10 text-center" formControlName="batch">
+    <input type="number" fxFlex="44px" class="mina-input border-rad-4 mr-8 ml-8 text-center" formControlName="batch">
     <div>tx. every</div>
-    <input type="number" fxFlex="40px" class="mina-input mr-10 ml-10 text-center" formControlName="interval">
+    <input type="number" fxFlex="44px" class="mina-input border-rad-4 mr-8 ml-8 text-center" formControlName="interval">
     <div>seconds</div>
   </div>
-  <div>{{ transactionLength }} Transactions</div>
+  <div class="tertiary">Sent Tx. overview: {{ successSentTransactions }} success, {{ failSentTransactions }} failed</div>
 </form>

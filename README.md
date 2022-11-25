@@ -9,7 +9,7 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The appli
 ## Web node integration process
 
 1. Get the latest version of the node.
-2. Go to wasm directory (the one which contains Cargo.toml)
+2. Go to wasm directory (the one which contains Cargo.toml: `openmina/node/wasm`)
 3. Run `eval 'ssh-agent -s'`
 4. Run `ssh-add`
 5. Run `cargo update`

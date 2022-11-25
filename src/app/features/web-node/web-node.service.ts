@@ -6,6 +6,9 @@ import * as base from 'base-x';
 import init, { JsHandle, start } from '../../../assets/webnode/mina-rust';
 import { toReadableDate } from '@shared/helpers/date.helper';
 
+export const PEER_CONNECTED = 'PeerConnected';
+export const PEER_DISCONNECTED = 'PeerDisconnected';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -58,7 +61,7 @@ export class WebNodeService {
     return this.backendSubject$.asObservable().pipe(
       filter(Boolean),
       switchMap(handle => from(handle.logs_range())),
-      map((logs: any[]) => logs.filter((log: any) => log.details.peer_id)),
+      map((logs: any[]) => logs.filter((log: any) => log.details.peer_id && [PEER_CONNECTED, PEER_DISCONNECTED].includes(log.details.kind))),
       map((logs: any[]) => WebNodeService.getWebNodeLog(logs)),
     );
   }

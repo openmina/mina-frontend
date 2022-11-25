@@ -23,7 +23,7 @@
           <span>{{ peer.date }}</span>
           <span>{{ peer.peerId | truncateMid: 17 }}</span>
           <span class="secondary truncate">{{ peer.kind }}</span>
-          <span class="truncate">{{ peer.summary }}</span>
+          <span class="truncate">{{ peer.summary || '-' }}</span>
           <span class="secondary truncate">{{ peer.level }}</span>
         </div>
       </cdk-virtual-scroll-viewport>
