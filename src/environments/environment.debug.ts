@@ -2,8 +2,8 @@ import { MinaEnv } from '@shared/types/core/environment/mina-env.type';
 
 export const environment: Readonly<MinaEnv> = {
   production: true,
-  backend: 'https://debug.dev.tezedge.com:3086',
-  debugger: 'https://debug.dev.tezedge.com',
+  backend: 'https://debug.dev.openmina.com:3086',
+  debugger: 'https://debug.dev.openmina.com',
   minaExplorer: 'https://berkeley.api.minaexplorer.com',
   features: ['network', 'stressing'],
   sentry: {
@@ -12,8 +12,8 @@ export const environment: Readonly<MinaEnv> = {
   },
   nodes: [
     {
-      backend: 'https://debug.dev.tezedge.com:3086',
-      debugger: 'https://debug.dev.tezedge.com',
+      backend: 'https://debug.dev.openmina.com:3086',
+      debugger: 'https://debug.dev.openmina.com',
       minaExplorer: 'https://berkeley.api.minaexplorer.com',
       features: ['network', 'stressing'],
       name: 'debug',

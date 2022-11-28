@@ -2,7 +2,7 @@ import { MinaEnv } from '@shared/types/core/environment/mina-env.type';
 
 export const environment: Readonly<MinaEnv> = {
   production: true,
-  backend: 'https://webrtc.minasync.com',
+  backend: 'https://webrtc.openmina.com',
   minaExplorer: 'https://berkeley.api.minaexplorer.com',
   features: ['web-node'],
   sentry: {
@@ -11,7 +11,7 @@ export const environment: Readonly<MinaEnv> = {
   },
   nodes: [
     {
-      backend: 'https://webrtc.minasync.com',
+      backend: 'https://webrtc.openmina.com',
       minaExplorer: 'https://berkeley.api.minaexplorer.com',
       features: ['web-node'],
       name: 'webrtc',

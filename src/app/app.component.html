@@ -11,7 +11,7 @@
   <mat-sidenav-content *ngIf="menu" class="flex-column"
                        [style.marginLeft.px]="menu.isMobile ? 0 : (menu.collapsed ? 44 : 160)">
     <mina-toolbar></mina-toolbar>
-    <mina-submenu-tabs *ngIf="menu.isMobile" class="border-bottom"></mina-submenu-tabs>
+    <mina-submenu-tabs *ngIf="menu.isMobile" class="border-bottom pl-8"></mina-submenu-tabs>
     <div class="mina-content"
          [class.mobile]="menu.isMobile">
       <router-outlet></router-outlet>

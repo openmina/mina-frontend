@@ -1,6 +1,7 @@
 @import '../../../../assets/styles/utilities/variables';
 
 .container {
+	max-width: 100vw;
 	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
 	opacity: 0;
 	transform: translateY(20px);

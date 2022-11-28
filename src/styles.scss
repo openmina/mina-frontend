@@ -57,17 +57,7 @@ p {
 }
 
 /* User Select */
-::-moz-selection {
-	color: $base-primary;
-	background: $selected-secondary;
-}
-
-::selection {
-	color: $base-primary;
-	background: $selected-secondary;
-}
-
-body.light {
+body {
 	::-moz-selection {
 		color: $base-primary;
 		background: $selected-secondary;

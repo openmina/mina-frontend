@@ -15,9 +15,9 @@
      [tooltip]="webNodeTooltip"
      [class.offline]="!webNodeStatus.peers && !webNodeStatus.messages">
   <span class="mina-icon icon-300 f-20">language</span>
-  <div class="ml-5 mr-5">{{ webNodeStatus.peers }} peer{{ webNodeStatus.peers === 1 ? '' : 's' }}
-                                                   , {{ webNodeStatus.messages }}
-                                                   message{{ webNodeStatus.messages === 1 ? '' : 's' }}</div>
+  <div class="ml-5 mr-5">
+    {{ webNodeStatus.peers }} peer{{ webNodeStatus.peers === 1 ? '' : 's' }} , {{ webNodeStatus.messages }} message{{ webNodeStatus.messages === 1 ? '' : 's' }}
+  </div>
 </div>
 
 <div class="node-status ml-8 mr-8 border-rad-4 p-relative overflow-hidden">
@@ -48,17 +48,24 @@
 </div>
 
 <ng-template #nodePicker>
-  <div class="flex-column border border-rad-6 bg-surface-top w-100 pointer"
+  <div class="flex-column border border-rad-4 bg-surface-top w-100 pointer p-5"
        (clickOutside)="detachOverlay()">
-    <div *ngFor="let node of nodes"
+    <div *ngFor="let node of nodes; let i=index"
          (click)="selectNode(node)"
-         class="bg-container-hover h-40 pl-12 pr-12 flex-row flex-between align-center"
-         [ngClass]="{ 'success-primary bg-success-container': activeNode === node }">
-      <div class="flex-column">
-        <span class="font-600 mb-5">{{ node.name }}</span>
-        <span class="f-10">{{ node.backend }}</span>
+         [ngClass]="{
+          'selected-primary bg-selected-container': activeNode === node,
+          'secondary bg-container-hover primary-hover': activeNode !== node,
+          'mb-5': i < nodes.length - 1
+          }"
+         class="h-40 pl-12 pr-12 flex-row flex-between border-rad-4">
+      <span class="mina-icon icon-200 f-20 divider mr-8"
+            [class.selected-primary]="activeNode === node">check
+      </span>
+      <div class="flex-column w-100">
+        <span fxFlex="45" class="flex-row align-end">{{ node.name }}</span>
+        <span fxFlex="55" class="flex-row align-center"
+              [ngClass]="activeNode === node ? 'selected-secondary' : 'tertiary'">{{ node.backend }}</span>
       </div>
-      <span class="mina-icon icon-200 f-20 success-primary" *ngIf="activeNode === node">check</span>
     </div>
   </div>
 </ng-template>

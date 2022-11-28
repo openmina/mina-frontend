@@ -26,19 +26,22 @@
         <div class="f-600 secondary align-center d-flex">Filters</div>
         <span class="mina-icon pointer tertiary primary-hover f-18" (click)="toggleFilerPanel()">close</span>
       </div>
-      <div class="flex-row" *ngFor="let row of availableFilters">
-        <div class="flex-row f-600 align-center flex-wrap"
-             *ngFor="let category of row">
-          <div class="category mr-10 pointer primary-hover"
-               [tooltip]="category.tooltip"
-               [showDelay]="700"
-               (click)="filterByCategory(category)">{{ category.name }}</div>
-          <div class="filter pointer bg-container pl-8 pr-8 border-rad-6 mr-5"
-               *ngFor="let filter of category.filters"
-               (click)="toggleFilter(filter)"
-               [tooltip]="filter.tooltip"
-               [showDelay]="700"
-               [class.active]="activeFilters.includes(filter)">{{ filter.display }}</div>
+      <div class="flex-column flex-grow overflow-y-auto">
+        <div class="flex-row flex-wrap" *ngFor="let row of availableFilters; let r=index">
+          <div class="flex-row f-600 align-center"
+               [class.flex-wrap]="r === 1 || r === 4 || r === 5"
+               *ngFor="let category of row">
+            <div class="category mr-10 pointer primary-hover"
+                 [tooltip]="category.tooltip"
+                 [showDelay]="700"
+                 (click)="filterByCategory(category)">{{ category.name }}</div>
+            <div class="filter pointer bg-container pl-8 pr-8 border-rad-6 mr-5 text-nowrap"
+                 *ngFor="let filter of category.filters"
+                 (click)="toggleFilter(filter)"
+                 [tooltip]="filter.tooltip"
+                 [showDelay]="700"
+                 [class.active]="activeFilters.includes(filter)">{{ filter.display }}</div>
+          </div>
         </div>
       </div>
     </div>

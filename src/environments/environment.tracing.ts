@@ -2,7 +2,7 @@ import { MinaEnv } from '@shared/types/core/environment/mina-env.type';
 
 export const environment: Readonly<MinaEnv> = {
   production: true,
-  backend: 'https://trace.dev.tezedge.com:3086',
+  backend: 'https://trace.dev.openmina.com:3086',
   minaExplorer: 'https://devnet.api.minaexplorer.com',
   features: ['tracing'],
   sentry: {
@@ -11,13 +11,13 @@ export const environment: Readonly<MinaEnv> = {
   },
   nodes: [
     {
-      backend: 'https://trace.dev.tezedge.com:3086',
+      backend: 'https://trace.dev.openmina.com:3086',
       minaExplorer: 'https://devnet.api.minaexplorer.com',
       features: ['tracing'],
       name: 'lower-latency',
     },
     {
-      backend: 'https://sandbox.dev.tezedge.com:3086',
+      backend: 'https://sandbox.dev.openmina.com:3086',
       minaExplorer: 'https://devnet.api.minaexplorer.com',
       features: ['tracing'],
       name: 'initial-trace',

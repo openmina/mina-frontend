@@ -198,7 +198,6 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
 
     const portal = new ComponentPortal(IntervalSelectComponent);
     this.intervalSelectComponent = this.overlayRef.attach<IntervalSelectComponent>(portal);
-    console.log(this.currentTimestamp?.from);
     this.intervalSelectComponent.instance.from = this.currentTimestamp?.from;
     this.intervalSelectComponent.instance.to = this.currentTimestamp?.to;
     setTimeout(() => {
