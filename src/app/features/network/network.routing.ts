@@ -24,6 +24,16 @@ const routes: Routes = [
         title: NETWORK_TITLE,
       },
       {
+        path: 'snarks',
+        loadChildren: () => import('./snarks/network-snarks.module').then(m => m.NetworkSnarksModule),
+        title: NETWORK_TITLE,
+      },
+      {
+        path: 'transactions',
+        loadChildren: () => import('./transactions/network-transactions.module').then(m => m.NetworkTransactionsModule),
+        title: NETWORK_TITLE,
+      },
+      {
         path: '**',
         redirectTo: 'messages',
         pathMatch: 'full',

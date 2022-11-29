@@ -15,7 +15,10 @@ export class NetworkComponent implements OnInit {
   constructor(private store: Store<MinaState>) { }
 
   ngOnInit(): void {
-    this.store.dispatch<AppChangeSubMenus>({ type: APP_CHANGE_SUB_MENUS, payload: [Routes.MESSAGES, Routes.CONNECTIONS, Routes.BLOCKS] });
+    this.store.dispatch<AppChangeSubMenus>({
+      type: APP_CHANGE_SUB_MENUS,
+      payload: [Routes.MESSAGES, Routes.CONNECTIONS, Routes.BLOCKS, Routes.SNARKS, Routes.TRANSACTIONS, Routes.GLOBAL],
+    });
   }
 
 }

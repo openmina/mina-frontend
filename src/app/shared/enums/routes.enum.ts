@@ -12,4 +12,6 @@ export enum Routes {
   STATE = 'state',
   WALLETS = 'wallets',
   TRANSACTIONS = 'transactions',
+  SNARKS = 'snarks',
+  GLOBAL = 'global',
 }
