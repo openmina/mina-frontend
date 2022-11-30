@@ -5,6 +5,7 @@ import { NetworkConnectionsState } from '@network/connections/network-connection
 import { NetworkBlocksState } from '@network/blocks/network-blocks.state';
 import { NetworkSnarksState } from '@network/snarks/network-snarks.state';
 import { NetworkTransactionsState } from '@network/transactions/network-transactions.state';
+import { NetworkGlobalState } from '@network/global/network-global.state';
 
 export interface NetworkState {
   messages: NetworkMessagesState;
@@ -12,6 +13,7 @@ export interface NetworkState {
   blocks: NetworkBlocksState;
   snarks: NetworkSnarksState;
   transactions: NetworkTransactionsState;
+  global: NetworkGlobalState;
 }
 
 const select = <T>(selector: (state: NetworkState) => T): MemoizedSelector<MinaState, T> => createSelector(
@@ -25,3 +27,4 @@ export const selectNetworkConnectionsState = select((state: NetworkState): Netwo
 export const selectNetworkBlocksState = select((state: NetworkState): NetworkBlocksState => state.blocks);
 export const selectNetworkSnarksState = select((state: NetworkState): NetworkSnarksState => state.snarks);
 export const selectNetworkTransactionsState = select((state: NetworkState): NetworkTransactionsState => state.transactions);
+export const selectNetworkGlobalState = select((state: NetworkState): NetworkGlobalState => state.global);

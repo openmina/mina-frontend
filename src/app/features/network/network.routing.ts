@@ -34,6 +34,11 @@ const routes: Routes = [
         title: NETWORK_TITLE,
       },
       {
+        path: 'global',
+        loadChildren: () => import('./global/network-global.module').then(m => m.NetworkGlobalModule),
+        title: NETWORK_TITLE,
+      },
+      {
         path: '**',
         redirectTo: 'messages',
         pathMatch: 'full',
