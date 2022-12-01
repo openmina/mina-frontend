@@ -14,6 +14,11 @@
 </head>
 
 <body class="f-12">
+  <script>
+    import('./assets/webnode/mina-rust/wasm.js').then((v) => {
+      window.WebnodeWasm = v;
+    });
+  </script>
   <app-root></app-root>
 <!--  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js" async></script>-->
   <script type="text/javascript" src="assets/js/xmlhttprequest-length-computable.min.js" async></script>

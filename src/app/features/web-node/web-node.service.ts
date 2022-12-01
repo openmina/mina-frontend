@@ -3,8 +3,10 @@ import { BehaviorSubject, filter, from, map, Observable, switchMap } from 'rxjs'
 import { WebNodeLog } from '@shared/types/web-node/logs/web-node-log.type';
 import { WebNodeTransaction } from '@shared/types/web-node/wallet/web-node-transaction.type';
 import * as base from 'base-x';
-import init, { JsHandle, start } from '../../../assets/webnode/mina-rust';
+import { JsHandle } from '../../../assets/webnode/mina-rust/wasm';
 import { toReadableDate } from '@shared/helpers/date.helper';
+
+declare var WebnodeWasm: any;
 
 export const PEER_CONNECTED = 'PeerConnected';
 export const PEER_DISCONNECTED = 'PeerDisconnected';
@@ -30,15 +32,20 @@ export class WebNodeService {
       decode: (string: string) => basex.decode(string.substring(1)),
     };
 
-    init('assets/webnode/mina-rust/wasm_bg.wasm').then(() => {
-      this.wasmReady.next(true);
-      this.wasmAlreadyLoaded = true;
+    const interval = setInterval(() => {
+      if (!!WebnodeWasm) {
+        WebnodeWasm.default('assets/webnode/mina-rust/wasm_bg.wasm').then(() => {
+          this.wasmReady.next(true);
+          this.wasmAlreadyLoaded = true;
 
-      start().then((jsHandle: JsHandle) => {
-        this.backend = jsHandle;
-        this.backendSubject$.next(jsHandle);
-      });
-    });
+          WebnodeWasm.start().then((jsHandle: JsHandle) => {
+            this.backend = jsHandle;
+            this.backendSubject$.next(jsHandle);
+          });
+        });
+        clearInterval(interval);
+      }
+    }, 200);
   }
 
   get wasmIsAlreadyLoaded(): boolean {
