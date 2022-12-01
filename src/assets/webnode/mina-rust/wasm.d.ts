@@ -5,6 +5,20 @@
 */
 export function start(): Promise<JsHandle>;
 /**
+* Entry point for web workers
+* @param {number} ptr
+*/
+export function wasm_thread_entry_point(ptr: number): void;
+/**
+*/
+export enum LogLevel {
+  Trace,
+  Debug,
+  Info,
+  Warn,
+  Error,
+}
+/**
 */
 export class Crypto {
   free(): void;
@@ -51,6 +65,10 @@ export class InMemLog {
 * @returns {number}
 */
   id(): number;
+/**
+* @returns {number}
+*/
+  level(): number;
 /**
 * @returns {string}
 */
@@ -117,7 +135,6 @@ export class ManualConnector {
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
-  readonly memory: WebAssembly.Memory;
   readonly __wbg_manualconnector_free: (a: number) => void;
   readonly manualconnector_dial: (a: number, b: number, c: number) => number;
   readonly manualconnector_listen: (a: number) => number;
@@ -134,7 +151,9 @@ export interface InitOutput {
   readonly __wbg_inmemlog_free: (a: number) => void;
   readonly inmemlog_get: (a: number, b: number, c: number, d: number) => void;
   readonly inmemlog_id: (a: number) => number;
+  readonly inmemlog_level: (a: number) => number;
   readonly inmemlog_as_json: (a: number, b: number) => void;
+  readonly wasm_thread_entry_point: (a: number) => void;
   readonly __wbg_crypto_free: (a: number) => void;
   readonly crypto_pub_key_as_protobuf: (a: number, b: number) => void;
   readonly crypto_peer_id_as_b58: (a: number, b: number) => void;
@@ -142,16 +161,20 @@ export interface InitOutput {
   readonly crypto_pub_key_as_protobuf_to_peer_id_as_b58: (a: number, b: number, c: number, d: number) => void;
   readonly crypto_assert_signature: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => void;
   readonly crypto_pub_key_as_protobuf_to_peer_id: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  readonly memory: WebAssembly.Memory;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
-  readonly __wbindgen_export_2: WebAssembly.Table;
-  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hf0d3ac44e8ea9df5: (a: number, b: number, c: number) => void;
-  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h724fb25c7b600c05: (a: number, b: number) => void;
-  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h5e2c95f786bffb19: (a: number, b: number) => void;
+  readonly __wbindgen_export_3: WebAssembly.Table;
+  readonly _dyn_core__ops__function__FnMut___A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h6c12caff3b9c9112: (a: number, b: number, c: number) => void;
+  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h789cfe9fd090c15b: (a: number, b: number, c: number) => void;
+  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h291ef12d2ea44fdb: (a: number, b: number) => void;
+  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h5834577f1f9de1fb: (a: number, b: number) => void;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_exn_store: (a: number) => void;
-  readonly wasm_bindgen__convert__closures__invoke2_mut__h419d610678e97774: (a: number, b: number, c: number, d: number) => void;
+  readonly wasm_bindgen__convert__closures__invoke2_mut__h0a596c78071ab04b: (a: number, b: number, c: number, d: number) => void;
+  readonly __wbindgen_thread_destroy: () => void;
+  readonly __wbindgen_start: () => void;
 }
 
 export type SyncInitInput = BufferSource | WebAssembly.Module;
@@ -160,21 +183,19 @@ export type SyncInitInput = BufferSource | WebAssembly.Module;
 * a precompiled `WebAssembly.Module`.
 *
 * @param {SyncInitInput} module
+* @param {WebAssembly.Memory} maybe_memory
 *
 * @returns {InitOutput}
 */
-export function initSync(module: SyncInitInput): InitOutput;
+export function initSync(module: SyncInitInput, maybe_memory?: WebAssembly.Memory): InitOutput;
 
 /**
 * If `module_or_path` is {RequestInfo} or {URL}, makes a request and
 * for everything else, calls `WebAssembly.instantiate` directly.
 *
 * @param {InitInput | Promise<InitInput>} module_or_path
+* @param {WebAssembly.Memory} maybe_memory
 *
 * @returns {Promise<InitOutput>}
 */
-export default function init (module_or_path?: InitInput | Promise<InitInput>): Promise<InitOutput>;
-
-export type WasmLoadProgressEvent = Pick<ProgressEvent, 'total' | 'loaded'>
-import { Subject } from 'rxjs';
-export const onProgress$: Subject<WasmLoadProgressEvent>;
+export default function init (module_or_path?: InitInput | Promise<InitInput>, maybe_memory?: WebAssembly.Memory): Promise<InitOutput>;

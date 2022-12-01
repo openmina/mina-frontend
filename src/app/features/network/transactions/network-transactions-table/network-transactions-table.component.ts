@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { NetworkSnark } from '@shared/types/network/snarks/network-snark';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { selectNetworkSnarks } from '@network/snarks/network-snarks.state';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { selectNetworkTransactions } from '@network/transactions/network-transactions.state';
+import { NetworkTransaction } from '@shared/types/network/transactions/network-transaction';
 
 @UntilDestroy()
 @Component({
@@ -19,8 +18,8 @@ export class NetworkTransactionsTableComponent extends ManualDetection implement
 
   readonly itemSize: number = 32;
 
-  snarks: NetworkSnark[];
-  activeRow: NetworkSnark;
+  snarks: NetworkTransaction[];
+  activeRow: NetworkTransaction;
 
   constructor(private store: Store<MinaState>) { super(); }
 
@@ -31,13 +30,13 @@ export class NetworkTransactionsTableComponent extends ManualDetection implement
   private listenToSnarksChanges(): void {
     this.store.select(selectNetworkTransactions)
       .pipe(untilDestroyed(this))
-      .subscribe((snarks: NetworkSnark[]) => {
+      .subscribe((snarks: NetworkTransaction[]) => {
         this.snarks = snarks;
         this.detect();
       });
   }
 
-  onRowClick(snark: NetworkSnark): void {
+  onRowClick(snark: NetworkTransaction): void {
 
   }
 

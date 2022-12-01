@@ -4,7 +4,6 @@ import { StressingTransaction } from '@shared/types/stressing/stressing-transact
 import { SentTransactionsStats } from '@shared/types/stressing/sent-transactions-stats.type';
 
 enum StressingActionTypes {
-  STRESSING_INIT = 'STRESSING_INIT',
   STRESSING_CLOSE = 'STRESSING_CLOSE',
   STRESSING_GET_WALLETS = 'STRESSING_GET_WALLETS',
   STRESSING_GET_WALLETS_SUCCESS = 'STRESSING_GET_WALLETS_SUCCESS',
@@ -21,7 +20,6 @@ enum StressingActionTypes {
   STRESSING_TOGGLE_FILTER_TRANSACTIONS = 'STRESSING_TOGGLE_FILTER_TRANSACTIONS',
 }
 
-export const STRESSING_INIT = StressingActionTypes.STRESSING_INIT;
 export const STRESSING_CLOSE = StressingActionTypes.STRESSING_CLOSE;
 export const STRESSING_GET_WALLETS = StressingActionTypes.STRESSING_GET_WALLETS;
 export const STRESSING_GET_WALLETS_SUCCESS = StressingActionTypes.STRESSING_GET_WALLETS_SUCCESS;
@@ -39,10 +37,6 @@ export const STRESSING_TOGGLE_FILTER_TRANSACTIONS = StressingActionTypes.STRESSI
 
 export interface StressingAction extends FeatureAction<StressingActionTypes> {
   readonly type: StressingActionTypes;
-}
-
-export class StressingInit implements StressingAction {
-  readonly type = STRESSING_INIT;
 }
 
 export class StressingClose implements StressingAction {
@@ -119,7 +113,6 @@ export class StressingToggleFilterTransactions implements StressingAction {
 
 
 export type StressingActions =
-  | StressingInit
   | StressingClose
   | StressingGetWallets
   | StressingGetWalletsSuccess

@@ -7,7 +7,7 @@
           (click)="getBlock(activeBlock - 1)">
     <span class="mina-icon f-18">navigate_before</span>
   </button>
-  <span class="f-600">{{ activeBlock }}</span>
+  <span class="f-600 selected-primary">{{ activeBlock }}</span>
   <button class="btn-secondary h-24 w-24 ml-10 mr-5 flex-row flex-center align-center"
           [class.disabled]="earliestBlock === activeBlock"
           [tooltip]="'Next block'"

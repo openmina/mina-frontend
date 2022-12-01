@@ -27,7 +27,7 @@
         <span class="underline tertiary"
               tooltip="See message details"
               [showDelay]="1000"
-              (click)="seeMessageInMessages(block.messageId)">{{ block.messageId }}</span>
+              (click)="seeMessageInMessages(block.receivedMessageId)">{{ block.receivedMessageId }}</span>
       </span>
       <span class="tertiary">{{ block.date }}</span>
       <span [tooltip]="'Producer ID: ' + block.producerId | truncateMid: 19"

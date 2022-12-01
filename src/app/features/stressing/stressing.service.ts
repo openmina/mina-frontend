@@ -5,9 +5,9 @@ import { WebNodeWalletService } from '@web-node/web-node-wallet/web-node-wallet.
 import { first, forkJoin, map, Observable, tap } from 'rxjs';
 import { Payment, Signed } from 'mina-signer/dist/src/TSTypes';
 import { HttpClient } from '@angular/common/http';
-import { CONFIG } from '@shared/constants/config';
 import { StressingWallet } from '@shared/types/stressing/stressing-wallet.type';
 import { StressingTransaction } from '@shared/types/stressing/stressing-transaction.type';
+import { ConfigService } from '@core/services/config.service';
 
 const STRESSING_WALLETS: any[] = [
   {
@@ -417,13 +417,12 @@ const STRESSING_WALLETS: any[] = [
 })
 export class StressingService {
 
-  private readonly MINA_EXPLORER: string = CONFIG.minaExplorer;
-
   private wallets = STRESSING_WALLETS;
 
   private client: Client = new Client({ network: 'testnet' });
 
   constructor(private http: HttpClient,
+              private config: ConfigService,
               private graphQL: GraphQLService,
               private walletService: WebNodeWalletService) {}
 
@@ -459,7 +458,7 @@ export class StressingService {
   }
 
   getTransactions(): Observable<StressingTransaction[]> {
-    const appliedTransactions$: Observable<any[]> = this.http.get<any>(this.MINA_EXPLORER + '/blocks?limit=500')
+    const appliedTransactions$: Observable<any[]> = this.http.get<any>(this.config.MINA_EXPLORER + '/blocks?limit=500')
       .pipe(
         first(),
         map(response => response.blocks.reduce((acc: any, current: any) => [

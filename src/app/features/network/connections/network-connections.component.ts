@@ -13,6 +13,8 @@ import {
 import { selectNetworkConnectionsActiveConnection } from '@network/connections/network-connections.state';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NetworkConnection } from '@shared/types/network/connections/network-connection.type';
+import { selectActiveNode } from '@app/app.state';
+import { filter } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +38,15 @@ export class NetworkConnectionsComponent extends ManualDetection implements OnIn
 
   ngOnInit(): void {
     this.listenToActiveRowChange();
-    this.store.dispatch<NetworkConnectionsInit>({ type: NETWORK_CONNECTIONS_INIT });
+    this.listenToActiveNodeChange();
+  }
+
+  private listenToActiveNodeChange(): void {
+    this.store.select(selectActiveNode)
+      .pipe(untilDestroyed(this), filter(Boolean))
+      .subscribe(() => {
+        this.store.dispatch<NetworkConnectionsInit>({ type: NETWORK_CONNECTIONS_INIT });
+      });
   }
 
   private listenToActiveRowChange(): void {

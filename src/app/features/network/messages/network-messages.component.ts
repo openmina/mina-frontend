@@ -9,6 +9,8 @@ import { HorizontalResizableContainerComponent } from '@shared/components/horizo
 import { NETWORK_CLOSE, NETWORK_INIT, NetworkMessagesClose, NetworkMessagesInit } from '@network/messages/network-messages.actions';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { APP_UPDATE_DEBUGGER_STATUS, AppUpdateDebuggerStatus } from '@app/app.actions';
+import { selectActiveNode } from '@app/app.state';
+import { filter } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +34,15 @@ export class NetworkMessagesComponent extends ManualDetection implements OnInit,
 
   ngOnInit(): void {
     this.listenToActiveRowChange();
-    this.store.dispatch<NetworkMessagesInit>({ type: NETWORK_INIT });
+    this.listenToActiveNodeChange();
+  }
+
+  private listenToActiveNodeChange(): void {
+    this.store.select(selectActiveNode)
+      .pipe(untilDestroyed(this), filter(Boolean))
+      .subscribe(() => {
+        this.store.dispatch<NetworkMessagesInit>({ type: NETWORK_INIT });
+      });
   }
 
   private listenToActiveRowChange(): void {

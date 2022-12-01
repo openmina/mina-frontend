@@ -12,7 +12,8 @@ import { filter } from 'rxjs';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { Router } from '@angular/router';
 import { Routes } from '@shared/enums/routes.enum';
-import { CONFIG } from '@shared/constants/config';
+import { selectActiveNode } from '@app/app.state';
+import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 
 @UntilDestroy()
 @Component({
@@ -40,12 +41,22 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
   private cancelDownload: boolean = false;
   private userDidHitExpandAll: boolean;
   private currentMessageKind: string;
+  private debuggerURL: string;
 
   constructor(private store: Store<MinaState>,
               private router: Router) { super(); }
 
   ngAfterViewInit(): void {
     this.listenToActiveRowChange();
+    this.listenToActiveNodeChange();
+  }
+
+  private listenToActiveNodeChange(): void {
+    this.store.select(selectActiveNode)
+      .pipe(untilDestroyed(this), filter(Boolean))
+      .subscribe((node: MinaNode) => {
+        this.debuggerURL = node.debugger;
+      });
   }
 
   private listenToActiveRowChange(): void {
@@ -101,7 +112,7 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
     const fileName = this.selectedTabIndex === 2 ? 'message_hex.txt' : 'network_data.json';
     if (this.jsonTooBig && this.selectedTabIndex === 1) {
       this.cancelDownload = false;
-      const URL = CONFIG.debugger + '/message/' + this.activeRow.id;
+      const URL = this.debuggerURL + '/message/' + this.activeRow.id;
       downloadJsonFromURL(URL, fileName, () => this.cancelDownload, this.saveButton.nativeElement);
       return;
     }
@@ -116,7 +127,7 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
   downloadBinary(): void {
     const fileName = this.activeRow.id + '_binary.bin';
     this.cancelDownload = false;
-    const URL = CONFIG.debugger + '/message_bin/' + this.activeRow.id;
+    const URL = this.debuggerURL + '/message_bin/' + this.activeRow.id;
     downloadJsonFromURL(URL, fileName, () => null);
   }
 

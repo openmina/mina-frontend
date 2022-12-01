@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { WebNodeService } from '@app/features/web-node/web-node.service';
-import { onProgress$, WasmLoadProgressEvent } from '../../../assets/webnode/mina-rust';
+// import { onProgress$, WasmLoadProgressEvent } from '../../../assets/webnode/mina-rust';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { APP_CHANGE_SUB_MENUS, AppChangeSubMenus } from '@app/app.actions';
@@ -44,8 +44,8 @@ export class WebNodeComponent extends ManualDetection implements OnInit, AfterVi
     if (this.webNodeService.wasmIsAlreadyLoaded) {
       return;
     }
+    // this.listenToWasmDownloadingProgress();
     this.webNodeService.instantiateWasm();
-    this.listenToWasmDownloadingProgress();
 
     this.webNodeService.wasmReady$.subscribe(() => {
       this.wasmLoaded = true;
@@ -53,44 +53,44 @@ export class WebNodeComponent extends ManualDetection implements OnInit, AfterVi
     });
   }
 
-  private listenToWasmDownloadingProgress(): void {
-    const startTime = Date.now();
-
-    onProgress$
-      .pipe(untilDestroyed(this))
-      .subscribe((event: WasmLoadProgressEvent) => {
-
-        // Calculate percentage
-        const percentComplete = Math.floor((event.loaded / event.total) * 100);
-
-        // Get download speed
-        const duration = (new Date().getTime() - startTime) / ONE_THOUSAND;
-        const bps = event.loaded / duration;
-        const kbps = bps / 1024;
-        let speed;
-        if (kbps > 1024) {
-          speed = Math.floor(kbps / 1024) + 'MB/s';
-        } else {
-          speed = Math.floor(kbps) + 'KB/s';
-        }
-
-        // Get remaining time
-        const time = (event.total - event.loaded) / bps;
-        const minutes = time / 60;
-        let remaining;
-        if (minutes >= 1) {
-          remaining = Math.ceil(minutes) + 'm';
-        } else {
-          const seconds = time % 60;
-          remaining = Math.ceil(seconds) + 's';
-        }
-
-        this.loadingService.setProgress({
-          percentage: percentComplete,
-          speed,
-          remaining,
-        });
-      });
-  }
+  // private listenToWasmDownloadingProgress(): void {
+  //   const startTime = Date.now();
+  //
+  //   onProgress$
+  //     .pipe(untilDestroyed(this))
+  //     .subscribe((event: WasmLoadProgressEvent) => {
+  //
+  //       // Calculate percentage
+  //       const percentComplete = Math.floor((event.loaded / event.total) * 100);
+  //
+  //       // Get download speed
+  //       const duration = (new Date().getTime() - startTime) / ONE_THOUSAND;
+  //       const bps = event.loaded / duration;
+  //       const kbps = bps / 1024;
+  //       let speed;
+  //       if (kbps > 1024) {
+  //         speed = Math.floor(kbps / 1024) + 'MB/s';
+  //       } else {
+  //         speed = Math.floor(kbps) + 'KB/s';
+  //       }
+  //
+  //       // Get remaining time
+  //       const time = (event.total - event.loaded) / bps;
+  //       const minutes = time / 60;
+  //       let remaining;
+  //       if (minutes >= 1) {
+  //         remaining = Math.ceil(minutes) + 'm';
+  //       } else {
+  //         const seconds = time % 60;
+  //         remaining = Math.ceil(seconds) + 's';
+  //       }
+  //
+  //       this.loadingService.setProgress({
+  //         percentage: percentComplete,
+  //         speed,
+  //         remaining,
+  //       });
+  //     });
+  // }
 
 }

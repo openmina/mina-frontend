@@ -9,7 +9,6 @@ import { NodeStatus } from '@shared/types/app/node-status.type';
 import { DebuggerStatus } from '@shared/types/app/debugger-status.type';
 import { WebNodeStatus } from '@shared/types/app/web-node-status.type';
 import { selectWebNodeSummary } from '@web-node/web-node.state';
-import { CONFIG } from '@shared/constants/config';
 import { AppMenu } from '@shared/types/app/app-menu.type';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 import { TemplatePortal } from '@angular/cdk/portal';
@@ -45,11 +44,11 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
   nodes: MinaNode[] = [];
   activeNode: MinaNode;
 
-  readonly enabledDebugger: boolean = !!CONFIG.debugger;
+  enabledDebugger: boolean;
   debuggerStatus: DebuggerStatus;
   debuggerTooltip: string;
 
-  readonly enabledWebNode: boolean = CONFIG.features.includes('web-node');
+  enabledWebNode: boolean;
   webNodeStatus: WebNodeStatus;
   webNodeTooltip: string;
 
@@ -160,6 +159,8 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
       .pipe(filter(Boolean))
       .subscribe((activeNode: MinaNode) => {
         this.activeNode = activeNode;
+        this.enabledDebugger = !!activeNode.debugger;
+        this.enabledWebNode = activeNode.features.includes('web-node');
         this.detect();
       });
   }

@@ -1,5 +1,5 @@
 <div class="debugger-status h-24 ml-8 border-rad-4 flex-row align-center"
-     *ngIf="enabledDebugger"
+     *ngIf="enabledDebugger && debuggerStatus"
      [tooltip]="debuggerTooltip"
      [class.failed]="debuggerStatus.failed"
      [class.offline]="!debuggerStatus.isOnline">
@@ -11,7 +11,7 @@
 </div>
 
 <div class="web-node-status h-24 ml-8 border-rad-4 flex-row align-center"
-     *ngIf="webNodeStatus"
+     *ngIf="enabledWebNode && webNodeStatus"
      [tooltip]="webNodeTooltip"
      [class.offline]="!webNodeStatus.peers && !webNodeStatus.messages">
   <span class="mina-icon icon-300 f-20">language</span>

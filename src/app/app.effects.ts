@@ -25,14 +25,18 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { addError, createNonDispatchableEffect } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import { NodeStatus } from '@shared/types/app/node-status.type';
-import { CONFIG } from '@shared/constants/config';
 import { GraphQLService } from '@core/services/graph-ql.service';
+import { Router } from '@angular/router';
+import { FeatureType } from '@shared/types/core/environment/mina-env.type';
+
+const INIT_EFFECTS = '@ngrx/effects/init';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppEffects extends MinaBaseEffect<AppAction> {
 
+  readonly ngrxEffectsInit$: Effect;
   readonly init$: Effect;
   readonly onNodeChange$: NonDispatchableEffect;
   readonly getNodeStatus$: Effect;
@@ -43,9 +47,16 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
   constructor(private actions$: Actions,
               private graphQL: GraphQLService,
               private blockService: BlockService,
+              private router: Router,
               store: Store<MinaState>) {
 
     super(store, selectMinaState);
+
+
+    this.ngrxEffectsInit$ = createEffect(() => this.actions$.pipe(
+      ofType(INIT_EFFECTS),
+      map(() => ({ type: APP_INIT })),
+    ));
 
     this.init$ = createEffect(() => this.actions$.pipe(
       ofType(APP_INIT),
@@ -64,7 +75,21 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
     this.onNodeChange$ = createNonDispatchableEffect(() => this.actions$.pipe(
       ofType(APP_CHANGE_ACTIVE_NODE),
       this.latestActionState<AppChangeActiveNode>(),
-      tap(({ state }) => this.graphQL.changeGraphQlProvider(state.app.activeNode.name)),
+      tap(({ state }) => {
+        this.graphQL.changeGraphQlProvider(state.app.activeNode.name);
+
+        const removeParams = (path: string): string => {
+          if (path?.includes('?')) {
+            return path.split('?')[0];
+          }
+          return path;
+        };
+        const activePage = removeParams(this.router.url.split('/')[1]);
+        const features = state.app.activeNode.features;
+        if (!features.some((feature: FeatureType) => feature === activePage)) {
+          this.router.navigate([features[0]]);
+        }
+      }),
     ));
 
     this.getNodeStatus$ = createEffect(() => this.actions$.pipe(
@@ -82,7 +107,7 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
     this.getDebuggerStatus$ = createEffect(() => this.actions$.pipe(
       ofType(APP_GET_DEBUGGER_STATUS),
       this.latestActionState<AppGetDebuggerStatus>(),
-      filter(() => !!CONFIG.debugger),
+      filter(({ state }) => !!state.app.activeNode.debugger),
       mergeMap(() => this.blockService.getDebuggerStatus()),
       map(() => this.updateDebuggerStatus(true)),
       catchError((error: HttpErrorResponse) => [

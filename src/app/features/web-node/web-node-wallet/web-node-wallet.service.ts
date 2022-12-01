@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { WebNodeWallet } from '@shared/types/web-node/wallet/web-node-wallet.type';
-import { first, forkJoin, map, Observable, of, tap } from 'rxjs';
+import { first, forkJoin, map, Observable, tap } from 'rxjs';
 import { WebNodeService } from '@web-node/web-node.service';
 import { WebNodeTransaction } from '@shared/types/web-node/wallet/web-node-transaction.type';
 import { HttpClient } from '@angular/common/http';
-import { CONFIG } from '@shared/constants/config';
 import { GraphQLService } from '@core/services/graph-ql.service';
+import { ConfigService } from '@core/services/config.service';
 
 
 const DEFAULT_WALLETS = [
@@ -48,12 +48,10 @@ const DEFAULT_WALLETS = [
 })
 export class WebNodeWalletService {
 
-  private readonly MINA_EXPLORER: string = CONFIG.minaExplorer;
-  private readonly BACKEND: string = CONFIG.backend;
-
-  constructor(private webNodeService: WebNodeService,
-              private http: HttpClient,
-              private graphQL: GraphQLService) { }
+  constructor(private http: HttpClient,
+              private config: ConfigService,
+              private graphQL: GraphQLService,
+              private webNodeService: WebNodeService) { }
 
   getWallets(): Observable<WebNodeWallet[]> {
     if (!localStorage.getItem('wallets')) {
@@ -74,7 +72,7 @@ export class WebNodeWalletService {
   }
 
   getAccount(publicKey: string): Observable<any> {
-    return this.http.get<any>(this.MINA_EXPLORER + '/accounts/' + publicKey);
+    return this.http.get<any>(this.config.MINA_EXPLORER + '/accounts/' + publicKey);
   }
 
   createTransaction(transaction: WebNodeTransaction): Observable<WebNodeTransaction> {
@@ -82,7 +80,7 @@ export class WebNodeWalletService {
   }
 
   getTransactions(publicKey: string): Observable<WebNodeTransaction[]> {
-    const appliedTransactions$: Observable<any[]> = this.http.get<any>(this.MINA_EXPLORER + '/blocks?limit=500')
+    const appliedTransactions$: Observable<any[]> = this.http.get<any>(this.config.MINA_EXPLORER + '/blocks?limit=500')
       .pipe(
         first(),
         map(response => response.blocks.reduce((acc: any, current: any) => [
@@ -133,7 +131,7 @@ export class WebNodeWalletService {
   }
 
   addTokensToWallet(publicKey: string, network: string = 'devnet'): Observable<any> {
-    return this.http.post(this.BACKEND + '/faucet', {
+    return this.http.post(this.config.API + '/faucet', {
       network,
       address: publicKey,
     }, { headers: { 'Content-Type': 'application/json' } });

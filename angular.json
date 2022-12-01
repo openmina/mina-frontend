@@ -208,6 +208,13 @@
               "browserTarget": "mina-frontend:build:development"
             }
           },
+          "options": {
+            "browserTarget": "web-ui:build",
+            "headers": {
+              "Cross-Origin-Opener-Policy":"same-origin",
+              "Cross-Origin-Embedder-Policy":"require-corp"
+            }
+           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {

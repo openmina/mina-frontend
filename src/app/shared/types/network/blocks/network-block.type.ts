@@ -5,10 +5,13 @@ export interface NetworkBlock {
   date: string;
   sender: string;
   receiver: string;
-  messageId: number;
+  receivedMessageId: number;
+  sentMessageId: number;
   height: number;
   globalSlot: number;
   incoming: 'Incoming' | 'Outgoing';
   sentLatency: number;
   receivedLatency: number;
+  debuggerUrl: string;
+  nodeAddr: string;
 }

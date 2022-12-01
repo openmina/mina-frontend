@@ -19,6 +19,7 @@ import {
   NetworkTransactionsGetTransactions,
   NetworkTransactionsGoLive,
 } from '@network/transactions/network-transactions.actions';
+import { NetworkTransaction } from '@shared/types/network/transactions/network-transaction';
 
 @Injectable({
   providedIn: 'root',
@@ -61,7 +62,7 @@ export class NetworkTransactionsEffects extends MinaBaseEffect<NetworkTransactio
       tap(() => this.waitingForServer = true),
       switchMap(({ action, state }) => this.networkSnarksService.getSnarks()),
       tap(() => this.waitingForServer = false),
-      map((payload: NetworkSnark[]) => ({ type: NETWORK_TRANSACTIONS_GET_TRANSACTIONS_SUCCESS, payload })),
+      map((payload: NetworkTransaction[]) => ({ type: NETWORK_TRANSACTIONS_GET_TRANSACTIONS_SUCCESS, payload })),
       catchError((error: Error) => addErrorObservable(error, MinaErrorType.DEBUGGER)),
       repeat(),
     ));

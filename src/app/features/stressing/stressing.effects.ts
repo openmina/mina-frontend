@@ -43,8 +43,8 @@ import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum'
 })
 export class StressingEffects extends MinaBaseEffect<StressingActions> {
 
-  readonly init$: Effect;
-  readonly init2$: Effect;
+  readonly getWalletsSuccess$: Effect;
+  readonly initSendTransactions$: Effect;
   readonly getWallets$: Effect;
   readonly getTransactions$: Effect;
   readonly createTransaction$: Effect;
@@ -64,7 +64,7 @@ export class StressingEffects extends MinaBaseEffect<StressingActions> {
 
     super(store, selectMinaState);
 
-    this.init$ = createEffect(() => this.actions$.pipe(
+    this.getWalletsSuccess$ = createEffect(() => this.actions$.pipe(
       ofType(STRESSING_GET_WALLETS_SUCCESS),
       this.latestActionState<StressingGetWalletsSuccess>(),
       tap(() => {
@@ -79,7 +79,7 @@ export class StressingEffects extends MinaBaseEffect<StressingActions> {
       ),
     ));
 
-    this.init2$ = createEffect(() => this.actions$.pipe(
+    this.initSendTransactions$ = createEffect(() => this.actions$.pipe(
       ofType(STRESSING_STREAM_SENDING_LIVE, STRESSING_CHANGE_TRANSACTION_SENDING_INTERVAL, STRESSING_CHANGE_TRANSACTION_BATCH),
       this.latestActionState<StressingStreamSendingLive | StressingChangeTransactionSendingInterval>(),
       tap(() => this.stressingStreamActive = true),
@@ -129,6 +129,7 @@ export class StressingEffects extends MinaBaseEffect<StressingActions> {
       ofType(STRESSING_CREATE_TRANSACTION),
       this.latestActionState<StressingCreateTransaction>(),
       mergeMap(({ action }) => this.stressingService.createTransaction(action.payload.from, action.payload.to)),
+      filter(() => this.stressingStreamActive),
       map(() => ({ type: STRESSING_CREATE_TRANSACTION_SUCCESS, payload: { success: 1, fail: 0 } })),
       catchError((error: HttpErrorResponse) => [
         addError(error, MinaErrorType.GRAPH_QL),
@@ -141,7 +142,7 @@ export class StressingEffects extends MinaBaseEffect<StressingActions> {
       ofType(STRESSING_GET_WALLETS),
       this.latestActionState<StressingGetWallets>(),
       switchMap(() => this.stressingService.getWallets()),
-      map((payload: any[]) => ({ type: STRESSING_GET_WALLETS_SUCCESS, payload })),
+      map((payload: StressingWallet[]) => ({ type: STRESSING_GET_WALLETS_SUCCESS, payload })),
     ));
 
     this.getTransactions$ = createEffect(() => this.actions$.pipe(

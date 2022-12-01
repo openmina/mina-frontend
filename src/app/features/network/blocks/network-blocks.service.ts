@@ -1,28 +1,27 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { CONFIG } from '@shared/constants/config';
 import { NetworkBlock } from '@shared/types/network/blocks/network-block.type';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { ONE_BILLION, ONE_MILLION, ONE_THOUSAND } from '@shared/constants/unit-measurements';
+import { ConfigService } from '@core/services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NetworkBlocksService {
 
-  private readonly API: string = CONFIG.debugger;
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+              private config: ConfigService) { }
 
   getBlockMessages(height: number): Observable<NetworkBlock[]> {
-    return this.http.get<any>(this.API + '/block/' + height).pipe(
+    return this.http.get<any>(this.config.DEBUGGER + '/block/' + height).pipe(
       map((blocks: any) => this.mapBlocks(blocks)),
     );
   }
 
   getEarliestBlockHeight(): Observable<number> {
-    return this.http.get<any>(this.API + '/block/latest').pipe(
+    return this.http.get<any>(this.config.DEBUGGER + '/block/latest').pipe(
       map((blocks: any) => blocks.height),
     );
   }
@@ -37,7 +36,10 @@ export class NetworkBlocksService {
       receiver: block.receiver_addr,
       height: block.block_height,
       globalSlot: block.global_slot,
-      messageId: block.message_id,
+      receivedMessageId: block.received_message_id,
+      sentMessageId: block.sent_message_id,
+      debuggerUrl: block.debugger_url,
+      nodeAddr: block.node_addr,
       incoming: block.incoming ? 'Incoming' : 'Outgoing',
       [block.incoming ? 'receivedLatency' : 'sentLatency']: !block.latency ? undefined : block.latency.secs + block.latency.nanos / ONE_BILLION,
     } as NetworkBlock));
