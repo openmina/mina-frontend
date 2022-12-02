@@ -16,7 +16,7 @@ RUN git clone ${node_explorer_git} && \
     npm install
 
 # change dir to angular app
-WORKDIR /app/tezedge-explorer
+WORKDIR /app/mina-frontend
 
 # buid app
 RUN ng build --configuration production --output-path=/dist
