@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GraphQLService } from '@core/services/graph-ql.service';
-import Client from 'mina-signer';
+// import Client from 'mina-signer';
 import { WebNodeWalletService } from '@web-node/web-node-wallet/web-node-wallet.service';
 import { first, forkJoin, map, Observable, tap } from 'rxjs';
 import { Payment, Signed } from 'mina-signer/dist/src/TSTypes';
@@ -419,7 +419,8 @@ export class StressingService {
 
   private wallets = STRESSING_WALLETS;
 
-  private client: Client = new Client({ network: 'testnet' });
+  // private client: Client = new Client({ network: 'testnet' });
+  private client: any = null;
 
   constructor(private http: HttpClient,
               private config: ConfigService,

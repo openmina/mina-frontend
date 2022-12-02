@@ -206,15 +206,18 @@
             },
             "development": {
               "browserTarget": "mina-frontend:build:development"
+            },
+            "webnode": {
+              "browserTarget": "mina-frontend:build:webnode"
             }
           },
           "options": {
-            "browserTarget": "web-ui:build",
+            "browserTarget": "mina-frontend:build:webnode",
             "headers": {
-              "Cross-Origin-Opener-Policy":"same-origin",
-              "Cross-Origin-Embedder-Policy":"require-corp"
+              "Cross-Origin-Opener-Policy": "same-origin",
+              "Cross-Origin-Embedder-Policy": "require-corp"
             }
-           },
+          },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
