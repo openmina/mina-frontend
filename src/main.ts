@@ -17,14 +17,16 @@ platformBrowserDynamic()
   .catch(err => console.error(err));
 
 function initSentry(): void {
-  Sentry.init({
-    dsn: CONFIG.sentry.dsn,
-    integrations: [
-      new BrowserTracing({
-        tracingOrigins: CONFIG.sentry.tracingOrigins,
-        routingInstrumentation: Sentry.routingInstrumentation,
-      }),
-    ],
-    tracesSampleRate: 1.0,
-  });
+  if (CONFIG.sentry) {
+    Sentry.init({
+      dsn: CONFIG.sentry.dsn,
+      integrations: [
+        new BrowserTracing({
+          tracingOrigins: CONFIG.sentry.tracingOrigins,
+          routingInstrumentation: Sentry.routingInstrumentation,
+        }),
+      ],
+      tracesSampleRate: 1.0,
+    });
+  }
 }

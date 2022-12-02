@@ -1271,9 +1271,6 @@ function initSync(module, maybe_memory) {
     return finalizeInit(instance, module);
 }
 
-import { ReplaySubject } from 'rxjs';
-const onProgress$ = new ReplaySubject();
-
 async function init(input, maybe_memory) {
     if (typeof input === 'undefined') {
         input = new URL('wasm_bg.wasm', import.meta.url);
