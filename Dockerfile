@@ -1,11 +1,12 @@
 # base image
-FROM node:18 AS BUILD_IMAGE
+FROM node:latest AS node
 
 # set working directory
 WORKDIR /app
 COPY . .
 RUN npm install
-RUN npm run build -- --configuration tracing
+RUN NODE_OPTIONS="--max-old-space-size=8192" npm run build --prod
+
 #stage 2
 FROM nginx:alpine
 COPY --from=node /app/dist/mina-frontend /usr/share/nginx/html
