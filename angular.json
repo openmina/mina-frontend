@@ -212,7 +212,7 @@
             }
           },
           "options": {
-            "browserTarget": "mina-frontend:build:webnode",
+            "browserTarget": "mina-frontend:build",
             "headers": {
               "Cross-Origin-Opener-Policy": "same-origin",
               "Cross-Origin-Embedder-Policy": "require-corp"
