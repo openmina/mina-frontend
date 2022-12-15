@@ -88,7 +88,38 @@ export const webrtc_transport = async (crypto) => {
         crypto,
         conn_config: {
             certificates: [cert],
-            iceServers: [],
+          iceServers: [
+            { urls: "turn:138.201.74.177:3478", username: "openmina", credential: "webrtc" },
+            {
+      urls: "stun:openrelay.metered.ca:80",
+    },
+    {
+      urls: "turn:openrelay.metered.ca:80",
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
+    {
+      urls: "turn:openrelay.metered.ca:443",
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
+    {
+      urls: "turn:openrelay.metered.ca:443?transport=tcp",
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
+            {
+                 url: 'turn:relay.backups.cz',
+                 credential: 'webrtc',
+                 username: 'webrtc'
+             },
+             {
+                 url: 'turn:relay.backups.cz?transport=tcp',
+                 credential: 'webrtc',
+                 username: 'webrtc'
+             },
+
+          ],
         },
 
         signSignal(signal) {

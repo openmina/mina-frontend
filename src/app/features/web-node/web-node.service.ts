@@ -39,6 +39,7 @@ export class WebNodeService {
           this.wasmAlreadyLoaded = true;
 
           WebnodeWasm.start().then((jsHandle: JsHandle) => {
+            window['wasmHandle'] = jsHandle;
             this.backend = jsHandle;
             this.backendSubject$.next(jsHandle);
           });
