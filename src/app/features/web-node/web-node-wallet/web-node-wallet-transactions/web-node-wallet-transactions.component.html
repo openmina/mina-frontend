@@ -1,8 +1,9 @@
 <mina-web-node-wallet-toolbar></mina-web-node-wallet-toolbar>
-<div fxFlex="calc(100% - 36px)" class="w-100 flex-row p-relative">
+<div class="wrapper w-100 flex-row p-relative">
   <div class="table-wrapper p-relative"
        [class.shrink]="activeTransaction">
-    <div class="mina-table flex-grow overflow-x-auto h-100"
+    <ng-container #minaTable></ng-container>
+ <!--   <div class="mina-table flex-grow overflow-x-auto h-100"
          [class.opacity-0]="!transactions.length">
       <div class="row head">
         <span>Transaction ID</span>
@@ -16,30 +17,31 @@
       </div>
       <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-auto"
                                    fxFlex="calc(100% - 36px)"
-                                   [itemSize]="32">
+                                   [itemSize]="itemSize">
         <div *cdkVirtualFor="let transaction of transactions; let i=index"
              (click)="onRowClick(transaction)"
              [class.active]="activeTransaction?.id === transaction.id"
              [class.row-even]="i % 2 === 0"
              class="row">
-          <span class="secondary">{{ transaction.id | truncateMid }}</span>
-          <span class="secondary">{{ transaction.from | truncateMid }}</span>
-          <span class="secondary">{{ transaction.to | truncateMid }}</span>
-          <span class="tertiary">{{ transaction.amount }}</span>
-          <span class="tertiary">{{ transaction.fee }}</span>
-          <span class="tertiary">{{ transaction.nonce }}</span>
-          <span class="tertiary">{{ transaction.memo || '-' | truncateMid }}</span>
-          <span>
-            <span class="status border-rad-4 pl-5 pr-5 text-capitalize" [ngClass]="transaction.status">{{ transaction.status }}</span>
-          </span>
+&lt;!&ndash;          <span class="secondary">{{ transaction.id | truncateMid }}</span>&ndash;&gt;
+&lt;!&ndash;          <span class="secondary">{{ transaction.from | truncateMid }}</span>&ndash;&gt;
+&lt;!&ndash;          <span class="secondary">{{ transaction.to | truncateMid }}</span>&ndash;&gt;
+&lt;!&ndash;          <span class="tertiary">{{ transaction.amount }}</span>&ndash;&gt;
+&lt;!&ndash;          <span class="tertiary">{{ transaction.fee }}</span>&ndash;&gt;
+&lt;!&ndash;          <span class="tertiary">{{ transaction.nonce }}</span>&ndash;&gt;
+&lt;!&ndash;          <span class="tertiary">{{ transaction.memo || '-' | truncateMid }}</span>&ndash;&gt;
+&lt;!&ndash;          <span>&ndash;&gt;
+&lt;!&ndash;            <span class="status border-rad-4 pl-5 pr-5 text-capitalize" [ngClass]="transaction.status">{{ transaction.status }}</span>&ndash;&gt;
+&lt;!&ndash;          </span>&ndash;&gt;
+          <ng-container *ngTemplateOutlet="tableRows; context: { item: transaction }"></ng-container>
         </div>
       </cdk-virtual-scroll-viewport>
-    </div>
+    </div>-->
 
     <div class="no-results p-absolute w-100 h-100 z-1 flex-column align-center flex-center"
-         *ngIf="!transactions.length">
+         *ngIf="!transactions?.length">
       <span class="mina-icon mb-16 icon-100 f-40">send</span>
-      <span class="f-600 f-14">No Transactions yet</span>
+      <span class="f-600 f-big">No Transactions yet</span>
       <span class="tertiary mt-8 text-center">
         If there is a new transaction it will appear here when the next block is produced (~3min)
       </span>
@@ -48,3 +50,16 @@
   </div>
   <mina-web-node-wallet-side-panel [class.show]="activeTransaction"></mina-web-node-wallet-side-panel>
 </div>
+
+<ng-template #rowTemplate let-item="item">
+  <span class="secondary">{{ item.id | truncateMid }}</span>
+  <span class="secondary">{{ item.from | truncateMid }}</span>
+  <span class="secondary">{{ item.to | truncateMid }}</span>
+  <span class="tertiary">{{ item.amount }}</span>
+  <span class="tertiary">{{ item.fee }}</span>
+  <span class="tertiary">{{ item.nonce }}</span>
+  <span class="tertiary">{{ item.memo || '-' | truncateMid }}</span>
+  <span>
+    <span class="status border-rad-4 pl-5 pr-5 text-capitalize" [ngClass]="item.status">{{ item.status }}</span>
+  </span>
+</ng-template>

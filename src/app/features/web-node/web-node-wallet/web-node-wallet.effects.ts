@@ -4,7 +4,7 @@ import { Effect, NonDispatchableEffect } from '@shared/types/store/effect.type';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaState, selectMinaState } from '@app/app.setup';
-import { filter, map, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
+import { catchError, filter, map, mergeMap, repeat, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
 import {
   WEB_NODE_WALLET_CLOSE,
   WEB_NODE_WALLET_CREATE_TRANSACTION,
@@ -21,7 +21,9 @@ import {
 import { WebNodeWalletService } from '@web-node/web-node-wallet/web-node-wallet.service';
 import { WebNodeWallet } from '@shared/types/web-node/wallet/web-node-wallet.type';
 import { WebNodeTransaction } from '@shared/types/web-node/wallet/web-node-transaction.type';
-import { createNonDispatchableEffect } from '@shared/constants/store-functions';
+import { addError, addErrorObservable, createNonDispatchableEffect } from '@shared/constants/store-functions';
+import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -46,7 +48,7 @@ export class WebNodeWalletEffects extends MinaBaseEffect<WebNodeWalletActions> {
     this.walletInit$ = createEffect(() => this.actions$.pipe(
       ofType(WEB_NODE_WALLET_GET_WALLETS),
       switchMap(({ action, state }) =>
-        timer(0, 10000).pipe(
+        timer(0, 100000).pipe(
           takeUntil(this.walletDestroy$),
           map(() => ({ type: WEB_NODE_WALLET_GET_TRANSACTIONS })),
         ),
@@ -55,17 +57,26 @@ export class WebNodeWalletEffects extends MinaBaseEffect<WebNodeWalletActions> {
 
     this.getWallets$ = createEffect(() => this.actions$.pipe(
       ofType(WEB_NODE_WALLET_GET_WALLETS),
-      switchMap(() => this.webNodeWalletService.getWallets()),
-      map((payload: WebNodeWallet[]) => ({ type: WEB_NODE_WALLET_GET_WALLETS_SUCCESS, payload })),
+      mergeMap(() => this.webNodeWalletService.getWallets()),
+      switchMap((result: Array<WebNodeWallet | HttpErrorResponse>) => {
+        const actions: any[] = [
+          { type: WEB_NODE_WALLET_GET_WALLETS_SUCCESS, payload: result.filter((w: WebNodeWallet | HttpErrorResponse) => w['publicKey']) },
+        ];
+        const errors = result.filter((w: WebNodeWallet | HttpErrorResponse) => !w['publicKey']) as HttpErrorResponse[];
+        if (errors.length > 0) {
+          actions.push(
+            ...errors.map((w: HttpErrorResponse) => addError(w, MinaErrorType.MINA_EXPLORER)),
+          );
+        }
+        return actions;
+      }),
     ));
 
     this.createTransaction$ = createNonDispatchableEffect(() => this.actions$.pipe(
       ofType(WEB_NODE_WALLET_CREATE_TRANSACTION),
       this.latestActionState<WebNodeWalletCreateTransaction>(),
       switchMap(({ action }) => this.webNodeWalletService.createTransaction(action.payload)),
-      tap((payload: WebNodeTransaction) => {
-        console.log(payload);
-      }),
+      tap((payload: WebNodeTransaction) => console.log('transaction:', payload)),
     ));
 
     this.getTransactions$ = createEffect(() => this.actions$.pipe(
@@ -74,6 +85,7 @@ export class WebNodeWalletEffects extends MinaBaseEffect<WebNodeWalletActions> {
       filter(({ state }) => !!state.webNode.wallet.activeWallet),
       switchMap(({ state }) => this.webNodeWalletService.getTransactions(state.webNode.wallet.activeWallet.publicKey)),
       map((payload: WebNodeTransaction[]) => ({ type: WEB_NODE_WALLET_GET_TRANSACTIONS_SUCCESS, payload })),
+      catchError(err => addErrorObservable(err, MinaErrorType.MINA_EXPLORER)),
     ));
 
     this.getTransactionsSuccess$ = createEffect(() => this.actions$.pipe(

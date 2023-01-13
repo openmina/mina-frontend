@@ -81,7 +81,6 @@ export class NetworkConnectionsEffects extends MinaBaseEffect<NetworkConnections
 
     this.goLive$ = createNonDispatchableEffect(() => this.actions$.pipe(
       ofType(NETWORK_CONNECTIONS_GO_LIVE),
-      this.latestActionState<NetworkConnectionsGoLive>(),
       tap(() => this.streamActive = true),
     ));
 

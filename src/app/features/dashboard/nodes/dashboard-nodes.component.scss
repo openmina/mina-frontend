@@ -1,0 +1,23 @@
+mina-dashboard-nodes-table {
+	transition: width 400ms cubic-bezier(0.22, 1, 0.36, 1);
+
+	&.shrink {
+		width: calc(100% - 420px);
+	}
+
+	&:not(.shrink) {
+		width: 100% !important;
+	}
+}
+
+mina-horizontal-resizable-container {
+	width: 420px;
+	height: 100%;
+	position: absolute;
+	right: -420px;
+	transition: right 400ms cubic-bezier(0.22, 1, 0.36, 1);
+
+	&.show {
+		right: 0 !important;
+	}
+}

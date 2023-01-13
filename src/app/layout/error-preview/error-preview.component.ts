@@ -49,6 +49,10 @@ export class ErrorPreviewComponent extends ManualDetection implements OnInit {
 
         this.errors = errors;
         this.unreadErrors = errors.some(e => !e.seen);
+        if (this.errorListComponent) {
+          this.errorListComponent.instance.errors = errors;
+          this.errorListComponent.instance.detect();
+        }
         this.detect();
       });
   }
@@ -58,6 +62,7 @@ export class ErrorPreviewComponent extends ManualDetection implements OnInit {
     if (this.overlayRef?.hasAttached()) {
       this.openedOverlay = false;
       this.overlayRef.detach();
+      this.store.dispatch<MarkErrorsAsSeen>({ type: MARK_ERRORS_AS_SEEN });
       return;
     }
 
@@ -76,16 +81,18 @@ export class ErrorPreviewComponent extends ManualDetection implements OnInit {
     });
     event.stopPropagation();
 
-    if (this.unreadErrors) {
-      this.store.dispatch<MarkErrorsAsSeen>({ type: MARK_ERRORS_AS_SEEN });
-    }
-
     const portal = new ComponentPortal(ErrorListComponent);
     this.errorListComponent = this.overlayRef.attach<ErrorListComponent>(portal);
     this.errorListComponent.instance.errors = this.errors;
     this.errorListComponent.instance.onConfirm
       .pipe(take(1))
-      .subscribe(() => this.detachOverlay());
+      .subscribe(() => {
+        this.detachOverlay();
+
+        if (this.unreadErrors) {
+          this.store.dispatch<MarkErrorsAsSeen>({ type: MARK_ERRORS_AS_SEEN });
+        }
+      });
   }
 
   private detachOverlay(): void {

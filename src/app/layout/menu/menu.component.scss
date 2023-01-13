@@ -2,10 +2,9 @@
 
 .menu {
 	.menu-toggle {
-		width: 160px;
-		height: 40px;
 		padding: 8px 12px;
 		border: none;
+		border-radius: 0;
 		border-bottom: 1px solid $base-divider;
 		background-color: unset;
 		transition: width 200ms ease-out, background-color 80ms;
@@ -39,15 +38,12 @@
 
 	.item {
 		color: $base-secondary;
-		font-size: 12px;
-		height: 36px;
 		cursor: pointer;
 		padding-left: 4px;
 		display: flex;
 		align-items: center;
 
 		.item-content {
-			height: 24px;
 			width: 80%;
 			border-radius: 6px;
 			padding: 5px 7px;
@@ -96,6 +92,32 @@
 
 		.item .item-content span:nth-child(2) {
 			opacity: 0;
+		}
+	}
+}
+
+@media (max-width: 700px) {
+	.menu {
+		.menu-toggle {
+			height: 44px;
+			font-size: 16px;
+		}
+	}
+}
+
+.switcher {
+	background-color: $base-container;
+
+	.mina-icon {
+		color: $base-secondary;
+		font-variation-settings: 'FILL' 1, 'wght' 200;
+	}
+
+	&:hover {
+		background-color: $base-divider;
+
+		.mina-icon {
+			color: $base-primary;
 		}
 	}
 }

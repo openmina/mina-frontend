@@ -20,7 +20,7 @@ const EAGER_DIRECTIVES = [
   MinaTooltipDirective,
 ];
 
-/* The role of this module is to eagerly load all modules required by app.component */
+/* The role of this module is to eagerly load all shared parts that are also required by app.component */
 @NgModule({
   imports: [
     ...EAGER_MODULES,

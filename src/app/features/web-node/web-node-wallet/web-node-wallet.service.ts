@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { WebNodeWallet } from '@shared/types/web-node/wallet/web-node-wallet.type';
-import { first, forkJoin, map, Observable, of, tap } from 'rxjs';
+import { catchError, first, forkJoin, map, Observable, of, tap } from 'rxjs';
 import { WebNodeService } from '@web-node/web-node.service';
 import { WebNodeTransaction } from '@shared/types/web-node/wallet/web-node-transaction.type';
-import { HttpClient } from '@angular/common/http';
-import { CONFIG } from '@shared/constants/config';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { GraphQLService } from '@core/services/graph-ql.service';
+import { ConfigService } from '@core/services/config.service';
 
 
 const DEFAULT_WALLETS = [
@@ -26,20 +26,20 @@ const DEFAULT_WALLETS = [
     pub_key: 'B62qrt7gK25e8XBYAMSJjK5mbcF8UVQMS7RFunxNAZSi1SNY7Q42xyA',
   },
   {
-    priv_key: '1c482acd8be9ed27519c8049b5006ba4d5a1cba57a07cf690a067acd50dae6ca',
-    pub_key: 'B62qj7jX5sq4vM3pgvS1ybcboSeBC3T8Hg1ov6jt6JkcQ7WeFk7y9vP',
+    priv_key: '0223f442baabc6e317975fbcf8fe04f3a3646e108a1ce29db6fd46c15bfe62f2',
+    pub_key: 'B62qndFPKf1RvLiSNouqnPE73Ndk5W2bTumri9CPfxGWF6wDsMtYEce',
   },
   {
-    priv_key: '19711c83f4818cf6f3c5ffcd5b47a07e6fff4adb01dc0ca607eb8a7974114504',
-    pub_key: 'B62qmq15hp12cs49yyX2FLW87oTNTyi1zbukvs3ZwcnHdUpikRosCGJ',
+    priv_key: '1e54ebc03a33e4eeae6a680ededa25a3342640c069eba4150bac34e062dee582',
+    pub_key: 'B62qnNPSRV5MB4fLQfBDMVsJuNPD3oBxkrg5m2ifGHBvez9EVqHPaE2',
   },
   {
-    priv_key: '35d59a49e70a75907f77aec37740f28e685f8780c2135017b1adcdb2a74f63d9',
-    pub_key: 'B62qmhEBbuuEk3davEfNGAgQ3YETgpV71eGEqXTWMwAeif6aiTuYvvA',
+    priv_key: '3cae2a0b6ed5ba57539aaad98b656473e2675cea293743ceade3112ece81b362',
+    pub_key: 'B62qp3fRYfmnFAsS4QC5gYZjEcZN5k5buu3sFXfjmbt2Wnhs4mCYLck',
   },
   {
-    priv_key: '126144cdc96047495d552972406b8ba662612ebed4b518a3074c744f3894cf03',
-    pub_key: 'B62qqVUaWaxFmFyu6Ec8vxzbCZqNuGDi9c5XGyK6qKSDRELdK856NPR',
+    priv_key: '3cfd20ffad43a2408f6afb1d1cefb399d2c0cdc8fe8dfa1243ddbab62182e95d',
+    pub_key: 'B62qkyFv9GTTjtGAxFTzVod1cp7NCQnavAVTNQ9aq4qJRNgNuhdgu8F',
   },
 ];
 
@@ -48,40 +48,202 @@ const DEFAULT_WALLETS = [
 })
 export class WebNodeWalletService {
 
-  private readonly MINA_EXPLORER: string = CONFIG.minaExplorer;
-  private readonly BACKEND: string = CONFIG.backend;
+  constructor(private http: HttpClient,
+              private config: ConfigService,
+              private graphQL: GraphQLService,
+              private webNodeService: WebNodeService) { }
 
-  constructor(private webNodeService: WebNodeService,
-              private http: HttpClient,
-              private graphQL: GraphQLService) { }
-
-  getWallets(): Observable<WebNodeWallet[]> {
+  getWallets(): Observable<Array<WebNodeWallet | HttpErrorResponse>> {
     if (!localStorage.getItem('wallets')) {
       localStorage.setItem('wallets', JSON.stringify(DEFAULT_WALLETS));
     }
 
-    const wallets = JSON.parse(localStorage.getItem('wallets')) as any[];
+    let wallets = JSON.parse(localStorage.getItem('wallets')) as any[];
+    wallets = wallets.filter(w => w.pub_key !== 'B62qkzCCgvnnySwE3iwBi5d5fj5uNXvnUXXkoZGhUjos3VgZqRzh94U'); //broken wallet...
 
-    return forkJoin(wallets.map(wallet => this.getAccount(wallet.pub_key)))
-      .pipe(
-        map(response => response.map((r: any, i: number) => ({
-          publicKey: wallets[i].pub_key,
-          privateKey: wallets[i].priv_key,
-          minaTokens: Number(r.account.balance.total),
-        }))),
-      );
+    return forkJoin(
+      wallets.map(wallet => this.getAccount(wallet.pub_key)
+        .pipe(catchError(err => of(err))),
+      ),
+    ).pipe(
+      map(response => {
+        return response.map((r: any | HttpErrorResponse, i: number) => r.account
+          ? ({
+            publicKey: wallets[i].pub_key,
+            privateKey: wallets[i].priv_key,
+            minaTokens: Number(r.account.balance.total),
+          })
+          : r,
+        );
+      }),
+    );
   }
 
   getAccount(publicKey: string): Observable<any> {
-    return this.http.get<any>(this.MINA_EXPLORER + '/accounts/' + publicKey);
+    return this.http.get<any>(this.config.MINA_EXPLORER + '/accounts/' + publicKey);
   }
 
   createTransaction(transaction: WebNodeTransaction): Observable<WebNodeTransaction> {
-    return of(this.webNodeService.createTransaction(transaction));
+    return this.webNodeService.createTransaction(transaction);
   }
 
-  getTransactions(publicKey: string): Observable<WebNodeTransaction[]> {
-    const appliedTransactions$: Observable<any[]> = this.http.get<any>(this.MINA_EXPLORER + '/blocks?limit=500')
+  getTransactions<T = WebNodeTransaction>(publicKey: string, onlyOfThisKey: boolean = true): Observable<T[]> {
+    // return of([
+    //   {
+    //     'id': '42543653635',
+    //     'priv_key': '5464t354523',
+    //     'to': 'B62qndFPKf1RvLiSNouqnPE73Ndk5W2bTumri9CPfxGWF6wDsMtYEce',
+    //     'amount': '155',
+    //     'fee': '54',
+    //     'nonce': '1',
+    //     'memo': 'Pariatur autem voluptatem rerstinctio.',
+    //     'from': 'B62qkyFv9GTTjtGAxFTzVod1cp7NCQnavAVTNQ9aq4qJRNgNuhdgu8F',
+    //     'blockHeight': 20,
+    //     'kind': 'erw4334234523',
+    //     'blockStateHash': 'Dolorum.',
+    //     'dateTime': Date.parse('2022-12-12'),
+    //     'hash': 'dolores.',
+    //     'status': 'included',
+    //     'isInMempool': false,
+    //   },
+    //   {
+    //     'id': '42543653635',
+    //     'priv_key': '5464t354523',
+    //     'to': 'B62qndFPKf1RvLiSNouqnPE73Ndk5W2bTumri9CPfxGWF6wDsMtYEce',
+    //     'amount': '155',
+    //     'fee': '54',
+    //     'nonce': '1',
+    //     'memo': 'Pariatur autem voluptatem rerstinctio.',
+    //     'from': 'B62qkyFv9GTTjtGAxFTzVod1cp7NCQnavAVTNQ9aq4qJRNgNuhdgu8F',
+    //     'blockHeight': 20,
+    //     'kind': 'erw4334234523',
+    //     'blockStateHash': 'Dolorum.',
+    //     'dateTime': Date.parse('2022-12-12'),
+    //     'hash': 'dolores.',
+    //     'status': 'included',
+    //     'isInMempool': false,
+    //   },
+    //   {
+    //     'id': '42543653635',
+    //     'priv_key': '5464t354523',
+    //     'to': 'B62qndFPKf1RvLiSNouqnPE73Ndk5W2bTumri9CPfxGWF6wDsMtYEce',
+    //     'amount': '155',
+    //     'fee': '54',
+    //     'nonce': '1',
+    //     'memo': 'Pariatur autem voluptatem rerstinctio.',
+    //     'from': 'B62qkyFv9GTTjtGAxFTzVod1cp7NCQnavAVTNQ9aq4qJRNgNuhdgu8F',
+    //     'blockHeight': 20,
+    //     'kind': 'erw4334234523',
+    //     'blockStateHash': 'Dolorum.',
+    //     'dateTime': Date.parse('2022-12-12'),
+    //     'hash': 'dolores.',
+    //     'status': 'included',
+    //     'isInMempool': false,
+    //   },
+    //   {
+    //     'id': '42543653635',
+    //     'priv_key': '5464t354523',
+    //     'to': 'B62qndFPKf1RvLiSNouqnPE73Ndk5W2bTumri9CPfxGWF6wDsMtYEce',
+    //     'amount': '155',
+    //     'fee': '54',
+    //     'nonce': '1',
+    //     'memo': 'Pariatur autem voluptatem rerstinctio.',
+    //     'from': 'B62qkyFv9GTTjtGAxFTzVod1cp7NCQnavAVTNQ9aq4qJRNgNuhdgu8F',
+    //     'blockHeight': 20,
+    //     'kind': 'erw4334234523',
+    //     'blockStateHash': 'Dolorum.',
+    //     'dateTime': Date.parse('2022-12-12'),
+    //     'hash': 'dolores.',
+    //     'status': 'included',
+    //     'isInMempool': false,
+    //   },
+    //   {
+    //     'id': '42543653635',
+    //     'priv_key': '5464t354523',
+    //     'to': 'B62qndFPKf1RvLiSNouqnPE73Ndk5W2bTumri9CPfxGWF6wDsMtYEce',
+    //     'amount': '155',
+    //     'fee': '54',
+    //     'nonce': '1',
+    //     'memo': 'Pariatur autem voluptatem rerstinctio.',
+    //     'from': 'B62qkyFv9GTTjtGAxFTzVod1cp7NCQnavAVTNQ9aq4qJRNgNuhdgu8F',
+    //     'blockHeight': 20,
+    //     'kind': 'erw4334234523',
+    //     'blockStateHash': 'Dolorum.',
+    //     'dateTime': Date.parse('2022-12-12'),
+    //     'hash': 'dolores.',
+    //     'status': 'included',
+    //     'isInMempool': false,
+    //   },
+    //   {
+    //     'id': '42543653635',
+    //     'priv_key': '5464t354523',
+    //     'to': 'B62qndFPKf1RvLiSNouqnPE73Ndk5W2bTumri9CPfxGWF6wDsMtYEce',
+    //     'amount': '155',
+    //     'fee': '54',
+    //     'nonce': '1',
+    //     'memo': 'Pariatur autem voluptatem rerstinctio.',
+    //     'from': 'B62qkyFv9GTTjtGAxFTzVod1cp7NCQnavAVTNQ9aq4qJRNgNuhdgu8F',
+    //     'blockHeight': 20,
+    //     'kind': 'erw4334234523',
+    //     'blockStateHash': 'Dolorum.',
+    //     'dateTime': Date.parse('2022-12-12'),
+    //     'hash': 'dolores.',
+    //     'status': 'included',
+    //     'isInMempool': false,
+    //   },
+    //   {
+    //     'id': '42543653635',
+    //     'priv_key': '5464t354523',
+    //     'to': 'B62qndFPKf1RvLiSNouqnPE73Ndk5W2bTumri9CPfxGWF6wDsMtYEce',
+    //     'amount': '155',
+    //     'fee': '54',
+    //     'nonce': '1',
+    //     'memo': 'Pariatur autem voluptatem rerstinctio.',
+    //     'from': 'B62qkyFv9GTTjtGAxFTzVod1cp7NCQnavAVTNQ9aq4qJRNgNuhdgu8F',
+    //     'blockHeight': 20,
+    //     'kind': 'erw4334234523',
+    //     'blockStateHash': 'Dolorum.',
+    //     'dateTime': Date.parse('2022-12-12'),
+    //     'hash': 'dolores.',
+    //     'status': 'included',
+    //     'isInMempool': false,
+    //   },
+    //   {
+    //     'id': '42543653635',
+    //     'priv_key': '5464t354523',
+    //     'to': 'B62qndFPKf1RvLiSNouqnPE73Ndk5W2bTumri9CPfxGWF6wDsMtYEce',
+    //     'amount': '155',
+    //     'fee': '54',
+    //     'nonce': '1',
+    //     'memo': 'Pariatur autem voluptatem rerstinctio.',
+    //     'from': 'B62qkyFv9GTTjtGAxFTzVod1cp7NCQnavAVTNQ9aq4qJRNgNuhdgu8F',
+    //     'blockHeight': 20,
+    //     'kind': 'erw4334234523',
+    //     'blockStateHash': 'Dolorum.',
+    //     'dateTime': Date.parse('2022-12-12'),
+    //     'hash': 'dolores.',
+    //     'status': 'included',
+    //     'isInMempool': false,
+    //   },
+    //   {
+    //     'id': '42543653635',
+    //     'priv_key': '5464t354523',
+    //     'to': 'B62qndFPKf1RvLiSNouqnPE73Ndk5W2bTumri9CPfxGWF6wDsMtYEce',
+    //     'amount': '155',
+    //     'fee': '54',
+    //     'nonce': '1',
+    //     'memo': 'Pariatur autem voluptatem rerstinctio.',
+    //     'from': 'B62qkyFv9GTTjtGAxFTzVod1cp7NCQnavAVTNQ9aq4qJRNgNuhdgu8F',
+    //     'blockHeight': 20,
+    //     'kind': 'erw4334234523',
+    //     'blockStateHash': 'Dolorum.',
+    //     'dateTime': Date.parse('2022-12-12'),
+    //     'hash': 'dolores.',
+    //     'status': 'included',
+    //     'isInMempool': false,
+    //   },
+    // ] as any);
+    const appliedTransactions$: Observable<any[]> = this.http.get<any>(this.config.MINA_EXPLORER + '/blocks?limit=500')
       .pipe(
         first(),
         map(response => response.blocks.reduce((acc: any, current: any) => [
@@ -109,7 +271,7 @@ export class WebNodeWalletService {
       .pipe(
         first(),
         map((data: any) => data.pooledUserCommands
-          .filter((t: any) => t.from === publicKey || t.to === publicKey)
+          .filter((t: any) => onlyOfThisKey && (t.from === publicKey || t.to === publicKey))
           .map((t: any) => ({ ...t, isInMempool: true, status: 'pending' })),
         ),
       );
@@ -131,9 +293,9 @@ export class WebNodeWalletService {
     return newWallet;
   }
 
-  addTokensToWallet(publicKey: string): Observable<any> {
-    return this.http.post(this.BACKEND + '/faucet', {
-      network: 'devnet',
+  addTokensToWallet(publicKey: string, network: string = 'devnet'): Observable<any> {
+    return this.http.post(this.config.API + '/faucet', {
+      network,
       address: publicKey,
     }, { headers: { 'Content-Type': 'application/json' } });
   }

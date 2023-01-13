@@ -3,15 +3,16 @@
 @import 'utilities/variables';
 @import 'utilities/layout';
 @import 'utilities/design';
-@import 'utilities/table';
 @import 'utilities/text';
 @import 'utilities/text-colors';
 @import 'utilities/backgrounds';
 @import 'utilities/font';
+@import 'utilities/scrollbar';
+@import 'utilities/dimensions';
+@import 'components/table';
 @import 'components/button';
 @import 'components/tooltip';
 @import 'components/input';
-@import 'components/stepper';
 @import 'material/material-accordion';
 @import 'material/material-icons';
 @import 'material/material-popups';
@@ -27,7 +28,6 @@ body {
 	margin: 0;
 	font-family: $inter-font;
 	font-weight: 400;
-	font-size: 12px;
 	color: $base-primary;
 }
 
@@ -53,18 +53,9 @@ p {
 	margin-top: 0;
 	margin-bottom: 0;
 }
+
 /* User Select */
-::-moz-selection {
-	color: $base-primary;
-	background: $selected-secondary;
-}
-
-::selection {
-	color: $base-primary;
-	background: $selected-secondary;
-}
-
-body.light {
+body {
 	::-moz-selection {
 		color: $base-primary;
 		background: $selected-secondary;
@@ -74,35 +65,4 @@ body.light {
 		color: $base-primary;
 		background: $selected-secondary;
 	}
-}
-
-/* --- Scrollbar --- */
-::-webkit-scrollbar {
-	width: 16px;
-}
-
-::-webkit-scrollbar-track {
-	background-color: $base-surface;
-}
-
-::-webkit-scrollbar-thumb {
-	background-color: $base-tertiary;
-	border-radius: 8px;
-	border-width: 4px;
-	border-style: solid;
-	border-color: transparent;
-	background-clip: content-box;
-}
-
-::-webkit-scrollbar-thumb:hover {
-	background-color: $base-secondary;
-	border-radius: 8px;
-	border-width: 2px;
-	border-style: solid;
-	border-color: transparent;
-	background-clip: content-box;
-}
-
-.transparent-scrollbar-track::-webkit-scrollbar-track {
-	background-color: transparent;
 }

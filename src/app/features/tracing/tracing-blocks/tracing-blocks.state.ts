@@ -9,7 +9,7 @@ export interface TracingBlocksState {
   traces: TracingBlockTrace[];
   activeTrace: TracingBlockTrace;
   activeTraceGroups: TracingTraceGroup[];
-  sort: TableSort;
+  sort: TableSort<TracingBlockTrace>;
 }
 
 const select = <T>(selector: (state: TracingBlocksState) => T): MemoizedSelector<MinaState, T> => createSelector(
@@ -24,4 +24,4 @@ export const selectTracingActiveTraceDetails = select((state: TracingBlocksState
   activeTraceGroups: state.activeTraceGroups,
 }));
 export const selectTracingActiveTraceGroups = select((state: TracingBlocksState): TracingTraceGroup[] => state.activeTraceGroups);
-export const selectTracingBlocksSorting = select((state: TracingBlocksState): TableSort => state.sort);
+export const selectTracingBlocksSorting = select((state: TracingBlocksState): TableSort<TracingBlockTrace> => state.sort);

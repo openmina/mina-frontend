@@ -1,0 +1,35 @@
+<div class="mina-table flex-grow overflow-x-auto">
+  <div class="row head" *ngIf="!isMobile">
+    <span *ngFor="let header of headerCells">{{ header }}</span>
+  </div>
+  <cdk-virtual-scroll-viewport *ngIf="!isMobile" class="border-bottom h-100 overflow-y-scroll"
+                               [fxFlex]="'calc(100% - 36px)'"
+                               [itemSize]="itemSize">
+    <div *cdkVirtualFor="let item of items; let i=index; let even"
+         (click)="onItemClick(item)"
+         [class.active]="activeItem && activeItem[propertyForActiveCheck] === item[propertyForActiveCheck]"
+         [class.row-even]="i % 2 === 0"
+         class="row">
+      <ng-container *ngTemplateOutlet="rowTemplate; context: { item }"></ng-container>
+    </div>
+  </cdk-virtual-scroll-viewport>
+
+  <cdk-virtual-scroll-viewport *ngIf="isMobile" class="h-100 overflow-y-scroll mt-5 mb-5"
+                               fxFlex
+                               [itemSize]="itemSize">
+    <div *cdkVirtualFor="let item of items; let i=index; let even"
+         (click)="onItemClick(item)"
+         [class.active]="activeItem && activeItem[propertyForActiveCheck] === item[propertyForActiveCheck]"
+         [class.row-even]="even"
+         class="row">
+      <div class="mob-row">
+        <div class="th">
+          <span *ngFor="let header of headerCells">{{ header }}</span>
+        </div>
+        <div class="td">
+          <ng-container *ngTemplateOutlet="rowTemplate; context: { item }"></ng-container>
+        </div>
+      </div>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>

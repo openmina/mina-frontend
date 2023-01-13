@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
-import { filter, Observable, tap } from 'rxjs';
+import { filter, Observable } from 'rxjs';
 import { Routes } from '@shared/enums/routes.enum';
 import { selectTracingActiveTrace, selectTracingBlocksSorting, selectTracingTraces } from '@tracing/tracing-blocks/tracing-blocks.state';
 import { TRACING_BLOCKS_SELECT_ROW, TRACING_BLOCKS_SORT, TracingBlocksSelectRow, TracingBlocksSort } from '@tracing/tracing-blocks/tracing-blocks.actions';
@@ -36,7 +36,7 @@ export class TracingBlocksTableComponent extends ManualDetection implements OnIn
 
   readonly itemSize: number = 36;
   readonly secDurationConfig: SecDurationConfig = secDurationConfig;
-  readonly tableHeads: TableHeadSorting[] = [
+  readonly tableHeads: TableHeadSorting<TracingBlockTrace>[] = [
     { name: 'height' },
     { name: 'hash' },
     { name: 'total time', sort: 'totalTime' },
@@ -46,12 +46,11 @@ export class TracingBlocksTableComponent extends ManualDetection implements OnIn
 
   traces: TracingBlockTrace[] = [];
   activeTrace: TracingBlockTrace;
-  currentSort$: Observable<TableSort>;
+  currentSort: TableSort<TracingBlockTrace>;
 
   @ViewChild(CdkVirtualScrollViewport) private scrollViewport: CdkVirtualScrollViewport;
   private hashFromRoute: string;
   private preselect: boolean;
-  private currentSort: TableSort;
 
   constructor(private store: Store<MinaState>,
               private router: Router) { super(); }
@@ -69,7 +68,7 @@ export class TracingBlocksTableComponent extends ManualDetection implements OnIn
       : this.currentSort.sortDirection === SortDirection.ASC ? SortDirection.DSC : SortDirection.ASC;
     this.store.dispatch<TracingBlocksSort>({
       type: TRACING_BLOCKS_SORT,
-      payload: { sortBy, sortDirection },
+      payload: { sortBy: sortBy as keyof TracingBlockTrace, sortDirection },
     });
   }
 
@@ -96,7 +95,7 @@ export class TracingBlocksTableComponent extends ManualDetection implements OnIn
     this.store.select(selectTracingTraces)
       .pipe(
         untilDestroyed(this),
-        filter(traces => !!traces.length),
+        filter(Boolean),
       )
       .subscribe((traces: TracingBlockTrace[]) => {
         this.traces = traces;
@@ -138,7 +137,15 @@ export class TracingBlocksTableComponent extends ManualDetection implements OnIn
   }
 
   private listenToSortingChanges(): void {
-    this.currentSort$ = this.store.select(selectTracingBlocksSorting)
-      .pipe(tap(sort => this.currentSort = sort));
+    this.store.select(selectTracingBlocksSorting)
+      .pipe(untilDestroyed(this))
+      .subscribe(sort => {
+        this.currentSort = sort;
+        this.detect();
+      });
+  }
+
+  seeBlockInNetwork(height: number) : void{
+
   }
 }

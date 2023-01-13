@@ -1,10 +1,12 @@
 @import 'variables';
+@import 'dimensions';
 
 .debugger-status {
 	padding-left: 2px;
 	padding-right: 2px;
 	background-color: $success-container;
 	color: $success-primary;
+	height: 24px;
 
 	&.offline {
 		background-color: $warn-container;
@@ -22,6 +24,7 @@
 	padding-right: 2px;
 	background-color: $success-container;
 	color: $success-primary;
+	height: 24px;
 
 	&.offline {
 		background-color: $warn-container;
@@ -30,65 +33,84 @@
 }
 
 .node-status {
-	padding: 1px;
-
 	.shining-border {
 		top: -300%;
 		left: -50%;
 		z-index: -1;
 		height: 800%;
-		width: 200%;
+		width: 190%;
 		transform: rotate(-45deg);
 		background: linear-gradient(to right, transparent 20%, transparent 40%, $base-container 45%, $base-divider 46%, $aware-tertiary 50%, $base-divider 54%, $base-container 55%, transparent 55%, transparent 100%);
 		background-size: 200% auto;
 		animation: shine 7s linear infinite;
 	}
 
-	.block-level {
-		background-color: $warn-container;
-		color: $warn-primary;
+	.bg-surface {
+		margin: 1px;
 
-		.p-relative {
-			padding-right: 73px;
-			height: 14px;
+		.background-wrap {
+			background-color: $warn-container;
+			color: $warn-primary;
 
-			.p-absolute {
-				top: 0;
-				right: 0;
-				width: 73px;
+			&.synced {
+				background-color: $success-container;
+				color: $success-secondary;
+
+				.strong-text {
+					color: $success-primary;
+				}
 			}
 
-			.ago {
-				width: 19px;
+			&.connecting,
+			&.listening {
+				background-color: $base-container;
+				color: $base-secondary;
+
+				.strong-text {
+					color: $base-primary;
+				}
 			}
-		}
 
-		&.synced {
-			background-color: $success-container;
-			color: $success-secondary;
+			&.bootstrap,
+			&.catchup {
+				background-color: $aware-container;
+				color: $aware-secondary;
 
-			.status {
-				color: $success-primary;
+				.strong-text {
+					color: $aware-primary;
+				}
 			}
-		}
 
-		&.connecting,
-		&.listening {
-			background-color: $base-container;
-			color: $base-secondary;
+			.block-level {
+				height: 24px;
 
-			.status {
-				color: $base-primary;
+				.p-relative {
+					padding-right: 73px;
+					height: 14px;
+
+					.p-absolute {
+						top: 0;
+						right: 0;
+						width: 73px;
+					}
+
+					.ago {
+						width: 19px;
+					}
+				}
 			}
-		}
 
-		&.bootstrap,
-		&.catchup {
-			background-color: $aware-container;
-			color: $aware-secondary;
+			.node-switcher {
+				height: 24px;
+				border-left: 2px solid $base-surface;
 
-			.status {
-				color: $aware-primary;
+				.mina-icon {
+					width: 16px;
+				}
+
+				&:hover {
+					background-color: $base-container;
+				}
 			}
 		}
 	}

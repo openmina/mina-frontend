@@ -7,6 +7,7 @@ export interface ThemeCssCategory {
   special: { [p: SpecialCssVariable]: string };
   chart: { [p: ChartCssVariable]: string };
   code: { [p: CodeCssVariable]: string };
+  cta: { [p: CtaCssVariable]: string };
 }
 
 export const BASE_CSS_PREFIX = '--base-';
@@ -17,6 +18,7 @@ export const SELECTED_CSS_PREFIX = '--selected-';
 export const SPECIAL_CSS_PREFIX = '--special-';
 export const CHART_CSS_PREFIX = '--chart-';
 export const CODE_CSS_PREFIX = '--code-';
+export const CTA_CSS_PREFIX = '--cta-';
 
 type BaseCssVariable = `${typeof BASE_CSS_PREFIX}${string}`;
 type SuccessCssVariable = `${typeof SUCCESS_CSS_PREFIX}${string}`;
@@ -26,3 +28,4 @@ type SelectedCssVariable = `${typeof SELECTED_CSS_PREFIX}${string}`;
 type SpecialCssVariable = `${typeof SPECIAL_CSS_PREFIX}${string}`;
 type ChartCssVariable = `${typeof CHART_CSS_PREFIX}${string}`;
 type CodeCssVariable = `${typeof CODE_CSS_PREFIX}${string}`;
+type CtaCssVariable = `${typeof CTA_CSS_PREFIX}${string}`;

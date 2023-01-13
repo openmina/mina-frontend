@@ -58,7 +58,8 @@
                 "src/assets/styles",
                 "src/assets/styles/utilities"
               ]
-            }
+            },
+            "aot": true
           },
           "configurations": {
             "production": {
@@ -99,6 +100,27 @@
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.tracing.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "tracing-v2": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "2mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kb",
+                  "maximumError": "8kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.tracing-v2.ts"
                 }
               ],
               "outputHashing": "all"
@@ -166,6 +188,27 @@
               ],
               "outputHashing": "all"
             },
+            "webnodedemo": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "2mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kb",
+                  "maximumError": "8kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.webnodedemo.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
@@ -185,6 +228,13 @@
             },
             "development": {
               "browserTarget": "mina-frontend:build:development"
+            }
+          },
+          "options": {
+            "browserTarget": "mina-frontend:build",
+            "headers": {
+              "Cross-Origin-Opener-Policy": "same-origin",
+              "Cross-Origin-Embedder-Policy": "require-corp"
             }
           },
           "defaultConfiguration": "development"

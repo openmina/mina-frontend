@@ -1,21 +1,38 @@
 @import 'variables';
 
-.f-10 {
+.monospace {
+	font-family: $mono-font;
+}
+
+.f-600 {
+	font-weight: 600;
+}
+
+.f-500 {
+	font-weight: 500;
+}
+
+.f-400 {
+	font-weight: 400;
+}
+
+.f-300 {
+	font-weight: 300;
+}
+
+.f-small {
 	font-size: 10px !important;
 }
 
-.f-12 {
+.f-base {
 	font-size: 12px !important;
 }
 
-.f-14 {
+.f-big {
 	font-size: 14px !important;
 }
 
-.f-14 {
-	font-size: 14px !important;
-}
-
+/* These are used only in icons */
 .f-16 {
 	font-size: 16px !important;
 }
@@ -40,22 +57,13 @@
 	font-size: 48px !important;
 }
 
-.f-600 {
-	font-weight: 600;
-}
+/* Mobile */
+@media (max-width: 700px) {
+	.f-base {
+		font-size: 14px !important;
+	}
 
-.f-500 {
-	font-weight: 500;
-}
-
-.f-400 {
-	font-weight: 400;
-}
-
-.f-300 {
-	font-weight: 300;
-}
-
-.monospace {
-	font-family: $mono-font;
+	.f-big {
+		font-size: 16px !important;
+	}
 }

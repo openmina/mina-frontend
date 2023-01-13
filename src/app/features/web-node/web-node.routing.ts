@@ -24,9 +24,9 @@ const routes: Routes = [
         title: WEB_NODE_TITLE,
       },
       {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'wallet',
+        path: 'state',
+        loadChildren: () => import('./web-node-state/web-node-state.module').then(module => module.WebNodeStateModule),
+        title: WEB_NODE_TITLE,
       },
       {
         path: '**',

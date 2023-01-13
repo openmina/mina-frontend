@@ -1,5 +1,5 @@
-export interface TableSort {
-  sortBy: string;
+export interface TableSort<T> {
+  sortBy: keyof T;
   sortDirection: SortDirection.ASC | SortDirection.DSC;
 }
 

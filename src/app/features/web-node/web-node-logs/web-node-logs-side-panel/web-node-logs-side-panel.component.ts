@@ -23,7 +23,6 @@ import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/cust
 export class WebNodeLogsSidePanelComponent extends ManualDetection implements OnInit {
 
   activeLog: WebNodeLog;
-  jsonData: any;
   jsonString: string;
   expandTracking: ExpandTracking = {};
 
@@ -44,8 +43,7 @@ export class WebNodeLogsSidePanelComponent extends ManualDetection implements On
       )
       .subscribe((log: WebNodeLog) => {
         this.activeLog = log;
-        this.jsonData = typeof log.data === 'object' ? log.data : JSON.parse(log.data);
-        this.jsonString = JSON.stringify(this.jsonData);
+        this.jsonString = JSON.stringify(log.data);
         this.detect();
       });
   }

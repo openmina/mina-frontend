@@ -11,10 +11,11 @@ import { WebNodeWalletAction, WebNodeWalletActions } from '@web-node/web-node-wa
 import {
   WEB_NODE_SHARED_GET_LOGS_SUCCESS,
   WEB_NODE_SHARED_GET_PEERS_SUCCESS,
-  WEB_NODE_SHARED_INIT, WEB_NODE_SHARED_MARK_AS_OPENED,
+  WEB_NODE_SHARED_MARK_AS_OPENED,
   WebNodeSharedAction,
   WebNodeSharedActions,
 } from '@web-node/web-node.actions';
+import { PEER_CONNECTED, PEER_DISCONNECTED } from '@web-node/web-node.service';
 
 export type WebNodeActions = WebNodePeersActions & WebNodeLogsActions & WebNodeWalletActions & WebNodeSharedActions;
 export type WebNodeAction = WebNodePeersAction & WebNodeLogsAction & WebNodeWalletAction & WebNodeSharedAction;
@@ -29,6 +30,7 @@ export const reducer: ActionReducer<WebNodeState, WebNodeActions> = combineReduc
 
 const initialState: WebNodeSharedState = {
   peers: undefined,
+  summary: undefined,
   logs: undefined,
   isOpen: false,
 };
@@ -44,23 +46,24 @@ function sharedReducer(state: WebNodeSharedState = initialState, action: WebNode
     }
 
     case WEB_NODE_SHARED_GET_PEERS_SUCCESS: {
-      const statePeers = state.peers ?? [];
       return {
         ...state,
-        peers: action.payload.type === 'PeerDisconnected'
-          ? statePeers.filter(peer => peer.data.peer_id !== action.payload.data.peer_id)
-          : [
-            { ...action.payload, id: statePeers.length ? (statePeers[statePeers.length - 1].id + 1) : 0 },
-            ...statePeers,
-          ],
+        peers: action.payload,
+        summary: {
+          ...state.summary,
+          peers: action.payload.filter(p => p.kind === PEER_CONNECTED).length - action.payload.filter(p => p.kind === PEER_DISCONNECTED).length,
+        },
       };
     }
 
     case WEB_NODE_SHARED_GET_LOGS_SUCCESS: {
-      const stateLogs = state.logs ?? [];
       return {
         ...state,
-        logs: [{ ...action.payload, id: stateLogs.length }, ...stateLogs],
+        logs: action.payload,
+        summary: {
+          ...state.summary,
+          messages: action.payload.filter(p => p.kind?.startsWith('P2pPubsub') || p.kind?.startsWith('P2pRpc')).length,
+        },
       };
     }
 

@@ -8,13 +8,12 @@
   <div fxFlex="34px" class="flex-row pl-12 pb-10">
     <button class="btn-primary mr-8" (click)="expandEntireJSON()">Expand All</button>
     <button class="btn-primary mr-8" (click)="collapseEntireJSON()">Collapse All</button>
-    <button class="btn-primary mr-8" [copyToClipboard]="jsonString">Copy
-    </button>
+    <button class="btn-primary mr-8" [copyToClipboard]="jsonString">Copy</button>
     <button class="btn-primary" (click)="downloadJson()">Save</button>
   </div>
   <div class="flex-column flex-grow overflow-y-scroll">
     <mina-json-viewer [expanded]="false"
-                      [json]="jsonData"
+                      [json]="activeLog.data"
                       [expandTracking]="expandTracking"></mina-json-viewer>
   </div>
 </ng-container>

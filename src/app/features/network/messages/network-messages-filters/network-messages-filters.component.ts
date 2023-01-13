@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { selectNetworkActiveFilters, selectNetworkTimestampInterval } from '@network/messages/network-messages.state';
 import { NetworkMessagesFilterCategory } from '@shared/types/network/messages/network-messages-filter-group.type';
-import { NETWORK_TOGGLE_FILTER, NetworkToggleFilter } from '@network/messages/network-messages.actions';
+import { NETWORK_TOGGLE_FILTER, NetworkMessagesToggleFilter } from '@network/messages/network-messages.actions';
 import { NetworkMessagesFilter } from '@shared/types/network/messages/network-messages-filter.type';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NetworkMessagesFilterTypes } from '@shared/types/network/messages/network-messages-filter-types.enum';
@@ -13,7 +13,6 @@ import { skip } from 'rxjs';
 import { TimestampInterval } from '@shared/types/shared/timestamp-interval.type';
 
 
-// add yamux filer same as mplex
 export const networkAvailableFilters: NetworkMessagesFilterCategory[][] = [
   [
     {
@@ -28,6 +27,13 @@ export const networkAvailableFilters: NetworkMessagesFilterCategory[][] = [
       tooltip: '',
       filters: [
         { type: NetworkMessagesFilterTypes.STREAM_KIND, display: 'Coda mplex', value: '/coda/mplex/1.0.0', tooltip: '' },
+      ],
+    },
+    {
+      name: '/coda/yamux/1.0.0',
+      tooltip: '',
+      filters: [
+        { type: NetworkMessagesFilterTypes.STREAM_KIND, display: 'Coda yamux', value: '/coda/yamux/1.0.0', tooltip: '' },
       ],
     },
   ],
@@ -163,14 +169,32 @@ export const networkAvailableFilters: NetworkMessagesFilterCategory[][] = [
         },
         {
           type: NetworkMessagesFilterTypes.MESSAGE_KIND,
-          display: 'Control',
-          value: 'meshsub_control',
-          tooltip: 'Control messages are exchanged to maintain topic meshes and emit gossip.',
+          display: 'iWant',
+          value: 'meshsub_iwant',
+          tooltip: '',
         },
         {
           type: NetworkMessagesFilterTypes.MESSAGE_KIND,
-          display: 'Publish External Transition',
-          value: 'publish_external_transition',
+          display: 'iHave',
+          value: 'meshsub_ihave',
+          tooltip: '',
+        },
+        {
+          type: NetworkMessagesFilterTypes.MESSAGE_KIND,
+          display: 'Prune',
+          value: 'meshsub_prune',
+          tooltip: '',
+        },
+        {
+          type: NetworkMessagesFilterTypes.MESSAGE_KIND,
+          display: 'Graft',
+          value: 'meshsub_graft',
+          tooltip: '',
+        },
+        {
+          type: NetworkMessagesFilterTypes.MESSAGE_KIND,
+          display: 'Publish New State',
+          value: 'publish_new_state',
           tooltip: 'Broadcasts newly produced blocks throughout the network.',
         },
         {
@@ -343,7 +367,7 @@ export class NetworkMessagesFiltersComponent extends ManualDetection implements 
   toggleFilter(filter: NetworkMessagesFilter): void {
     const type = this.activeFilters.includes(filter) ? 'remove' : 'add';
     const filters = [filter];
-    this.store.dispatch<NetworkToggleFilter>({ type: NETWORK_TOGGLE_FILTER, payload: { filters, type } });
+    this.store.dispatch<NetworkMessagesToggleFilter>({ type: NETWORK_TOGGLE_FILTER, payload: { filters, type } });
     this.onResize();
   }
 
@@ -357,6 +381,6 @@ export class NetworkMessagesFiltersComponent extends ManualDetection implements 
   filterByCategory(category: NetworkMessagesFilterCategory): void {
     const filters = category.filters;
     const type = filters.every(f => this.activeFilters.includes(f)) ? 'remove' : 'add';
-    this.store.dispatch<NetworkToggleFilter>({ type: NETWORK_TOGGLE_FILTER, payload: { filters, type } });
+    this.store.dispatch<NetworkMessagesToggleFilter>({ type: NETWORK_TOGGLE_FILTER, payload: { filters, type } });
   }
 }

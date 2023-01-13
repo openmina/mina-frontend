@@ -158,7 +158,7 @@ export class WebNodeWalletCreateTransactionComponent extends ManualDetection imp
     const transaction = {
       priv_key: this.activeWallet.privateKey,
       to: value.recipient,
-      amount: value.amount.toString(),
+      amount: value.amount,
       fee: value.fee.toString(),
       nonce: value.nonce.toString(),
       memo: value.memo,

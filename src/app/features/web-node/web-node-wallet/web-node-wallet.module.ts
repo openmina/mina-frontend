@@ -26,5 +26,8 @@ import { WebNodeWalletSidePanelComponent } from './web-node-wallet-side-panel/we
     WebNodeWalletRouting,
     EffectsModule.forFeature([WebNodeWalletEffects]),
   ],
+  exports: [
+    WebNodeWalletComponent,
+  ],
 })
 export class WebNodeWalletModule {}

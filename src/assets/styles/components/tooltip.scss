@@ -21,6 +21,12 @@
 	animation-timing-function: ease-out;
 	animation-duration: 0.18s;
 	animation-fill-mode: forwards;
+	word-break: break-word;
+
+	&.cancel-formatting {
+		word-break: initial;
+		white-space: pre-line;
+	}
 }
 
 @keyframes tooltip-slide-top {

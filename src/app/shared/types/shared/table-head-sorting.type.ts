@@ -1,4 +1,4 @@
-export interface TableHeadSorting {
-  name: string;
-  sort?: string;
+export interface TableHeadSorting<T = any> {
+  name: string | keyof T;
+  sort?: keyof T;
 }

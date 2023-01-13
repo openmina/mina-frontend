@@ -6,7 +6,7 @@ import {
   AWARE_CSS_PREFIX,
   BASE_CSS_PREFIX,
   CHART_CSS_PREFIX,
-  CODE_CSS_PREFIX,
+  CODE_CSS_PREFIX, CTA_CSS_PREFIX,
   SELECTED_CSS_PREFIX,
   SPECIAL_CSS_PREFIX,
   SUCCESS_CSS_PREFIX,
@@ -34,7 +34,7 @@ const DARK_THEME: Theme = {
       [`${SUCCESS_CSS_PREFIX}container`]: 'rgba(129,224,108,0.05)',
     },
     aware: {
-      [`${AWARE_CSS_PREFIX}primary`]: '#FFCC00',
+      [`${AWARE_CSS_PREFIX}primary`]: '#ffcc00',
       [`${AWARE_CSS_PREFIX}secondary`]: 'rgba(255,204,0,0.6)',
       [`${AWARE_CSS_PREFIX}tertiary`]: 'rgba(255,204,0,0.4)',
       [`${AWARE_CSS_PREFIX}container`]: 'rgba(255,204,0,0.1)',
@@ -83,6 +83,11 @@ const DARK_THEME: Theme = {
       [`${CODE_CSS_PREFIX}magenta`]: '#f299ce',
       [`${CODE_CSS_PREFIX}teal`]: '#abebfc',
     },
+    cta: {
+      [`${CTA_CSS_PREFIX}primary`]: '#0D0D0D',
+      [`${CTA_CSS_PREFIX}secondary`]: 'rgba(13,13,13,0.6)',
+      [`${CTA_CSS_PREFIX}container`]: '#5BB3FB',
+    }
   },
 };
 
@@ -156,6 +161,11 @@ const LIGHT_THEME: Theme = {
       [`${CODE_CSS_PREFIX}magenta`]: '#c64f87',
       [`${CODE_CSS_PREFIX}teal`]: '#529f99',
     },
+    cta: {
+      [`${CTA_CSS_PREFIX}primary`]: '#FFFFFF',
+      [`${CTA_CSS_PREFIX}secondary`]: 'rgba(255,255,255,0.6)',
+      [`${CTA_CSS_PREFIX}container`]: '#0C8AE4',
+    }
   },
 };
 
@@ -170,6 +180,10 @@ export class ThemeSwitcherService {
   constructor(@Inject(DOCUMENT) private document: Document,
               rendererFactory: RendererFactory2) {
     this.renderer = rendererFactory.createRenderer(null, null);
+  }
+
+  getThemeConfiguration(): Theme {
+    return this.document.body.classList.contains(ThemeType.LIGHT) ? LIGHT_THEME : DARK_THEME;
   }
 
   loadThemes(): Promise<void> {

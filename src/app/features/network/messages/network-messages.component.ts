@@ -6,9 +6,11 @@ import { selectNetworkActiveRow } from '@network/messages/network-messages.state
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NetworkMessage } from '@shared/types/network/messages/network-message.type';
 import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
-import { NETWORK_CLOSE, NETWORK_INIT, NetworkClose, NetworkInit } from '@network/messages/network-messages.actions';
+import { NETWORK_CLOSE, NETWORK_INIT, NetworkMessagesClose, NetworkMessagesInit } from '@network/messages/network-messages.actions';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { APP_UPDATE_DEBUGGER_STATUS, AppUpdateDebuggerStatus } from '@app/app.actions';
+import { selectActiveNode } from '@app/app.state';
+import { filter } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +34,15 @@ export class NetworkMessagesComponent extends ManualDetection implements OnInit,
 
   ngOnInit(): void {
     this.listenToActiveRowChange();
-    this.store.dispatch<NetworkInit>({ type: NETWORK_INIT });
+    this.listenToActiveNodeChange();
+  }
+
+  private listenToActiveNodeChange(): void {
+    this.store.select(selectActiveNode)
+      .pipe(untilDestroyed(this), filter(Boolean))
+      .subscribe(() => {
+        this.store.dispatch<NetworkMessagesInit>({ type: NETWORK_INIT });
+      });
   }
 
   private listenToActiveRowChange(): void {
@@ -72,6 +82,6 @@ export class NetworkMessagesComponent extends ManualDetection implements OnInit,
 
   ngOnDestroy(): void {
     this.store.dispatch<AppUpdateDebuggerStatus>({ type: APP_UPDATE_DEBUGGER_STATUS, payload: { failed: undefined } });
-    this.store.dispatch<NetworkClose>({ type: NETWORK_CLOSE });
+    this.store.dispatch<NetworkMessagesClose>({ type: NETWORK_CLOSE });
   }
 }

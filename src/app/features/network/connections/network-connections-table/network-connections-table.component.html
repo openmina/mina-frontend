@@ -18,18 +18,20 @@
          [class.active]="activeRow?.connectionId === connection.connectionId"
          [class.row-even]="i % 2 === 0"
          class="row">
-      <span class="tertiary">{{ connection.connectionId }}</span>
-      <span class="tertiary">{{ connection.date }}</span>
-      <span (click)="goToNetworkMessages(connection.addr)"
-            [tooltip]="'See messages for this address'"
-            [showDelay]="1000"
-            class="underline">{{ connection.addr }}</span>
-      <span class="tertiary">{{ connection.pid }}</span>
-      <span class="tertiary">{{ connection.fd }}</span>
-      <span class="tertiary">{{ connection.incoming }}</span>
-      <span class="tertiary">{{ connection.alias }}</span>
-      <span>{{ connection.stats_in.decrypted_bytes * 100 / connection.stats_in.total_bytes | number: '1.0-1' }}%</span>
-      <span>{{ connection.stats_out.decrypted_bytes * 100 / connection.stats_out.total_bytes | number: '1.0-1' }}%</span>
+      <span>{{ connection.connectionId }}</span>
+      <span>{{ connection.date }}</span>
+      <span class="secondary">
+        <span (click)="goToNetworkMessages(connection.addr)"
+              [tooltip]="'See messages for this address'"
+              [showDelay]="1000"
+              class="underline">{{ connection.addr }}</span>
+      </span>
+      <span>{{ connection.pid }}</span>
+      <span>{{ connection.fd }}</span>
+      <span>{{ connection.incoming }}</span>
+      <span class="truncate">{{ connection.alias }}</span>
+      <span class="secondary">{{ connection.stats_in.total_bytes ? connection.stats_in.decrypted_bytes * 100 / connection.stats_in.total_bytes : 0 | number: '1.0-1' }}%</span>
+      <span class="secondary">{{ connection.stats_out.total_bytes ? connection.stats_out.decrypted_bytes * 100 / connection.stats_out.total_bytes : 0 | number: '1.0-1' }}%</span>
     </div>
   </cdk-virtual-scroll-viewport>
 </div>

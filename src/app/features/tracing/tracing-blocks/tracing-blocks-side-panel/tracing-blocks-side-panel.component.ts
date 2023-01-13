@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs';
 import { TracingBlockTrace } from '@shared/types/tracing/blocks/tracing-block-trace.type';
@@ -8,17 +8,9 @@ import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { Router } from '@angular/router';
 import { Routes } from '@shared/enums/routes.enum';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
-import { TracingTraceCheckpoint } from '@shared/types/tracing/blocks/tracing-trace-checkpoint.type';
 import { selectTracingActiveTraceDetails, selectTracingActiveTraceGroups } from '@tracing/tracing-blocks/tracing-blocks.state';
 import { TRACING_BLOCKS_SELECT_ROW, TracingBlocksSelectRow } from '@tracing/tracing-blocks/tracing-blocks.actions';
-import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
-
-const timeColorScheme: SecDurationConfig = {
-  red: 1,
-  orange: 0.3,
-  yellow: 0.1,
-  color: true,
-};
+import { BlockStructuredTraceComponent } from '@shared/components/block-structured-trace/block-structured-trace.component';
 
 @UntilDestroy()
 @Component({
@@ -26,22 +18,21 @@ const timeColorScheme: SecDurationConfig = {
   templateUrl: './tracing-blocks-side-panel.component.html',
   styleUrls: ['./tracing-blocks-side-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'h-100 flex-column border-left' },
 })
 export class TracingBlocksSidePanelComponent extends ManualDetection implements OnInit {
 
-  readonly timeColorScheme: SecDurationConfig = timeColorScheme;
-
-  activeTrace: TracingBlockTrace;
-  groups: TracingTraceGroup[];
-  checkpoints: TracingTraceCheckpoint[];
-  expandedParents: string[] = [];
-  allExpanded: boolean;
+  @ViewChild('traces', { read: ViewContainerRef })
+  private blockStructuredTrace: ViewContainerRef;
+  private component: BlockStructuredTraceComponent;
 
   constructor(private store: Store<MinaState>,
               private router: Router) { super(); }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    await import('@shared/components/block-structured-trace/block-structured-trace.component').then(c => {
+      this.component = this.blockStructuredTrace.createComponent<BlockStructuredTraceComponent>(c.BlockStructuredTraceComponent).instance;
+      this.component.closeEmitter$.pipe(untilDestroyed(this)).subscribe(() => this.closeSidePanel());
+    });
     this.listenToActiveTraceChange();
   }
 
@@ -52,58 +43,22 @@ export class TracingBlocksSidePanelComponent extends ManualDetection implements 
         filter(t => !!t.activeTrace),
       )
       .subscribe((trace: { activeTrace: TracingBlockTrace; activeTraceGroups: TracingTraceGroup[] }) => {
-        this.activeTrace = trace.activeTrace;
-        if (trace.activeTraceGroups !== this.groups) {
-          this.groups = trace.activeTraceGroups;
-          this.detect();
-        }
+        this.component.title = trace.activeTrace.source + ' Transition ' + trace.activeTrace.height + ' - ' + trace.activeTrace.status;
+        this.component.detect();
       });
     this.store.select(selectTracingActiveTraceGroups)
       .pipe(untilDestroyed(this))
       .subscribe((groups: TracingTraceGroup[]) => {
-        // this.groups = groups;
-        // TODO: add here the groups. Right now we have only checkpoints because there is only one group
-        this.checkpoints = groups[0]?.checkpoints;
-        if (this.allExpanded) {
-          this.expandAll();
+        this.component.checkpoints = groups[0]?.checkpoints;
+        if (this.component.allExpanded) {
+          this.component.expandAll();
         }
-        this.detect();
+        this.component.detect();
       });
   }
 
   closeSidePanel(): void {
     this.router.navigate([Routes.TRACING, Routes.BLOCKS], { queryParamsHandling: 'merge' });
     this.store.dispatch<TracingBlocksSelectRow>({ type: TRACING_BLOCKS_SELECT_ROW, payload: undefined });
-  }
-
-  toggleExpanding(checkpoint: TracingTraceGroup | TracingTraceCheckpoint): void {
-    if (!checkpoint.checkpoints.length) {
-      return;
-    }
-    const index = this.expandedParents.indexOf(checkpoint.title);
-    if (index !== -1) {
-      this.expandedParents.splice(index, 1);
-    } else {
-      this.expandedParents.push(checkpoint.title);
-    }
-  }
-
-  expandAll(): void {
-    this.allExpanded = true;
-    this.collapseAll();
-    const expandRecursively = (checkpoints: TracingTraceCheckpoint[]) => {
-      checkpoints.forEach((checkpoint: TracingTraceCheckpoint) => {
-        if (checkpoint.checkpoints.length) {
-          this.expandedParents.push(checkpoint.title);
-        }
-        expandRecursively(checkpoint.checkpoints);
-      });
-    };
-    expandRecursively(this.checkpoints);
-  }
-
-  collapseAll(): void {
-    this.expandedParents = [];
-    this.allExpanded = false;
   }
 }

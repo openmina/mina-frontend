@@ -58,7 +58,7 @@ export class TracingBlocksGetDetailsSuccess implements TracingBlocksAction {
 export class TracingBlocksSort implements TracingBlocksAction {
   readonly type = TRACING_BLOCKS_SORT;
 
-  constructor(public payload: TableSort) { }
+  constructor(public payload: TableSort<TracingBlockTrace>) { }
 }
 
 export type TracingBlocksActions =

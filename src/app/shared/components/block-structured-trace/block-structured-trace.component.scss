@@ -1,0 +1,121 @@
+@import 'variables';
+@import 'layout';
+
+.row {
+	display: grid;
+	grid-template-columns: calc(100% - 170px) 90px 80px;
+
+	> span {
+		padding-left: 12px;
+		line-height: 36px;
+		height: 36px;
+	}
+
+	&:not(.head) {
+		color: $base-secondary;
+	}
+
+	&.head {
+		padding-right: 16px;
+	}
+}
+
+.group-list {
+	position: relative;
+	padding-left: 22px;
+
+	> .checkpoint-row {
+		color: $base-primary !important;
+
+		.title .icon-wrap .mina-icon {
+			color: $base-primary;
+		}
+	}
+
+	&::before {
+		position: absolute;
+		content: '';
+		top: 0;
+		left: 10px;
+		width: 7px;
+		height: 17px;
+		background-color: $base-surface;
+		z-index: 1;
+	}
+}
+
+.title {
+	height: 36px;
+	line-height: 36px;
+	padding-left: 6px;
+
+	.icon-wrap {
+		z-index: 1;
+		position: absolute;
+		left: -18px;
+		display: none;
+		width: 16px;
+		height: 16px;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		background-color: $base-surface;
+
+		.mina-icon {
+			color: $base-tertiary;
+			transition: transform 100ms;
+			font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+		}
+
+		&.rotate {
+			left: -19px;
+
+			.mina-icon {
+				transform: rotate(90deg);
+			}
+		}
+	}
+
+	&.parent {
+		cursor: pointer;
+		position: relative;
+		overflow: visible;
+
+		span {
+			display: flex;
+		}
+	}
+}
+
+.checkpoint-list {
+	padding-left: 22px;
+	overflow: hidden;
+}
+
+.checkpoint-row {
+	position: relative;
+	padding-left: 6px;
+
+	&::after,
+	&:last-child::before,
+	&:last-of-type::before {
+		background: $base-divider;
+		position: absolute;
+		content: '';
+	}
+
+	&::after {
+		left: -5px;
+		top: 17px;
+		width: 14px;
+		height: 1px;
+	}
+
+	&:last-child::before,
+	&:last-of-type::before {
+		left: -6px;
+		bottom: 18px;
+		width: 1px;
+		height: 10000px;
+	}
+}

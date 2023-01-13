@@ -2,7 +2,7 @@ mina-network-messages-table {
 	transition: width 400ms cubic-bezier(0.22, 1, 0.36, 1);
 
 	&.shrink {
-		width: calc(100% - 320px);
+		width: calc(100% - 400px);
 	}
 
 	&:not(.shrink) {
@@ -11,10 +11,10 @@ mina-network-messages-table {
 }
 
 mina-horizontal-resizable-container {
-	width: 320px;
+	width: 400px;
 	height: 100%;
 	position: absolute;
-	right: -320px;
+	right: -400px;
 	transition: right 400ms cubic-bezier(0.22, 1, 0.36, 1);
 
 	&.show {

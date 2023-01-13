@@ -1,0 +1,35 @@
+<div class="mina-table flex-grow overflow-x-auto">
+  <div class="row head sorting p-relative pr-12" *ngIf="currentSort">
+    <span *ngFor="let tableHead of tableHeads; let i=index"
+          (click)="sortTable(tableHead.sort ?? tableHead.name)"
+          [class.active]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
+          class="pointer">
+      {{ tableHead.name }}
+      <span [class.flip]="currentSort.sortDirection === 'descending'"
+            [class.show]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
+            class="mina-icon f-18 icon-200">arrow_upward
+      </span>
+    </span>
+  </div>
+  <cdk-virtual-scroll-viewport class="border-bottom border-top h-100 overflow-y-scroll"
+                               fxFlex="calc(100% - 36px)"
+                               [itemSize]="itemSize">
+    <div *cdkVirtualFor="let node of blocks; let i=index"
+         (click)="onRowClick(node)"
+         [class.row-even]="i % 2 === 0"
+         class="row">
+      <span>{{ node.date }}</span>
+      <span>{{ node.hash | truncateMid }}</span>
+      <span class="secondary">
+        <span (click)="goToScanState(node.height)"
+              [tooltip]="'See scan state for this block'"
+              [showDelay]="1000"
+              class="underline">{{ node.height }}</span>
+      </span>
+      <span>{{ node.txCount }}</span>
+      <span>{{ node.snarkCount }}</span>
+      <span>{{ node.stagedLedgerHash | truncateMid }}</span>
+      <span>{{ node.snarkedLedgerHash | truncateMid }}</span>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>
