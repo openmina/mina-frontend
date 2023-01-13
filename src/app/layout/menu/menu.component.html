@@ -1,16 +1,25 @@
-<div *ngIf="menu" class="menu flex-column" [class.collapsed]="menu.collapsed">
-  <button class="menu-toggle primary f-14 pointer flex-row align-center f-400"
+<div *ngIf="menu" class="menu flex-column" [class.collapsed]="menu.collapsed && !menu.isMobile">
+  <button class="menu-toggle f-big h-xl primary pointer flex-row align-center f-400"
+          [class.flex-between]="menu.isMobile"
           (click)="toggleMenu()">
     <span>OpenMina</span>
-    <span fxFlex="20px" class="mina-icon" [class.flipped]="menu.collapsed">first_page</span>
+    <span [class.flipped]="menu.isMobile ? false : menu.collapsed"
+          class="mina-icon f-20">{{ !menu.isMobile ? 'first_page' : 'close'}}</span>
   </button>
   <a *ngFor="let item of menuItems"
      [routerLink]="'/' + item.name.toLowerCase().split(' ').join('-')"
+     [tooltip]="item.name"
+     [tooltipDisabled]="!menu.collapsed || menu.isMobile"
      routerLinkActive="active"
-     class="item">
-    <span class="item-content">
+     class="item h-lg">
+    <span class="item-content h-sm">
       <span class="mina-icon">{{ item.icon }}</span>
       <span class="text-nowrap">{{ item.name }}</span>
     </span>
   </a>
 </div>
+
+<button class="switcher icon-btn p-0 ml-10"
+        (click)="changeTheme()">
+  <span class="mina-icon f-18">{{ currentTheme === 'light' ? 'dark_mode' : 'wb_sunny' }}</span>
+</button>

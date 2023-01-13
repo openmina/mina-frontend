@@ -5,19 +5,18 @@ import { toReadableDate } from '@shared/helpers/date.helper';
 import { NetworkMessagesDirection } from '@shared/types/network/messages/network-messages-direction.enum';
 import { NetworkConnection } from '@shared/types/network/connections/network-connection.type';
 import { ONE_MILLION, ONE_THOUSAND } from '@shared/constants/unit-measurements';
-import { CONFIG } from '@shared/constants/config';
+import { ConfigService } from '@core/services/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NetworkConnectionsService {
 
-  private readonly API: string = CONFIG.debugger;
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+              private config: ConfigService) { }
 
   getConnections(limit: number, id: number, direction: NetworkMessagesDirection): Observable<NetworkConnection[]> {
-    let url = `${this.API}/connections?limit=${limit}&direction=${direction}`;
+    let url = `${this.config.DEBUGGER}/connections?limit=${limit}&direction=${direction}`;
 
     if (id) {
       url += `&id=${id}`;

@@ -13,4 +13,4 @@ export const MICROSEC_IN_1_SEC = ONE_MILLION;
 export const NANOSEC_IN_1_SEC  = ONE_BILLION;
 
 // times in nanoseconds
-// export const ONE_HUNDRED_MS    = 100000000;
+export const ONE_HUNDRED_MS    = 100000000;

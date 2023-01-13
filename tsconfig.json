@@ -13,6 +13,7 @@
     "strictPropertyInitialization": false,
     "suppressImplicitAnyIndexErrors": true,
     "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "declaration": false,
     "downlevelIteration": true,
@@ -22,6 +23,7 @@
     "target": "es2020",
     "module": "es2020",
     "types": [
+      "node",
       "google",
       "cypress",
       "cypress-real-events"
@@ -58,9 +60,18 @@
       "@tracing/*": [
         "src/app/features/tracing/*"
       ],
+      "@benchmarks/*": [
+        "src/app/features/benchmarks/*"
+      ],
       "@web-node/*": [
         "src/app/features/web-node/*"
       ],
+      "@dashboard/*": [
+        "src/app/features/dashboard/*"
+      ],
+      "@explorer/*": [
+        "src/app/features/explorer/*"
+      ]
     }
   },
   "angularCompilerOptions": {

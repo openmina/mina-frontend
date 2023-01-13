@@ -1,0 +1,36 @@
+@import 'variables';
+
+.submenus {
+	.a-wrap {
+		max-width: 116px;
+		@media (max-width: 700px) {
+			max-width: unset;
+		}
+	}
+
+	a {
+		background-color: transparent;
+		color: $base-secondary;
+		border-radius: 6px;
+		position: relative;
+
+		&:hover {
+			background-color: $base-container;
+		}
+
+		&.active {
+			color: $selected-primary;
+			background-color: $selected-container;
+		}
+	}
+
+	.bar {
+		width: 8px;
+		height: 20px;
+	}
+
+	@media (max-width: 700px) {
+		background-color: $base-surface;
+	}
+
+}

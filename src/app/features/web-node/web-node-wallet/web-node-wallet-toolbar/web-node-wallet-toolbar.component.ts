@@ -14,9 +14,10 @@ import {
   WebNodeWalletChangeWallet,
   WebNodeWalletGetTransactions,
 } from '@web-node/web-node-wallet/web-node-wallet.actions';
-import { selectAppNodeStatus } from '@app/app.state';
+import { selectAppMenu, selectAppNodeStatus } from '@app/app.state';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { NodeStatus } from '@shared/types/app/node-status.type';
+import { AppMenu } from '@shared/types/app/app-menu.type';
 
 @UntilDestroy()
 @Component({
@@ -30,6 +31,8 @@ export class WebNodeWalletToolbarComponent extends ManualDetection implements On
   wallets: WebNodeWallet[];
   activeWallet: WebNodeWallet;
   nodeStatus: AppNodeStatusTypes;
+  isMobile: boolean;
+  openMobileDropdown: boolean;
 
   private overlayRef: OverlayRef;
 
@@ -43,6 +46,7 @@ export class WebNodeWalletToolbarComponent extends ManualDetection implements On
   ngOnInit(): void {
     this.listenToWalletChanges();
     this.listenToNodeChanges();
+    this.listenToMenuChange();
   }
 
   private listenToNodeChanges(): void {
@@ -53,6 +57,18 @@ export class WebNodeWalletToolbarComponent extends ManualDetection implements On
       )
       .subscribe((status: NodeStatus) => {
         this.nodeStatus = status.status;
+        this.detect();
+      });
+  }
+
+  private listenToMenuChange(): void {
+    this.store.select(selectAppMenu)
+      .pipe(
+        untilDestroyed(this),
+        filter(menu => menu.isMobile !== this.isMobile),
+      )
+      .subscribe((menu: AppMenu) => {
+        this.isMobile = menu.isMobile;
         this.detect();
       });
   }
@@ -87,7 +103,7 @@ export class WebNodeWalletToolbarComponent extends ManualDetection implements On
 
     this.overlayRef = this.overlay.create({
       hasBackdrop: false,
-      width: 330,
+      width: !this.isMobile ? 330 : '100vw',
       positionStrategy: this.overlay.position()
         .flexibleConnectedTo(this.dropdownTrigger.nativeElement)
         .withPositions([{

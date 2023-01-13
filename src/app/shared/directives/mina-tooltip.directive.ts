@@ -11,14 +11,15 @@ const TOOLTIP_OFFSET = 8;
 })
 export class MinaTooltipDirective implements OnInit, OnDestroy {
 
-  @Input() tooltip: string = '';
+  @Input() tooltip: string | number = '';
   @Input() showDelay: number = 0;
   @Input() hideDelay: number = 0;
   @Input() tooltipDisabled: boolean = false;
   @Input() globalTooltip: boolean = true;
+  @Input() cancelFormatting: boolean = false;
 
   private popup: HTMLDivElement = this.document.getElementById('mina-tooltip') as HTMLDivElement;
-  private timer: number;
+  private timer: any;
   private cancelShowing: boolean = false;
 
   constructor(private el: ElementRef,
@@ -43,7 +44,10 @@ export class MinaTooltipDirective implements OnInit, OnDestroy {
     }
     this.timer = setTimeout(() => {
       if (!this.cancelShowing) {
-        MinaTooltipDirective.showTooltip(this.popup, this.el.nativeElement, this.tooltip);
+        MinaTooltipDirective.showTooltip(this.popup, this.el.nativeElement, this.tooltip.toString());
+        if (this.cancelFormatting) {
+          this.popup.classList.add('cancel-formatting');
+        }
       }
     }, this.showDelay);
   }

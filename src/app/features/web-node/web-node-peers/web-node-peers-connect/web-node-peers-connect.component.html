@@ -26,7 +26,7 @@
             [class.error]="peerIdMessage">Peer ID
       </span>
       <input #firstInput type="text"
-             class="mina-input h-36 w-100 border-rad-4 text-right pr-12 p-relative input-selected"
+             class="mina-input h-lg w-100 border-rad-4 text-right pr-12 p-relative input-selected"
              [class.input-error]="peerIdMessage"
              [class.input-success]="!peerIdMessage && formControl.value"
              [formControl]="formControl">
@@ -58,7 +58,7 @@
   <div class="border-rad-6 border p-12 flex-column h-100">
     <ng-container *ngIf="!copiedOffer; else copied">
       <div class="flex-column flex-grow bg-container border-rad-4 p-12 h-100">
-        <div class="f-600 h-32">Initial Offer</div>
+        <div class="f-600 h-md">Initial Offer</div>
         <div class="flex-column flex-grow overflow-auto transparent-scrollbar-track">
           <mina-json-viewer [json]="offer" [expanded]="true"></mina-json-viewer>
         </div>
@@ -118,10 +118,10 @@
 
 <ng-template #stepperFooter>
   <div class="flex-row flex-between mt-16">
-    <button class="action-btn btn-primary pl-12 pr-12 h-32" (click)="prevStep()" [disabled]="activeStep === 0">
+    <button class="action-btn btn-primary pl-12 pr-12 h-md" (click)="prevStep()" [disabled]="activeStep === 0">
       Back
     </button>
-    <button class="action-btn btn-selected pl-12 pr-12 h-32" (click)="nextStep()"
+    <button class="action-btn btn-selected pl-12 pr-12 h-md" (click)="nextStep()"
             [disabled]="peerIdMessage">
       {{ activeStep === 0
       ? !pastedPeerId ? 'Paste ID from Clipboard' : 'Continue'

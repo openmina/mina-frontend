@@ -16,7 +16,7 @@ import {
   TracingBlocksActions,
   TracingBlocksSelectRow,
 } from '@tracing/tracing-blocks/tracing-blocks.actions';
-import { addErrorObservable } from '@shared/constants/store-functions';
+import { addError, addErrorObservable } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 
 @Injectable({
@@ -37,7 +37,10 @@ export class TracingBlocksEffects extends MinaBaseEffect<TracingBlocksActions> {
       ofType(TRACING_BLOCKS_GET_TRACES),
       switchMap(() => this.tracingBlocksService.getTraces()),
       map((payload: TracingBlockTrace[]) => ({ type: TRACING_BLOCKS_GET_TRACES_SUCCESS, payload })),
-      catchError((error: Error) => addErrorObservable(error, MinaErrorType.GRAPH_QL)),
+      catchError((error: Error) => [
+        addError(error, MinaErrorType.GRAPH_QL),
+        { type: TRACING_BLOCKS_GET_TRACES_SUCCESS, payload: [] },
+      ]),
       repeat(),
     ));
 

@@ -1,0 +1,18 @@
+@import 'variables';
+
+.mina-table {
+
+	.row {
+		//grid-template-columns: $col0 $col1 $col2 $col3 1fr;
+		color: $base-tertiary;
+
+		&:not(.head) {
+			cursor: pointer;
+		}
+	}
+
+	.cdk-virtual-scroll-viewport {
+		//min-width: $col0 + $col1 + $col2 + $col3 + $col4;
+		overflow-x: hidden;
+	}
+}

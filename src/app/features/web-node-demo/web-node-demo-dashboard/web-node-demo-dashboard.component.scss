@@ -1,0 +1,41 @@
+@import 'variables';
+
+.loading-block {
+	max-width: 360px;
+	margin: 0 auto;
+
+	.loading-webnode {
+		font-size: 20px;
+	}
+
+	.mina-icon.aware-primary {
+		animation: fadeIn 1500ms ease-in-out infinite;
+	}
+}
+
+.font-16 {
+	font-size: 16px;
+}
+
+.data-wrapper {
+	max-width: 544px;
+}
+
+button {
+	font-size: 16px;
+}
+
+@keyframes fadeIn {
+	10% {
+		opacity: 1;
+	}
+	38% {
+		opacity: 0.1;
+	}
+	42% {
+		opacity: 0.1;
+	}
+	70% {
+		opacity: 1;
+	}
+}

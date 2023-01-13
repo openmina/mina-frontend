@@ -1,0 +1,41 @@
+<div class="flex-row align-center">
+  <span class="tertiary mr-10 f-600">Height</span>
+  <button class="btn-secondary h-sm w-sm mr-5 ml-10 flex-row flex-center align-center"
+          [class.disabled]="firstBlock === activeBlock"
+          [tooltip]="'First block'"
+          [showDelay]="500"
+          (click)="getBlock(firstBlock)">
+    <span class="mina-icon f-18">first_page</span>
+  </button>
+  <div class="pagination-group flex-row align-center bg-selected-container border-rad-4">
+    <button class="h-sm w-sm flex-row flex-center align-center"
+            [class.disabled]="firstBlock === activeBlock"
+            [tooltip]="'Prev block'"
+            [showDelay]="500"
+            (click)="getBlock(activeBlock - 1)">
+      <span class="mina-icon f-18">navigate_before</span>
+    </button>
+    <span class="f-600 selected-primary pl-5 pr-5">{{ activeBlock }}</span>
+    <button class="h-sm w-sm flex-row flex-center align-center"
+            [class.disabled]="earliestBlock === activeBlock"
+            [tooltip]="'Next block'"
+            [showDelay]="500"
+            (click)="getBlock(activeBlock + 1)">
+      <span class="mina-icon f-18">navigate_next</span>
+    </button>
+  </div>
+  <button class="btn-secondary h-sm w-sm mr-10 ml-5 flex-row flex-center align-center"
+          [class.disabled]="earliestBlock === activeBlock"
+          [tooltip]="'Last block'"
+          [showDelay]="500"
+          (click)="getBlock(earliestBlock)">
+    <span class="mina-icon f-18">last_page</span>
+  </button>
+  <div class="tertiary">
+    {{ txCount }} transactions, {{ snarksCount }} snarks
+  </div>
+</div>
+<div>
+  <button class="h-sm btn-primary mr-10"
+          (click)="toggleLeafsMarking()">{{ !leafsMarking ? 'Highlight snarks' : 'Hide snarks' }}</button>
+</div>

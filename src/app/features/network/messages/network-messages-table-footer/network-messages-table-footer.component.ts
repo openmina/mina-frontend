@@ -8,10 +8,10 @@ import {
   NETWORK_GO_LIVE,
   NETWORK_PAUSE,
   NETWORK_SET_TIMESTAMP_INTERVAL,
-  NetworkGetPaginatedMessages,
-  NetworkGoLive,
-  NetworkPause,
-  NetworkSetTimestampInterval,
+  NetworkMessagesGetPaginatedMessages,
+  NetworkMessagesGoLive,
+  NetworkMessagesPause,
+  NetworkMessagesSetTimestampInterval,
 } from '@network/messages/network-messages.actions';
 import { NetworkMessagesDirection } from '@shared/types/network/messages/network-messages-direction.enum';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
@@ -108,15 +108,15 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
   }
 
   goLive(): void {
-    this.store.dispatch<NetworkGoLive>({ type: NETWORK_GO_LIVE });
+    this.store.dispatch<NetworkMessagesGoLive>({ type: NETWORK_GO_LIVE });
   }
 
   pause(): void {
-    this.store.dispatch<NetworkPause>({ type: NETWORK_PAUSE });
+    this.store.dispatch<NetworkMessagesPause>({ type: NETWORK_PAUSE });
   }
 
   previousPage(): void {
-    let payload: NetworkGetPaginatedMessages['payload'];
+    let payload: NetworkMessagesGetPaginatedMessages['payload'];
     if (this.currentTimestamp) {
       payload = {
         id: this.state.activePage.start.id - this.state.limit,
@@ -129,22 +129,22 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
         direction: NetworkMessagesDirection.REVERSE,
       };
     }
-    this.store.dispatch<NetworkGetPaginatedMessages>({ type: NETWORK_GET_PAGINATED_MESSAGES, payload });
+    this.store.dispatch<NetworkMessagesGetPaginatedMessages>({ type: NETWORK_GET_PAGINATED_MESSAGES, payload });
   }
 
   nextPage(): void {
-    const payload: NetworkGetPaginatedMessages['payload'] = {
+    const payload: NetworkMessagesGetPaginatedMessages['payload'] = {
       id: this.state.activePage.end.id + 1,
       direction: NetworkMessagesDirection.FORWARD,
     };
     if (this.currentTimestamp) {
       payload.timestamp = { from: undefined, to: this.currentTimestamp.to };
     }
-    this.store.dispatch<NetworkGetPaginatedMessages>({ type: NETWORK_GET_PAGINATED_MESSAGES, payload });
+    this.store.dispatch<NetworkMessagesGetPaginatedMessages>({ type: NETWORK_GET_PAGINATED_MESSAGES, payload });
   }
 
   firstPage(): void {
-    let payload: NetworkGetPaginatedMessages['payload'];
+    let payload: NetworkMessagesGetPaginatedMessages['payload'];
     if (this.currentTimestamp) {
       payload = {
         id: this.state.activePage.firstPageIdWithTimestamp,
@@ -157,11 +157,11 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
         direction: NetworkMessagesDirection.FORWARD,
       };
     }
-    this.store.dispatch<NetworkGetPaginatedMessages>({ type: NETWORK_GET_PAGINATED_MESSAGES, payload });
+    this.store.dispatch<NetworkMessagesGetPaginatedMessages>({ type: NETWORK_GET_PAGINATED_MESSAGES, payload });
   }
 
   lastPage(): void {
-    let payload: NetworkGetPaginatedMessages['payload'];
+    let payload: NetworkMessagesGetPaginatedMessages['payload'];
     if (this.currentTimestamp) {
       payload = {
         timestamp: { from: this.currentTimestamp.to, to: this.currentTimestamp.from },
@@ -173,7 +173,7 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
         direction: NetworkMessagesDirection.REVERSE,
       };
     }
-    this.store.dispatch<NetworkGetPaginatedMessages>({ type: NETWORK_GET_PAGINATED_MESSAGES, payload });
+    this.store.dispatch<NetworkMessagesGetPaginatedMessages>({ type: NETWORK_GET_PAGINATED_MESSAGES, payload });
   }
 
   openIntervalPicker(event?: MouseEvent): void {
@@ -198,7 +198,6 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
 
     const portal = new ComponentPortal(IntervalSelectComponent);
     this.intervalSelectComponent = this.overlayRef.attach<IntervalSelectComponent>(portal);
-    console.log(this.currentTimestamp?.from);
     this.intervalSelectComponent.instance.from = this.currentTimestamp?.from;
     this.intervalSelectComponent.instance.to = this.currentTimestamp?.to;
     setTimeout(() => {
@@ -217,7 +216,7 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
               from: response.from, to: response.to,
             },
           });
-          this.store.dispatch<NetworkSetTimestampInterval>({
+          this.store.dispatch<NetworkMessagesSetTimestampInterval>({
             type: NETWORK_SET_TIMESTAMP_INTERVAL,
             payload: {
               timestamp: { from: response.from, to: response.to },
@@ -249,7 +248,7 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
         from: undefined, to: undefined,
       },
     });
-    this.store.dispatch<NetworkSetTimestampInterval>({
+    this.store.dispatch<NetworkMessagesSetTimestampInterval>({
       type: NETWORK_SET_TIMESTAMP_INTERVAL,
       payload: {
         timestamp: { from: undefined, to: undefined },

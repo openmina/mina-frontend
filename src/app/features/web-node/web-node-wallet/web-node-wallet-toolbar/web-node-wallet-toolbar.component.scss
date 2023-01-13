@@ -1,13 +1,34 @@
 @import 'variables';
 
 .wallet-toolbar {
-	height: 36px;
-
 	.btn-selected {
 		min-width: 230px;
 
 		&:hover {
 			filter: brightness(120%);
+		}
+	}
+
+	@media (max-width: 700px) {
+		background-color: $base-surface;
+
+		.btn-selected {
+			min-width: 220px;
+		}
+	}
+
+	.mobile-dropdown {
+		position: absolute;
+		top: 44px;
+		right: 10px;
+		width: 200px;
+
+		> button {
+			margin-right: 0 !important;
+
+			&:not(:last-child) {
+				margin-bottom: 5px;
+			}
 		}
 	}
 }
@@ -17,9 +38,9 @@
 	max-height: 200px;
 
 	.dropdown-item {
-		height: 24px;
 		display: grid;
-		grid-template-columns: 27px 110px 110px;
+		height: 24px;
+		grid-template-columns: 57px 110px 1fr;
 		color: $base-tertiary;
 		box-sizing: border-box;
 
@@ -49,6 +70,15 @@
 
 		&:last-child {
 			margin-bottom: 0 !important;
+		}
+	}
+
+	@media (max-width: 700px) {
+		width: 100vw;
+		max-height: 60vh;
+
+		.dropdown-item {
+			height: 48px;
 		}
 	}
 }

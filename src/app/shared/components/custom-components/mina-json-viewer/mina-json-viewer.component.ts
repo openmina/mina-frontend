@@ -17,6 +17,7 @@ export class MinaJsonViewerComponent extends NgxJsonViewerComponent implements O
   @Input() paddingLimitForNestedElements: number = 1000;
   @Input() internalDepth: number = 0;
   @Input() expandTracking: ExpandTracking;
+  @Input() skipDecycle: boolean = false;
 
   ngOnInit(): void {
     this.internalDepth++;
@@ -25,7 +26,9 @@ export class MinaJsonViewerComponent extends NgxJsonViewerComponent implements O
   override ngOnChanges(): void {
     this.segments = [];
 
-    this.json = this['decycle'](this.json);
+    if (this.skipDecycle) {
+      this.json = this['decycle'](this.json);
+    }
 
     this['_currentDepth']++;
 
@@ -65,12 +68,12 @@ export class MinaJsonViewerComponent extends NgxJsonViewerComponent implements O
   }
 
   private customParseKeyValue(key: any, value: any): Segment {
-    const segment: Segment = this['parseKeyValue'](key, value);
-    if (typeof segment.value === 'string' && Number(segment.value) >= 10000000000000000) {
-      segment.type = 'number';
-      segment.description = '' + segment.value;
-    }
-    return segment;
+    /*const segment: Segment =*/ return this['parseKeyValue'](key, value);
+    // if (typeof segment.value === 'string' && Number(segment.value) <= 10000000000000000000 && Number(segment.value) >= 10000000000000000) {
+    //   segment.type = 'number';
+    //   segment.description = '' + segment.value;
+    // }
+    // return segment;
   }
 
   toggleAll(expand: boolean): ExpandTracking {

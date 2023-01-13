@@ -12,6 +12,7 @@ mat-expansion-panel.table-filter {
 	.mat-expansion-panel-header {
 		padding: 0;
 		height: auto;
+		background: unset !important;
 
 		.mat-content {
 			display: flex;

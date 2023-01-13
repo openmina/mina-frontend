@@ -1,0 +1,64 @@
+<div class="mina-table flex-grow overflow-x-auto">
+  <div class="row head sorting p-relative pr-12" *ngIf="currentSort">
+    <span *ngFor="let tableHead of tableHeads; let i=index"
+          (click)="sortTable(tableHead.sort ?? tableHead.name)"
+          [class.active]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
+          class="pointer">
+      {{ tableHead.name }}
+      <span [class.flip]="currentSort.sortDirection === 'descending'"
+            [class.show]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
+            class="mina-icon f-18 icon-200">arrow_upward</span>
+    </span>
+    <div class="flex-row flex-end">
+      <button class="h-sm w-sm flex-row align-center flex-center btn-selected p-0 toggle p-relative"
+              *ngIf="!isSidePanelOpen"
+              (click)="toggleSidePanel()">
+        <span class="mina-icon f-20">view_sidebar</span>
+      </button>
+    </div>
+  </div>
+  <cdk-virtual-scroll-viewport class="border-bottom border-top h-100 overflow-y-scroll"
+                               fxFlex="calc(100% - 36px)"
+                               [itemSize]="itemSize">
+    <div *cdkVirtualFor="let block of blocks; let i=index"
+         [class.row-even]="i % 2 === 0"
+         class="row">
+      <span class="tertiary">{{ block.date || '-' }}</span>
+      <span>
+        <span class="underline tertiary"
+              tooltip="See message details"
+              [showDelay]="1000"
+              (click)="seeMessageInMessages(block.receivedMessageId)">{{ block.receivedMessageId || '-' }}</span>
+      </span>
+      <span>
+        <span class="underline tertiary"
+              tooltip="See message details"
+              [showDelay]="1000"
+              (click)="seeMessageInMessages(block.sentMessageId)">{{ block.sentMessageId || '-' }}</span>
+      </span>
+      <span class="secondary">{{ block.hash | truncateMid }}</span>
+      <span class="tertiary"
+            [tooltip]="'Global slot: ' + block.globalSlot"
+            [showDelay]="500">{{ block.height }}</span>
+      <span class="primary">
+        <span (click)="seeMessagesForAddress(block.sourceAddr)"
+              class="underline"
+              [tooltip]="'See messages for this address'"
+              [showDelay]="1000">{{ block.sourceAddr || '-' }}</span>
+      </span>
+      <span>
+        <span (click)="seeMessagesForAddress(block.nodeAddr)"
+              class="underline tertiary"
+              [tooltip]="block.debuggerName"
+              [showDelay]="200">{{ block.nodeAddr }}</span>
+      </span>
+      <span class="primary">
+        <span (click)="seeMessagesForAddress(block.destAddr)"
+              class="underline"
+              [tooltip]="'See messages for this address'"
+              [showDelay]="1000">{{ block.destAddr || '-' }}</span>
+      </span>
+      <span [innerHTML]="block.blockLatency | secDuration: secConfig"></span>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>

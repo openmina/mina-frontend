@@ -1,0 +1,93 @@
+<div *ngIf="!loading[loading.length - 1].loaded; else loadedTemplate"
+     class="loading-block h-100 w-100 flex-column flex-center align-center">
+  <div class="f-big flex-column align-center mb-16">
+    <div class="loading-webnode f-600">Loading Web Node</div>
+    <div class="font-16 tertiary pt-10">~ {{ remaining }}s remaining</div>
+  </div>
+  <div class="mt-16 border-rad-6 bg-container flex-column p-12 w-100">
+    <div class="flex-row flex-between align-center h-xl f-500 font-16"
+         *ngFor="let item of loading; let i=index">
+      <span [ngClass]="item.loaded ? 'tertiary' : 'primary'">{{ item.name }}</span>
+      <span
+          [ngClass]="'bg-' + (item.loaded ? 'success' : (!item.loaded && (loading[i - 1]?.loaded || i === 0)) ? 'aware' : '') + '-container'"
+          class="flex-row align-center flex-center w-lg h-md border-rad-6">
+        <span
+            [ngClass]="(item.loaded ? 'success-' : (!item.loaded && (loading[i - 1]?.loaded || i === 0)) ? 'aware-' : '') + 'primary'"
+            class="mina-icon icon-200">{{ item.loaded ? 'task_alt' : 'more_horiz' }}</span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadedTemplate>
+  <div class="flex-column h-100 flex-between">
+    <div class="flex-column overflow-y-auto w-100 align-center pl-10 pr-10">
+      <div class="data-wrapper flex-column w-100">
+        <mina-web-node-demo-active-web-node></mina-web-node-demo-active-web-node>
+        <mina-web-node-demo-wallet></mina-web-node-demo-wallet>
+        <mina-web-node-demo-transaction></mina-web-node-demo-transaction>
+      </div>
+    </div>
+    <div class="border-top w-100 flex-row flex-center p-8 align-stretch">
+      <div class="bg-selected-container border-rad-6 data-wrapper w-100 selected-secondary pl-10 pr-10"
+           fxLayout.gt-sm="row"
+           fxLayoutAlign.gt-sm="space-between center"
+           fxLayout="column-reverse"
+           fxLayoutAlign="stretch stretch">
+        <!--        <ng-container *ngIf="!wallet?.balance">-->
+        <!--          <div *ngIf="!funding">-->
+        <!--            <span>Your wallet has no balance.</span>-->
+        <!--          </div>-->
+        <!--          <div *ngIf="funding">-->
+        <!--            <span>-->
+        <!--              Berkley tMINA will arrive at your wallet when-->
+        <!--              <br>-->
+        <!--              the next block is produced (~3min)-->
+        <!--            </span>-->
+        <!--          </div>-->
+        <!--          <button class="border-rad-8 h-xl mt-8 mb-8 text-center"-->
+        <!--                  fxFlex.gt-sm="186px"-->
+        <!--                  (click)="fundWallet()"-->
+        <!--                  [class.disabled]="funding"-->
+        <!--                  [ngClass]="funding ? 'btn-primary' : 'btn-cta'">-->
+        <!--            <span>{{ funding ? 'Funding Wallet...' : 'Fund wallet' }}</span>-->
+        <!--          </button>-->
+        <!--        </ng-container>-->
+        <div *ngIf="wallet && !transaction"
+             fxLayout="row"
+             fxLayoutAlign="center center">
+          <span class="mina-icon icon-200 mr-5" fxHide.lt-md>lightbulb</span>
+          <div fxLayout="row"
+               fxLayout.gt-sm="column" class="f-big">
+            <div class="pb-5">Your Web Node sends transactions&nbsp;</div>
+            directly
+          </div>
+        </div>
+        <div *ngIf="transaction?.status === 'pending'"
+             fxLayout="row"
+             fxLayoutAlign="center center">
+          <span class="mina-icon icon-200 mr-5" fxHide.lt-md>lightbulb</span>
+          <div fxLayout="row"
+               fxLayout.gt-sm="column" class="f-big">
+            <div class="pb-5">It takes ~3min for a Tx to be included&nbsp;</div>
+            in the next block
+          </div>
+        </div>
+        <div *ngIf="transaction?.status === 'included'"
+             fxLayout="row"
+             fxLayoutAlign="center center"
+             class="success-primary pb-8 pt-8 f-big">
+          <span class="mina-icon icon-200 mr-5" fxHide.lt-md>task_alt</span>
+          Transaction included
+        </div>
+        <button class="border-rad-8 h-xxl text-center mt-8 mb-8"
+                fxFlex.gt-sm="186px"
+                routerLink="create-transaction"
+                [class.disabled]="transaction?.status === 'pending'"
+                [ngClass]="transaction?.status === 'pending' ? 'btn-primary' : 'btn-cta'">
+          <span>{{ transaction?.status === 'pending' ? 'Pending' : 'New Transaction' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

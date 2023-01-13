@@ -1,0 +1,14 @@
+<div class="submenus flex-row align-center flex-stretch w-100 h-100 pl-8 pr-8">
+  <ng-container *ngFor="let subMenu of subMenus; let i=index">
+    <div class="a-wrap flex-row align-center w-100">
+      <a [class.active]="activeSubMenu === subMenu"
+         [routerLink]="baseRoute + '/' + subMenu"
+         [class.ml-8]="i > 0"
+         class="text-capitalize h-sm lh-sm f-600 flex-center flex-row flex-grow">{{
+        subMenu === 'blocks-ipc' ? 'Blocks IPC'
+          : subMenu.split('-').join(' ')
+        }}</a>
+      <div *ngIf="i < subMenus.length - 1" class="bar border-right"></div>
+    </div>
+  </ng-container>
+</div>

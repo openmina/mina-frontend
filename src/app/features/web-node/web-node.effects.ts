@@ -4,7 +4,7 @@ import { Effect } from '@shared/types/store/effect.type';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaState, selectMinaState } from '@app/app.setup';
-import { filter, map, switchMap } from 'rxjs';
+import { filter, map, Subject, switchMap, takeUntil, timer } from 'rxjs';
 import { WebNodeService } from '@web-node/web-node.service';
 import {
   WEB_NODE_SHARED_GET_LOGS,
@@ -25,8 +25,11 @@ import { WebNodePeersService } from '@web-node/web-node-peers/web-node-peers.ser
 export class WebNodeEffects extends MinaBaseEffect<WebNodeSharedActions> {
 
   readonly init$: Effect;
+  readonly markAsOpened$: Effect;
   readonly getPeers$: Effect;
   readonly getLogs$: Effect;
+
+  private networkDestroy$: Subject<void> = new Subject<void>();
 
   constructor(private actions$: Actions,
               private webNodeService: WebNodeService,
@@ -39,29 +42,34 @@ export class WebNodeEffects extends MinaBaseEffect<WebNodeSharedActions> {
       ofType(WEB_NODE_SHARED_INIT),
       this.latestActionState<WebNodeSharedInit>(),
       filter(({ state }) => !state.webNode.shared.isOpen),
-      switchMap(() => [
-        { type: WEB_NODE_SHARED_MARK_AS_OPENED },
-        { type: WEB_NODE_SHARED_GET_PEERS },
-        { type: WEB_NODE_SHARED_GET_LOGS },
-      ]),
+      switchMap(({ action, state }) =>
+        timer(0, 10000).pipe(
+          takeUntil(this.networkDestroy$),
+          switchMap(() => [
+            { type: WEB_NODE_SHARED_GET_PEERS },
+            { type: WEB_NODE_SHARED_GET_LOGS },
+          ]),
+        ),
+      ),
+    ));
+
+    this.markAsOpened$ = createEffect(() => this.actions$.pipe(
+      ofType(WEB_NODE_SHARED_INIT),
+      this.latestActionState<WebNodeSharedInit>(),
+      filter(({ state }) => !state.webNode.shared.isOpen),
+      map(() => ({ type: WEB_NODE_SHARED_MARK_AS_OPENED })),
     ));
 
     this.getPeers$ = createEffect(() => this.actions$.pipe(
       ofType(WEB_NODE_SHARED_GET_PEERS),
-      switchMap(() =>
-        this.webNodePeersService.getPeers().pipe(
-          map((payload: WebNodeLog) => ({ type: WEB_NODE_SHARED_GET_PEERS_SUCCESS, payload })),
-        ),
-      ),
+      switchMap(() => this.webNodePeersService.getPeers()),
+      map((payload: WebNodeLog[]) => ({ type: WEB_NODE_SHARED_GET_PEERS_SUCCESS, payload })),
     ));
 
     this.getLogs$ = createEffect(() => this.actions$.pipe(
       ofType(WEB_NODE_SHARED_GET_LOGS),
-      switchMap(() =>
-        this.webNodeService.logs$.pipe(
-          map((payload: WebNodeLog) => ({ type: WEB_NODE_SHARED_GET_LOGS_SUCCESS, payload })),
-        ),
-      ),
+      switchMap(() => this.webNodeService.logs$),
+      map((payload: WebNodeLog[]) => ({ type: WEB_NODE_SHARED_GET_LOGS_SUCCESS, payload })),
     ));
   }
 }

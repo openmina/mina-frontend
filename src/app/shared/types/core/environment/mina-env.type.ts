@@ -1,16 +1,27 @@
 export interface MinaEnv {
   production: boolean;
-  backend: string;
-  debugger?: string;
-  minaExplorer: string;
-  features: FeatureType[];
+  configs: MinaNode[];
+  aggregator?: string;
   sentry?: SentryConfig;
 }
 
-export type FeatureType = 'resources'
+export interface MinaNode {
+  backend: string;
+  debugger?: string;
+  minaExplorer?: string;
+  features: FeatureType[];
+  name: string;
+}
+
+export type FeatureType =
+  | 'dashboard'
+  | 'resources'
   | 'network'
   | 'tracing'
   | 'web-node'
+  | 'web-node-demo'
+  | 'benchmarks'
+  | 'explorer'
   ;
 
 interface SentryConfig {

@@ -6,9 +6,9 @@
   <div class="title mb-5 f-600 truncate">{{ checkpoint.title }}</div>
   <div class="big-graph flex-column">
     <div class="mb-16 mt-5">{{ checkpoint.totalTime | secDuration }} <span class="divider">|</span> {{ checkpoint.totalCount | thousand }} calls</div>
-    <span class="secondary f-10">Total time</span>
+    <span class="secondary f-small">Total time</span>
     <div class="graph-body flex-row">
-      <div class="y-steps flex-column f-10 tertiary">
+      <div class="y-steps flex-column f-small tertiary">
         <div *ngFor="let step of ySteps">{{ step }}</div>
       </div>
       <div class="cols-wrap flex-row"
@@ -36,9 +36,9 @@
     <div class="flex-row tertiary">
       <div>
         <span class="mina-icon f-20">arrow_forward</span>
-        <div class="secondary f-10">Duration</div>
+        <div class="secondary f-small">Duration</div>
       </div>
-      <div #xStepsRef class="x-steps f-10 flex-row text-capitalize">
+      <div #xStepsRef class="x-steps f-small flex-row text-capitalize">
         <div *ngFor="let step of xSteps">{{ step }}</div>
       </div>
     </div>

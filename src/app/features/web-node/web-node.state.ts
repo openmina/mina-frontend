@@ -4,10 +4,12 @@ import { WebNodeLogsState } from '@web-node/web-node-logs/web-node-logs.state';
 import { WebNodeWalletState } from '@web-node/web-node-wallet/web-node-wallet.state';
 import { WebNodePeersState } from '@web-node/web-node-peers/web-node-peers.state';
 import { WebNodeLog } from '@shared/types/web-node/logs/web-node-log.type';
+import { WebNodeStatus } from '@shared/types/app/web-node-status.type';
 
 export interface WebNodeSharedState {
   peers: WebNodeLog[];
   logs: WebNodeLog[];
+  summary: WebNodeStatus;
   isOpen: boolean;
 }
 
@@ -31,3 +33,4 @@ export const selectWebNodeSharedState = select((state: WebNodeState): WebNodeSha
 
 export const selectWebNodePeers = (state: MinaState): WebNodeLog[] => state.webNode.shared.peers;
 export const selectWebNodeLogs = (state: MinaState): WebNodeLog[] => state.webNode.shared.logs;
+export const selectWebNodeSummary = (state: MinaState): WebNodeStatus => state.webNode.shared.summary;

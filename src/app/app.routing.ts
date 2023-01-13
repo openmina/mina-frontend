@@ -8,6 +8,10 @@ export const RESOURCES_TITLE: string = APP_TITLE + ' - Resources';
 export const NETWORK_TITLE: string = APP_TITLE + ' - Network';
 export const TRACING_TITLE: string = APP_TITLE + ' - Tracing';
 export const WEB_NODE_TITLE: string = APP_TITLE + ' - Web Node';
+export const BENCHMARKS_TITLE: string = APP_TITLE + ' - Benchmarks';
+export const DASHBOARD_TITLE: string = APP_TITLE + ' - Dashboard';
+export const EXPLORER_TITLE: string = APP_TITLE + ' - Explorer';
+
 
 export const routes: Routes = [
   {
@@ -35,8 +39,32 @@ export const routes: Routes = [
     canActivate: [FeatureGuard],
   },
   {
+    path: 'web-node-demo',
+    loadChildren: () => import('./features/web-node-demo/web-node-demo.module').then(module => module.WebNodeDemoModule),
+    title: WEB_NODE_TITLE,
+    canActivate: [FeatureGuard],
+  },
+  {
+    path: 'benchmarks',
+    loadChildren: () => import('@benchmarks/benchmarks.module').then(module => module.BenchmarksModule),
+    title: BENCHMARKS_TITLE,
+    canActivate: [FeatureGuard],
+  },
+  {
+    path: 'dashboard',
+    loadChildren: () => import('@dashboard/dashboard.module').then(m => m.DashboardModule),
+    title: DASHBOARD_TITLE,
+    canActivate: [FeatureGuard],
+  },
+  {
+    path: 'explorer',
+    loadChildren: () => import('@explorer/explorer.module').then(m => m.ExplorerModule),
+    title: EXPLORER_TITLE,
+    canActivate: [FeatureGuard],
+  },
+  {
     path: '**',
-    redirectTo: 'network',
+    redirectTo: 'dashboard',
     pathMatch: 'full',
   },
 ];

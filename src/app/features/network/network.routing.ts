@@ -19,6 +19,26 @@ const routes: Routes = [
         title: NETWORK_TITLE,
       },
       {
+        path: 'blocks',
+        loadChildren: () => import('./blocks/network-blocks.module').then(m => m.NetworkBlocksModule),
+        title: NETWORK_TITLE,
+      },
+      {
+        path: 'blocks-ipc',
+        loadChildren: () => import('./blocks-ipc/network-blocks-ipc.module').then(m => m.NetworkBlocksIpcModule),
+        title: NETWORK_TITLE,
+      },
+      {
+        path: 'snarks',
+        loadChildren: () => import('./snarks/network-snarks.module').then(m => m.NetworkSnarksModule),
+        title: NETWORK_TITLE,
+      },
+      {
+        path: 'transactions',
+        loadChildren: () => import('./transactions/network-transactions.module').then(m => m.NetworkTransactionsModule),
+        title: NETWORK_TITLE,
+      },
+      {
         path: '**',
         redirectTo: 'messages',
         pathMatch: 'full',

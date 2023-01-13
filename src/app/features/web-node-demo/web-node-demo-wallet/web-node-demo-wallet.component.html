@@ -1,0 +1,22 @@
+<div class="flex-column mt-16">
+  <div class="flex-row flex-between h-xl align-center">
+    <div>Your Wallet</div>
+    <a class="tertiary flex-row align-center pointer primary-hover"
+       target="_blank"
+       [href]="'https://minaexplorer.com/wallet/' + publicKey">
+      View in Explorer
+      <span class="mina-icon icon-200 ml-5">arrow_outward</span>
+    </a>
+  </div>
+  <div class="flex-column border-rad-6 bg-container pt-5 pb-5">
+    <div class="flex-row h-xl flex-between pl-12 pr-12 align-center mb-5 tertiary">
+      <span>Balance (MINA)</span>
+      <div class="bg-success-container success-primary border-rad-6 p-5"
+           [ngClass]="balance === 0 ? 'bg-aware-container aware-primary' : 'bg-success-container success-primary'">{{ balance }}</div>
+    </div>
+    <div class="flex-row h-xl flex-between pl-12 pr-12 align-center">
+      <div class="tertiary">Address</div>
+      <div>{{ publicKey | truncateMid: 3: 3 }}</div>
+    </div>
+  </div>
+</div>

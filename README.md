@@ -1,27 +1,20 @@
 # MinaFrontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.2.
+This project was generated with Angular CLI version 14.0.2.
 
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Code scaffolding
+## Web node integration process
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+1. Get the latest version of the node.
+2. Go to wasm directory (the one which contains Cargo.toml: `openmina/node/wasm`)
+3. Run `eval 'ssh-agent -s'`
+4. Run `ssh-add`
+5. Run `cargo update` or `cargo update -p mina-p2p-messages`
+6. Run `wasm-pack build --target web` or `rustup run nightly wasm-pack build --target web`
+7. Copy content of **pkg** directory (in Windows run `explorer.exe .` and copy as usual)
+8. Paste content in **mina-frontend/assets/webnode/mina-rust**
+9. In **wasm.d.ts** add Typescript lines from alteration.txt
+10. In **wasm.js** add Javascript lines from alteration.txt

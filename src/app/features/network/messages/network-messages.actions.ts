@@ -49,121 +49,121 @@ export interface NetworkMessagesAction extends FeatureAction<NetworkMessagesActi
   readonly type: NetworkMessagesActionTypes;
 }
 
-export class NetworkInit implements NetworkMessagesAction {
+export class NetworkMessagesInit implements NetworkMessagesAction {
   readonly type = NETWORK_INIT;
 }
 
-export class NetworkClose implements NetworkMessagesAction {
+export class NetworkMessagesClose implements NetworkMessagesAction {
   readonly type = NETWORK_CLOSE;
 }
 
-export class NetworkGetMessages implements NetworkMessagesAction {
+export class NetworkMessagesGetMessages implements NetworkMessagesAction {
   readonly type = NETWORK_GET_MESSAGES;
 }
 
-export class NetworkGetPaginatedMessages implements NetworkMessagesAction {
+export class NetworkMessagesGetPaginatedMessages implements NetworkMessagesAction {
   readonly type = NETWORK_GET_PAGINATED_MESSAGES;
 
   constructor(public payload: { id?: number, direction?: NetworkMessagesDirection, timestamp?: TimestampInterval }) {}
 }
 
-export class NetworkGetMessagesSuccess implements NetworkMessagesAction {
+export class NetworkMessagesGetMessagesSuccess implements NetworkMessagesAction {
   readonly type = NETWORK_GET_MESSAGES_SUCCESS;
 
   constructor(public payload: NetworkMessage[]) {}
 }
 
-export class NetworkToggleFilter implements NetworkMessagesAction {
+export class NetworkMessagesToggleFilter implements NetworkMessagesAction {
   readonly type = NETWORK_TOGGLE_FILTER;
 
   constructor(public payload: { filters: NetworkMessagesFilter[], type: 'add' | 'remove', timestamp?: TimestampInterval, direction?: NetworkMessagesDirection }) {}
 }
 
-export class NetworkSetTimestampInterval implements NetworkMessagesAction {
+export class NetworkMessagesSetTimestampInterval implements NetworkMessagesAction {
   readonly type = NETWORK_SET_TIMESTAMP_INTERVAL;
 
   constructor(public payload: { timestamp: TimestampInterval, direction?: NetworkMessagesDirection }) {}
 }
 
-export class NetworkSetActiveRow implements NetworkMessagesAction {
+export class NetworkMessagesSetActiveRow implements NetworkMessagesAction {
   readonly type = NETWORK_SET_ACTIVE_ROW;
 
   constructor(public payload: NetworkMessage) {}
 }
 
-export class NetworkGoLive implements NetworkMessagesAction {
+export class NetworkMessagesGoLive implements NetworkMessagesAction {
   readonly type = NETWORK_GO_LIVE;
 }
 
-export class NetworkPause implements NetworkMessagesAction {
+export class NetworkMessagesPause implements NetworkMessagesAction {
   readonly type = NETWORK_PAUSE;
 }
 
-export class NetworkGetFullMessage implements NetworkMessagesAction {
+export class NetworkMessagesGetFullMessage implements NetworkMessagesAction {
   readonly type = NETWORK_GET_FULL_MESSAGE;
 
   constructor(public payload: { id: number }) {}
 }
 
-export class NetworkGetFullMessageSuccess implements NetworkMessagesAction {
+export class NetworkMessagesGetFullMessageSuccess implements NetworkMessagesAction {
   readonly type = NETWORK_GET_FULL_MESSAGE_SUCCESS;
 
   constructor(public payload: any) {}
 }
 
-export class NetworkGetConnection implements NetworkMessagesAction {
+export class NetworkMessagesGetConnection implements NetworkMessagesAction {
   readonly type = NETWORK_GET_CONNECTION;
 
   constructor(public payload: { id: number }) {}
 }
 
-export class NetworkGetConnectionSuccess implements NetworkMessagesAction {
+export class NetworkMessagesGetConnectionSuccess implements NetworkMessagesAction {
   readonly type = NETWORK_GET_CONNECTION_SUCCESS;
 
   constructor(public payload: NetworkMessageConnection) {}
 }
 
-export class NetworkGetMessageHex implements NetworkMessagesAction {
+export class NetworkMessagesGetMessageHex implements NetworkMessagesAction {
   readonly type = NETWORK_GET_MESSAGE_HEX;
 
   constructor(public payload: { id: number }) {}
 }
 
-export class NetworkGetMessageHexSuccess implements NetworkMessagesAction {
+export class NetworkMessagesGetMessageHexSuccess implements NetworkMessagesAction {
   readonly type = NETWORK_GET_MESSAGE_HEX_SUCCESS;
 
   constructor(public payload: string) {}
 }
 
-export class NetworkChangeTab implements NetworkMessagesAction {
+export class NetworkMessagesChangeTab implements NetworkMessagesAction {
   readonly type = NETWORK_CHANGE_TAB;
 
   constructor(public payload: number) {}
 }
 
-export class NetworkGetSpecificMessage implements NetworkMessagesAction {
+export class NetworkMessagesGetSpecificMessage implements NetworkMessagesAction {
   readonly type = NETWORK_GET_SPECIFIC_MESSAGE;
 
   constructor(public payload: { id: number, filters: NetworkMessagesFilter[], type: 'add' | 'remove', timestamp: TimestampInterval, direction?: NetworkMessagesDirection }) {}
 }
 
 export type NetworkMessagesActions =
-  | NetworkInit
-  | NetworkClose
-  | NetworkGetMessages
-  | NetworkGetMessagesSuccess
-  | NetworkGetPaginatedMessages
-  | NetworkToggleFilter
-  | NetworkSetTimestampInterval
-  | NetworkSetActiveRow
-  | NetworkGoLive
-  | NetworkPause
-  | NetworkGetFullMessage
-  | NetworkGetFullMessageSuccess
-  | NetworkGetMessageHex
-  | NetworkGetMessageHexSuccess
-  | NetworkGetConnection
-  | NetworkGetConnectionSuccess
-  | NetworkChangeTab
-  | NetworkGetSpecificMessage
+  | NetworkMessagesInit
+  | NetworkMessagesClose
+  | NetworkMessagesGetMessages
+  | NetworkMessagesGetMessagesSuccess
+  | NetworkMessagesGetPaginatedMessages
+  | NetworkMessagesToggleFilter
+  | NetworkMessagesSetTimestampInterval
+  | NetworkMessagesSetActiveRow
+  | NetworkMessagesGoLive
+  | NetworkMessagesPause
+  | NetworkMessagesGetFullMessage
+  | NetworkMessagesGetFullMessageSuccess
+  | NetworkMessagesGetMessageHex
+  | NetworkMessagesGetMessageHexSuccess
+  | NetworkMessagesGetConnection
+  | NetworkMessagesGetConnectionSuccess
+  | NetworkMessagesChangeTab
+  | NetworkMessagesGetSpecificMessage
   ;

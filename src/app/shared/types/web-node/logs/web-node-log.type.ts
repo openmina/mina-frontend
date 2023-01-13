@@ -1,7 +1,9 @@
 export interface WebNodeLog {
   id: number;
-  type: string;
+  level: string;
   date: string;
+  kind: string;
   summary: string;
+  peerId: string;
   data: any;
 }

@@ -1,0 +1,39 @@
+@import 'variables';
+
+* {
+	font-size: 16px;
+}
+
+.tx-container {
+	min-height: 270px;
+}
+
+.status {
+	padding: 3px;
+
+	&.pending {
+		color: $aware-primary;
+		background-color: $aware-container;
+	}
+
+	&.included {
+		color: $success-primary;
+		background-color: $success-container;
+	}
+
+	span.pulse {
+		animation: fadeIn 3000ms ease-in-out infinite;
+	}
+}
+
+@keyframes fadeIn {
+	30% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.1;
+	}
+	70% {
+		opacity: 1;
+	}
+}

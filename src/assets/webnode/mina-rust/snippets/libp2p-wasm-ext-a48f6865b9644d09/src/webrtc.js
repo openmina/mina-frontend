@@ -185,7 +185,7 @@ export const webrtc_transport = async (crypto) => {
                             }
                             console.debug("[Libp2p][WebRTC][Manual] setRemoteDescription done:", answer);
 
-                            const stream = await wait_channel_open_and_attach_handlers(channel, target_peer_id, remote_pub_key_as_protobuf);
+                            const stream = await wait_channel_open_and_attach_handlers(conn, channel, target_peer_id, remote_pub_key_as_protobuf);
                             const ma_addr = `/p2p-webrtc-direct/p2p/${target_peer_id}`;
                             push_new_connection(conn, stream, ma_addr);
                         },
@@ -211,7 +211,7 @@ export const webrtc_transport = async (crypto) => {
                                 conn.ondatachannel = (e) => resolve(e.channel || e);
                             });
                             finishedPromise = channelPromise.then(async (channel) => {
-                                const stream = await wait_channel_open_and_attach_handlers(channel, target_peer_id, remote_pub_key_as_protobuf);
+                                const stream = await wait_channel_open_and_attach_handlers(conn, channel, target_peer_id, remote_pub_key_as_protobuf);
                                 push_new_connection(conn, stream);
                             });
                             try {
@@ -247,6 +247,36 @@ function signalAsSignInput(signal) {
     return new TextEncoder().encode(`${signal.type}${signal.sdp}${signal.identity_pub_key}${signal.target_peer_id}`);
 }
 
+function closeConn(conn, channel = null) {
+    // Check to see if the counter has been initialized
+    if (typeof closeConn.counter == 'undefined') {
+        // It has not... perform the initialization
+        closeConn.counter = 0;
+    }
+    closeConn.counter++;
+    setTimeout(() => {
+        try {
+            if (channel != null) {
+              channel.close()
+            }
+            conn.close();
+        } catch {}
+    }, 20);
+    // https://bugs.chromium.org/p/chromium/issues/detail?id=825576
+    // workaround: https://stackoverflow.com/questions/66546934/how-to-clear-closed-rtcpeerconnection-with-workaround
+    if (closeConn.counter % 16) {
+        queueMicrotask(() => {
+          console.warn("[Libp2p][WebRTC] doing heavy (around 50ms) GC for dangling peer connections");
+          let img = document.createElement("img");
+          img.src = window.URL.createObjectURL(new Blob([new ArrayBuffer(5e+7)])); // 50Mo or less or more depending as you wish to force/invoke GC cycle run
+          img.onerror = function() {
+            window.URL.revokeObjectURL(this.src);
+            img = null
+          }
+        });
+    }
+}
+
 // Attempt to dial a multiaddress.
 const dial = async (self, addr) => {
     const addrParsed = addr.match(/^\/(ip4|ip6|dns4|dns6|dns)\/(.*?)\/tcp\/([0-9]+)\/http\/p2p-webrtc-direct\/p2p\/([a-zA-Z0-9]+)$/);
@@ -259,34 +289,39 @@ const dial = async (self, addr) => {
     const target_peer_id = addrParsed[4];
     const [conn, channel] = self.createConnWithChannel();
 
-    const offer = await self.createAndSetOffer(conn, target_peer_id);
-
-    console.info("[Libp2p][WebRTC] send offer:", offer);
-    const offerBase58 = bs58btc.encode(new TextEncoder().encode(JSON.stringify(offer)));
-    const httpPrefix = addrParsed[3] == 443 ? "https://" : "http://";
-    const respBody = await httpSend({
-        method: "GET",
-        url: httpPrefix + addrParsed[2] + ":" + addrParsed[3] + "/?signal=" + offerBase58,
-    });
-    const answer = JSON.parse(new TextDecoder().decode(bs58btc.decode(respBody)));
-    console.info("[Libp2p][WebRTC] recv answer:", answer);
-    let remote_pub_key_as_protobuf = bs58btc.decode(answer.identity_pub_key);
     try {
-        self.verifyRemoteSignal(answer, target_peer_id);
+        const offer = await self.createAndSetOffer(conn, target_peer_id);
+
+        console.info("[Libp2p][WebRTC] send offer:", offer);
+        const offerBase58 = bs58btc.encode(new TextEncoder().encode(JSON.stringify(offer)));
+        const httpPrefix = addrParsed[3] == 443 ? "https://" : "http://";
+        const respBody = await httpSend({
+            method: "GET",
+            url: httpPrefix + addrParsed[2] + ":" + addrParsed[3] + "/?signal=" + offerBase58,
+        });
+        const answer = JSON.parse(new TextDecoder().decode(bs58btc.decode(respBody)));
+        console.info("[Libp2p][WebRTC] recv answer:", answer);
+        let remote_pub_key_as_protobuf = bs58btc.decode(answer.identity_pub_key);
+        try {
+            self.verifyRemoteSignal(answer, target_peer_id);
+        } catch (e) {
+            console.error("[Libp2p][WebRTC] verify answer error:", e, answer);
+            throw e;
+        }
+
+        try {
+            await conn.setRemoteDescription(new RTCSessionDescription(answer));
+        } catch(e) {
+            console.error("[Libp2p][WebRTC] setRemoteDescription error:", error);
+            throw e;
+        }
+        console.debug("[Libp2p][WebRTC] setRemoteDescription done:", answer);
+
+        return wait_channel_open_and_attach_handlers(conn, channel, target_peer_id, remote_pub_key_as_protobuf);
     } catch (e) {
-        console.error("[Libp2p][WebRTC] verify answer error:", e, answer);
+        closeConn(conn, channel);
         throw e;
     }
-
-    try {
-        await conn.setRemoteDescription(new RTCSessionDescription(answer));
-    } catch(e) {
-        console.error("[Libp2p][WebRTC] setRemoteDescription error:", error);
-        throw e;
-    }
-    console.debug("[Libp2p][WebRTC] setRemoteDescription done:", answer);
-
-    return wait_channel_open_and_attach_handlers(channel, target_peer_id, remote_pub_key_as_protobuf);
 }
 
 function try_bytes_as_str(bytes) {
@@ -297,11 +332,12 @@ function try_bytes_as_str(bytes) {
     }
 }
 
-function wait_channel_open_and_attach_handlers(channel, remote_id, remote_pub_key_as_protobuf) {
+function wait_channel_open_and_attach_handlers(conn, channel, remote_id, remote_pub_key_as_protobuf) {
     return new Promise((open_resolve, open_reject) => {
         let reader = async_queue();
         channel.onerror = (ev) => {
             console.error(`[Libp2p][WebRTC][peer_${remote_id}][chan_${CHANNEL_NAME}][error]`, 'event:', ev);
+            closeConn(conn, channel);
             // If `open_resolve` has been called earlier, calling `open_reject` seems to be
             // silently ignored. It is easier to unconditionally call `open_reject` rather than
             // check in which state the connection is, which would be error-prone.
@@ -312,9 +348,18 @@ function wait_channel_open_and_attach_handlers(channel, remote_id, remote_pub_ke
         };
         channel.onclose = (ev) => {
             console.warn(`[Libp2p][WebRTC][peer_${remote_id}][chan_${CHANNEL_NAME}][closed]`, 'event:', ev);
+            closeConn(conn, channel);
             // Same remarks as above.
             open_reject(ev);
             reader.push_eof();
+        };
+        conn.onconnectionstatechange = () => {
+            if (conn.connectionState == "disconnected") {
+                closeConn(conn, channel);
+                // Same remarks as above.
+                open_reject();
+                reader.push_eof();
+            }
         };
 
         // We inject all incoming messages into the queue unconditionally. The caller isn't
@@ -362,7 +407,7 @@ function wait_channel_open_and_attach_handlers(channel, remote_id, remote_pub_ke
                     // }
                     // return new Uint8Array(cert);
                 },
-                shutdown: () => channel.close(),
+                shutdown: () => closeConn(conn, channel),
                 close: () => {}
             });
         }

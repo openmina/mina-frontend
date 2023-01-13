@@ -21,7 +21,6 @@ import { WEB_NODE_PEERS_SELECT_PEER, WebNodePeersSelectPeer } from '@web-node/we
 export class WebNodePeersSidePanelComponent extends ManualDetection implements OnInit {
 
   activePeer: WebNodeLog;
-  jsonData: any;
   jsonString: string;
   expandTracking: ExpandTracking = {};
 
@@ -41,8 +40,7 @@ export class WebNodePeersSidePanelComponent extends ManualDetection implements O
       )
       .subscribe((log: WebNodeLog) => {
         this.activePeer = log;
-        this.jsonData = typeof log.data === 'object' ? log.data : JSON.parse(log.data);
-        this.jsonString = JSON.stringify(this.jsonData);
+        this.jsonString = JSON.stringify(log.data);
         this.detect();
       });
   }

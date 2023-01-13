@@ -5,17 +5,24 @@
   <title>Open Mina</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="assets/env.js"></script>
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://fonts.gstatic.com" rel="preconnect">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <style id="table-style"></style>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
 </head>
-<script type="text/javascript" src="assets/js/xmlhttprequest-length-computable.min.js"></script>
 
-<body>
-  <app-root></app-root>
-<!--  <script src="https://www.gstatic.com/charts/loader.js"></script>-->
+<body class="f-base">
+  <script>
+    import('./assets/webnode/mina-rust/wasm.js').then((v) => {
+      window.WebnodeWasm = v;
+    });
+  </script>
+  <app-root class="h-100"></app-root>
+<!--  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js" async></script>-->
+<!--  <script type="text/javascript" src="assets/js/xmlhttprequest-length-computable.min.js" async></script>-->
 </body>
 </html>

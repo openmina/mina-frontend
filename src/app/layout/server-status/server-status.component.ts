@@ -1,16 +1,20 @@
-import { ChangeDetectionStrategy, Component, NgZone, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ComponentRef, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
-import { selectAppDebuggerStatus, selectAppNodeStatus } from '@app/app.state';
-import { BehaviorSubject, filter } from 'rxjs';
+import { selectActiveNode, selectAppDebuggerStatus, selectAppMenu, selectAppNodeStatus, selectNodes } from '@app/app.state';
+import { BehaviorSubject, filter, take } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { NodeStatus } from '@shared/types/app/node-status.type';
 import { DebuggerStatus } from '@shared/types/app/debugger-status.type';
 import { WebNodeStatus } from '@shared/types/app/web-node-status.type';
-import { selectWebNodeLogs, selectWebNodePeers } from '@web-node/web-node.state';
-import { WebNodeLog } from '@shared/types/web-node/logs/web-node-log.type';
+import { selectWebNodeSummary } from '@web-node/web-node.state';
+import { AppMenu } from '@shared/types/app/app-menu.type';
+import { MinaNode } from '@shared/types/core/environment/mina-env.type';
+import { ComponentPortal } from '@angular/cdk/portal';
+import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { CONFIG } from '@shared/constants/config';
+import { NodePickerComponent } from '@app/layout/node-picker/node-picker.component';
 
 const TOOLTIP_MESSAGES: { [p: string]: string } = {
   [AppNodeStatusTypes.OFFLINE.toLowerCase()]: 'Is when the node has not received any messages for a while',
@@ -36,27 +40,38 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
   status: string = AppNodeStatusTypes.CONNECTING.toLowerCase();
   timeIsPresent: boolean;
   nodeTooltip: string = TOOLTIP_MESSAGES[this.status];
+  isMobile: boolean;
 
-  readonly enabledDebugger: boolean = !!CONFIG.debugger;
+  activeNode: MinaNode;
+
+  enabledDebugger: boolean = CONFIG.configs.some(n => n.debugger);
   debuggerStatus: DebuggerStatus;
   debuggerTooltip: string;
 
-  readonly enabledWebNode: boolean = !!CONFIG.features.includes('web-node');
+  enabledWebNode: boolean;
   webNodeStatus: WebNodeStatus;
   webNodeTooltip: string;
 
-  private interval: number;
+  @ViewChild('overlayOpener') private overlayOpener: ElementRef<HTMLDivElement>;
+
+  private nodes: MinaNode[] = [];
+  private interval: any;
   private secondsPassed: number = 0;
   private timeReference: number = 0;
+  private overlayRef: OverlayRef;
+  private nodePickerComponent: ComponentRef<NodePickerComponent>;
 
-  constructor(private store: Store<MinaState>,
-              private zone: NgZone) { super(); }
+  constructor(private zone: NgZone,
+              private overlay: Overlay,
+              private store: Store<MinaState>) { super(); }
 
   ngOnInit(): void {
     this.createTimer();
     this.listenToNodeStatusChange();
     this.listenToDebuggerStatusChange();
     this.listenToWebNodeStatusChange();
+    this.listenToMenuChange();
+    this.listenToNodeChanges();
   }
 
   private createTimer(): void {
@@ -74,18 +89,15 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
   private listenToNodeStatusChange(): void {
     this.store.select(selectAppNodeStatus)
       .pipe(
-        filter(node => this.blockLevel !== node.blockLevel
-          || this.status.toLowerCase() !== node.status.toLowerCase()
+        filter(node => this.status.toLowerCase() !== node.status.toLowerCase()
           || this.timeReference !== node.timestamp,
         ),
       )
       .subscribe((node: NodeStatus) => {
         this.timeIsPresent = !!node.timestamp;
-        if (this.blockLevel !== node.blockLevel) {
-          this.timeReference = node.timestamp;
-          this.secondsPassed = (Date.now() - this.timeReference) / 1000;
-          this.elapsedTime$.next(ServerStatusComponent.getFormattedTimeToDisplay(this.secondsPassed));
-        }
+        this.timeReference = node.timestamp;
+        this.secondsPassed = (Date.now() - this.timeReference) / 1000;
+        this.elapsedTime$.next(ServerStatusComponent.getFormattedTimeToDisplay(this.secondsPassed));
 
         this.blockLevel = node.blockLevel;
         this.status = node.status.toLowerCase();
@@ -95,9 +107,6 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
   }
 
   private listenToDebuggerStatusChange(): void {
-    if (!this.enabledDebugger) {
-      return;
-    }
     this.store.select(selectAppDebuggerStatus)
       .subscribe((debuggerStatus: DebuggerStatus) => {
         this.debuggerStatus = debuggerStatus;
@@ -115,25 +124,44 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
       this.webNodeTooltip = 'Web Node is ' + ((this.webNodeStatus.peers || this.webNodeStatus.messages) ? 'online' : 'offline');
     };
 
-    this.store.select(selectWebNodePeers)
-      .pipe(filter(Boolean))
-      .subscribe((peers: WebNodeLog[]) => {
-        this.webNodeStatus = {
-          ...this.webNodeStatus,
-          peers: peers.length,
-        };
+    this.store.select(selectWebNodeSummary)
+      .pipe(
+        filter(Boolean),
+        filter(s => s.peers !== this.webNodeStatus?.peers || s.messages !== this.webNodeStatus?.messages),
+      )
+      .subscribe((status: WebNodeStatus) => {
+        this.webNodeStatus = status;
         getTooltip();
         this.detect();
       });
+  }
 
-    this.store.select(selectWebNodeLogs)
+  private listenToMenuChange(): void {
+    this.store.select(selectAppMenu)
+      .pipe(filter(menu => menu.isMobile !== this.isMobile))
+      .subscribe((menu: AppMenu) => {
+        this.isMobile = menu.isMobile;
+        this.detect();
+      });
+  }
+
+  private listenToNodeChanges(): void {
+    this.store.select(selectNodes)
+      .pipe(filter(nodes => nodes.length > 0))
+      .subscribe((nodes: MinaNode[]) => {
+        this.nodes = nodes;
+        if (this.overlayRef?.hasAttached()) {
+          this.detachOverlay();
+          this.openNodePicker();
+        }
+        this.detect();
+      });
+    this.store.select(selectActiveNode)
       .pipe(filter(Boolean))
-      .subscribe((logs: WebNodeLog[]) => {
-        this.webNodeStatus = {
-          ...this.webNodeStatus,
-          messages: logs.length,
-        };
-        getTooltip();
+      .subscribe((activeNode: MinaNode) => {
+        this.activeNode = activeNode;
+        this.enabledDebugger = !!activeNode.debugger;
+        this.enabledWebNode = activeNode.features.includes('web-node');
         this.detect();
       });
   }
@@ -151,5 +179,43 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
       time += twoDigit(hour) + 'h ' + twoDigit(min) + 'm';
     }
     return time;
+  }
+
+  openNodePicker(event?: MouseEvent): void {
+    event?.stopImmediatePropagation();
+    if (this.overlayRef?.hasAttached()) {
+      this.overlayRef.detach();
+      return;
+    }
+
+    this.overlayRef = this.overlay.create({
+      hasBackdrop: false,
+      width: 'auto',
+      minWidth: '220px',
+      scrollStrategy: this.overlay.scrollStrategies.close(),
+      positionStrategy: this.overlay.position()
+        .flexibleConnectedTo(this.overlayOpener.nativeElement)
+        .withPositions([{
+          originX: 'end',
+          originY: 'bottom',
+          overlayX: 'start',
+          overlayY: 'top',
+          offsetY: 10,
+          offsetX: -10,
+        }]),
+    });
+
+    const portal = new ComponentPortal(NodePickerComponent);
+    this.nodePickerComponent = this.overlayRef.attach<NodePickerComponent>(portal);
+    this.nodePickerComponent.instance.nodes = this.nodes;
+    this.nodePickerComponent.instance.filteredNodes = this.nodes;
+    this.nodePickerComponent.instance.activeNode = this.activeNode;
+    this.nodePickerComponent.instance.closeEmitter.pipe(take(1)).subscribe(() => this.detachOverlay());
+  }
+
+  detachOverlay(): void {
+    if (this.overlayRef?.hasAttached()) {
+      this.overlayRef.detach();
+    }
   }
 }

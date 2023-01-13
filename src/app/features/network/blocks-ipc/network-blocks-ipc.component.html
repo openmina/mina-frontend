@@ -1,0 +1,16 @@
+<div class="flex-column h-100">
+  <mina-network-blocks-ipc-toolbar></mina-network-blocks-ipc-toolbar>
+  <div #parent class="h-100 w-100 flex-row p-relative">
+    <mina-network-blocks-ipc-table [class.shrink]="isSidePanelOpen"></mina-network-blocks-ipc-table>
+    <mina-horizontal-resizable-container (endResizing)="toggleResizing()"
+                                         (startResizing)="toggleResizing()"
+                                         (widthChange)="onWidthChange($event)"
+                                         [class.show]="isSidePanelOpen"
+                                         [maxWidthElement]="parent"
+                                         [minWidth]="360"
+                                         class="no-transition"
+                                         localStorageKey="network-blocks-ipc-side-panel-width">
+      <mina-network-blocks-ipc-side-panel></mina-network-blocks-ipc-side-panel>
+    </mina-horizontal-resizable-container>
+  </div>
+</div>

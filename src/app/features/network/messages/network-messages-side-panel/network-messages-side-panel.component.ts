@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { NETWORK_CHANGE_TAB, NETWORK_SET_ACTIVE_ROW, NetworkChangeTab, NetworkSetActiveRow } from '@network/messages/network-messages.actions';
+import { NETWORK_CHANGE_TAB, NETWORK_SET_ACTIVE_ROW, NetworkMessagesChangeTab, NetworkMessagesSetActiveRow } from '@network/messages/network-messages.actions';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NetworkMessage } from '@shared/types/network/messages/network-message.type';
 import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/custom-components/mina-json-viewer/mina-json-viewer.component';
@@ -10,10 +10,11 @@ import { selectNetworkActiveRow, selectNetworkConnection, selectNetworkFullMessa
 import { downloadJson, downloadJsonFromURL } from '@shared/helpers/user-input.helper';
 import { filter } from 'rxjs';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { isNumber } from 'chart.js/helpers';
 import { Router } from '@angular/router';
 import { Routes } from '@shared/enums/routes.enum';
-import { CONFIG } from '@shared/constants/config';
+import { selectActiveNode } from '@app/app.state';
+import { MinaNode } from '@shared/types/core/environment/mina-env.type';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 @UntilDestroy()
 @Component({
@@ -33,6 +34,7 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
   jsonTooBig: boolean;
   toCopy: string;
   expandingTracking: ExpandTracking = {};
+  linkOfPage: string;
 
   @ViewChild(MinaJsonViewerComponent) private minaJsonViewer: MinaJsonViewerComponent;
   @ViewChild('saveButton') private saveButton: ElementRef<HTMLButtonElement>;
@@ -41,12 +43,23 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
   private cancelDownload: boolean = false;
   private userDidHitExpandAll: boolean;
   private currentMessageKind: string;
+  private debuggerURL: string;
 
   constructor(private store: Store<MinaState>,
+              private clipboard: Clipboard,
               private router: Router) { super(); }
 
   ngAfterViewInit(): void {
     this.listenToActiveRowChange();
+    this.listenToActiveNodeChange();
+  }
+
+  private listenToActiveNodeChange(): void {
+    this.store.select(selectActiveNode)
+      .pipe(untilDestroyed(this), filter(Boolean))
+      .subscribe((node: MinaNode) => {
+        this.debuggerURL = node.debugger;
+      });
   }
 
   private listenToActiveRowChange(): void {
@@ -72,7 +85,7 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
     this.store.select(selectNetworkFullMessage)
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((message: any) => {
-        this.jsonTooBig = isNumber(message) ? Number(message) > 10485760 : false;
+        this.jsonTooBig = !isNaN(message) ? Number(message) > 10485760 : false;
         this.activeRowFullMessage = message;
         this.setToCopy();
         this.detect();
@@ -102,7 +115,7 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
     const fileName = this.selectedTabIndex === 2 ? 'message_hex.txt' : 'network_data.json';
     if (this.jsonTooBig && this.selectedTabIndex === 1) {
       this.cancelDownload = false;
-      const URL = CONFIG.debugger + '/message/' + this.activeRow.id;
+      const URL = this.debuggerURL + '/message/' + this.activeRow.id;
       downloadJsonFromURL(URL, fileName, () => this.cancelDownload, this.saveButton.nativeElement);
       return;
     }
@@ -117,8 +130,8 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
   downloadBinary(): void {
     const fileName = this.activeRow.id + '_binary.bin';
     this.cancelDownload = false;
-    const URL = CONFIG.debugger + '/message_bin/' + this.activeRow.id;
-    downloadJsonFromURL(URL, fileName, null);
+    const URL = this.debuggerURL + '/message_bin/' + this.activeRow.id;
+    downloadJsonFromURL(URL, fileName, () => null);
   }
 
   private setToCopy(): void {
@@ -131,7 +144,7 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
 
   closeSidePanel(): void {
     this.router.navigate([Routes.NETWORK, Routes.MESSAGES], { queryParamsHandling: 'merge' });
-    this.store.dispatch<NetworkSetActiveRow>({ type: NETWORK_SET_ACTIVE_ROW, payload: undefined });
+    this.store.dispatch<NetworkMessagesSetActiveRow>({ type: NETWORK_SET_ACTIVE_ROW, payload: undefined });
   }
 
   expandEntireJSON(): void {
@@ -146,9 +159,13 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
 
   selectTab(tabNum: number): void {
     this.cancelDownload = true;
-    this.saveButton.nativeElement.textContent = 'Save';
+    this.saveButton.nativeElement.textContent = 'Save JSON';
     this.selectedTabIndex = tabNum;
-    this.store.dispatch<NetworkChangeTab>({ type: NETWORK_CHANGE_TAB, payload: tabNum });
+    this.store.dispatch<NetworkMessagesChangeTab>({ type: NETWORK_CHANGE_TAB, payload: tabNum });
     this.setToCopy();
+  }
+
+  copyToClipboard(): void {
+    this.clipboard.copy(window.location.href);
   }
 }

@@ -1,0 +1,48 @@
+@import 'variables';
+
+.mina-table {
+	.row {
+		grid-template-columns: 200px 105px 125px 90px 135px 160px 90px 140px 100px 100px 100px;
+		color: $base-secondary;
+
+		&:not(.head) {
+			cursor: pointer;
+
+			span.addr:hover > span:last-child {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	.cdk-virtual-scroll-viewport {
+		min-width: 200px + 105px + 125px + 90px + 135px + 160px + 90px + 140px + 100px + 100px + 100px;
+		overflow-x: hidden;
+	}
+}
+
+.status {
+	padding: 2px 5px;
+	border-radius: 4px;
+
+	&.synced {
+		background-color: $success-container;
+		color: $success-primary;
+	}
+
+	&.connecting,
+	&.listening {
+		background-color: $base-container;
+		color: $base-primary;
+	}
+
+	&.bootstrap,
+	&.catchup {
+		background-color: $aware-container;
+		color: $aware-primary;
+	}
+
+	&.offline {
+		background-color: $warn-container;
+		color: $warn-primary;
+	}
+}

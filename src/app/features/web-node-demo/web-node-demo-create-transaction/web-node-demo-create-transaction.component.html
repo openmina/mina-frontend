@@ -1,0 +1,45 @@
+<div class="flex-column h-100 flex-between">
+  <div class="flex-column overflow-y-auto w-100 align-center pl-10 pr-10">
+    <div class="data-wrapper flex-column w-100"
+         *ngIf="formGroup">
+      <form [formGroup]="formGroup" class="flex-column">
+        <div class="primary h-xl flex-row align-center f-20">New Transaction</div>
+        <div class="flex-column mb-16 f-big">
+          <span class="tertiary mb-5 f-16">Recipient</span>
+          <div class="monospace">
+            <input #firstInput type="text" class="mina-input f-16 w-100 pr-8 text-right border-rad-4" formControlName="to">
+          </div>
+        </div>
+        <div fxLayout.gt-xs="row"
+             fxLayout="column"
+             fxLayoutGap.gt-xs="10px"
+             fxLayoutGap="0">
+          <div class="flex-column mb-16 f-big w-100">
+            <span class="tertiary mb-5 f-16">Amount (MINA)</span>
+            <input type="number" class="mina-input w-100 f-16 pr-8 text-right border-rad-4" formControlName="amount">
+          </div>
+          <div class="flex-column mb-16 f-big w-100">
+            <span class="tertiary mb-5 f-16">Fee (MINA)</span>
+            <input type="number" class="mina-input f-16 w-100 pr-8 text-right border-rad-4" formControlName="fee">
+          </div>
+        </div>
+        <div class="flex-column mb-16 f-big">
+          <span class="tertiary mb-5 f-16">Memo (optional)</span>
+          <textarea rows="10" type="text" class="mina-input f-16 pl-12 pt-12 mb-16 w-100 f-big border-rad-4"
+                    formControlName="memo"></textarea>
+        </div>
+      </form>
+      <div fxLayout.gt-xs="row-reverse"
+           fxLayout="column"
+           fxLayoutGap.gt-xs="10px"
+           fxLayoutGap="0">
+        <button class="btn-cta mt-10 w-100 h-xxl f-16" (click)="confirmTransaction()"
+                [class.disabled]="!formGroup.getRawValue().to || !formGroup.getRawValue().amount || !formGroup.getRawValue().fee">
+          Confirm Transaction
+        </button>
+        <button class="btn-primary mt-10 w-100 h-xxl f-16"
+                routerLink="web-node-demo">Back</button>
+      </div>
+    </div>
+  </div>
+</div>

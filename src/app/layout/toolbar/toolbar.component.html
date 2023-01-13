@@ -1,12 +1,12 @@
-<div class="toolbar h-100 flex-row flex-between align-center w-100 p-relative">
-  <div class="flex-row align-center">
-    <span class="f-600 f-14">{{ title }}</span>
-    <div class="submenus flex-row">
-      <a *ngFor="let subMenu of subMenus"
-         [class.active]="activeSubMenu === subMenu"
-         [routerLink]="baseRoute + '/' + subMenu"
-         class="text-capitalize mr-5 text-center f-600">{{ subMenu }}</a>
-    </div>
+<div class="toolbar h-100 flex-row flex-stretch align-stretch w-100 p-relative"
+     [class.pl-12]="!isMobile">
+  <div class="flex-row align-center flex-grow">
+    <button *ngIf="isMobile" (click)="toggleMenu()"
+            class="mobile-toggle btn-transparent h-xl flex-row align-center flex-center">
+      <span class="mina-icon f-22 icon-200 primary">menu</span>
+    </button>
+    <span class="f-600 f-big" [class.pr-12]="!isMobile">{{ title }}</span>
+    <mina-submenu-tabs *ngIf="!isMobile" class="pl-12"></mina-submenu-tabs>
   </div>
   <div class="flex-row flex-end align-center">
     <mina-error-preview></mina-error-preview>
@@ -14,10 +14,6 @@
       {{ definiteLoading.remaining }} remaining, <span>{{ definiteLoading.percentage }}</span>% completed
     </div>
     <mina-server-status></mina-server-status>
-    <button class="switcher icon-btn p-0 mr-10"
-            (click)="changeTheme()">
-      <span class="mina-icon f-18">{{ currentTheme === 'light' ? 'dark_mode' : 'wb_sunny' }}</span>
-    </button>
   </div>
   <div #loadingRef id="loadingRef" class="loading p-absolute" [class.opacity-0]="!!definiteLoading"></div>
   <div *ngIf="definiteLoading" class="definite-loading p-absolute" [style.width.%]="definiteLoading.percentage"></div>

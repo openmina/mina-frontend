@@ -135,11 +135,11 @@ describe('NETWORK TABLE', () => {
             .then((network: NetworkMessagesState) => {
               expect(network.activeRow).equals(clickedMessage);
             })
-            .get('mina-network-side-panel .mina-icon')
+            .get('mina-network-messages-side-panel .mina-icon')
             .click()
             .wait(500)
             .url().should('not.contain', 'network/')
-            .get('mina-network-side-panel button')
+            .get('mina-network-messages-side-panel button')
             .should('not.be.visible')
             .window()
             .its('store')

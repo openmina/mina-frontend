@@ -1,0 +1,79 @@
+<div class="legend p-absolute flex-column z-1 bg-surface-top pl-8 pr-8 pb-5 border-rad-4 popup-box-shadow-weak">
+  <div class="f-600 h-md flex-row align-center">Legend</div>
+  <div class="flex-row">
+    <div class="list">
+      <div class="flex-row align-center">
+        <span class="leaf Todo"></span>
+        <span>&nbsp;= Todo</span>
+      </div>
+      <div class="flex-row align-center">
+        <span class="leaf Done"></span>
+        <span>&nbsp;= Done</span>
+      </div>
+      <div class="flex-row align-center">
+        <span class="leaf empty"></span>
+        <span>&nbsp;= Empty</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="h-100 overflow-y-auto flex-column p-relative">
+  <div *ngFor="let tree of scanStateTrees; let i=index; trackBy: treeTrackBy" class="mb-16 flex-column border-bottom pl-12">
+    <div class="f-600 h-xl flex-row align-center">
+      TREE {{ i }}
+      <div class="border-rad-4 h-sm ml-8 pl-5 pr-5 flex-row align-center stats-done">{{ tree.done }} Done</div>
+      <div class="border-rad-4 h-sm ml-8 pl-5 pr-5 flex-row align-center stats-todo">{{ tree.todo }} Todo</div>
+      <div class="border-rad-4 h-sm ml-8 pl-5 pr-5 flex-row align-center stats-empty">{{ tree.empty }} Empty</div>
+    </div>
+    <div #trees class="flex-column f-small overflow-x-auto">
+      <div class="flex-row leaf-row" [style.margin-left.px]="21 * 63.5">
+        <ng-container *ngTemplateOutlet="leafRef; context: { leaf: tree.leafs[0] }"></ng-container>
+      </div>
+      <div class="flex-row leaf-row" [style.margin-left.px]="21 * 63">
+        <ng-container *ngFor="let leaf of tree.leafs.slice(1,3); trackBy: leafTrackBy">
+          <ng-container *ngTemplateOutlet="leafRef; context: { leaf }"></ng-container>
+        </ng-container>
+      </div>
+      <div class="flex-row leaf-row" [style.margin-left.px]="21 * 62">
+        <ng-container *ngFor="let leaf of tree.leafs.slice(3,7); trackBy: leafTrackBy">
+          <ng-container *ngTemplateOutlet="leafRef; context: { leaf }"></ng-container>
+        </ng-container>
+      </div>
+      <div class="flex-row leaf-row" [style.margin-left.px]="21 * 60">
+        <ng-container *ngFor="let leaf of tree.leafs.slice(7,15); trackBy: leafTrackBy">
+          <ng-container *ngTemplateOutlet="leafRef; context: { leaf }"></ng-container>
+        </ng-container>
+      </div>
+      <div class="flex-row leaf-row" [style.margin-left.px]="21 * 56">
+        <ng-container *ngFor="let leaf of tree.leafs.slice(15,31); trackBy: leafTrackBy">
+          <ng-container *ngTemplateOutlet="leafRef; context: { leaf }"></ng-container>
+        </ng-container>
+      </div>
+      <div class="flex-row leaf-row" [style.margin-left.px]="21 * 48">
+        <ng-container *ngFor="let leaf of tree.leafs.slice(31,63); trackBy: leafTrackBy">
+          <ng-container *ngTemplateOutlet="leafRef; context: { leaf }"></ng-container>
+        </ng-container>
+      </div>
+      <div class="flex-row leaf-row" [style.margin-left.px]="21 * 32">
+        <ng-container *ngFor="let leaf of tree.leafs.slice(63,127); trackBy: leafTrackBy">
+          <ng-container *ngTemplateOutlet="leafRef; context: { leaf }"></ng-container>
+        </ng-container>
+      </div>
+      <div class="flex-row leaf-row">
+        <ng-container *ngFor="let leaf of tree.leafs.slice(127,255); trackBy: leafTrackBy">
+          <ng-container *ngTemplateOutlet="leafRef; context: { leaf }"></ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #leafRef let-leaf="leaf">
+  <div class="leaf"
+       [cancelFormatting]="true"
+       [tooltip]="'Job: ' + leaf[1] + '\nWork Ids: ' + (leaf[2] || null) + '\nStatus: ' + (leaf[4] || null)"
+       [class.mark]="leaf[5]"
+       [ngClass]="leaf[4]">
+    {{ leaf[3] }}
+  </div>
+</ng-template>

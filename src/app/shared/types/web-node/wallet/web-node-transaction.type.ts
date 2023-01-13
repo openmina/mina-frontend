@@ -2,7 +2,7 @@ export interface WebNodeTransaction {
   id: string;
   priv_key: string;
   to: string;
-  amount: string;
+  amount: number;
   fee: string;
   nonce: string;
   memo: string;

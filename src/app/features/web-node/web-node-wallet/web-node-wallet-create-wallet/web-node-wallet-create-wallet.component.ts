@@ -61,7 +61,7 @@ export class WebNodeWalletCreateWalletComponent extends ManualDetection {
     this.requestingTokensInProgress = true;
     this.webNodeWalletService.addTokensToWallet(this.newWallet.publicKey)
       .pipe(untilDestroyed(this))
-      .subscribe((response: any) => {
+      .subscribe(() => {
         this.tokensRequested = true;
         this.requestingTokensInProgress = false;
         this.activeStep++;

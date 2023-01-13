@@ -7,8 +7,8 @@ import { NetworkMessageConnection } from '@shared/types/network/messages/network
 import { NetworkMessagesFilter } from '@shared/types/network/messages/network-messages-filter.type';
 import { NetworkMessagesFilterTypes } from '@shared/types/network/messages/network-messages-filter-types.enum';
 import { NetworkMessagesDirection } from '@shared/types/network/messages/network-messages-direction.enum';
-import { CONFIG } from '@shared/constants/config';
 import { ONE_MILLION, ONE_THOUSAND } from '@shared/constants/unit-measurements';
+import { ConfigService } from '@core/services/config.service';
 
 
 @Injectable({
@@ -16,12 +16,11 @@ import { ONE_MILLION, ONE_THOUSAND } from '@shared/constants/unit-measurements';
 })
 export class NetworkMessagesService {
 
-  private readonly API: string = CONFIG.debugger;
-
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,
+              private config: ConfigService) { }
 
   getNetworkMessages(limit: number, id: number | undefined, direction: NetworkMessagesDirection, activeFilters: NetworkMessagesFilter[], from: number | undefined, to: number | undefined): Observable<NetworkMessage[]> {
-    let url = `${this.API}/messages?limit=${limit}&direction=${direction}`;
+    let url = `${this.config.DEBUGGER}/messages?limit=${limit}&direction=${direction}`;
 
     if (id) {
       url += `&id=${id}`;
@@ -43,7 +42,7 @@ export class NetworkMessagesService {
   }
 
   getNetworkFullMessage(messageId: number): Observable<any> {
-    return this.http.request<any>(new HttpRequest<any>('GET', `${this.API}/message/` + messageId, { reportProgress: true, observe: 'events' }))
+    return this.http.request<any>(new HttpRequest<any>('GET', `${this.config.DEBUGGER}/message/` + messageId, { reportProgress: true, observe: 'events' }))
       .pipe(
         map((event: any) => {
           if (event.type === HttpEventType.DownloadProgress && event.total > 10485760) {
@@ -57,12 +56,12 @@ export class NetworkMessagesService {
   }
 
   getNetworkConnection(connectionId: number): Observable<NetworkMessageConnection> {
-    return this.http.get<any>(`${this.API}/connection/` + connectionId)
+    return this.http.get<any>(`${this.config.DEBUGGER}/connection/` + connectionId)
       .pipe(map(NetworkMessagesService.mapNetworkConnectionResponse));
   }
 
   getNetworkMessageHex(messageId: number): Observable<string> {
-    return this.http.get<string>(`${this.API}/message_hex/` + messageId);
+    return this.http.get<string>(`${this.config.DEBUGGER}/message_hex/` + messageId);
   }
 
   private mapNetworkMessageResponse(messages: any[], direction: NetworkMessagesDirection): NetworkMessage[] {
@@ -88,14 +87,15 @@ export class NetworkMessagesService {
   }
 
   private static getMessageKind(message: any): string {
-    const messageKind = message[1].message[0]?.message?.type
-      ?? message[1].message[0]?.type
-      ?? message[1].message.type
-      ?? message[1].message.action;
-    if (messageKind) {
-      return messageKind;
-    }
-    return typeof message[1].message === 'string' ? message[1].message : 'Error Report';
+    return message[1].message;
+    // const messageKind = message[1].message[0]?.message?.type
+    //   ?? message[1].message[0]?.type
+    //   ?? message[1].message.type
+    //   ?? message[1].message.action;
+    // if (messageKind) {
+    //   return messageKind;
+    // }
+    // return typeof message[1].message === 'string' ? message[1].message : 'Error Report';
   }
 
   private static mapNetworkConnectionResponse(connection: any): NetworkMessageConnection {

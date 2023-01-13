@@ -23,7 +23,7 @@ export const addError = (error: HttpErrorResponse | Error, type: MinaErrorType):
     payload: {
       type,
       message: error.message,
-      status: (error as any).status ? `${(error as any).status} ${(error as any).statusText} - ` : undefined,
+      status: (error as any).status ? `${(error as any).status} ${(error as any).statusText}` : undefined,
       timestamp: toReadableDate(Number(Date.now()), 'HH:mm:ss'),
       seen: false,
     },

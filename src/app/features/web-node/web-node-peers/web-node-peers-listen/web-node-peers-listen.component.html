@@ -22,7 +22,7 @@
         <span class="mina-icon icon-100 paste-icon">conversion_path</span>
       </div>
       <div
-          class="bg-container border-rad-4 h-36 flex-row align-center pl-12 pr-12 flex-between text-nowrap overflow-hidden">
+          class="bg-container border-rad-4 h-lg flex-row align-center pl-12 pr-12 flex-between text-nowrap overflow-hidden">
         <span>Peer ID</span>
         <span class="monospace">{{ peerId }}</span>
       </div>
@@ -62,7 +62,7 @@
 
 <ng-template #step3>
   <div class="flex-column flex-grow bg-container border-rad-4 p-12 h-100">
-    <div class="f-600 h-32">Received Offer</div>
+    <div class="f-600 h-md">Received Offer</div>
     <div class="flex-column flex-grow overflow-auto transparent-scrollbar-track">
       <mina-json-viewer [json]="offer" [expanded]="true"></mina-json-viewer>
     </div>
@@ -104,10 +104,10 @@
 
 <ng-template #stepperFooter>
   <div class="flex-row flex-between mt-16">
-    <button class="action-btn btn-primary pl-12 pr-12 h-32" (click)="prevStep()" [disabled]="activeStep === 0">
+    <button class="action-btn btn-primary pl-12 pr-12 h-md" (click)="prevStep()" [disabled]="activeStep === 0">
       Back
     </button>
-    <button class="action-btn btn-selected pl-12 pr-12 h-32" (click)="nextStep()">
+    <button class="action-btn btn-selected pl-12 pr-12 h-md" (click)="nextStep()">
       {{ activeStep === 0
       ? !copiedPeerId ? 'Copy ID to Clipboard' : 'Continue'
       : activeStep === 1

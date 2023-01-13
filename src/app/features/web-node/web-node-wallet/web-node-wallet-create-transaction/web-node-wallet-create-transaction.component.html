@@ -83,11 +83,11 @@
 
 <ng-template #stepperFooter>
   <div class="flex-row flex-between mt-16">
-    <button class="btn-primary pl-12 pr-12 h-32" (click)="prevStep()"
+    <button class="btn-primary pl-12 pr-12 h-md" (click)="prevStep()"
             [disabled]="activeStep === 0 || activeStep === 2">
       Back
     </button>
-    <button class="btn-selected pl-12 pr-12 h-32" (click)="nextStep()"
+    <button class="btn-selected pl-12 pr-12 h-md" (click)="nextStep()"
             [disabled]="!formGroup.value.amount || !formGroup.value.fee || (formGroup.value.nonce === null)">
       {{ activeStep === 0 ? 'Continue' : activeStep === 1 ? 'Submit' : 'See transactions' }}
     </button>

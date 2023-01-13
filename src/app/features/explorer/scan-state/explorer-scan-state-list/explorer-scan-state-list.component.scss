@@ -1,0 +1,92 @@
+@import 'variables';
+@import 'layout';
+
+:host {
+	position: relative;
+}
+
+.stats-done {
+	color: $success-primary;
+	background-color: $success-container;
+}
+
+.stats-todo {
+	color: $aware-primary;
+	background-color: $aware-container;
+}
+
+.stats-empty {
+	color: $base-secondary;
+	background-color: $base-container;
+}
+
+.legend {
+	right: 16px;
+	top: 5px;
+
+	.list > * {
+		margin-bottom: 4px;
+	}
+
+	.leaf.Todo {
+		border-color: $aware-primary;
+	}
+
+	.leaf.Done {
+		border-color: $success-primary;
+	}
+
+	.leaf.empty {
+		border-color: $base-tertiary;
+	}
+}
+
+.leaf-row {
+	margin-bottom: 4px;
+
+	.leaf {
+		cursor: pointer;
+
+		&:hover {
+			background-color: $base-tertiary;
+		}
+
+		&.Todo:hover {
+			background-color: $aware-tertiary;
+		}
+
+		&.Done:hover {
+			background-color: $success-tertiary;
+		}
+	}
+}
+
+.leaf {
+	border-radius: 50%;
+	min-width: 19px;
+	height: 19px;
+	margin-right: 2px;
+	background-color: $base-surface-top;
+	border: 1px solid $base-divider;
+	@include flexRowFullCenter();
+
+	&.Todo {
+		color: $aware-primary;
+		background-color: $aware-container;
+		border-color: $aware-tertiary;
+	}
+
+	&.Done {
+		color: $success-primary;
+		background-color: $success-container;
+		border-color: $success-divider;
+	}
+
+	&:not(.Todo):not(.Done) {
+		pointer-events: none;
+	}
+
+	&.mark {
+		border: 2px solid $base-primary;
+	}
+}

@@ -3,7 +3,7 @@
 .mina-input {
 	background-color: $base-container;
 	color: $base-primary;
-	border: none;
+	border: 1px solid $base-container;
 	padding: 0 4px;
 	height: 24px;
 	outline: none;
@@ -17,8 +17,14 @@
 		color: $base-tertiary;
 	}
 
-	&:hover, &:focus {
+	&:hover:not(:focus) {
 		background-color: $base-divider;
+	}
+
+	&:focus {
+		background-color: $selected-container;
+		border-color: $selected-primary;
+		color: $selected-primary;
 	}
 
 	&::-webkit-outer-spin-button,

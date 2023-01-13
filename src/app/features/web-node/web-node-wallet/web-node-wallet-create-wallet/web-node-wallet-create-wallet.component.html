@@ -15,7 +15,7 @@
                 [style.max-width.px]="600"></mina-stepper>
 </div>
 <ng-template #contentHeaderInfo>
-  <div class="w-100 h-40 flex-row align-center p-12 error bg-warn-container mb-10 border-rad-4">
+  <div class="w-100 h-xl flex-row align-center p-12 error bg-warn-container mb-10 border-rad-4">
     <span class="mina-icon f-22 mr-10 icon-300">error</span>
     Development purposes only, wallets are stored in a super dangerous way.
   </div>
@@ -99,11 +99,11 @@
 
 <ng-template #stepperFooter>
   <div class="flex-row flex-between mt-16">
-    <button class="btn-primary pl-12 pr-12 h-32" (click)="prevStep()"
+    <button class="btn-primary pl-12 pr-12 h-md" (click)="prevStep()"
             [disabled]="activeStep === 0 || activeStep === 2 || tokensRequested || requestingTokensInProgress">
       Back
     </button>
-    <button class="btn-selected pl-12 pr-12 h-32" (click)="nextStep()"
+    <button class="btn-selected pl-12 pr-12 h-md" (click)="nextStep()"
             [disabled]="activeStep === 1 && requestingTokensInProgress">
       {{ activeStep === 0
       ? !newWallet ? 'Generate' : 'Continue'
