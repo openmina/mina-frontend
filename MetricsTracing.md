@@ -31,8 +31,9 @@ Showing latency from second fastest displays the time the block was already prod
 
 Click on a node to open up a window with a list of checkpoints, as seen above. A checkpoint is a term we use to describe a place in the code (or the process which we are tracing) where we mark that we have reached that location.
 
+![1-3-Dashboard Sidebar FocusedCheckpoints](https://user-images.githubusercontent.com/1679939/220934009-5b69e242-b3e7-46a7-801d-1026fbb4673b.png)
 
-![1-3-Dashboard Sidebar FocusedCheckpoints](https://user-images.githubusercontent.com/1679939/220899794-b099e2eb-61b0-4736-8dad-056fc41635d8.png)
+
 
 
 At the top is the block hash (**3NKUYE...29CUrL**)
@@ -228,7 +229,7 @@ Hovering over the timeline will bring up a graph with the following values:
 
 Click on a point in the graph to show how much of that resource the various processes used, in percentages, at that point in time. 
 
-![3-0-Resources--CPU](https://user-images.githubusercontent.com/1679939/220909204-367b80ae-578f-4964-b083-61b45329ad4b.png)
+![3-0-Resources--CPU](https://user-images.githubusercontent.com/1679939/220934133-1d2cd904-8dcd-4edc-b7ff-e2b99665bdbb.png)
 
 Clicking on a process, for instance on `coda-libp2p_hel-155`, will open up a detailed breakdown of resource use by the various threads running under that process. 
 
@@ -304,7 +305,7 @@ Displays the network sent and received bandwidth over a period of time. In other
 
 The P2P network is the key component of the Mina blockchain. This is an overview of the messages sent by the node, other peer nodes connecting to it, as well as the blocks being propagated across the network. 
 
-![4-0-Network--Overview](https://user-images.githubusercontent.com/1679939/220913814-00dd858c-d6f5-451a-80a3-4c8f55cda278.png)
+![4-0-Network--Overview](https://user-images.githubusercontent.com/1679939/220934227-a531fd5e-26d5-4e4a-a016-2b55f4c26669.png)
 
 The Network page has the following tabs: 
 
@@ -324,7 +325,6 @@ Click on the Filters icon:
 
 Various filters for P2P messages will be displayed:
 
-
 ![4-1-0-Network--Messages Filters](https://user-images.githubusercontent.com/1679939/220913940-3d463b63-8af2-40b1-bc8b-150d2a2daa99.png)
 
 
@@ -334,7 +334,7 @@ Clicking on a filter will filter out all other messages, displaying only those t
 
 You can also click on a filter category (in this case, `/noise`), which may contain multiple filters:
 
-![4-1-0-0-Network--Messages Filters Noise](https://user-images.githubusercontent.com/1679939/220914498-31b8b0f4-2bfe-41fb-9ea2-5338f07df2d0.png)
+  ![4-1-0-0-Network--Messages Filters Noise](https://user-images.githubusercontent.com/1679939/220934310-f85860cb-902f-4568-ace8-de43bc58b262.png)
 
 There is also the option of combining multiple filters from various categories:
 
@@ -344,7 +344,7 @@ Below the filters is a list of network **Messages**. They are sorted by their me
 
 The most recent messages continuously appear at the bottom of the list as long as the green **Live** button on the bottom of the screen is selected. Click on **Pause** to stop the continuous addition of new messages. There are buttons for going to the top of the list as well as for browsing back and forth between pages.
 
-![4-1-2-Network--Messages Time](https://user-images.githubusercontent.com/1679939/220914925-c6097f91-d3b8-4352-91c8-f8f14a8f2456.png)
+![4-1-2-Network--Messages Time](https://user-images.githubusercontent.com/1679939/220934442-e77a0634-212d-4931-9b27-cc4f08079cd5.png)
 
 There is also a time filter. Click on the button to open up a window into which you can input your own time range, and the page will filter out network messages made within that time range.
 
@@ -380,7 +380,7 @@ Now let’s move onto the next tab in the Network page - **Connections**
 
 A list of connections to other peers in the Mina P2P network.
 
-![4-2-0-Connection](https://user-images.githubusercontent.com/1679939/220917239-48387dfc-ac38-42ea-96fd-95481251a745.png)
+![4-2-0-Connection](https://user-images.githubusercontent.com/1679939/220934557-1dfa42d2-9517-4d26-9e6b-5c0806d6635f.png)
 
 **Datetime** - when the connection was made. Click on the datetime to open up a window with additional Connection details.
 
@@ -398,7 +398,7 @@ A list of connections to other peers in the Mina P2P network.
 
 Click on a connection’s datetime to open up the **Connection details** window on the right side of your screen:
 
-![4-2-1-Connection Sidebar](https://user-images.githubusercontent.com/1679939/220917284-795d707d-970e-4358-a64d-88538c1ce912.png)
+![4-2-1-Connection Sidebar](https://user-images.githubusercontent.com/1679939/220934682-4c260a1f-44d5-4781-af6f-d7fe9215dca9.png)
 
 **connectionId** - the ID number of the connection
 
@@ -423,7 +423,7 @@ Click on **Expand all** to show full details of all values, and **Collapse all**
 
 We want to understand how efficient inter-node communication is, so we created a page that provides an overview of blocks propagated across the Mina P2P network. Note that everything is from the perspective of the node selected in the top right corner of the screen.
 
-![4-3-0-Blocks](https://user-images.githubusercontent.com/1679939/220920758-b426c04b-b4f2-445c-a54c-bce41e2e88f8.png)
+![4-3-0-Blocks](https://user-images.githubusercontent.com/1679939/220934745-9fb1d346-5b1d-442d-9369-573a40f1f689.png)
 
 You can browse back and forth through lists of blocks depending on their block **Height**, or move to the top (meaning the highest or most recent block height). Below the height scroller, you can see the **Block candidates** at the selected height, as well as their hashes. Click on a Block candidate to filter out messages broadcasting that block.
 
@@ -431,7 +431,7 @@ Block candidates are known as such because for each global slot, multiple nodes 
 
 Click on the icon on the right edge of the screen to open up a window titled **Distributions** that displays a histogram with the distribution of times from the sample we collected. 
 
-![4-3-0-Blocks Histogram](https://user-images.githubusercontent.com/1679939/220920784-ba54d168-c757-4cfb-983e-9961eb73e1c0.png)
+![4-3-0-Blocks Histogram](https://user-images.githubusercontent.com/1679939/220934818-f34df5b9-b3f9-423d-b812-c76be51448a3.png)
 
 This histogram lets you see how much variation there is between block send times, what is the range and what are the most common times.
 
@@ -440,7 +440,7 @@ This histogram lets you see how much variation there is between block send times
 
 A Mina node communicates over the network with other peers as well as inter-process commands from Mina daemon on the same device. This screen is about inter-process communication (IPC). It allows the user to track the block as it is being created by the local node or as it is first seen by the local node.
 
-![4-4-0-Blocks IPC](https://user-images.githubusercontent.com/1679939/220920880-2cc407a4-0c6d-4852-9326-d5f852a0aad9.png)
+![4-4-0-Blocks IPC](https://user-images.githubusercontent.com/1679939/220934862-bef4ad43-a9ec-428a-b3ef-ecc1fea7c760.png)
 
 **Height** - the block height at which the candidate blocks are attempting to be published. 
 
@@ -482,7 +482,7 @@ By default, the graphs are sorted **Slowest first** since we are most interested
 
 Let’s take a closer look at a checkpoint graph:
 
-![5-0-Traces](https://user-images.githubusercontent.com/1679939/220921661-5c9cfd3b-980f-45c2-ba72-17d68bd8f726.png)
+![5-0-Traces](https://user-images.githubusercontent.com/1679939/220934944-303d4c48-3464-45f1-b811-6e02d2f9a55d.png)
 
 At the top, we have the name for the checkpoint (**Initial validation**).
 
@@ -492,8 +492,8 @@ The y axis represents the total time of all calls made after reaching that check
 
 The x axis represents the duration of calls made after reaching that checkpoint.
 
-![5-1-Traces Checkpoint](https://user-images.githubusercontent.com/1679939/220921911-769c5da4-0b39-451b-add2-adc4db9fb29f.png)
-
+![5-1-Traces Checkpoint](https://user-images.githubusercontent.com/1679939/220934992-3e92b6a2-1a46-4103-8c64-b82aa6ba3e60.png)
+  
 Hovering the cursor above a vertical row displays a tooltip that shows:
 
 
@@ -518,14 +518,14 @@ Clicking on a checkpoint call will expand it and reveal the full graph:
 
 Now switch to the **Blocks** tab located on the right of the Overview tab.
 
-![5-4-Blocks](https://user-images.githubusercontent.com/1679939/220927232-4ff97a86-7b52-4812-84b8-37a84836dfec.png)
-
+![5-4-Blocks](https://user-images.githubusercontent.com/1679939/220935077-eaed1c27-6d19-48cb-84bc-0377a281390a.png)
+  
 A list of blocks will appear, sorted by their block **height**. This is a number that designates their level on the blockchain, - the genesis block has a block height of 0, and each block built on top of it increments this height by 1. The higher the number, the more recently has the block been published, therefore the blocks are also listed in reverse chronological order (newest at top).
 
 Note that multiple blocks may have the same block height: 
-
-![5-5-Blocks SameHeight](https://user-images.githubusercontent.com/1679939/220927332-6e00206a-ac0a-441b-ad23-01639c90085c.png)
-
+  
+![5-5-Blocks SameHeight](https://user-images.githubusercontent.com/1679939/220935135-d28d8ec7-8924-4c27-b75a-2d257fe4c1e7.png)
+  
 In Mina, multiple block producers can get the right to publish the block at the same time. Therefore there can be multiple valid blocks at the same height. This, of course, causes a problem - if there are multiple valid blocks at the same level, the node must figure out which one is the _canonical_ block and will have another block published on top of it, thus becoming a continuation of the Mina blockchain.
 
 Part of the Mina consensus algorithm is a series of mechanisms that determine which block will be the canonical block.
@@ -541,7 +541,7 @@ See the diagram above for a visual explanation. While there are two blocks at le
 
 In the same window, on the right side of the screen, the **source** of each block and its **status** is displayed. 
 
-![5-6-Source Status](https://user-images.githubusercontent.com/1679939/220927527-5ee86979-5b90-4c0e-a2ac-f1d3527e8e9a.png)
+![5-6-Source Status](https://user-images.githubusercontent.com/1679939/220935257-475b4124-95eb-4a78-81eb-e23c702708ea.png)
 
 
 A block may have various sources:
