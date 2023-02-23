@@ -84,13 +84,16 @@ Now let’s move onto the **Explorer** section, which is located immediately bel
 
 ## Explorer
 
+We need to have a view of the blockchain’s past and present, not only for debugging purposes, but also to help us understand what happened in its history, which also gives us a clearer picture of what to optimize.
+
+
 The Explorer page enables you to access blockchain data recorded in the form of blocks, transactions, the SNARK pool, scan state and SNARK traces. It provides a view into the current and past state of the blockchain and its focus is the blockchain itself
 
 ![2-0-Explorer Blocks](https://user-images.githubusercontent.com/1679939/220905530-87957444-a1c4-4582-9084-fef289b52b98.png)
   
 ### Blocks
 
-This is the Mina block explorer, and the first tab displays a list of blocks sorted by the time of their publication (you can click on the **Date** column to switch between ascending and descending order).
+We want to be able to view the history of the blockchain, which is achieved through the Mina block explorer. The first tab displays a list of blocks sorted by the time of their publication (you can click on the **Date** column to switch between ascending and descending order).
 
 Each block’s **Hash** is written next to the date, along with the block
 
@@ -101,6 +104,8 @@ Next, click on the **Transactions** tab.
 
 ### Transactions
 
+The blockchain’s present state is constantly changing as new transactions are added. We want a live view of this process, to see as pending transactions are validated and added to the state.
+
 If you have created transactions via the **Benchmarks** page of the Dashboard, they will show up here. 
 
 ![2-1-Explorer Transactions--Empty Filled](https://user-images.githubusercontent.com/1679939/220905605-8e65ba43-66ca-40dc-be7b-e01a993a6c8f.png)
@@ -109,8 +114,9 @@ Transactions are sorted by their **Transaction ID**. You can also see where they
 
 Next, click on the **Snark Pool** tab.
 
-
 ### Snark pool
+
+Why (I actually asked someone about this but they said its just a way to view the internal state of the node/the Snark pool)
 
 On this tab, we can inspect the contents of the internal state of the node, specifically the node's SNARK pool.
 
@@ -131,7 +137,9 @@ Next, we look at the **Scan State** tab
 
 ### Scan State
 
-Transactions in Mina require SNARK proofs in order to be validated. We want to take a closer look at this process, which is why we’ve created a visual representation of the _[scan state](https://docs.minaprotocol.com/node-operators/scan-state)_, a data structure that queues transactions requiring transaction SNARK proofs.
+Transactions in Mina require SNARK proofs in order to be validated. We want to take a closer look at this process because SNARKs are a key part of Mina’s block production process, are resource-intensive and may present a performance bottleneck.
+
+We’ve created a visual representation of the _[scan state](https://docs.minaprotocol.com/node-operators/scan-state)_, a data structure that queues transactions requiring transaction SNARK proofs.
 
 ![2-3-ScanState](https://user-images.githubusercontent.com/1679939/220905867-6a7c4e74-5b54-4647-8bdd-ee9609a56467.png)
 
@@ -152,7 +160,8 @@ Select **Highlight snarks** to highlight all proofs (SNARK jobs) that are waitin
 
 ### Snark Traces
 
-It is assumed that SNARKs, due to their performance demands, present a performance bottleneck. In order to understand how we can increase throughput, we had to understand how exactly SNARKs are generated, which is why we began tracing them. 
+
+SNARKs have a certain life cycle, and we want to have a close look at their various stages to detect possible problems at any stage of this cycle. This helps us understand how we can optimize this process. For this purpose, we began tracing SNARKs.
 
 ![2-4-0-SnarkTraces](https://user-images.githubusercontent.com/1679939/220906352-5fe5909b-a13f-484a-a9f3-fe57aa15913e.png)
   
@@ -192,7 +201,6 @@ To choose a **Time range**, click on the **Select** button, where you can either
 ## Resources
 
 The node utilizes a variety of resources through processes such as reading, writing and communicating with peers. We want to have a graphical overview of how much resources are being used over time which helps us quickly detect possible problems or inefficiencies. 
-
 
 ### System
 
@@ -303,7 +311,10 @@ Displays the network sent and received bandwidth over a period of time. In other
 
 ## Network
 
-The P2P network is the key component of the Mina blockchain. This is an overview of the messages sent by the node, other peer nodes connecting to it, as well as the blocks being propagated across the network. 
+
+The P2P network is the key component of the Mina blockchain. It is used for communication between nodes, which, among other things, also includes block propagation and the updating of the blockchain state. We want to have a close look at the messages sent by nodes to see if there are inefficiencies in communication so that we know where to optimize.
+
+This is an overview of the messages sent by the node, other peer nodes connecting to it, as well as the blocks being propagated across the network. 
 
 ![4-0-Network--Overview](https://user-images.githubusercontent.com/1679939/220934227-a531fd5e-26d5-4e4a-a016-2b55f4c26669.png)
 
@@ -317,8 +328,10 @@ The Network page has the following tabs:
 
 ### Messages
 
-The **Messages** tab shows a list of all messages sent across the P2P network.
 
+We want to have a view of all messages sent across the Mina P2P network to see if there are any outliers, either in particular messages or when we filter through various layers. This shows us which types of messages are in need of optimization.
+
+The **Messages** tab shows a list of all messages sent across the P2P network.
 
 
 Click on the Filters icon:
@@ -378,7 +391,10 @@ Now let’s move onto the next tab in the Network page - **Connections**
 
 ### Connections
 
-A list of connections to other peers in the Mina P2P network.
+
+Connections made across the P2P network have to be encrypted and decrypted. We want to see whether these processes have been completed, and if not, to see which connections failed to do so.
+
+For this purpose, we’ve created a list of connections to other peers in the Mina P2P network.
 
 ![4-2-0-Connection](https://user-images.githubusercontent.com/1679939/220934557-1dfa42d2-9517-4d26-9e6b-5c0806d6635f.png)
 
@@ -421,7 +437,7 @@ Click on **Expand all** to show full details of all values, and **Collapse all**
 
 ### Blocks
 
-We want to understand how efficient inter-node communication is, so we created a page that provides an overview of blocks propagated across the Mina P2P network. Note that everything is from the perspective of the node selected in the top right corner of the screen.
+We want to view inter-node communication so that we can detect any inefficiencies that we can then optimize. We created a page that provides an overview of blocks propagated across the Mina P2P network. Note that everything is from the perspective of the node selected in the top right corner of the screen.
 
 ![4-3-0-Blocks](https://user-images.githubusercontent.com/1679939/220934745-9fb1d346-5b1d-442d-9369-573a40f1f689.png)
 
@@ -438,7 +454,10 @@ This histogram lets you see how much variation there is between block send times
 
 ### Blocks IPC
 
-A Mina node communicates over the network with other peers as well as inter-process commands from Mina daemon on the same device. This screen is about inter-process communication (IPC). It allows the user to track the block as it is being created by the local node or as it is first seen by the local node.
+A Mina node communicates over the network with other peers as well as inter-process commands from Mina daemon on the same device. We want to track the block as the local node is creating it or as the local node first sees it so that we can detect any problems during this communication. 
+
+For that purpose, we’ve created the Block IPC tab, which displays inter-process communication (IPC). 
+
 
 ![4-4-0-Blocks IPC](https://user-images.githubusercontent.com/1679939/220934862-bef4ad43-a9ec-428a-b3ef-ecc1fea7c760.png)
 
@@ -467,11 +486,9 @@ Click on the icon on the right edge of the screen to open up a window titled **D
 
 ## Tracing
 
-
+We want to know which processes in Mina are particularly slow so that we can then focus our optimization efforts on those areas. For that purpose, we’ve created the Tracing page, an overview of calls made from various checkpoints within the Mina code that shows us which processes have high latencies. 
 
 <Screenshot - Tracing - overview>
-
-The Tracing Dashboard is an overview of calls made from various checkpoints within the Mina code. It informs us which processes are particularly slow, which indicates what parts of the code are in most need of optimization. 
 
 The first screen is the **Overview** tab in which you can see a visualization of the metrics for various checkpoints, represented by graphs.
 
@@ -580,7 +597,7 @@ The benchmarks page shows a list of testnet wallets from which we send transacti
 
 There are two options for where to send transactions from
 
-![6-2-BenchmarkRandom](https://user-images.githubusercontent.com/1679939/220953094-f56bc585-25bc-44e3-9744-34ca7ae9fd34.png)
+<Screenshot - Benchmarks - random sender>
 
 * From **Random** **senders**, which are chosen randomly from wallets from the list (1 wallet can be only once a sender in a batch sending process)
 
@@ -589,6 +606,7 @@ There are two options for where to send transactions from
 * All sent from the same **Specific sender** wallet, which can be chosen from a dropdown menu.
 
 After you’ve mass sent transactions, you can see many transactions have been a **success** and how many **failed** in the upper right corner.
+
 
 
 
