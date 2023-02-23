@@ -532,10 +532,9 @@ Part of the Mina consensus algorithm is a series of mechanisms that determine wh
 
 First, the node attempts to select the longest chain, which works if the forks are short-range. If blocks are based on the same parent, VRF hashes are compared, with the larger one being preferred. If VRF hashes are equal, then we compare state hashes as a tie-breaker.
 
+![Blocks Diagram](https://user-images.githubusercontent.com/1679939/220938884-b7598805-15b9-4b6d-a483-578a27abca9f.png)
 
-<diagram - tree of blocks, multiple blocks at same height, canonical chain green>
-
-See the diagram above for a visual explanation. While there are two blocks at level 2, we already know that the one on the right is the canonical block (in green), because an additional block or blocks are published on top of it. However, we haven’t determined which of the level 3 blocks are canonical, because no blocks have been published at level 4.
+See the diagram above for a visual explanation. While there are two blocks at level 2, we already know that the one on the right is the canonical block (in blue), because an additional block or blocks are published on top of it. However, we haven’t determined which of the level 3 blocks are canonical, because no blocks have been published at level 4.
 
 **Source and Status**
 
