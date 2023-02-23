@@ -304,12 +304,9 @@ Displays the network sent and received bandwidth over a period of time. In other
 
 The P2P network is the key component of the Mina blockchain. This is an overview of the messages sent by the node, other peer nodes connecting to it, as well as the blocks being propagated across the network. 
 
-
-<screenshot - network - main>
+![4-0-Network--Overview](https://user-images.githubusercontent.com/1679939/220913814-00dd858c-d6f5-451a-80a3-4c8f55cda278.png)
 
 The Network page has the following tabs: 
-
-
 
 * **Messages** sent and received across the P2P network by this node 
 * **Connections** with peers (incoming and outgoing)
@@ -325,51 +322,37 @@ The **Messages** tab shows a list of all messages sent across the P2P network.
 
 Click on the Filters icon:
 
-<screenshot - network - messages - filter icon>
-
 Various filters for P2P messages will be displayed:
 
 
-<screenshot - network - messages - filters opened>
+![4-1-0-Network--Messages Filters](https://user-images.githubusercontent.com/1679939/220913940-3d463b63-8af2-40b1-bc8b-150d2a2daa99.png)
 
 
 Hovering over each filter category or filter will display a tooltip with additional information.
 
 Clicking on a filter will filter out all other messages, displaying only those that are related to that category:
 
-<screenshot - network - messages - filter selected>
-
-
 You can also click on a filter category (in this case, `/noise`), which may contain multiple filters:
 
-<screenshot - network - messages - filter category selected>
-
+![4-1-0-0-Network--Messages Filters Noise](https://user-images.githubusercontent.com/1679939/220914498-31b8b0f4-2bfe-41fb-9ea2-5338f07df2d0.png)
 
 There is also the option of combining multiple filters from various categories:
 
 <screenshot - network - messages - multiple filters selected>
 
-
-
 Below the filters is a list of network **Messages**. They are sorted by their message **ID** and **datetime**. You can also see their **Remote Address**, **Direction** (whether they are incoming or outgoing), their **Size**, their **Stream Kind** and **Message Kind**.
 
 The most recent messages continuously appear at the bottom of the list as long as the green **Live** button on the bottom of the screen is selected. Click on **Pause** to stop the continuous addition of new messages. There are buttons for going to the top of the list as well as for browsing back and forth between pages.
 
-
-<screenshot - Network - messages - time filter>
+![4-1-2-Network--Messages Time](https://user-images.githubusercontent.com/1679939/220914925-c6097f91-d3b8-4352-91c8-f8f14a8f2456.png)
 
 There is also a time filter. Click on the button to open up a window into which you can input your own time range, and the page will filter out network messages made within that time range.
 
 Click on a network message to display further details:
 
+![4-1-2-Network--Messages Detail](https://user-images.githubusercontent.com/1679939/220915125-8c6a90a3-710c-4d62-a093-62fbb524ff59.png)
 
-
-<Network - messages - details sidebar - message>
-
-
-
-
-
+  
 **Message**
 
 By default, the Info window will first display the contents of the **Message**. 
@@ -384,8 +367,8 @@ This is the Hex value of the message.
 
 You can **Copy** the information into your clipboard or **Save** it, either as a JSON file or as a Bin. Click on **Copy link** to copy a link to the message to your clipboard.
 
-<Network - messages - connection>
-
+![4-1-3-Network--Messages Detail](https://user-images.githubusercontent.com/1679939/220915327-ac963f48-0639-4701-9992-92f626ee3f90.png) 
+  
 **Connection**
 
 Same as with the Message Hex, you can **Copy** the information into your clipboard or **Save** it, either as a JSON file or as a Bin. Click on **Copy link** to copy the link to the message to your clipbaord.
@@ -397,7 +380,7 @@ Now let’s move onto the next tab in the Network page - **Connections**
 
 A list of connections to other peers in the Mina P2P network.
 
-<screenshot - network - connections>
+![4-2-0-Connection](https://user-images.githubusercontent.com/1679939/220917239-48387dfc-ac38-42ea-96fd-95481251a745.png)
 
 **Datetime** - when the connection was made. Click on the datetime to open up a window with additional Connection details.
 
@@ -415,7 +398,7 @@ A list of connections to other peers in the Mina P2P network.
 
 Click on a connection’s datetime to open up the **Connection details** window on the right side of your screen:
 
-<network - connections - connection details>
+![4-2-1-Connection Sidebar](https://user-images.githubusercontent.com/1679939/220917284-795d707d-970e-4358-a64d-88538c1ce912.png)
 
 **connectionId** - the ID number of the connection
 
@@ -440,8 +423,7 @@ Click on **Expand all** to show full details of all values, and **Collapse all**
 
 We want to understand how efficient inter-node communication is, so we created a page that provides an overview of blocks propagated across the Mina P2P network. Note that everything is from the perspective of the node selected in the top right corner of the screen.
 
-
-<Screenshot - network - blocks>
+![4-3-0-Blocks](https://user-images.githubusercontent.com/1679939/220920758-b426c04b-b4f2-445c-a54c-bce41e2e88f8.png)
 
 You can browse back and forth through lists of blocks depending on their block **Height**, or move to the top (meaning the highest or most recent block height). Below the height scroller, you can see the **Block candidates** at the selected height, as well as their hashes. Click on a Block candidate to filter out messages broadcasting that block.
 
@@ -449,20 +431,16 @@ Block candidates are known as such because for each global slot, multiple nodes 
 
 Click on the icon on the right edge of the screen to open up a window titled **Distributions** that displays a histogram with the distribution of times from the sample we collected. 
 
-<screenshot - network - blocks - distributions>
+![4-3-0-Blocks Histogram](https://user-images.githubusercontent.com/1679939/220920784-ba54d168-c757-4cfb-983e-9961eb73e1c0.png)
 
 This histogram lets you see how much variation there is between block send times, what is the range and what are the most common times.
-
-
-
 
 
 ### Blocks IPC
 
 A Mina node communicates over the network with other peers as well as inter-process commands from Mina daemon on the same device. This screen is about inter-process communication (IPC). It allows the user to track the block as it is being created by the local node or as it is first seen by the local node.
 
-
-<screenshot - network - blocks IPC>
+![4-4-0-Blocks IPC](https://user-images.githubusercontent.com/1679939/220920880-2cc407a4-0c6d-4852-9326-d5f852a0aad9.png)
 
 **Height** - the block height at which the candidate blocks are attempting to be published. 
 
