@@ -1,13 +1,13 @@
 # The Metrics & Tracing Interface
 
 # Table of Contents
-1. [Introduction](##Introduction)  
-2. [Dashboard](##Dashboard)
-3. [Explorer](##Explorer)
-4. [Resources](##Resources)
-5. [Network](##Network)
-6. [Tracing](##Tracing)
-7. [Benchmarks](##Benchmarks)
+1. [Introduction](#Introduction)  
+2. [Dashboard](#Dashboard)
+3. [Explorer](#Explorer)
+4. [Resources](#Resources)
+5. [Network](#Network)
+6. [Tracing](#Tracing)
+7. [Benchmarks](#Benchmarks)
 
 
 
