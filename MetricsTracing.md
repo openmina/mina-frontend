@@ -580,7 +580,7 @@ The benchmarks page shows a list of testnet wallets from which we send transacti
 
 There are two options for where to send transactions from
 
-<Screenshot - Benchmarks - random sender>
+![6-2-BenchmarkRandom](https://user-images.githubusercontent.com/1679939/220953094-f56bc585-25bc-44e3-9744-34ca7ae9fd34.png)
 
 * From **Random** **senders**, which are chosen randomly from wallets from the list (1 wallet can be only once a sender in a batch sending process)
 
