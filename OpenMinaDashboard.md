@@ -208,8 +208,7 @@ The number and labels of the subprocesses can change as the node launches variou
 
 #### CPU
 
-
-<Screenshot - resources - CPU>
+![3-0-1-Resources--CPU Default](https://user-images.githubusercontent.com/1679939/220909063-480d29b7-7742-49bd-8d88-e7e737332ff3.png)
 
 From top to bottom, first, we see a graph of the node’s **CPU** usage. It describes the percentage of the CPU that was utilized by the processes over a period of time. 
 
@@ -229,7 +228,7 @@ Hovering over the timeline will bring up a graph with the following values:
 
 Click on a point in the graph to show how much of that resource the various processes used, in percentages, at that point in time. 
 
-<Screenshot - Resources - click on graph>
+![3-0-Resources--CPU](https://user-images.githubusercontent.com/1679939/220909204-367b80ae-578f-4964-b083-61b45329ad4b.png)
 
 Clicking on a process, for instance on `coda-libp2p_hel-155`, will open up a detailed breakdown of resource use by the various threads running under that process. 
 
@@ -240,8 +239,7 @@ You can also open up this point in time in the **Network - Messages** and **Expl
 
 Describes how much physical memory (RAM) each process is using at given times. 
 
-<screenshot - resources - memory>
-
+![3-1-Resources--Memory](https://user-images.githubusercontent.com/1679939/220909230-10c10ca6-bbbe-4ce8-8259-37be0ce993d1.png)
 
 **total** - Total memory usage
 
@@ -258,7 +256,7 @@ Describes how much physical memory (RAM) each process is using at given times.
 
 #### Storage IO
 
-<screenshot - resources - storage IO>
+![3-2-Resources--Storage](https://user-images.githubusercontent.com/1679939/220909283-509348fb-8482-407f-82d2-a136d0a43eee.png)
 
 Displays the disk read and written bandwidth over a period of time. In other words, how much data was read/written from/to the disk (HDD/SSD) per second over a period of time. 
 
@@ -282,8 +280,8 @@ Displays the disk read and written bandwidth over a period of time. In other wor
 #### **Network IO**.
 
 Displays the network sent and received bandwidth over a period of time. In other words, how much data was sent and received per second over a period of time. 
-
-<screenshot - resources - network IO>
+  
+![3-3-Resources--NetworkIO](https://user-images.githubusercontent.com/1679939/220909309-91d322e0-e7b4-46ce-8603-cc7b0fe142c8.png)
 
 **total received** - total received bandwidth
 
