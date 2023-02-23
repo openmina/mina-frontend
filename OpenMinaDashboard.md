@@ -482,8 +482,7 @@ By default, the graphs are sorted **Slowest first** since we are most interested
 
 Let’s take a closer look at a checkpoint graph:
 
-
-<Tracing - overview - checkpoints>
+![5-0-Traces](https://user-images.githubusercontent.com/1679939/220921661-5c9cfd3b-980f-45c2-ba72-17d68bd8f726.png)
 
 At the top, we have the name for the checkpoint (**Initial validation**).
 
@@ -493,7 +492,7 @@ The y axis represents the total time of all calls made after reaching that check
 
 The x axis represents the duration of calls made after reaching that checkpoint.
 
-<Tracing - graph hover - tooltip>
+![5-1-Traces Checkpoint](https://user-images.githubusercontent.com/1679939/220921911-769c5da4-0b39-451b-add2-adc4db9fb29f.png)
 
 Hovering the cursor above a vertical row displays a tooltip that shows:
 
@@ -510,23 +509,22 @@ Squares marked with gray edges denote that the calls have an adequate duration. 
 We can also display the overview tab in compact mode, to get a clearer picture of which checkpoint calls are particularly slow. 
 
 
-<Tracing - overview - minimized view>
+![5-2-Traces--Colapsed](https://user-images.githubusercontent.com/1679939/220922020-69e49144-c89a-456c-a7c3-c40dd6570a2e.png)
+
 
 Clicking on a checkpoint call will expand it and reveal the full graph:
 
-
-<Tracing - overview - minimized - click on graph>
+![5-1-Traces Checkpoint](https://user-images.githubusercontent.com/1679939/220922128-45b09148-8a33-4644-8a16-8c2d1b67da2e.png)
 
 Now switch to the **Blocks** tab located on the right of the Overview tab.
 
-
-<Tracing - blocks>
+![5-4-Blocks](https://user-images.githubusercontent.com/1679939/220927232-4ff97a86-7b52-4812-84b8-37a84836dfec.png)
 
 A list of blocks will appear, sorted by their block **height**. This is a number that designates their level on the blockchain, - the genesis block has a block height of 0, and each block built on top of it increments this height by 1. The higher the number, the more recently has the block been published, therefore the blocks are also listed in reverse chronological order (newest at top).
 
 Note that multiple blocks may have the same block height: 
 
-<screenshot - tracing - blocks - multiple blocks at same height>
+![5-5-Blocks SameHeight](https://user-images.githubusercontent.com/1679939/220927332-6e00206a-ac0a-441b-ad23-01639c90085c.png)
 
 In Mina, multiple block producers can get the right to publish the block at the same time. Therefore there can be multiple valid blocks at the same height. This, of course, causes a problem - if there are multiple valid blocks at the same level, the node must figure out which one is the _canonical_ block and will have another block published on top of it, thus becoming a continuation of the Mina blockchain.
 
@@ -543,7 +541,7 @@ See the diagram above for a visual explanation. While there are two blocks at le
 
 In the same window, on the right side of the screen, the **source** of each block and its **status** is displayed. 
 
-<Tracing - blocks - source and status>
+![5-6-Source Status](https://user-images.githubusercontent.com/1679939/220927527-5ee86979-5b90-4c0e-a2ac-f1d3527e8e9a.png)
 
 
 A block may have various sources:
@@ -561,7 +559,8 @@ Status can either be determined as a **success**, a **failure** or **pending**.
 
 Clicking on a block will expand a window on the right side of the screen with additional details:
 
-<Tracing - blocks - block details>
+![5-7-Blocks Detail](https://user-images.githubusercontent.com/1679939/220927922-6ad14d5d-4ef1-4d28-bb31-55f67cf9b548.png)
+  
 
 At the top of the window, the title describes the source of the block (External), its number and its status (Success).
 
@@ -576,8 +575,7 @@ We want to be able to benchmark test the Mina network in order to measure its ca
 
 ### Wallets
 
-
-<Screenshot - Benchmarks - default screen>
+![6-0-Benchmark](https://user-images.githubusercontent.com/1679939/220928212-fe992cc5-53e0-46b7-854a-04c337a368c6.png)
 
 The benchmarks page shows a list of testnet wallets from which we send transactions to the node. You can send any number of transactions, though the maximum number of transactions that can be sent at a time is based on how many wallets are available. For instance, if you want to send 300 transactions, and 200 wallets are available, you must press the **Send** button twice.
 
@@ -587,8 +585,7 @@ There are two options for where to send transactions from
 
 * From **Random** **senders**, which are chosen randomly from wallets from the list (1 wallet can be only once a sender in a batch sending process)
 
-<screenshot - benchmarks - send from specific sender>
-
+![6-1-BenchmarkSender](https://user-images.githubusercontent.com/1679939/220928410-84fe2df0-7d24-4875-8fc3-9fa940eb4cea.png)
 
 * All sent from the same **Specific sender** wallet, which can be chosen from a dropdown menu.
 
