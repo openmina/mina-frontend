@@ -1,5 +1,26 @@
 # The Metrics & Tracing Interface
 
+# Table of Contents
+1. [Introduction](##Introduction)  
+2. [Dashboard](##Dashboard)
+3. [Explorer](##Explorer)
+4. [Resources](##Resources)
+5. [Network](##Network)
+6. [Tracing](##Tracing)
+7. [Benchmarks](##Benchmarks)
+
+
+
+## Introduction
+
+We want to take a more comprehensive approach to improving performance. In addition to increasing throughput and reducing block production latencies, we want to also speed up SNARK work, increase the efficiency of the SNARK pool and we want to speed up the rate at which the Mina network is developed.
+
+First, we need to understand how the Mina network operates. We do this by measuring all relevant processes and detecting those that are particularly slow or problematic, which gives us a clear picture of which areas of code are in most need of optimization. 
+
+We achieve this by tracing Mina nodes. Tracing is a way to track the execution of a program and collect data about it, such as the values of variables at different points in time, the flow of control, and the order of function calls. The purpose of tracing is to help developers understand how a program is executing, to identify and debug issues, or to collect performance data.
+
+Tracing helps us in the optimization of Mina nodes and the Mina network as a whole, and it also allows other developers to detect problems faster and easier. Tracing doesn’t limit itself to improving performance – it also points to problems in correctness, and allows us to easily check whether everything is working as intended.
+
 To gain a better understanding of the various processes happening in a Mina node and the Mina network as a whole, we have developed the Open Mina Metrics and Tracing Interface. It is a browser-based interface that visualizes all of the data we have gained by tracing Mina nodes and their communication across the Mina network. 
 
 Let’s take a closer look at the Interface:
