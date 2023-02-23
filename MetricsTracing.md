@@ -514,7 +514,7 @@ We can also display the overview tab in compact mode, to get a clearer picture o
 
 Clicking on a checkpoint call will expand it and reveal the full graph:
 
-![5-1-Traces Checkpoint](https://user-images.githubusercontent.com/1679939/220922128-45b09148-8a33-4644-8a16-8c2d1b67da2e.png)
+![5-3-TracesCollapsed Checkpoint](https://user-images.githubusercontent.com/1679939/220932820-9cc78c71-8669-4392-88c6-9dc1164cf32a.png)
 
 Now switch to the **Blocks** tab located on the right of the Overview tab.
 
