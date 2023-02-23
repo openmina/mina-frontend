@@ -9,7 +9,9 @@ Open up the [Open Mina website](http://1.k8.openmina.com:31308/dashboard/nodes)
 
 ## Dashboard
 
-We want to first take a look at all of the nodes on the Mina network to gain a high-level overview of their latencies and block application times. Please note that this shows nodes on the Mina testnet.
+We want to first take a look at all of the nodes on the Mina network to gain a high-level overview of their latencies and block application times so that we can easily detect if any nodes are particularly slow, and then examine the reasons behind their low performance. 
+
+Please note that this shows nodes on the Mina testnet.
 
 ![1-0-Dashboard](https://user-images.githubusercontent.com/1679939/220898792-967416a7-3bfc-427c-95c6-f99a6b2b0553.png)
 
