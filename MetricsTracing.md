@@ -7,26 +7,40 @@
 2. [Dashboard](#Dashboard)
     2.1 [Nodes](#Nodes)
 3. [Explorer](#Explorer)
+   
     3.1 [Blocks](#Blocks)
+    
     3.2 [Transactions](#Transactions)
+    
     3.3 [Snark pool](#Snark pool)
+    
     3.4 [Snark traces](#Snark traces)
+    
     3.5 [Scan state](#Scan state)
 4. [Resources](#Resources)
     4.1 [CPU](#CPU)
+    
     4.2 [Memory](#Memory)
+    
     4.3 [Storage IO](#Storage IO)
+    
     4.4 [Network IO](#Network IO)
   
 5. [Network](#Network)
     5.1 [Messages](#Messages)
+    
     5.2 [Connections](#Connections)
+    
     5.3 [Blocks](#Blocks)
+    
     5.4 [Blocks IPC](#Blocks IPC)
    
 6. [Tracing](#Tracing)
+    
     6.1 [Overview](#Overview)
+
 7. [Benchmarks](#Benchmarks)
+
     7.1 [Wallets](#Wallets)
 
 
