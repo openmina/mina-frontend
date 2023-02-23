@@ -3,6 +3,7 @@
 # Table of Contents
 1. [Introduction](#Introduction)  
 2. [Dashboard](#Dashboard)
+2.2[Nodes](#Nodes)
 3. [Explorer](#Explorer)
 4. [Resources](#Resources)
 5. [Network](#Network)
