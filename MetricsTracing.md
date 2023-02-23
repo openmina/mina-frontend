@@ -1,4 +1,4 @@
-# The Open Mina Metrics & Tracing Interface
+# The Metrics & Tracing Interface
 
 To gain a better understanding of the various processes happening in a Mina node and the Mina network as a whole, we have developed the Open Mina Metrics and Tracing Interface. It is a browser-based interface that visualizes all of the data we have gained by tracing Mina nodes and their communication across the Mina network. 
 
