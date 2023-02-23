@@ -11,9 +11,7 @@ Open up the [Open Mina website](http://1.k8.openmina.com:31308/dashboard/nodes)
 
 We want to first take a look at all of the nodes on the Mina network to gain a high-level overview of their latencies and block application times. Please note that this shows nodes on the Mina testnet.
 
-
-<screenshot dashboard - nodes>
-
+![1-0-Dashboard](https://user-images.githubusercontent.com/1679939/220898792-967416a7-3bfc-427c-95c6-f99a6b2b0553.png)
 
 ### Nodes 
 
@@ -28,15 +26,14 @@ Showing latency from fastest shows the time when the block producer started prod
 Showing latency from second fastest displays the time the block was already produced and reached the peer. This shows pure network latency.
 
 
-
-<screenshot dashboard - nodes - sidebar>
-
+![1-1-Dashboard Sidebar](https://user-images.githubusercontent.com/1679939/220898968-85c714b4-9049-41c7-96be-ee2e93659038.png)
 
 
 Click on a node to open up a window with a list of checkpoints, as seen above. A checkpoint is a term we use to describe a place in the code (or the process which we are tracing) where we mark that we have reached that location.
 
 
-<screenshot - dashboard - nodes - sidebar with checkpoints>
+![1-3-Dashboard Sidebar FocusedCheckpoints](https://user-images.githubusercontent.com/1679939/220899794-b099e2eb-61b0-4736-8dad-056fc41635d8.png)
+
 
 At the top is the block hash (**3NKUYE...29CUrL**)
 
@@ -73,11 +70,11 @@ For block 7881 on `berkeleynet`, which includes 76 completed works, here are the
 **Unoptimized node (8.86s) / Block Total (12.03s)**
 
 
-<screenshot - unoptimized node>
+TBD <screenshot - unoptimized node>
 
 **Optimized node (0.015s) / Block Total (1.5s)**
 
-<screenshot - optimized node>
+TBD <screenshot - optimized node>
 
 By tracing these checkpoints, not only are we informed of particularly slow processes, but we can also confirm whether our implemented changes have resulted in better performance.
 
@@ -88,9 +85,8 @@ Now let’s move onto the **Explorer** section, which is located immediately bel
 
 The Explorer page enables you to access blockchain data recorded in the form of blocks, transactions, the SNARK pool, scan state and SNARK traces. It provides a view into the current and past state of the blockchain and its focus is the blockchain itself
 
-<screenshot - Explorer - Blocks>
-
-
+![2-0-Explorer Blocks](https://user-images.githubusercontent.com/1679939/220905530-87957444-a1c4-4582-9084-fef289b52b98.png)
+  
 ### Blocks
 
 This is the Mina block explorer, and the first tab displays a list of blocks sorted by the time of their publication (you can click on the **Date** column to switch between ascending and descending order).
@@ -106,8 +102,7 @@ Next, click on the **Transactions** tab.
 
 If you have created transactions via the **Benchmarks** page of the Dashboard, they will show up here. 
 
-
-<screenshot - explorer - transactions>
+![2-1-Explorer Transactions--Empty Filled](https://user-images.githubusercontent.com/1679939/220905605-8e65ba43-66ca-40dc-be7b-e01a993a6c8f.png)
 
 Transactions are sorted by their **Transaction ID**. You can also see where they are arriving **From** as well as the destination **To** which they are heading, the **Amount** of funds in a transaction, its **Fee**, **[Nonce](https://docs.minaprotocol.com/glossary#nonce)**, the **Memo** (note) associated with it and its **Status**.
 
@@ -118,8 +113,7 @@ Next, click on the **Snark Pool** tab.
 
 On this tab, we can inspect the contents of the internal state of the node, specifically the node's SNARK pool.
 
-
-<screenshot - Explorer - Snark pool>
+![2-2-SnarkPool](https://user-images.githubusercontent.com/1679939/220905659-ef65b346-eecb-49a0-b5ae-34951a029a66.png)
 
 The snark pool contains work completed by snark workers in the pool of the current node. Snark workers compress transactions via SNARKs, receiving compensation in MINA for their effort.
 
@@ -138,9 +132,7 @@ Next, we look at the **Scan State** tab
 
 Transactions in Mina require SNARK proofs in order to be validated. We want to take a closer look at this process, which is why we’ve created a visual representation of the _[scan state](https://docs.minaprotocol.com/node-operators/scan-state)_, a data structure that queues transactions requiring transaction SNARK proofs.
 
-<screenshot - Explorer - Scan state>
-
-
+![2-3-ScanState](https://user-images.githubusercontent.com/1679939/220905867-6a7c4e74-5b54-4647-8bdd-ee9609a56467.png)
 
 At each block height, there are operations requiring proofs such as transactions, snarks, user commands, fee transfers and so on. Scroll through the various block heights with the use of the buttons at the top of the screen, then scroll down to view the individual trees of operations at that height.
 
@@ -161,15 +153,13 @@ Select **Highlight snarks** to highlight all proofs (SNARK jobs) that are waitin
 
 It is assumed that SNARKs, due to their performance demands, present a performance bottleneck. In order to understand how we can increase throughput, we had to understand how exactly SNARKs are generated, which is why we began tracing them. 
 
-<screenshot - Explorer - Snark traces>
-
-
-
+![2-4-0-SnarkTraces](https://user-images.githubusercontent.com/1679939/220906352-5fe5909b-a13f-484a-a9f3-fe57aa15913e.png)
+  
 Here is a list of Snark traces that were produced within a certain time range. By default this shows **All** Snark traces made within the highlighted time range. You can click on the **Select** button to open up a drop-down list of snarkers (SNARK workers), selecting one or multiple  snarkers will filter out the list to only show snark jobs from them. 
 
 The **Time range** can be customized by clicking on the **Select** button at the top of the list. If there is already a time range selected, click on the **time range** to adjust it.
 
-<Screenshot - Explorer - Snark Traces main>
+![2-4-1-SnarkTraces--Time](https://user-images.githubusercontent.com/1679939/220906754-c8e1cff5-6780-4388-b79c-0920bd838e3e.png)
 
 You can either choose to display recent Snark Traces (such as the past 1 minute, 5 minutes and so on) or from a specific time range that you can enter.
 
@@ -193,9 +183,7 @@ A snark job has the following values:
 
 Clicking on a Snark job will open up a sidebar on the left with additional **Job Details**:
 
-
-<Screenshot - snark traces - job details>
-
+![2-4-2-SnarkTraces--Sidebar](https://user-images.githubusercontent.com/1679939/220906812-fc4734c4-db93-46d6-9738-501a3f6f6add.png)
 
 To choose a **Time range**, click on the **Select** button, where you can either choose to display recent Snark Traces (such as the past 1 minute, 5 minutes and so on) or from a specific time range that you can enter.
 
