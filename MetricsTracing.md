@@ -129,8 +129,8 @@ We then tested the optimization by running two servers extended with internal tr
 
 For block 7881 on `berkeleynet`, which includes 76 completed works, here are the times for the unpatched and patched nodes:
 
-**Unoptimized node (8.86s) / Block Total (12.03s)**
-**Optimized node (0.015s) / Block Total (1.5s)**
+**Unoptimized node (8.86s) / Block Total (12.03s)** – **Optimized node (0.015s) / Block Total (1.5s)**
+
 ![1-4-Patched UnparchedCompare](https://user-images.githubusercontent.com/1679939/221126116-0312a086-e4b7-4e80-9166-fc03c62f683c.png)
 
 
@@ -583,9 +583,7 @@ Squares marked with gray edges denote that the calls have an adequate duration. 
 
 We can also display the overview tab in compact mode, to get a clearer picture of which checkpoint calls are particularly slow. 
 
-
-![5-2-Traces--Colapsed](https://user-images.githubusercontent.com/1679939/220922020-69e49144-c89a-456c-a7c3-c40dd6570a2e.png)
-
+![5-2-Traces--Colapsed](https://user-images.githubusercontent.com/1679939/221128005-e3eac7a3-4eab-4a1b-bb98-a45fdf52267e.png)
 
 Clicking on a checkpoint call will expand it and reveal the full graph:
 
@@ -655,7 +653,7 @@ The benchmarks page shows a list of testnet wallets from which we send transacti
 
 There are two options for where to send transactions from
 
-<Screenshot - Benchmarks - random sender>
+![6-2-BenchmarkRandom](https://user-images.githubusercontent.com/1679939/221127717-93102e25-cabc-42f3-96d4-80df6d6f78d9.png)
 
 * From **Random** **senders**, which are chosen randomly from wallets from the list (1 wallet can be only once a sender in a batch sending process)
 
