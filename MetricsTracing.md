@@ -409,8 +409,6 @@ You can also click on a filter category (in this case, `/noise`), which may cont
 
 There is also the option of combining multiple filters from various categories:
 
-<screenshot - network - messages - multiple filters selected>
-
 Below the filters is a list of network **Messages**. They are sorted by their message **ID** and **datetime**. You can also see their **Remote Address**, **Direction** (whether they are incoming or outgoing), their **Size**, their **Stream Kind** and **Message Kind**.
 
 The most recent messages continuously appear at the bottom of the list as long as the green **Live** button on the bottom of the screen is selected. Click on **Pause** to stop the continuous addition of new messages. There are buttons for going to the top of the list as well as for browsing back and forth between pages.
