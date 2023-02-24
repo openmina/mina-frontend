@@ -4,50 +4,28 @@
 ## Table of Contents
 
 1. [Introduction](#Introduction)  
-2. [Dashboard](#Dashboard)
-   
-    2.1 [Nodes](#Nodes)
-
-3. [Explorer](#Explorer)
-   
-    3.1 [Blocks](#Blocks)
-    
-    3.2 [Transactions](#Transactions)
-    
-    3.3 [Snark pool](#Snark-pool)
-    
-    3.4 [Snark traces](#Snark-traces)
-    
-    3.5 [Scan state](#Scan-state)
-
-4. [Resources](#Resources)
-
-    4.1 [CPU](#CPU)
-    
-    4.2 [Memory](#Memory)
-    
-    4.3 [Storage IO](#Storage-IO)
-    
-    4.4 [Network IO](#Network-IO)
-  
-5. [Network](#Network)
- 
-    5.1 [Messages](#Messages)
-    
-    5.2 [Connections](#Connections)
-    
-    5.3 [Blocks](#Blocks)
-    
-    5.4 [Blocks IPC](#Blocks-IPC)
-   
-6. [Tracing](#Tracing)
-    
-    6.1 [Overview](#Overview)
-
-7. [Benchmarks](#Benchmarks)
-
-    7.1 [Wallets](#Wallets)
-
+2. [Dashboard](#Dashboard)  
+    2.1 [Nodes](#Nodes)  
+3. [Explorer](#Explorer)  
+3.1 [Blocks](#Blocks)  
+3.2 [Transactions](#Transactions)  
+3.3 [Snark pool](#Snark-pool)  
+3.4 [Snark traces](#Snark-traces)  
+3.5 [Scan state](#Scan-state)  
+4. [Resources](#Resources)  
+4.1 [CPU](#CPU)  
+4.2 [Memory](#Memory)  
+4.3 [Storage IO](#Storage-IO)  
+4.4 [Network IO](#Network-IO)  
+5. [Network](#Network)  
+5.1 [Messages](#Messages)  
+5.2 [Connections](#Connections)  
+5.3 [Blocks](#Blocks)  
+5.4 [Blocks IPC](#Blocks-IPC)  
+6. [Tracing](#Tracing)  
+6.1 [Overview](#Overview)  
+7. [Benchmarks](#Benchmarks)  
+7.1 [Wallets](#Wallets)  
 
 ## Introduction
 
@@ -64,7 +42,6 @@ To gain a better understanding of the various processes happening in a Mina node
 Let’s take a closer look at the Interface:
 
 Open up the [Open Mina website](http://1.k8.openmina.com:31308/dashboard/nodes)
-
 
 ## Dashboard
 
@@ -86,16 +63,11 @@ Showing latency from fastest shows the time when the block producer started prod
 
 Showing latency from second fastest displays the time the block was already produced and reached the peer. This shows pure network latency.
 
-
 ![1-1-Dashboard Sidebar](https://user-images.githubusercontent.com/1679939/220898968-85c714b4-9049-41c7-96be-ee2e93659038.png)
-
 
 Click on a node to open up a window with a list of checkpoints, as seen above. A checkpoint is a term we use to describe a place in the code (or the process which we are tracing) where we mark that we have reached that location.
 
 ![1-3-Dashboard Sidebar FocusedCheckpoints](https://user-images.githubusercontent.com/1679939/220934009-5b69e242-b3e7-46a7-801d-1026fbb4673b.png)
-
-
-
 
 At the top is the block hash (**3NKUYE...29CUrL**)
 
@@ -104,9 +76,6 @@ Immediately below the name are the options to either **Expand All** checkpoints,
 Checkpoints are sorted chronologically from top to bottom, meaning that each action is performed after the action above it. 
 
 From left to right, each checkpoint describes:
-
-
-
 * The name of the process. 
 * The time at which the process started. This time is local to the user (the person viewing the tracing UI).
 * How long it took to complete the process. This value is color-coded to reflect whether the process took longer than expected:
@@ -133,17 +102,13 @@ For block 7881 on `berkeleynet`, which includes 76 completed works, here are the
 
 ![1-4-Patched UnparchedCompare](https://user-images.githubusercontent.com/1679939/221126116-0312a086-e4b7-4e80-9166-fc03c62f683c.png)
 
-
-
 By tracing these checkpoints, not only are we informed of particularly slow processes, but we can also confirm whether our implemented changes have resulted in better performance.
 
 Now let’s move onto the **Explorer** section, which is located immediately below the Dashboard.
 
-
 ## Explorer
 
 We need to have a view of the blockchain’s past and present, not only for debugging purposes, but also to help us understand what happened in its history, which also gives us a clearer picture of what to optimize.
-
 
 The Explorer page enables you to access blockchain data recorded in the form of blocks, transactions, the SNARK pool, scan state and SNARK traces. It provides a view into the current and past state of the blockchain and its focus is the blockchain itself
 
@@ -174,7 +139,9 @@ Next, click on the **Snark Pool** tab.
 
 ### Snark pool
 
+<!---
 Why (I actually asked someone about this but they said its just a way to view the internal state of the node/the Snark pool)
+-->
 
 On this tab, we can inspect the contents of the internal state of the node, specifically the node's SNARK pool.
 
@@ -182,13 +149,10 @@ On this tab, we can inspect the contents of the internal state of the node, spec
 
 The snark pool contains work completed by snark workers in the pool of the current node. Snark workers compress transactions via SNARKs, receiving compensation in MINA for their effort.
 
-**Snark jobs** - units of work performed by SNARK workers
-
-**Prover** - the identity of the node acting as a snark prover
-
-**Fee** - the compensation received by the snark worker.
-
-**Work Ids** - a unique number identifying the snark job. Most snark jobs are bundled in pairs, which is why they have two work ids.
+* **Snark jobs** - units of work performed by SNARK workers
+* **Prover** - the identity of the node acting as a snark prover
+* **Fee** - the compensation received by the snark worker.
+* **Work Ids** - a unique number identifying the snark job. Most snark jobs are bundled in pairs, which is why they have two work ids.
 
 Next, we look at the **Scan State** tab
 
@@ -204,20 +168,15 @@ We’ve created a visual representation of the _[scan state](https://docs.minapr
 At each block height, there are operations requiring proofs such as transactions, snarks, user commands, fee transfers and so on. Scroll through the various block heights with the use of the buttons at the top of the screen, then scroll down to view the individual trees of operations at that height.
 
 Each operation is represented by one of the following possible values:
-
-**Todo** - A request to generate this operation’s SNARK proof has been made, but it has yet to be added.
-
-**Done** - means the operation already has a SNARK proof. The operation has been waiting in the SNARK pool and it was selected by a block producer. 
-
-**Empty** - A request to generate this operation’s SNARK proof hasn’t been made.
+* **Todo** - A request to generate this operation’s SNARK proof has been made, but it has yet to be added.
+* **Done** - means the operation already has a SNARK proof. The operation has been waiting in the SNARK pool and it was selected by a block producer. 
+* **Empty** - A request to generate this operation’s SNARK proof hasn’t been made.
 
 Click on **Center trees** to move the horizontal scrolling bar to the center of the tree.
 
 Select **Highlight snarks** to highlight all proofs (SNARK jobs) that are waiting to be selected by block producers. Click on **Hide snarks** to remove these highlights.
 
-
 ### Snark Traces
-
 
 SNARKs have a certain life cycle, and we want to have a close look at their various stages to detect possible problems at any stage of this cycle. This helps us understand how we can optimize this process. For this purpose, we began tracing SNARKs.
 
@@ -234,20 +193,13 @@ You can either choose to display recent Snark Traces (such as the past 1 minute,
 In the upper right corner of the screen is the total number of snark **workers **as well as the total number of snark **jobs**.
 
 A snark job has the following values:
-
-**Worker** - The ID of the Snark worker that created this snark job.
-
-**Work IDs** - a unique number identifying the snark job. Most snark jobs are bundled in pairs, which is why they have two work ids.
-
-**Kind** - The latest state for this job.
-
-**Job Init** - When snark worker initiated request to get the job from the node.
-
-**Job Received** - The time it took to receive a job after it was requested from the node.
-
-**Proof Generated** - How long it took for the Snark proof to be generated after **Job Received**
-
-**Proof Submitted** - How long it took to submit the Snark proof  after **Proof Generated**.
+* **Worker** - The ID of the Snark worker that created this snark job.
+* **Work IDs** - a unique number identifying the snark job. Most snark jobs are bundled in pairs, which is why they have two work ids.
+* **Kind** - The latest state for this job.
+* **Job Init** - When snark worker initiated request to get the job from the node.
+* **Job Received** - The time it took to receive a job after it was requested from the node.
+* **Proof Generated** - How long it took for the Snark proof to be generated after **Job Received**
+* **Proof Submitted** - How long it took to submit the Snark proof  after **Proof Generated**.
 
 Clicking on a Snark job will open up a sidebar on the left with additional **Job Details**:
 
@@ -280,18 +232,10 @@ The number and labels of the subprocesses can change as the node launches variou
 From top to bottom, first, we see a graph of the node’s **CPU** usage. It describes the percentage of the CPU that was utilized by the processes over a period of time. 
 
 Hovering over the timeline will bring up a graph with the following values:
-
-**total** - total CPU usage, the sum of the main process (node) and all of its subprocesses.
-
-**node** - CPU usage of the main process.
-
-**coda-libp2p_hel-1806** - CPU usage of the process that handles P2P communication
-
-**exe-1778** - CPU usage by a parallel worker launched by the main node process
-
-
-
-
+* **total** - total CPU usage, the sum of the main process (node) and all of its subprocesses.
+* **node** - CPU usage of the main process.
+* **coda-libp2p_hel-1806** - CPU usage of the process that handles P2P communication
+* **exe-1778** - CPU usage by a parallel worker launched by the main node process
 
 Click on a point in the graph to show how much of that resource the various processes used, in percentages, at that point in time. 
 
@@ -301,24 +245,18 @@ Clicking on a process, for instance on `coda-libp2p_hel-155`, will open up a det
 
 You can also open up this point in time in the **Network - Messages** and **Explorer - Snark traces** tabs. Doing will open up a new tab in your browser.
 
-
 #### Memory
 
 Describes how much physical memory (RAM) each process is using at given times. 
 
 ![3-1-Resources--Memory](https://user-images.githubusercontent.com/1679939/220909230-10c10ca6-bbbe-4ce8-8259-37be0ce993d1.png)
 
-**total** - Total memory usage
-
-**node** - Memory usage of the main process 
-
-**coda-libp2p_hel-1806** - Memory usage of the process that handles P2P communication
-
-**exe-1778** - Memory usage by a parallel worker launched by the main node process
-
-**exe-1789** - Memory usage by a parallel worker launched by the main node process
-
-**exe-1800** - Memory usage by a parallel worker launched by the main node process
+* **total** - Total memory usage
+* **node** - Memory usage of the main process 
+* **coda-libp2p_hel-1806** - Memory usage of the process that handles P2P communication
+* **exe-1778** - Memory usage by a parallel worker launched by the main node process
+* **exe-1789** - Memory usage by a parallel worker launched by the main node process
+* **exe-1800** - Memory usage by a parallel worker launched by the main node process
 
 
 #### Storage IO
@@ -327,21 +265,14 @@ Describes how much physical memory (RAM) each process is using at given times.
 
 Displays the disk read and written bandwidth over a period of time. In other words, how much data was read/written from/to the disk (HDD/SSD) per second over a period of time. 
 
-**total read** - Total disk read bandwidth
-
-**total write** - Total disk written bandwidth
-
-**node read** - Total node process read bandwidth
-
-**node write** - Total node process write bandwidth
-
-**coda-libp2p_hel-1806** **read** - read bandwidth of the process that handles P2P communication
-
-**coda-libp2p_hel-1806** **write** - write bandwidth of the process that handles P2P communication
-
-**exe-1778 read** - read bandwidth of a parallel worker launched by the main node process
-
-**exe-1778 write** - write bandwidth of a parallel worker launched by the main node process
+* **total read** - Total disk read bandwidth
+* **total write** - Total disk written bandwidth
+* **node read** - Total node process read bandwidth
+* **node write** - Total node process write bandwidth
+* **coda-libp2p_hel-1806** **read** - read bandwidth of the process that handles P2P communication
+* **coda-libp2p_hel-1806** **write** - write bandwidth of the process that handles P2P communication
+* **exe-1778 read** - read bandwidth of a parallel worker launched by the main node process
+* **exe-1778 write** - write bandwidth of a parallel worker launched by the main node process
 
 
 #### **Network IO**.
@@ -350,25 +281,17 @@ Displays the network sent and received bandwidth over a period of time. In other
   
 ![3-3-Resources--NetworkIO](https://user-images.githubusercontent.com/1679939/220909309-91d322e0-e7b4-46ce-8603-cc7b0fe142c8.png)
 
-**total received** - total received bandwidth
-
-**total sent** - total sent bandwidth
-
-**node received** - Total bandwidth received by the node process
-
-**node sent** - Total bandwidth sent by the node process
-
-**coda-libp2p_hel-1806 received** - bandwidth received by the process that handles P2P communication
-
-**coda-libp2p_hel-1806 sent** - bandwidth sent by the process that handles P2P communication
-
-**exe-1778 received** - bandwidth received by a parallel worker launched by the main node process
-
-**exe-1778 sent** - bandwidth sent by a parallel worker launched by the main node process
+* **total received** - total received bandwidth
+* **total sent** - total sent bandwidth
+* **node received** - Total bandwidth received by the node process
+* **node sent** - Total bandwidth sent by the node process
+* **coda-libp2p_hel-1806 received** - bandwidth received by the process that handles P2P communication
+* **coda-libp2p_hel-1806 sent** - bandwidth sent by the process that handles P2P communication
+* **exe-1778 received** - bandwidth received by a parallel worker launched by the main node process
+* **exe-1778 sent** - bandwidth sent by a parallel worker launched by the main node process
 
 
 ## Network
-
 
 The P2P network is the key component of the Mina blockchain. It is used for communication between nodes, which, among other things, also includes block propagation and the updating of the blockchain state. We want to have a close look at the messages sent by nodes to see if there are inefficiencies in communication so that we know where to optimize.
 
@@ -377,7 +300,6 @@ This is an overview of the messages sent by the node, other peer nodes connectin
 ![4-0-Network--Overview](https://user-images.githubusercontent.com/1679939/220934227-a531fd5e-26d5-4e4a-a016-2b55f4c26669.png)
 
 The Network page has the following tabs: 
-
 * **Messages** sent and received across the P2P network by this node 
 * **Connections** with peers (incoming and outgoing)
 * **Blocks** propagated across the P2P network
@@ -386,28 +308,21 @@ The Network page has the following tabs:
 
 ### Messages
 
-
 We want to have a view of all messages sent across the Mina P2P network to see if there are any outliers, either in particular messages or when we filter through various layers. This shows us which types of messages are in need of optimization.
 
 The **Messages** tab shows a list of all messages sent across the P2P network.
 
-
-Click on the Filters icon:
-
-Various filters for P2P messages will be displayed:
+Click on the Filters icon. Various filters for P2P messages will be displayed:
 
 ![4-1-0-Network--Messages Filters](https://user-images.githubusercontent.com/1679939/220913940-3d463b63-8af2-40b1-bc8b-150d2a2daa99.png)
 
-
-Hovering over each filter category or filter will display a tooltip with additional information.
-
-Clicking on a filter will filter out all other messages, displaying only those that are related to that category:
+Hovering over each filter category or filter will display a tooltip with additional information. Clicking on a filter will filter out all other messages, displaying only those that are related to that category.
 
 You can also click on a filter category (in this case, `/noise`), which may contain multiple filters:
 
   ![4-1-0-0-Network--Messages Filters Noise](https://user-images.githubusercontent.com/1679939/220934310-f85860cb-902f-4568-ace8-de43bc58b262.png)
 
-There is also the option of combining multiple filters from various categories:
+There is also the option of combining multiple filters from various categories.
 
 Below the filters is a list of network **Messages**. They are sorted by their message **ID** and **datetime**. You can also see their **Remote Address**, **Direction** (whether they are incoming or outgoing), their **Size**, their **Stream Kind** and **Message Kind**.
 
@@ -428,8 +343,6 @@ By default, the Info window will first display the contents of the **Message**.
 
 Click on **Expand all** to show full details of all values, and **Collapse all** to minimize them. You can **Copy** the information into your clipboard or **Save** it, either as a **JSON** file or as a **Bin**. You can also click on **Copy link** to copy the a web link for this message to your clipboard.
 
-
-
 **Message hex**
 
 This is the Hex value of the message. 
@@ -444,9 +357,7 @@ Same as with the Message Hex, you can **Copy** the information into your clipboa
 
 Now let’s move onto the next tab in the Network page - **Connections**
 
-
 ### Connections
-
 
 Connections made across the P2P network have to be encrypted and decrypted. We want to see whether these processes have been completed, and if not, to see which connections failed to do so.
 
@@ -454,42 +365,28 @@ For this purpose, we’ve created a list of connections to other peers in the Mi
 
 ![4-2-0-Connection](https://user-images.githubusercontent.com/1679939/220934557-1dfa42d2-9517-4d26-9e6b-5c0806d6635f.png)
 
-**Datetime** - when the connection was made. Click on the datetime to open up a window with additional Connection details.
-
-**Remote Address** - the address of the peer. Clicking on the address will take you back to the Messages tab and filter out all messages from that peer.
-
-**PID** - the process id given to applications by the operating system. It will most likely remain the same for all messages while the node is running, but it will change if the node crashes and is rebooted. 
-
-**FD** - the messages’s TCP socket ID (a file descriptor, but it is used for items other than files). The fd is valid inside the process, another process may also have the same fd, but it is different socket. Similarly to pid, it is subject to change when the connection is closed or fails.
-
-**Incoming** - This value informs us of who initiated the communication, if it is the selected node in the top right corner, it will be marked as _outgoing_. If it is a different node, then it is marked as _incoming_.
-
-**Decrypted In** - the percentage of messages coming into the node that the debugger was able to decrypt
-
-**Decrypted Out** - the percentage of messages coming from the node that the debugger was able to decrypt
+* **Datetime** - when the connection was made. Click on the datetime to open up a window with additional Connection details.
+* **Remote Address** - the address of the peer. Clicking on the address will take you back to the Messages tab and filter out all messages from that peer.
+* **PID** - the process id given to applications by the operating system. It will most likely remain the same for all messages while the node is running, but it will change if the node crashes and is rebooted. 
+* **FD** - the messages’s TCP socket ID (a file descriptor, but it is used for items other than files). The fd is valid inside the process, another process may also have the same fd, but it is different socket. Similarly to pid, it is subject to change when the connection is closed or fails.
+* **Incoming** - This value informs us of who initiated the communication, if it is the selected node in the top right corner, it will be marked as _outgoing_. If it is a different node, then it is marked as _incoming_.
+* **Decrypted In** - the percentage of messages coming into the node that the debugger was able to decrypt
+* **Decrypted Out** - the percentage of messages coming from the node that the debugger was able to decrypt
 
 Click on a connection’s datetime to open up the **Connection details** window on the right side of your screen:
 
 ![4-2-1-Connection Sidebar](https://user-images.githubusercontent.com/1679939/220934682-4c260a1f-44d5-4781-af6f-d7fe9215dca9.png)
 
-**connectionId** - the ID number of the connection
-
-**date** - the time and date when the connection was made
-
-**incoming** - whether it is an incoming or outgoing connection
-
-**addr** - the remote address from where the connection is coming
-
-**pid** - process ID, explained above.
-
-**fd** - TCP socket ID, explained above.
-
-**Stats_in** - accumulated statistics about incoming traffic
-
-**Stats_out** - accumulated statistic about outgoing traffic
+* **connectionId** - the ID number of the connection
+* **date** - the time and date when the connection was made
+* **incoming** - whether it is an incoming or outgoing connection
+* **addr** - the remote address from where the connection is coming
+* **pid** - process ID, explained above.
+* **fd** - TCP socket ID, explained above.
+* **Stats_in** - accumulated statistics about incoming traffic
+* **Stats_out** - accumulated statistic about outgoing traffic
 
 Click on **Expand all** to show full details of all values, and **Collapse all** to minimize them. You can **Copy** the information into your clipboard or **Save** it as a JSON file.
-
 
 ### Blocks
 
@@ -507,35 +404,24 @@ Click on the icon on the right edge of the screen to open up a window titled **D
 
 This histogram lets you see how much variation there is between block send times, what is the range and what are the most common times.
 
-
 ### Blocks IPC
 
 A Mina node communicates over the network with other peers as well as inter-process commands from Mina daemon on the same device. We want to track the block as the local node is creating it or as the local node first sees it so that we can detect any problems during this communication. 
 
 For that purpose, we’ve created the Block IPC tab, which displays inter-process communication (IPC). 
 
-
 ![4-4-0-Blocks IPC](https://user-images.githubusercontent.com/1679939/220934862-bef4ad43-a9ec-428a-b3ef-ecc1fea7c760.png)
 
-**Height** - the block height at which the candidate blocks are attempting to be published. 
-
-**Block candidates** - blocks that have been created as candidate blocks for that block height, but have yet to be selected as canonical.
-
-**Datetime** - The time and date when they were added
-
-**Message Hash** - A hash calculated for each message that helps detect duplicates.
-
-**Height** - the height of the blocks
-
-**Node Address** - address of the node that the debugger is attached to.
-
-**Peer Address** - if this value is `received_gossip`, it means the peer sent us the message.  If it is `publish_gossip`, then this field is absent, because it was published to all peers.
-
-**Type** - the type of event, either `received_gossip` or `publish_gossip`.
-
-**Message Type** - The three possible messages Mina can broadcast are `new_state`, `snark_pool_diff` or `transaction_pool_diff`.
-
-**Block Latency** - the time between the creation of this block and when this block has been seen by the peer
+* **Height** - the block height at which the candidate blocks are attempting to be published. 
+* **Block candidates** - blocks that have been created as candidate blocks for that block height, but have yet to be selected as canonical.
+* **Datetime** - The time and date when they were added
+* **Message Hash** - A hash calculated for each message that helps detect duplicates.
+* **Height** - the height of the blocks
+* **Node Address** - address of the node that the debugger is attached to.
+* **Peer Address** - if this value is `received_gossip`, it means the peer sent us the message.  If it is `publish_gossip`, then this field is absent, because it was published to all peers.
+* **Type** - the type of event, either `received_gossip` or `publish_gossip`.
+* **Message Type** - The three possible messages Mina can broadcast are `new_state`, `snark_pool_diff` or `transaction_pool_diff`.
+* **Block Latency** - the time between the creation of this block and when this block has been seen by the peer
 
 Click on the icon on the right edge of the screen to open up a window titled **Distributions** that displays a graph with block count on the y-axis and Block Latency values on the x-axis.
 
@@ -544,10 +430,7 @@ Click on the icon on the right edge of the screen to open up a window titled **D
 
 We want to know which processes in Mina are particularly slow so that we can then focus our optimization efforts on those areas. For that purpose, we’ve created the Tracing page, an overview of calls made from various checkpoints within the Mina code that shows us which processes have high latencies. 
 
-<Screenshot - Tracing - overview>
-
 The first screen is the **Overview** tab in which you can see a visualization of the metrics for various checkpoints, represented by graphs.
-
 
 ### Overview
 
@@ -568,9 +451,6 @@ The x axis represents the duration of calls made after reaching that checkpoint.
 ![5-1-Traces Checkpoint](https://user-images.githubusercontent.com/1679939/220934992-3e92b6a2-1a46-4103-8c64-b82aa6ba3e60.png)
   
 Hovering the cursor above a vertical row displays a tooltip that shows:
-
-
-
 * How many calls were made within that **Range**
 * Their **Mean** (average) duration
 * The **Max** duration of a call within that range
@@ -615,9 +495,6 @@ In the same window, on the right side of the screen, the **source** of each bloc
 
 
 A block may have various sources:
-
-
-
 * **External**, which means it was produced by other nodes within the network and received via the gossip network.
 * **Internal** is for internally produced blocks, i.e. published by the user’s own node.
 * **Reconstruct** means your node has already received the data for these blocks, but because the node was reset, it needs to _reconstruct_ the blocks using the data in its cache.
@@ -631,17 +508,13 @@ Clicking on a block will expand a window on the right side of the screen with ad
 
 ![5-7-Blocks Detail](https://user-images.githubusercontent.com/1679939/220927922-6ad14d5d-4ef1-4d28-bb31-55f67cf9b548.png)
   
-
 At the top of the window, the title describes the source of the block (External), its number and its status (Success).
 
 Below that, we have several checkpoints for the various calls a block must go through before it is published. 
 
-
-
 ## Benchmarks
 
 We want to be able to benchmark test the Mina network in order to measure its capabilities. For that purpose, we’ve developed a Benchmark frontend through which users can mass send transactions.
-
 
 ### Wallets
 
@@ -649,18 +522,12 @@ We want to be able to benchmark test the Mina network in order to measure its ca
 
 The benchmarks page shows a list of testnet wallets from which we send transactions to the node. You can send any number of transactions, though the maximum number of transactions that can be sent at a time is based on how many wallets are available. For instance, if you want to send 300 transactions, and 200 wallets are available, you must press the **Send** button twice.
 
-There are two options for where to send transactions from
+There are two options for where to send transactions from.
 
+From **Random** **senders**, which are chosen randomly from wallets from the list (1 wallet can be only once a sender in a batch sending process)
 ![6-2-BenchmarkRandom](https://user-images.githubusercontent.com/1679939/221127717-93102e25-cabc-42f3-96d4-80df6d6f78d9.png)
 
-* From **Random** **senders**, which are chosen randomly from wallets from the list (1 wallet can be only once a sender in a batch sending process)
-
+All sent from the same **Specific sender** wallet, which can be chosen from a dropdown menu.
 ![6-1-BenchmarkSender](https://user-images.githubusercontent.com/1679939/220928410-84fe2df0-7d24-4875-8fc3-9fa940eb4cea.png)
 
-* All sent from the same **Specific sender** wallet, which can be chosen from a dropdown menu.
-
 After you’ve mass sent transactions, you can see many transactions have been a **success** and how many **failed** in the upper right corner.
-
-
-
-
