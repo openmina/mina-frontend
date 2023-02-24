@@ -49,13 +49,12 @@ The application is divided into three main sections:
 
 ## Available features (pages)
 
-1. [Dashboard](http://1.k8.openmina.com:31308/dashboard) - This page shows a summary of the current status of each node connected to the application.
-2. [Explorer](http://1.k8.openmina.com:31308/explorer) - The Explorer page enables you to access blockchain data recorded in the form of blocks, transaction pool, snark pool, scan state and snark traces.
-3. [Resources](http://1.k8.openmina.com:31308/resources) - The Resources page allows you to view how much resources are being used over time by the currently active node.
-4. [Network](http://1.k8.openmina.com:31308/network) - The Network page allows you to view the network communication of the currently active node.
-5. [Tracing](http://1.k8.openmina.com:31308/tracing) - The Tracing page allows you to follow the traces of each block of the currently active node.
-6. [Benchmarks](http://1.k8.openmina.com:31308/benchmarks) - The Benchmarks page allows you to send transactions within currently active node in order to track its behaviour and spot potential issues.
-7. [Web Node](https://openmina-webnode.web.app/web-node) - The Web Node page allows you to connect to a node running in the browser.
+1. [Dashboard](https://github.com/openmina/mina-frontend/blob/main/docs/MetricsTracing.md#Dashboard) - This page shows a summary of the current status of each node connected to the application.
+2. [Explorer](https://github.com/openmina/mina-frontend/blob/main/docs/MetricsTracing.md#Explorer) - The Explorer page enables you to access blockchain data recorded in the form of blocks, transaction pool, snark pool, scan state and snark traces.
+3. [Resources](https://github.com/openmina/mina-frontend/blob/main/docs/MetricsTracing.md#Resources) - The Resources page allows you to view how much resources are being used over time by the currently active node.
+4. [Network](https://github.com/openmina/mina-frontend/blob/main/docs/MetricsTracing.md#Network) - The Network page allows you to view the network communication of the currently active node.
+5. [Tracing](https://github.com/openmina/mina-frontend/blob/main/docs/MetricsTracing.md#Tracing) - The Tracing page allows you to follow the traces of each block of the currently active node.
+6. [Benchmarks](https://github.com/openmina/mina-frontend/blob/main/docs/MetricsTracing.md#Benchmarks) - The Benchmarks page allows you to send transactions within currently active node in order to track its behaviour and spot potential issues.
 
 ## Architecture
 

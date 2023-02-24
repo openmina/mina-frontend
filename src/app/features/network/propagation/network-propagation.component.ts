@@ -472,7 +472,7 @@ export class NetworkPropagationComponent implements OnInit, AfterViewInit {
 
     this.createHeadNode(nodes.find(n => n.id === baseNode));
 
-    const levels = nodes.map(n => n.level).filter((v: number, i: number, a: number[]) => a.indexOf(v) === i);
+    const levels = [1,2,3,4,5,6,7];
     levels.forEach(level => {
       const levelNodes = nodes.filter(n => n.level === level && n.id !== baseNode);
       const leftOffsetOfThisLevel = (this.width - (levelNodes.length * cGap - cGap)) / 2;
@@ -516,7 +516,7 @@ export class NetworkPropagationComponent implements OnInit, AfterViewInit {
     this.mainG.selectAll('text').raise();
   }
 
-  private getLevel(shortestPaths: {}, n: any): number {
+  private getLevel(shortestPaths: object, n: any): number {
     const time = shortestPaths[n];
     if (time < 50) {
       return 1;
