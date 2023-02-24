@@ -4,15 +4,16 @@ import { Effect } from '@shared/types/store/effect.type';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaState, selectMinaState } from '@app/app.setup';
-import { catchError, filter, map, repeat, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, filter, map, repeat, switchMap, tap } from 'rxjs';
 import { addError } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import {
+  EXPLORER_SCAN_STATE_CLOSE,
   EXPLORER_SCAN_STATE_GET_SCAN_STATE,
   EXPLORER_SCAN_STATE_GET_SCAN_STATE_SUCCESS,
   EXPLORER_SCAN_STATE_SET_ACTIVE_BLOCK,
   EXPLORER_SCAN_STATE_SET_EARLIEST_BLOCK, EXPLORER_SCAN_STATE_TOGGLE_LEAFS_MARKING,
-  ExplorerScanStateActions,
+  ExplorerScanStateActions, ExplorerScanStateClose,
   ExplorerScanStateGetScanState,
   ExplorerScanStateSetActiveBlock,
   ExplorerScanStateSetEarliestBlock, ExplorerScanStateToggleLeafsMarking,
@@ -23,6 +24,7 @@ import { Router } from '@angular/router';
 import { Routes } from '@shared/enums/routes.enum';
 import { ExplorerScanStateLeaf } from '@shared/types/explorer/scan-state/explorer-scan-state-leaf.type';
 import { ExplorerSnark } from '@shared/types/explorer/snarks/explorer-snarks.type';
+import { ExplorerScanStateResponse } from '@shared/types/explorer/scan-state/explorer-scan-state-response.type';
 
 @Injectable({
   providedIn: 'root',
@@ -45,7 +47,7 @@ export class ExplorerScanStateEffects extends MinaBaseEffect<ExplorerScanStateAc
       ofType(EXPLORER_SCAN_STATE_SET_EARLIEST_BLOCK),
       this.latestActionState<ExplorerScanStateSetEarliestBlock>(),
       filter(({ state }) => !state.explorer.scanState.activeBlock),
-      tap(({ action }) => this.router.navigate([Routes.EXPLORER, Routes.SCAN_STATE, action.payload.height])),
+      tap(({ action }) => this.router.navigate([Routes.EXPLORER, Routes.SCAN_STATE, action.payload.height], { queryParamsHandling: 'merge' })),
       map(({ action }) => ({ type: EXPLORER_SCAN_STATE_SET_ACTIVE_BLOCK, payload: { height: action.payload.height } })),
     ));
 
@@ -56,15 +58,17 @@ export class ExplorerScanStateEffects extends MinaBaseEffect<ExplorerScanStateAc
     ));
 
     this.getScanState$ = createEffect(() => this.actions$.pipe(
-      ofType(EXPLORER_SCAN_STATE_GET_SCAN_STATE),
-      this.latestActionState<ExplorerScanStateGetScanState>(),
+      ofType(EXPLORER_SCAN_STATE_GET_SCAN_STATE, EXPLORER_SCAN_STATE_CLOSE),
+      this.latestActionState<ExplorerScanStateGetScanState | ExplorerScanStateClose>(),
       switchMap(({ action, state }) =>
-        this.scanStateService.getScanState(action.payload.height)
-          .pipe(
-            map((response: any) => ({ response, state }))
-          )
+        action.type === EXPLORER_SCAN_STATE_CLOSE
+          ? EMPTY
+          : this.scanStateService.getScanState(action.payload.height)
+            .pipe(
+              map((response: ExplorerScanStateResponse) => ({ response, state })),
+            ),
       ),
-      map(({ response, state }: { response: any, state: MinaState }) => {
+      map(({ response, state }: { response: ExplorerScanStateResponse, state: MinaState }) => {
         const scanState = this.addLeafMarkingToLeafs(state.explorer.snarks.snarks, response.scanState, state.explorer.scanState.leafsMarking);
         return ({ type: EXPLORER_SCAN_STATE_GET_SCAN_STATE_SUCCESS, payload: { ...response, scanState } });
       }),

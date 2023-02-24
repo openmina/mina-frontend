@@ -11,6 +11,8 @@ import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { ActivatedRoute, Router } from '@angular/router';
 import { skip } from 'rxjs';
 import { TimestampInterval } from '@shared/types/shared/timestamp-interval.type';
+import { getMergedRoute } from '@shared/router/router-state.selectors';
+import { MergedRoute } from '@shared/router/merged-route';
 
 
 export const networkAvailableFilters: NetworkMessagesFilterCategory[][] = [
@@ -55,7 +57,12 @@ export const networkAvailableFilters: NetworkMessagesFilterCategory[][] = [
       name: '/coda/kad/1.0.0',
       tooltip: 'Used for peer discovery. The Kademlia Distributed Hash Table (DHT) is a DHT implementation largely based on the Kademlia whitepaper, augmented with notions from S/Kademlia, Coral and the BitTorrent DHT.',
       filters: [
-        { type: NetworkMessagesFilterTypes.MESSAGE_KIND, display: 'Put Value', value: 'put_value', tooltip: 'Value storage, Putting the value to the closest nodes.' },
+        {
+          type: NetworkMessagesFilterTypes.MESSAGE_KIND,
+          display: 'Put Value',
+          value: 'put_value',
+          tooltip: 'Value storage, Putting the value to the closest nodes.',
+        },
         {
           type: NetworkMessagesFilterTypes.MESSAGE_KIND,
           display: 'Get Value',
@@ -75,7 +82,12 @@ export const networkAvailableFilters: NetworkMessagesFilterCategory[][] = [
           tooltip: 'Getting providers for a given key from the nodes closest to that key.',
         },
         { type: NetworkMessagesFilterTypes.MESSAGE_KIND, display: 'Find Node', value: 'find_node', tooltip: 'Finding the closest nodes to a given key.' },
-        { type: NetworkMessagesFilterTypes.MESSAGE_KIND, display: 'Ping', value: 'ping', tooltip: 'Deprecated. Message type replaced by the dedicated ping protocol.' },
+        {
+          type: NetworkMessagesFilterTypes.MESSAGE_KIND,
+          display: 'Ping',
+          value: 'ping',
+          tooltip: 'Deprecated. Message type replaced by the dedicated ping protocol.',
+        },
       ],
     },
   ],
@@ -84,7 +96,12 @@ export const networkAvailableFilters: NetworkMessagesFilterCategory[][] = [
       name: '/mina/peer-exchange',
       tooltip: 'Keeps the mesh connected when closing connections.',
       filters: [
-        { type: NetworkMessagesFilterTypes.STREAM_KIND, display: 'Peer Exchange', value: '/mina/peer-exchange', tooltip: 'Keeps the mesh connected when closing connections.' },
+        {
+          type: NetworkMessagesFilterTypes.STREAM_KIND,
+          display: 'Peer Exchange',
+          value: '/mina/peer-exchange',
+          tooltip: 'Keeps the mesh connected when closing connections.',
+        },
       ],
     },
     {
@@ -315,6 +332,7 @@ export class NetworkMessagesFiltersComponent extends ManualDetection implements 
 
   private elementHeight: number;
   private timestamp: TimestampInterval;
+  private activeNodeName: string;
 
   constructor(private store: Store<MinaState>,
               private router: Router,
@@ -323,11 +341,20 @@ export class NetworkMessagesFiltersComponent extends ManualDetection implements 
 
   ngOnInit(): void {
     this.listenToNetworkTimestampFilter();
+    this.listenToRouteChange();
     this.listenToNetworkFilters();
   }
 
   toggleFilerPanel(): void {
     this.filtersOpen = !this.filtersOpen;
+  }
+
+  private listenToRouteChange(): void {
+    this.store.select(getMergedRoute)
+      .pipe(untilDestroyed(this))
+      .subscribe((route: MergedRoute) => {
+        this.activeNodeName = route.queryParams['node'];
+      });
   }
 
   private listenToNetworkFilters(): void {
@@ -349,6 +376,7 @@ export class NetworkMessagesFiltersComponent extends ManualDetection implements 
       ...(message_kind && { message_kind }),
       ...(addr && { addr }),
       ...(this.timestamp?.from && { from: this.timestamp.from, to: this.timestamp.to }),
+      ...(this.activeNodeName && { node: this.activeNodeName }),
     };
     this.router.navigate([], {
       relativeTo: this.route,

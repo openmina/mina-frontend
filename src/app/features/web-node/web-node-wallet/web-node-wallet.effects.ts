@@ -76,7 +76,7 @@ export class WebNodeWalletEffects extends MinaBaseEffect<WebNodeWalletActions> {
       ofType(WEB_NODE_WALLET_CREATE_TRANSACTION),
       this.latestActionState<WebNodeWalletCreateTransaction>(),
       switchMap(({ action }) => this.webNodeWalletService.createTransaction(action.payload)),
-      tap((payload: WebNodeTransaction) => console.log('transaction:', payload)),
+      tap((payload: string) => console.log('transaction:', payload)),
     ));
 
     this.getTransactions$ = createEffect(() => this.actions$.pipe(

@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { MinaState, selectMinaState } from '@app/app.setup';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaBaseEffect } from '@shared/base-classes/mina-base.effect';
 import { Effect, NonDispatchableEffect } from '@shared/types/store/effect.type';
-import { BehaviorSubject, catchError, delay, filter, interval, map, mergeMap, repeat, startWith, switchMap, tap, timer } from 'rxjs';
+import { BehaviorSubject, catchError, filter, interval, map, mergeMap, repeat, switchMap, tap } from 'rxjs';
 import {
   APP_CHANGE_ACTIVE_NODE,
   APP_GET_DEBUGGER_STATUS,
@@ -29,6 +29,8 @@ import { NodeStatus } from '@shared/types/app/node-status.type';
 import { GraphQLService } from '@core/services/graph-ql.service';
 import { Router } from '@angular/router';
 import { FeatureType } from '@shared/types/core/environment/mina-env.type';
+import { withLatestFrom } from 'rxjs/operators';
+import { removeParamsFromURL } from '@shared/helpers/router.helper';
 
 const INIT_EFFECTS = '@ngrx/effects/init';
 
@@ -39,13 +41,16 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
 
   readonly ngrxEffectsInit$: Effect;
   readonly init$: Effect;
-  readonly backgroundChecks$: Effect;
+  readonly backgroundChecks1$: Effect;
+  readonly backgroundChecks2$: Effect;
   readonly onNodeChange$: Effect;
   readonly getNodeStatus$: Effect;
   readonly getDebuggerStatus$: Effect;
+  readonly zoneDebugEffects$: NonDispatchableEffect;
 
   private readonly updateDebuggerStatus = (isOnline: boolean): AppUpdateDebuggerStatus => ({ type: APP_UPDATE_DEBUGGER_STATUS, payload: { isOnline } });
-  private readonly monitoringInterval$ = new BehaviorSubject<number>(10000);
+  private readonly nodeCheckInterval$ = new BehaviorSubject<number>(10000);
+  private readonly debuggerCheckInterval$ = new BehaviorSubject<number>(10000);
 
   constructor(private actions$: Actions,
               private graphQL: GraphQLService,
@@ -57,7 +62,7 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
 
     this.ngrxEffectsInit$ = createEffect(() => this.actions$.pipe(
       ofType(INIT_EFFECTS),
-      map(() => ({ type: APP_INIT })),
+      map(() => ({ type: APP_INIT, payload: { nodeName: new URL(location.href).searchParams.get('node') } })),
     ));
 
     this.init$ = createEffect(() => this.actions$.pipe(
@@ -67,15 +72,22 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
       map(() => ({ type: APP_START_BACKGROUND_CHECKS })),
     ));
 
-    this.backgroundChecks$ = createEffect(() => this.actions$.pipe(
+    this.backgroundChecks1$ = createEffect(() => this.actions$.pipe(
       ofType(APP_START_BACKGROUND_CHECKS),
       switchMap(() =>
-        this.monitoringInterval$.pipe(
+        this.nodeCheckInterval$.pipe(
           switchMap(value => interval(value)),
-          switchMap(() => [
-            { type: APP_GET_DEBUGGER_STATUS },
-            { type: APP_GET_NODE_STATUS },
-          ]),
+          map(() => ({ type: APP_GET_NODE_STATUS })),
+        ),
+      ),
+    ));
+
+    this.backgroundChecks2$ = createEffect(() => this.actions$.pipe(
+      ofType(APP_START_BACKGROUND_CHECKS),
+      switchMap(() =>
+        this.debuggerCheckInterval$.pipe(
+          switchMap(value => interval(value)),
+          map(() => ({ type: APP_GET_DEBUGGER_STATUS })),
         ),
       ),
     ));
@@ -85,15 +97,12 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
       this.latestActionState<AppChangeActiveNode>(),
       tap(({ state }) => {
         this.graphQL.changeGraphQlProvider(state.app.activeNode);
-        this.monitoringInterval$.next(10000);
-
-        const removeParams = (path: string): string => {
-          if (path?.includes('?')) {
-            return path.split('?')[0];
-          }
-          return path;
-        };
-        const activePage = removeParams(this.router.url.split('/')[1]);
+        this.nodeCheckInterval$.next(10000);
+        const activePage = removeParamsFromURL(this.router.url.split('/')[1]);
+        this.router.navigate([], {
+          queryParams: { node: state.app.activeNode.name },
+          queryParamsHandling: 'merge',
+        });
         const features = state.app.activeNode.features;
         if (!features.some((feature: FeatureType) => feature === activePage)) {
           this.router.navigate([features[0]]);
@@ -108,7 +117,7 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
       mergeMap(() => this.blockService.getNodeStatus()),
       map((payload: NodeStatus) => ({ type: APP_GET_NODE_STATUS_SUCCESS, payload })),
       catchError((error: HttpErrorResponse) => {
-        this.monitoringInterval$.next(300000);
+        this.nodeCheckInterval$.next(300000);
         return [
           addError(error, MinaErrorType.GRAPH_QL),
           { type: APP_GET_NODE_STATUS_SUCCESS, payload: { level: 0, status: AppNodeStatusTypes.OFFLINE } },
@@ -123,12 +132,32 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
       filter(({ state }) => !!state.app.activeNode.debugger),
       mergeMap(() => this.blockService.getDebuggerStatus()),
       map(() => this.updateDebuggerStatus(true)),
-      catchError((error: HttpErrorResponse) => [
-        addError(error, MinaErrorType.DEBUGGER),
-        this.updateDebuggerStatus(false),
-      ]),
+      catchError((error: HttpErrorResponse) => {
+        this.debuggerCheckInterval$.next(300000);
+        return [
+          addError(error, MinaErrorType.DEBUGGER),
+          this.updateDebuggerStatus(false),
+        ];
+      }),
       repeat(),
     ));
 
+    // effect to debug falling outside of zone
+    this.zoneDebugEffects$ = createNonDispatchableEffect(() => this.actions$
+      .pipe(
+        withLatestFrom(this.store, (action, state) => ({ action, state })),
+        tap(({ action, state }) => {
+          if (!NgZone.isInAngularZone()) {
+            console.error('[zone][debug]', NgZone.isInAngularZone(), action);
+          }
+        }),
+      ),
+    );
+  }
+
+  setURLSearchParam(key: string, value: string): void {
+    const url = new URL(window.location.href);
+    url.searchParams.set(key, value);
+    window.history.pushState({ path: url.href }, '', url.href);
   }
 }

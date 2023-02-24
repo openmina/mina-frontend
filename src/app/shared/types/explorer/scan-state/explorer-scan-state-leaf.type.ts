@@ -1,2 +1,8 @@
-//                                   index   type    work ids  seqNumber   status       marking
-export type ExplorerScanStateLeaf = [number, string, number[], number, 'Todo' | 'Done', boolean];
+export type ExplorerScanStateLeaf = [
+  number, // index
+  string, // type
+  number[], // work ids(we assume they are 2)
+  number, // seqNumber
+  'Todo' | 'Done', // status
+  boolean, // highlighting snarks
+];

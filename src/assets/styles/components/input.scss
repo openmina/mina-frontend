@@ -48,6 +48,7 @@
 
 	&.input-error {
 		background-color: $warn-container;
+		border-color: $warn-primary;
 		color: $warn-primary;
 	}
 }

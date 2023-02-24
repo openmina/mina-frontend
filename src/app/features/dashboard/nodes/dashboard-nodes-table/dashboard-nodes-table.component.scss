@@ -2,7 +2,7 @@
 
 .mina-table {
 	.row {
-		grid-template-columns: 200px 105px 125px 90px 135px 160px 90px 140px 100px 100px 100px;
+		grid-template-columns: 200px 105px 125px 90px 135px 160px 90px 140px 100px 100px 100px 100px;
 		color: $base-secondary;
 
 		&:not(.head) {
@@ -15,7 +15,7 @@
 	}
 
 	.cdk-virtual-scroll-viewport {
-		min-width: 200px + 105px + 125px + 90px + 135px + 160px + 90px + 140px + 100px + 100px + 100px;
+		min-width: 200px + 105px + 125px + 90px + 135px + 160px + 90px + 140px + 100px + 100px + 100px + 100px;
 		overflow-x: hidden;
 	}
 }
@@ -44,5 +44,18 @@
 	&.offline {
 		background-color: $warn-container;
 		color: $warn-primary;
+	}
+}
+
+.btn-primary {
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+.no-results {
+	top: 0;
+
+	> * {
+		max-width: 80%;
 	}
 }

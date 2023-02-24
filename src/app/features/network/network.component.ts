@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { APP_CHANGE_SUB_MENUS, AppChangeSubMenus } from '@app/app.actions';
 import { Routes } from '@shared/enums/routes.enum';
+import { CONFIG } from '@shared/constants/config';
 
 @Component({
   selector: 'mina-network',
@@ -17,7 +18,7 @@ export class NetworkComponent implements OnInit {
   ngOnInit(): void {
     this.store.dispatch<AppChangeSubMenus>({
       type: APP_CHANGE_SUB_MENUS,
-      payload: [Routes.MESSAGES, Routes.CONNECTIONS, Routes.BLOCKS, Routes.BLOCKS_IPC /* Routes.SNARKS, Routes.TRANSACTIONS,*/],
+      payload: [Routes.MESSAGES, Routes.CONNECTIONS, Routes.BLOCKS, Routes.BLOCKS_IPC, ...(CONFIG.production ? [] : [Routes.PROPAGATION]) /* Routes.SNARKS, Routes.TRANSACTIONS,*/],
     });
   }
 

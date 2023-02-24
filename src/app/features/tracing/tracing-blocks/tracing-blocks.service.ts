@@ -24,6 +24,9 @@ export class TracingBlocksService {
             hash: trace.state_hash,
             status: trace.status,
             totalTime: trace.total_time,
+            globalSlot: trace.metadata?.global_slot ? Number(trace.metadata.global_slot) : undefined,
+            creator: trace.metadata?.creator,
+            metadata: trace.metadata,
             id,
           } as TracingBlockTrace)),
         ));
@@ -46,9 +49,11 @@ export class TracingBlocksService {
       title: checkpoint.checkpoint.split('_').join(' '),
       startedAt: toReadableDate(checkpoint.started_at * ONE_THOUSAND, 'HH:mm:ss.SSS'),
       duration: checkpoint.duration,
-      metadata: checkpoint.metadata,
+      metadata: Object.keys(checkpoint.metadata || {}).length === 0
+        ? undefined
+        : (typeof checkpoint.metadata === 'string' ? checkpoint.metadata : JSON.stringify(checkpoint.metadata)),
       checkpoints: this.getCheckpoints(checkpoint),
-    }))
+    }));
   }
 }
 

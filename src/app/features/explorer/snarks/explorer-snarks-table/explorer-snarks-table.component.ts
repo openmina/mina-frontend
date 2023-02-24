@@ -25,11 +25,12 @@ export class ExplorerSnarksTableComponent extends ManualDetection implements OnI
   readonly tableHeads: TableHeadSorting<ExplorerSnark>[] = [
     { name: 'prover' },
     { name: 'fee' },
-    { name: 'workIds' },
+    { name: 'work ids', sort: 'workIds' },
   ];
 
   snarks: ExplorerSnark[] = [];
   currentSort: TableSort<ExplorerSnark>;
+  workIdsCount: number;
 
   constructor(private store: Store<MinaState>) { super(); }
 
@@ -43,6 +44,7 @@ export class ExplorerSnarksTableComponent extends ManualDetection implements OnI
       .pipe(untilDestroyed(this))
       .subscribe((snarks: ExplorerSnark[]) => {
         this.snarks = snarks;
+        this.workIdsCount = snarks.reduce((sum: number, curr: ExplorerSnark) => sum + curr.workIds.split(',').length, 0);
         this.detect();
       });
   }

@@ -28,7 +28,6 @@ export class WebNodeStateComponent extends ManualDetection implements OnInit {
     this.webNodeService.globalState
       .pipe(untilDestroyed(this))
       .subscribe(state => {
-        // console.log(state.snark);
         try {
           state.snark.block_verify.verifier_srs.g = 'Array with ' + state.snark.block_verify.verifier_srs.g.length + ' items';
         } catch (err) {

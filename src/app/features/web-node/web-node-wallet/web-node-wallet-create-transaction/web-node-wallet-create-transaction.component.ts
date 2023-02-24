@@ -67,7 +67,7 @@ export class WebNodeWalletCreateTransactionComponent extends ManualDetection imp
       )
       .subscribe((node: NodeStatus) => {
         if (node.status !== AppNodeStatusTypes.SYNCED) {
-          this.router.navigate([Routes.WEB_NODE, Routes.WALLET]);
+          this.router.navigate([Routes.WEB_NODE, Routes.WALLET], { queryParamsHandling: 'merge' });
         }
       });
   }
@@ -99,7 +99,6 @@ export class WebNodeWalletCreateTransactionComponent extends ManualDetection imp
             this.formGroup.get('recipient').setValue(this.wallets[0].publicKey);
             this.detect();
           });
-
       });
   }
 
@@ -144,7 +143,7 @@ export class WebNodeWalletCreateTransactionComponent extends ManualDetection imp
     if (this.activeStep === 1) {
       this.sendTransaction();
     } else if (this.activeStep === 2) {
-      this.router.navigate([Routes.WEB_NODE, Routes.WALLET]);
+      this.router.navigate([Routes.WEB_NODE, Routes.WALLET], { queryParamsHandling: 'merge' });
     }
     this.activeStep++;
   }

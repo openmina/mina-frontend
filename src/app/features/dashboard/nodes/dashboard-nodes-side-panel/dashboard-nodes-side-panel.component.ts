@@ -18,8 +18,11 @@ import { TruncateMidPipe } from '@shared/pipes/truncate-mid.pipe';
   styleUrls: ['./dashboard-nodes-side-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [TruncateMidPipe],
+  host: { class: 'flex-column h-100' },
 })
 export class DashboardNodesSidePanelComponent extends ManualDetection implements OnInit {
+
+  title: string;
 
   @ViewChild('traces', { read: ViewContainerRef })
   private blockStructuredTrace: ViewContainerRef;
@@ -31,7 +34,6 @@ export class DashboardNodesSidePanelComponent extends ManualDetection implements
   async ngOnInit(): Promise<void> {
     await import('@shared/components/block-structured-trace/block-structured-trace.component').then(c => {
       this.component = this.blockStructuredTrace.createComponent<BlockStructuredTraceComponent>(c.BlockStructuredTraceComponent).instance;
-      this.component.closeEmitter$.pipe(untilDestroyed(this)).subscribe(() => this.closeSidePanel());
     });
     this.listenToActiveTraceChange();
   }
@@ -43,8 +45,9 @@ export class DashboardNodesSidePanelComponent extends ManualDetection implements
         filter(Boolean),
       )
       .subscribe((activeNode: DashboardNode) => {
-        this.component.title = 'Distributions - ' + this.truncateMid.transform(activeNode.hash);
+        this.title =`${activeNode.source} Transition ${activeNode.blockchainLength} - ${activeNode.traceStatus}`;
         this.component.detect();
+        this.detect();
       });
     this.store.select(selectDashboardNodesBlockTraces)
       .pipe(untilDestroyed(this))
@@ -58,6 +61,6 @@ export class DashboardNodesSidePanelComponent extends ManualDetection implements
   }
 
   closeSidePanel(): void {
-    this.store.dispatch<DashboardNodesSetActiveNode>({ type: DASHBOARD_NODES_SET_ACTIVE_NODE, payload: undefined });
+    this.store.dispatch<DashboardNodesSetActiveNode>({ type: DASHBOARD_NODES_SET_ACTIVE_NODE, payload: { node: undefined } });
   }
 }

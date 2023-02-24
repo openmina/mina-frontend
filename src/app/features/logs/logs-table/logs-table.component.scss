@@ -1,0 +1,46 @@
+@import 'variables';
+
+.mina-table {
+	.row {
+		grid-template-columns: 170px 105px 725px;
+		color: $base-secondary;
+
+		&:not(.head) {
+			cursor: pointer;
+
+			span.addr:hover > span:last-child {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	.cdk-virtual-scroll-viewport {
+		min-width: 170px + 105px + 725px;
+		overflow-x: hidden;
+	}
+}
+
+.status {
+	padding: 4px 5px;
+	border-radius: 4px;
+
+	&.Info {
+		background-color: $success-container;
+		color: $special-selected-alt-3-primary;
+	}
+
+	&.Debug {
+		background-color: $base-container;
+		color: $base-primary;
+	}
+
+	&.Warning {
+		background-color: $aware-container;
+		color: $aware-primary;
+	}
+
+	&.Error {
+		background-color: $warn-container;
+		color: $warn-primary;
+	}
+}

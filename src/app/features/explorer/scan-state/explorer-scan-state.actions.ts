@@ -1,5 +1,6 @@
 import { FeatureAction } from '@shared/types/store/feature-action.type';
 import { ExplorerScanStateTree } from '@shared/types/explorer/scan-state/explorer-scan-state-tree.type';
+import { ExplorerScanStateResponse } from '@shared/types/explorer/scan-state/explorer-scan-state-response.type';
 
 enum ExplorerScanStateActionTypes {
   EXPLORER_SCAN_STATE_CLOSE = 'EXPLORER_SCAN_STATE_CLOSE',
@@ -8,6 +9,7 @@ enum ExplorerScanStateActionTypes {
   EXPLORER_SCAN_STATE_SET_ACTIVE_BLOCK = 'EXPLORER_SCAN_STATE_SET_ACTIVE_BLOCK',
   EXPLORER_SCAN_STATE_SET_EARLIEST_BLOCK = 'EXPLORER_SCAN_STATE_SET_EARLIEST_BLOCK',
   EXPLORER_SCAN_STATE_TOGGLE_LEAFS_MARKING = 'EXPLORER_SCAN_STATE_TOGGLE_LEAFS_MARKING',
+  EXPLORER_SCAN_STATE_CENTER_TREES = 'EXPLORER_SCAN_STATE_CENTER_TREES',
 }
 
 export const EXPLORER_SCAN_STATE_CLOSE = ExplorerScanStateActionTypes.EXPLORER_SCAN_STATE_CLOSE;
@@ -16,6 +18,7 @@ export const EXPLORER_SCAN_STATE_GET_SCAN_STATE_SUCCESS = ExplorerScanStateActio
 export const EXPLORER_SCAN_STATE_SET_ACTIVE_BLOCK = ExplorerScanStateActionTypes.EXPLORER_SCAN_STATE_SET_ACTIVE_BLOCK;
 export const EXPLORER_SCAN_STATE_SET_EARLIEST_BLOCK = ExplorerScanStateActionTypes.EXPLORER_SCAN_STATE_SET_EARLIEST_BLOCK;
 export const EXPLORER_SCAN_STATE_TOGGLE_LEAFS_MARKING = ExplorerScanStateActionTypes.EXPLORER_SCAN_STATE_TOGGLE_LEAFS_MARKING;
+export const EXPLORER_SCAN_STATE_CENTER_TREES = ExplorerScanStateActionTypes.EXPLORER_SCAN_STATE_CENTER_TREES;
 
 export interface ExplorerScanStateAction extends FeatureAction<ExplorerScanStateActionTypes> {
   readonly type: ExplorerScanStateActionTypes;
@@ -34,7 +37,7 @@ export class ExplorerScanStateGetScanState implements ExplorerScanStateAction {
 export class ExplorerScanStateGetScanStateSuccess implements ExplorerScanStateAction {
   readonly type = EXPLORER_SCAN_STATE_GET_SCAN_STATE_SUCCESS;
 
-  constructor(public payload: { scanState: ExplorerScanStateTree[], txCount: number, snarksCount: number, firstBlock: number }) {}
+  constructor(public payload: ExplorerScanStateResponse) {}
 }
 
 export class ExplorerScanStateSetActiveBlock implements ExplorerScanStateAction {
@@ -53,6 +56,10 @@ export class ExplorerScanStateToggleLeafsMarking implements ExplorerScanStateAct
   readonly type = EXPLORER_SCAN_STATE_TOGGLE_LEAFS_MARKING;
 }
 
+export class ExplorerScanStateCenterTrees implements ExplorerScanStateAction {
+  readonly type = EXPLORER_SCAN_STATE_CENTER_TREES;
+}
+
 export type ExplorerScanStateActions =
   | ExplorerScanStateClose
   | ExplorerScanStateGetScanState
@@ -60,4 +67,5 @@ export type ExplorerScanStateActions =
   | ExplorerScanStateSetActiveBlock
   | ExplorerScanStateSetEarliestBlock
   | ExplorerScanStateToggleLeafsMarking
+  | ExplorerScanStateCenterTrees
   ;

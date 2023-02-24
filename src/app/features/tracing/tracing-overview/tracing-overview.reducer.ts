@@ -43,9 +43,8 @@ export function reducer(state: TracingOverviewState = initialState, action: Trac
       };
     }
 
-    case TRACING_OVERVIEW_CLOSE: {
+    case TRACING_OVERVIEW_CLOSE:
       return initialState;
-    }
 
     default:
       return state;

@@ -17,12 +17,12 @@
     </div>
     <form class="grid-row f-600" [formGroup]="formGroup">
       <span></span>
-      <input #firstInput class="mina-input" type="number" formControlName="hour" placeholder="hh" [ngClass]="{'input-error': formGroup.controls['hour'].touched && formGroup.controls['hour'].errors && formGroup.controls['hour'].errors['required'] }">
-      <input class="mina-input" type="number" formControlName="minute" placeholder="mm" [ngClass]="{'input-error': formGroup.controls['minute'].touched && formGroup.controls['minute'].errors && formGroup.controls['minute'].errors['required'] }">
-      <input class="mina-input" type="number" formControlName="second" placeholder="ss" [ngClass]="{'input-error': formGroup.controls['second'].touched && formGroup.controls['second'].errors && formGroup.controls['second'].errors['required'] }">
-      <input class="mina-input" type="number" formControlName="year" placeholder="yy" [ngClass]="{'input-error': formGroup.controls['year'].touched && formGroup.controls['year'].errors && formGroup.controls['year'].errors['required'] }">
-      <input class="mina-input" type="number" formControlName="month" placeholder="mm" [ngClass]="{'input-error': formGroup.controls['month'].touched && formGroup.controls['month'].errors && formGroup.controls['month'].errors['required'] }">
-      <input class="mina-input" type="number" formControlName="day" placeholder="dd" [ngClass]="{'input-error': formGroup.controls['day'].touched && formGroup.controls['day'].errors && formGroup.controls['day'].errors['required'] }">
+      <input #firstInput class="mina-input" type="number" formControlName="hour" placeholder="hh" [ngClass]="{'input-error': (i === 0 && !skipFrom || i === 1 && !skipTo) && formGroup.controls['hour'].touched && formGroup.controls['hour'].errors && formGroup.controls['hour'].errors['required'] }">
+      <input class="mina-input" type="number" formControlName="minute" placeholder="mm" [ngClass]="{'input-error': (i === 0 && !skipFrom || i === 1 && !skipTo) && formGroup.controls['minute'].touched && formGroup.controls['minute'].errors && formGroup.controls['minute'].errors['required'] }">
+      <input class="mina-input" type="number" formControlName="second" placeholder="ss" [ngClass]="{'input-error': (i === 0 && !skipFrom || i === 1 && !skipTo) && formGroup.controls['second'].touched && formGroup.controls['second'].errors && formGroup.controls['second'].errors['required'] }">
+      <input class="mina-input" type="number" formControlName="year" placeholder="yy" [ngClass]="{'input-error': (i === 0 && !skipFrom || i === 1 && !skipTo) && formGroup.controls['year'].touched && formGroup.controls['year'].errors && formGroup.controls['year'].errors['required'] }">
+      <input class="mina-input" type="number" formControlName="month" placeholder="mm" [ngClass]="{'input-error': (i === 0 && !skipFrom || i === 1 && !skipTo) && formGroup.controls['month'].touched && formGroup.controls['month'].errors && formGroup.controls['month'].errors['required'] }">
+      <input class="mina-input" type="number" formControlName="day" placeholder="dd" [ngClass]="{'input-error': (i === 0 && !skipFrom || i === 1 && !skipTo) && formGroup.controls['day'].touched && formGroup.controls['day'].errors && formGroup.controls['day'].errors['required'] }">
       <div class="flex-row flex-end">
         <button class="now" (click)="onNowClick(formGroup)">Now</button>
       </div>

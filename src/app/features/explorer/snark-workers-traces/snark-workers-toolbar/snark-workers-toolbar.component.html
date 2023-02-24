@@ -1,0 +1,42 @@
+<div class="flex-row align-center">
+  <button class="mr-5"
+          [ngClass]="filter.workers.length === 0 ? 'btn-selected' : 'btn-primary'"
+          (click)="getAllWorkers()">All</button>
+  <button class="h-sm flex-row flex-between align-center mr-5"
+          #dropdownTrigger
+          [ngClass]="filter.workers.length === 0 ? 'btn-primary' : 'btn-selected'"
+          (click)="openDropdown($event)">
+    <div class="flex-row align-center">
+      <span>
+        {{ filter.workers.length === 0 ? 'Select' : (filter.workers.length + ' worker' + (filter.workers.length !== 1 ? 's' : '')) }}
+      </span>
+      <span class="mina-icon" [class.tertiary]="filter.workers.length === 0">arrow_drop_down</span>
+    </div>
+  </button>
+  <div class="ml-16 tertiary f-600">Time range</div>
+  <button class="pl-10 pr-10 ml-10 mr-10 overflow-hidden flex-row align-center "
+          [ngClass]="activeInterval ? 'btn-selected' : 'btn-secondary'"
+          (click)="openIntervalPicker($event)"><span class="truncate">{{ activeInterval ?? 'Select' }}</span>
+    <div *ngIf="activeInterval"
+         (click)="clearTimestampInterval($event)"
+         class="icon-wrap ml-10 flex-row align-center flex-center">
+      <span class="mina-icon f-20">close</span>
+    </div>
+  </button>
+</div>
+<div class="tertiary pr-12">{{ data.workers.length }} workers, {{ data.jobs.length }} jobs</div>
+
+<ng-template #dropdown>
+  <div class="dropdown border-rad-4 popup-box-shadow-weak flex-column border bg-surface overflow-hidden"
+       (clickOutside)="detachWorkerSelector()">
+    <div class="overflow-auto h-100 p-10 monospace">
+      <div *ngFor="let worker of data.workers; let i=index"
+           class="dropdown-item flex-row flex-between align-center pointer pl-8 pr-8 border-rad-4 mb-5"
+           [class.active]="filter.workers.includes(worker)"
+           (click)="toggleWorker(worker)">
+        <span class="mina-icon f-20">check_small</span>
+        <span>{{ worker | truncateMid }}</span>
+      </div>
+    </div>
+  </div>
+</ng-template>

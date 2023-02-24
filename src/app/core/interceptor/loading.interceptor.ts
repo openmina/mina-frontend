@@ -20,7 +20,7 @@ export class LoadingInterceptor implements HttpInterceptor {
   constructor(private loadingService: LoadingService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const skipLoadingIndication: boolean = SKIPPED_URLS.some(url => request.url.includes(url));
+    const skipLoadingIndication: boolean = request.url.includes('/graphql') || SKIPPED_URLS.some(url => request.url.includes(url));
     if (skipLoadingIndication) {
       return next.handle(request);
     }

@@ -7,14 +7,24 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { selectDashboardNodes, selectDashboardNodesActiveNode, selectDashboardNodesSorting } from '@dashboard/nodes/dashboard-nodes.state';
 import {
+  selectDashboardNodes,
+  selectDashboardNodesActiveBlockLevel,
+  selectDashboardNodesActiveNode, selectDashboardNodesEarliestBlockLevel,
+  selectDashboardNodesSorting,
+} from '@dashboard/nodes/dashboard-nodes.state';
+import {
+  DASHBOARD_NODES_SET_ACTIVE_BLOCK,
   DASHBOARD_NODES_SET_ACTIVE_NODE,
-  DASHBOARD_NODES_SORT,
+  DASHBOARD_NODES_SORT, DashboardNodesSetActiveBlock,
   DashboardNodesSetActiveNode,
   DashboardNodesSort,
 } from '@dashboard/nodes/dashboard-nodes.actions';
 import { filter } from 'rxjs';
+import { isNotVanilla } from '@shared/constants/config';
+import { toggleItem } from '@shared/helpers/array.helper';
+import { Routes } from '@shared/enums/routes.enum';
+import { Router } from '@angular/router';
 
 @UntilDestroy()
 @Component({
@@ -31,7 +41,7 @@ export class DashboardNodesTableComponent extends ManualDetection implements OnI
   readonly tableHeads: TableHeadSorting<DashboardNode>[] = [
     { name: 'name' },
     { name: 'status' },
-    { name: 'hash' },
+    { name: 'state hash', sort: 'hash' },
     { name: 'height', sort: 'blockchainLength' },
     { name: 'address', sort: 'addr' },
     { name: 'datetime', sort: 'timestamp' },
@@ -40,18 +50,55 @@ export class DashboardNodesTableComponent extends ManualDetection implements OnI
     { name: 'source' },
     { name: 'tx. pool', sort: 'txPool' },
     { name: 'snark pool', sort: 'snarkPool' },
+    { name: 'logs', sort: 'name' },
   ];
 
   nodes: DashboardNode[] = [];
   currentSort: TableSort<DashboardNode>;
   activeNode: DashboardNode;
+  downloadingNodes: number[] = [];
+  currentHeightIsTooBig: boolean;
+  latestHeight: number;
 
-  constructor(private store: Store<MinaState>) { super(); }
+  private activeHeight: number;
+
+  constructor(private store: Store<MinaState>,
+              private router: Router) { super(); }
 
   ngOnInit(): void {
     this.listenToSortingChanges();
     this.listenToNodeList();
     this.listenToActiveDashboardNodeChange();
+    this.listenToLatestLevelChange();
+    this.listenToActiveLevelChange();
+  }
+
+  private listenToActiveLevelChange(): void {
+    this.store.select(selectDashboardNodesActiveBlockLevel)
+      .pipe(untilDestroyed(this))
+      .subscribe((height: number) => {
+        this.activeHeight = height;
+        this.toggleHeightMismatching();
+      });
+  }
+
+  private listenToLatestLevelChange(): void {
+    this.store.select(selectDashboardNodesEarliestBlockLevel)
+      .pipe(untilDestroyed(this))
+      .subscribe((height: number) => {
+        this.latestHeight = height;
+        this.toggleHeightMismatching();
+      });
+  }
+
+  private toggleHeightMismatching(): void {
+    if (this.activeHeight > this.latestHeight && !this.currentHeightIsTooBig) {
+      this.currentHeightIsTooBig = true;
+      this.detect();
+    } else if (this.activeHeight <= this.latestHeight && this.currentHeightIsTooBig) {
+      this.currentHeightIsTooBig = false;
+      this.detect();
+    }
   }
 
   private listenToNodeList(): void {
@@ -95,10 +142,29 @@ export class DashboardNodesTableComponent extends ManualDetection implements OnI
   }
 
   onRowClick(node: DashboardNode): void {
-    if (this.activeNode?.index !== node.index && node.hash) {
-      this.activeNode = node;
-      this.store.dispatch<DashboardNodesSetActiveNode>({ type: DASHBOARD_NODES_SET_ACTIVE_NODE, payload: node });
+    if (this.activeNode?.index !== node.index && node.hash && isNotVanilla()) {
+      this.store.dispatch<DashboardNodesSetActiveNode>({ type: DASHBOARD_NODES_SET_ACTIVE_NODE, payload: { node } });
     }
   }
 
+  downloadLogs(node: DashboardNode, index: number, event: MouseEvent): void {
+    event.stopPropagation();
+    this.downloadingNodes = toggleItem(this.downloadingNodes, index);
+    const path = `${node.url.replace('graphql', '')}logs/download`;
+    const a = document.createElement('a');
+    a.href = path;
+    a.download = path.substring(path.lastIndexOf('/') + 1);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => {
+      this.downloadingNodes = toggleItem(this.downloadingNodes, index);
+      this.detect();
+    }, 1000);
+  }
+
+  setActiveBlock(): void {
+    this.store.dispatch<DashboardNodesSetActiveBlock>({ type: DASHBOARD_NODES_SET_ACTIVE_BLOCK, payload: { height: this.latestHeight, fetchNew: true } });
+    this.router.navigate([Routes.DASHBOARD, Routes.NODES, this.latestHeight], { queryParamsHandling: 'merge' });
+  }
 }

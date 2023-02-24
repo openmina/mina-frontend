@@ -20,7 +20,6 @@ import {
   NetworkBlocksIpcInit,
   NetworkBlocksIpcSetActiveBlock,
 } from '@network/blocks-ipc/network-blocks-ipc.actions';
-import { NetworkBlock } from '@shared/types/network/blocks/network-block.type';
 import { Store } from '@ngrx/store';
 import { Routes } from '@shared/enums/routes.enum';
 import { Router } from '@angular/router';
@@ -54,7 +53,7 @@ export class NetworkBlocksIpcEffects extends MinaBaseEffect<NetworkBlocksIpcActi
       this.latestActionState<NetworkBlocksIpcGetEarliestBlock>(),
       switchMap(({ action, state }) => {
         return this.networkBlocksService.getEarliestBlockHeight().pipe(
-          tap(height => this.router.navigate([Routes.NETWORK, Routes.BLOCKS_IPC, height])),
+          tap(height => this.router.navigate([Routes.NETWORK, Routes.BLOCKS_IPC, height], { queryParamsHandling: 'merge' })),
           switchMap(height => {
             const actions: NetworkBlocksIpcActions[] = [{ type: NETWORK_BLOCKS_IPC_SET_EARLIEST_BLOCK, payload: { height } }];
             if (!state.network.blocksIpc.activeBlock) {

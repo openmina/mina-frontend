@@ -26,35 +26,35 @@
       <div class="border-rad-4 h-sm ml-8 pl-5 pr-5 flex-row align-center stats-empty">{{ tree.empty }} Empty</div>
     </div>
     <div #trees class="flex-column f-small overflow-x-auto">
-      <div class="flex-row leaf-row" [style.margin-left.px]="21 * 63.5">
+      <div class="flex-row leaf-row" [style.margin-left.px]="25 * 63.5">
         <ng-container *ngTemplateOutlet="leafRef; context: { leaf: tree.leafs[0] }"></ng-container>
       </div>
-      <div class="flex-row leaf-row" [style.margin-left.px]="21 * 63">
+      <div class="flex-row leaf-row" [style.margin-left.px]="25 * 63">
         <ng-container *ngFor="let leaf of tree.leafs.slice(1,3); trackBy: leafTrackBy">
           <ng-container *ngTemplateOutlet="leafRef; context: { leaf }"></ng-container>
         </ng-container>
       </div>
-      <div class="flex-row leaf-row" [style.margin-left.px]="21 * 62">
+      <div class="flex-row leaf-row" [style.margin-left.px]="25 * 62">
         <ng-container *ngFor="let leaf of tree.leafs.slice(3,7); trackBy: leafTrackBy">
           <ng-container *ngTemplateOutlet="leafRef; context: { leaf }"></ng-container>
         </ng-container>
       </div>
-      <div class="flex-row leaf-row" [style.margin-left.px]="21 * 60">
+      <div class="flex-row leaf-row" [style.margin-left.px]="25 * 60">
         <ng-container *ngFor="let leaf of tree.leafs.slice(7,15); trackBy: leafTrackBy">
           <ng-container *ngTemplateOutlet="leafRef; context: { leaf }"></ng-container>
         </ng-container>
       </div>
-      <div class="flex-row leaf-row" [style.margin-left.px]="21 * 56">
+      <div class="flex-row leaf-row" [style.margin-left.px]="25 * 56">
         <ng-container *ngFor="let leaf of tree.leafs.slice(15,31); trackBy: leafTrackBy">
           <ng-container *ngTemplateOutlet="leafRef; context: { leaf }"></ng-container>
         </ng-container>
       </div>
-      <div class="flex-row leaf-row" [style.margin-left.px]="21 * 48">
+      <div class="flex-row leaf-row" [style.margin-left.px]="25 * 48">
         <ng-container *ngFor="let leaf of tree.leafs.slice(31,63); trackBy: leafTrackBy">
           <ng-container *ngTemplateOutlet="leafRef; context: { leaf }"></ng-container>
         </ng-container>
       </div>
-      <div class="flex-row leaf-row" [style.margin-left.px]="21 * 32">
+      <div class="flex-row leaf-row" [style.margin-left.px]="25 * 32">
         <ng-container *ngFor="let leaf of tree.leafs.slice(63,127); trackBy: leafTrackBy">
           <ng-container *ngTemplateOutlet="leafRef; context: { leaf }"></ng-container>
         </ng-container>

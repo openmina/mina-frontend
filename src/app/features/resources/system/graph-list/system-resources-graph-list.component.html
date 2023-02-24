@@ -1,0 +1,61 @@
+<div class="gr-wrapper border-rad-6 border p-12 mb-10"
+     [class.fade]="resources.cpu"
+     [style.transition-delay.s]="0.1"
+     [class.bg-selected-container]="activePointTitle === resources.cpuTitle">
+  <div class="graph-title text-center w-100 f-600">{{ resources.cpuTitle }}</div>
+  <mina-system-resources-graph [data]="resources.cpu || []"
+                               [title]="resources.cpuTitle"
+                               [paths]="cpuPaths"
+                               [colors]="colors.cpu || []"
+                               [maxY]="resources.cpuMax || 0"
+                               [preselectValue]="activePointFromUrl?.title === resources.cpuTitle"
+                               [activePointTitle]="activePointTitle"
+                               [yLabel]="'Load'"
+                               [um]="resources.cpuUm"></mina-system-resources-graph>
+</div>
+<div class="gr-wrapper border-rad-6 border p-12 mb-10"
+     [class.fade]="resources.cpu"
+     [style.transition-delay.s]="0.2"
+     [class.bg-selected-container]="activePointTitle === resources.memoryTitle">
+  <div class="graph-title text-center w-100 f-600">{{ resources.memoryTitle }}</div>
+  <mina-system-resources-graph [data]="resources.memory || []"
+                               [title]="resources.memoryTitle"
+                               [paths]="memoryPaths"
+                               [colors]="colors.memory || []"
+                               [maxY]="resources.memoryMax || 0"
+                               [preselectValue]="activePointFromUrl?.title === resources.memoryTitle"
+                               [activePointTitle]="activePointTitle"
+                               [yLabel]="'Usage'"
+                               [um]="resources.memoryUm"></mina-system-resources-graph>
+</div>
+<div class="gr-wrapper border-rad-6 border p-12 mb-10"
+     [class.fade]="resources.cpu"
+     [style.transition-delay.s]="0.3"
+     [class.bg-selected-container]="activePointTitle === resources.ioTitle">
+  <div class="graph-title text-center w-100 f-600">{{ resources.ioTitle }}</div>
+  <mina-system-resources-graph [data]="resources?.io || []"
+                               [title]="resources.ioTitle"
+                               [paths]="ioPaths"
+                               [colors]="colors.io || []"
+                               [maxY]="resources.ioMax || 0"
+                               [preselectValue]="activePointFromUrl?.title === resources.ioTitle"
+                               [activePointTitle]="activePointTitle"
+                               [yLabel]="'Traffic'"
+                               [um]="resources.ioUm"></mina-system-resources-graph>
+</div>
+<div class="gr-wrapper border-rad-6 border p-12 mb-10"
+     [class.fade]="resources.cpu"
+     [style.transition-delay.s]="0.4"
+     [class.bg-selected-container]="activePointTitle === resources.networkTitle">
+  <div class="graph-title text-center w-100 f-600">{{ resources.networkTitle }}</div>
+  <mina-system-resources-graph [data]="resources.network || []"
+                               [title]="resources.networkTitle"
+                               [paths]="networkPaths"
+                               [colors]="colors.network || []"
+                               [maxY]="resources.networkMax || 0"
+                               [preselectValue]="activePointFromUrl?.title === resources.networkTitle"
+                               [activePointTitle]="activePointTitle"
+                               [yLabel]="'Traffic'"
+                               [um]="resources.networkUm"></mina-system-resources-graph>
+</div>
+

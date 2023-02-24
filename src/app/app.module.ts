@@ -1,4 +1,4 @@
-import { ErrorHandler, NgModule, Provider } from '@angular/core';
+import { APP_INITIALIZER, ErrorHandler, Injectable, NgModule, Provider } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRouting } from './app.routing';
@@ -23,12 +23,27 @@ import { CONFIG } from '@shared/constants/config';
 import { SubmenuTabsComponent } from './layout/submenu-tabs/submenu-tabs.component';
 import { INTERCEPTOR_PROVIDER } from '@core/interceptor/loading.interceptor';
 import { NodePickerComponent } from './layout/node-picker/node-picker.component';
+import { GlobalErrorHandlerService } from '@core/services/global-error-handler.service';
+import { Router } from '@angular/router';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireAnalyticsModule } from '@angular/fire/compat/analytics';
 
 
 export const SENTRY_PROVIDER: Provider = {
   provide: ErrorHandler,
   useValue: Sentry.createErrorHandler(),
 };
+
+@Injectable()
+export class AppGlobalErrorhandler implements ErrorHandler {
+  constructor(private errorHandlerService: GlobalErrorHandlerService) {}
+
+  handleError(error: any) {
+    Sentry.captureException(error);
+    this.errorHandlerService.handleError(error);
+    console.error(error);
+  }
+}
 
 
 @NgModule({
@@ -45,6 +60,8 @@ export const SENTRY_PROVIDER: Provider = {
   imports: [
     BrowserModule,
     AppRouting,
+    CONFIG.firebase ? AngularFireModule.initializeApp(CONFIG.firebase) : [],
+    CONFIG.firebase ? AngularFireAnalyticsModule : [],
     StoreModule.forRoot(reducers, {
       metaReducers,
       runtimeChecks: {
@@ -56,15 +73,26 @@ export const SENTRY_PROVIDER: Provider = {
     }),
     EffectsModule.forRoot([AppEffects]),
     NgrxRouterStoreModule,
-    !CONFIG.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : [],
+    !CONFIG.production ? StoreDevtoolsModule.instrument({ maxAge: 150 }) : [],
     HttpClientModule,
     BrowserAnimationsModule,
     EagerSharedModule,
   ],
   providers: [
+    SENTRY_PROVIDER,
+    {
+      provide: Sentry.TraceService,
+      deps: [Router],
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => () => {},
+      deps: [Sentry.TraceService],
+      multi: true,
+    },
     INTERCEPTOR_PROVIDER,
     THEME_PROVIDER,
-    SENTRY_PROVIDER,
+    { provide: ErrorHandler, useClass: AppGlobalErrorhandler, deps: [GlobalErrorHandlerService] },
   ],
   bootstrap: [AppComponent],
 })

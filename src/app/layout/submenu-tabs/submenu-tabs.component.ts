@@ -7,6 +7,7 @@ import { MergedRoute } from '@shared/router/merged-route';
 import { selectAppSubMenus } from '@app/app.state';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { removeParamsFromURL } from '@shared/helpers/router.helper';
 
 @UntilDestroy()
 @Component({
@@ -22,6 +23,7 @@ export class SubmenuTabsComponent extends ManualDetection implements OnInit {
   activeSubMenu: string;
   baseRoute: string;
   isMobile: boolean;
+  activeNode: string;
 
   constructor(private router: Router,
               private store: Store<MinaState>) { super(); }
@@ -32,16 +34,11 @@ export class SubmenuTabsComponent extends ManualDetection implements OnInit {
   }
 
   private listenToRouteChange(): void {
-    const removeParams = (path: string): string => {
-      if (path?.includes('?')) {
-        return path.split('?')[0];
-      }
-      return path;
-    };
     this.store.select(getMergedRoute)
       .subscribe((route: MergedRoute) => {
-        this.baseRoute = removeParams(route.url.split('/')[1]);
-        this.activeSubMenu = removeParams(route.url.split('/')[2]);
+        this.baseRoute = removeParamsFromURL(route.url.split('/')[1]);
+        this.activeSubMenu = removeParamsFromURL(route.url.split('/')[2]);
+        this.activeNode = route.queryParams['node'];
         this.detect();
       });
   }

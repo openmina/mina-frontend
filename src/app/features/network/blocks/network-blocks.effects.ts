@@ -54,7 +54,7 @@ export class NetworkBlocksEffects extends MinaBaseEffect<NetworkBlocksActions> {
       this.latestActionState<NetworkBlocksGetEarliestBlock>(),
       switchMap(({ action, state }) => {
         return this.networkBlocksService.getEarliestBlockHeight().pipe(
-          tap(height => this.router.navigate([Routes.NETWORK, Routes.BLOCKS, height])),
+          tap(height => this.router.navigate([Routes.NETWORK, Routes.BLOCKS, height], { queryParamsHandling: 'merge' })),
           switchMap(height => {
             const actions: NetworkBlocksActions[] = [{ type: NETWORK_BLOCKS_SET_EARLIEST_BLOCK, payload: { height } }];
             if (!state.network.blocks.activeBlock) {

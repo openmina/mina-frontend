@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, of } from 'rxjs';
-import { ExplorerBlock } from '@shared/types/explorer/blocks/explorer-block.type';
+import { map, Observable } from 'rxjs';
 import { GraphQLService } from '@core/services/graph-ql.service';
-import { toReadableDate } from '@shared/helpers/date.helper';
 import { ExplorerScanStateTree } from '@shared/types/explorer/scan-state/explorer-scan-state-tree.type';
+import { ExplorerScanStateResponse } from '@shared/types/explorer/scan-state/explorer-scan-state-response.type';
 
 @Injectable({
   providedIn: 'root',
@@ -12,18 +11,29 @@ export class ExplorerScanStateService {
 
   constructor(private graphQL: GraphQLService) { }
 
-  getScanState(height: number): Observable<{ scanState: ExplorerScanStateTree[], txCount: number, snarksCount: number, firstBlock: number }> {
+  getScanState(height: number): Observable<ExplorerScanStateResponse> {
     return this.graphQL.query<any>('getScanState', `{
        blockScanState(height: ${height})
        block(height: ${height}) {
-          snarkJobs
-        }
+         snarkJobs
+         transactions {
+           userCommands {
+             nonce
+           }
+           feeTransfer {
+             fee
+           }
+           zkappCommands {
+             id
+           }
+         }
+       }
        bestChain(maxLength: 0) {
-          protocolState {
-            consensusState {
-              blockHeight
-            }
-          }
+         protocolState {
+           consensusState {
+             blockHeight
+           }
+         }
         }
       }`)
       .pipe(map((response: any) => {
@@ -36,7 +46,10 @@ export class ExplorerScanStateService {
         const txCount = response.blockScanState.transactions.length;
         const snarksCount = response.block.snarkJobs.length;
         const firstBlock = Number(response.bestChain[0].protocolState.consensusState.blockHeight);
-        return { scanState, txCount, snarksCount, firstBlock };
+        const userCommandsCount = response.block.transactions.userCommands.length;
+        const feeTransferCount = response.block.transactions.feeTransfer.length;
+        const zkappCommandsCount = response.block.transactions.zkappCommands.length;
+        return { scanState, txCount, snarksCount, firstBlock, userCommandsCount, feeTransferCount, zkappCommandsCount };
       }));
   }
 }

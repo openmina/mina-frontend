@@ -34,7 +34,6 @@ export class NetworkBlocksIpcService {
     // const allTimestamps = blocks.events.map((block: any) => this.getTimestamp(block.time));
     // const fastestTime: bigint = allTimestamps.map((t: string) => BigInt(t)).reduce((t1: bigint, t2: bigint) => t2 < t1 ? t2 : t1);
     // return blocks.events.map((block: any, i: number) => ({
-    //
     //   messageKind: block.message_kind,
     //   producerId: block.producer_id,
     //   hash: block.hash,

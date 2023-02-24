@@ -10,13 +10,13 @@ export const environment: Readonly<MinaEnv> = {
     {
       backend: 'https://trace.dev.openmina.com:3086',
       minaExplorer: 'https://devnet.api.minaexplorer.com',
-      features: ['tracing'],
+      features: ['tracing', 'explorer'],
       name: 'initial-trace',
     },
     {
       backend: 'https://sandbox.dev.openmina.com:3086',
       minaExplorer: 'https://devnet.api.minaexplorer.com',
-      features: ['tracing'],
+      features: ['tracing', 'explorer'],
       name: 'lower-latency',
     },
   ],

@@ -74,7 +74,7 @@ export class NetworkMessagesTableComponent extends ManualDetection implements On
         this.queryParams = route.queryParams;
         const idFromRoute = Number(route.params['messageId']);
         const isValidIdInRoute = !isNaN(idFromRoute);
-        if (this.attemptToGetMessagesFromRoute && (isValidIdInRoute || Object.keys(route.queryParams).length !== 0)) {
+        if (this.attemptToGetMessagesFromRoute && (isValidIdInRoute || Object.keys(route.queryParams).filter(key => key !== 'node').length !== 0)) {
           const filters = this.getFiltersFromTheRoute(route);
 
           const timestamp: TimestampInterval = {

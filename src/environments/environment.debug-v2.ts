@@ -8,11 +8,9 @@ export const environment: Readonly<MinaEnv> = {
   },
   configs: [
     {
-      backend: 'https://debug.dev.openmina.com:3086',
-      debugger: 'https://debug.dev.openmina.com',
-      minaExplorer: 'https://devnet.api.minaexplorer.com',
-      features: ['network'],
-      name: 'debug',
+      backend: 'https://webrtc.webnode.openmina.com',
+      features: ['web-node-demo'],
+      name: 'Web Node Demo',
     },
   ],
 };

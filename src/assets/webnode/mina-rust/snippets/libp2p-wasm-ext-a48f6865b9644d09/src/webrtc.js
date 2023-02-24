@@ -88,7 +88,12 @@ export const webrtc_transport = async (crypto) => {
         crypto,
         conn_config: {
             certificates: [cert],
-            iceServers: [],
+          iceServers: [
+            { urls: "stun:138.201.74.177:3478", username: "openmina", credential: "webrtc" },
+            { urls: "stun:65.109.110.75:3478", username: "openmina", credential: "webrtc" },
+            { urls: "turn:138.201.74.177:3478", username: "openmina", credential: "webrtc" },
+            { urls: "turn:65.109.110.75:3478", username: "openmina", credential: "webrtc" },
+          ],
         },
 
         signSignal(signal) {
@@ -264,7 +269,7 @@ function closeConn(conn, channel = null) {
     }, 20);
     // https://bugs.chromium.org/p/chromium/issues/detail?id=825576
     // workaround: https://stackoverflow.com/questions/66546934/how-to-clear-closed-rtcpeerconnection-with-workaround
-    if (closeConn.counter % 16) {
+    if (closeConn.counter % 4 == 0) {
         queueMicrotask(() => {
           console.warn("[Libp2p][WebRTC] doing heavy (around 50ms) GC for dangling peer connections");
           let img = document.createElement("img");
@@ -294,7 +299,7 @@ const dial = async (self, addr) => {
 
         console.info("[Libp2p][WebRTC] send offer:", offer);
         const offerBase58 = bs58btc.encode(new TextEncoder().encode(JSON.stringify(offer)));
-        const httpPrefix = addrParsed[3] == 443 ? "https://" : "http://";
+        const httpPrefix = String(addrParsed[3]).startsWith("443") ? "https://" : "http://";
         const respBody = await httpSend({
             method: "GET",
             url: httpPrefix + addrParsed[2] + ":" + addrParsed[3] + "/?signal=" + offerBase58,
@@ -365,8 +370,13 @@ function wait_channel_open_and_attach_handlers(conn, channel, remote_id, remote_
         // We inject all incoming messages into the queue unconditionally. The caller isn't
         // supposed to access this queue unless the connection is open.
         channel.onmessage = (ev) => {
-            console.debug(`[Libp2p][WebRTC][peer_${remote_id}][chan_${CHANNEL_NAME}][msg_recv]`, 'bytes:', ev.data, '\nas_str:', try_bytes_as_str(ev.data));
-            reader.push(ev.data);
+            let data = ev.data;
+            if (data instanceof Blob) {
+                data = data.arrayBuffer();
+            }
+            data = Promise.resolve(data);
+            // data.then(data => console.debug(`[Libp2p][WebRTC][peer_${remote_id}][chan_${CHANNEL_NAME}][msg_recv]`, 'bytes:', data, '\nas_str:', try_bytes_as_str(data)));
+            reader.push(data);
         }
 
         channel.onopen = () => {
@@ -374,9 +384,7 @@ function wait_channel_open_and_attach_handlers(conn, channel, remote_id, remote_
             open_resolve({
                 read: (function*() { while(channel.readyState == "open") {
                     let next = reader.next();
-                    Promise.resolve(next).then(function(next) {
-                        console.debug(`[Libp2p][WebRTC][peer_${remote_id}][chan_${CHANNEL_NAME}][read]`, 'bytes:', next, '\nas_str:', try_bytes_as_str(next));
-                    })
+                    // Promise.resolve(next).then(next => console.debug(`[Libp2p][WebRTC][peer_${remote_id}][chan_${CHANNEL_NAME}][read]`, 'bytes:', next, '\nas_str:', try_bytes_as_str(next)));
                     yield next;
                 } })(),
                 write: (data) => {
@@ -392,7 +400,7 @@ function wait_channel_open_and_attach_handlers(conn, channel, remote_id, remote_
                         // [1]: https://chromium.googlesource.com/chromium/src/+/1438f63f369fed3766fa5031e7a252c986c69be6%5E%21/
                         // [2]: https://bugreports.qt.io/browse/QTBUG-78078
                         // [3]: https://chromium.googlesource.com/chromium/src/+/HEAD/third_party/blink/renderer/bindings/IDLExtendedAttributes.md#AllowShared_p
-                        console.debug(`[Libp2p][WebRTC][peer_${remote_id}][chan_${CHANNEL_NAME}][write]`, 'bytes:', data, '\nas_str:', try_bytes_as_str(data));
+                        // console.debug(`[Libp2p][WebRTC][peer_${remote_id}][chan_${CHANNEL_NAME}][write]`, 'bytes:', data, '\nas_str:', try_bytes_as_str(data));
                         channel.send(data.slice(0));
                         return promise_when_send_finished(channel);
                     } else {
@@ -453,7 +461,7 @@ const async_queue = () => {
 				state.resolve(buffer);
 				state.resolve = null;
 			} else {
-				state.queue.push(buffer);
+				state.queue.push(Promise.resolve(buffer));
 			}
 		},
 
@@ -463,14 +471,14 @@ const async_queue = () => {
 				state.resolve(null);
 				state.resolve = null;
 			} else {
-				state.queue.push(null);
+				state.queue.push(Promise.resolve(null));
 			}
 		},
 
 		// Returns a Promise that yields the next entry as an ArrayBuffer.
 		next: () => {
 			if (state.queue.length != 0) {
-				return Promise.resolve(state.queue.shift(0));
+				return state.queue.shift(0);
 			} else {
 				if (state.resolve !== null)
 					throw "Internal error: already have a pending promise";

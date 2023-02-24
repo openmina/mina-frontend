@@ -105,7 +105,7 @@ export class WebNodePeersListenComponent extends ManualDetection {
     this.webNodePeersService.finishListener()
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.router.navigate([Routes.WEB_NODE, Routes.PEERS]);
+        this.router.navigate([Routes.WEB_NODE, Routes.PEERS], { queryParamsHandling: 'merge' });
       });
   }
 }

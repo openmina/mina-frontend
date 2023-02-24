@@ -34,6 +34,7 @@ export class BenchmarksWalletsComponent extends ManualDetection implements OnIni
   }
 
   private listenToActiveNodeChange(): void {
+    this.store.dispatch<BenchmarksGetWallets>({ type: BENCHMARKS_GET_WALLETS });
     this.store.select(selectActiveNode)
       .pipe(untilDestroyed(this), filter(Boolean), skip(1))
       .subscribe(() => {

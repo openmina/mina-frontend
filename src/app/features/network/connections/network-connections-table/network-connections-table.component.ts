@@ -75,6 +75,7 @@ export class NetworkConnectionsTableComponent extends ManualDetection implements
   goToNetworkMessages(addr: string): void {
     this.router.navigate([Routes.NETWORK, Routes.MESSAGES], {
       queryParams: { addr },
+      queryParamsHandling: 'merge',
     });
   }
 }

@@ -124,7 +124,7 @@ export class WebNodePeersConnectComponent extends ManualDetection implements Aft
     this.webNodePeersService.finishDialer(this.peerId, this.answer)
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.router.navigate([Routes.WEB_NODE, Routes.PEERS]);
+        this.router.navigate([Routes.WEB_NODE, Routes.PEERS], { queryParamsHandling: 'merge' });
       });
   }
 

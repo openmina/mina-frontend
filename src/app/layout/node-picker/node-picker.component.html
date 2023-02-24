@@ -18,7 +18,9 @@
             'secondary bg-container-hover primary-hover': activeNode !== node,
             'mb-5': i < filteredNodes.length - 1
             }"
-         class="h-xl pl-12 pr-12 flex-row flex-between border-rad-4">
+         [tabindex]="0"
+         (keydown.enter)="selectNode(node)"
+         class="node h-xl pl-12 pr-12 flex-row flex-between border-rad-4">
       <span class="mina-icon icon-200 f-20 divider mr-8"
             [class.selected-primary]="activeNode === node">check
       </span>

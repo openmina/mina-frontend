@@ -34,6 +34,15 @@ button {
 		}
 	}
 
+	&.btn-success-inverted {
+		background-color: $success-primary;
+		color: $cta-primary;
+
+		&:hover {
+			filter: brightness(120%);
+		}
+	}
+
 	&.btn-primary {
 		background-color: $base-container;
 		color: $base-primary;
@@ -49,6 +58,33 @@ button {
 
 		&:hover {
 			background-color: $base-divider;
+		}
+	}
+
+	&.btn-warn {
+		background-color: $warn-container;
+		color: $warn-primary;
+
+		&:hover {
+			color: $base-primary;
+		}
+	}
+
+	&.btn-aware {
+		background-color: $aware-container;
+		color: $aware-primary;
+
+		&:hover {
+			filter: brightness(120%);
+		}
+	}
+
+	&.btn-special-alt-3 {
+		background-color: $success-divider;
+		color: $special-selected-alt-3-primary;
+
+		&:hover {
+			filter: brightness(120%);
 		}
 	}
 

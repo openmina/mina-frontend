@@ -30,7 +30,7 @@ const DARK_THEME: Theme = {
       [`${SUCCESS_CSS_PREFIX}primary`]: '#81e06c',
       [`${SUCCESS_CSS_PREFIX}secondary`]: 'rgba(129,224,108,0.6)',
       [`${SUCCESS_CSS_PREFIX}tertiary`]: 'rgba(129,224,108,0.4)',
-      [`${SUCCESS_CSS_PREFIX}divider`]: 'rgba(129,224,108,0.2)',
+      [`${SUCCESS_CSS_PREFIX}divider`]: 'rgba(129,224,108,0.1)',
       [`${SUCCESS_CSS_PREFIX}container`]: 'rgba(129,224,108,0.05)',
     },
     aware: {
@@ -53,6 +53,14 @@ const DARK_THEME: Theme = {
     },
     special: {
       [`${SPECIAL_CSS_PREFIX}surface`]: '#000000',
+      [`${SPECIAL_CSS_PREFIX}on-surface`]: 'rgba(255,255,255,0.8)',
+      [`${SPECIAL_CSS_PREFIX}overlay`]: 'rgba(0,0,0,0.5)',
+      [`${SPECIAL_CSS_PREFIX}selected-alt-1-primary`]: '#927fb9',
+      [`${SPECIAL_CSS_PREFIX}selected-alt-1-container`]: 'rgba(146,127,185,0.1)',
+      [`${SPECIAL_CSS_PREFIX}selected-alt-2-secondary`]: '#59bfb5',
+      [`${SPECIAL_CSS_PREFIX}selected-alt-2-container`]: 'rgba(123,204,196,0.1)',
+      [`${SPECIAL_CSS_PREFIX}selected-alt-3-primary`]: '#acdea0',
+      [`${SPECIAL_CSS_PREFIX}selected-alt-3-container`]: 'rgba(204,235,197,0.1)',
     },
     chart: {
       [`${CHART_CSS_PREFIX}yellow-red-5`]: '#b10026',
@@ -84,10 +92,10 @@ const DARK_THEME: Theme = {
       [`${CODE_CSS_PREFIX}teal`]: '#abebfc',
     },
     cta: {
-      [`${CTA_CSS_PREFIX}primary`]: '#0D0D0D',
+      [`${CTA_CSS_PREFIX}primary`]: '#0d0d0d',
       [`${CTA_CSS_PREFIX}secondary`]: 'rgba(13,13,13,0.6)',
-      [`${CTA_CSS_PREFIX}container`]: '#5BB3FB',
-    }
+      [`${CTA_CSS_PREFIX}container`]: '#5bb3fb',
+    },
   },
 };
 
@@ -130,7 +138,15 @@ const LIGHT_THEME: Theme = {
       [`${SELECTED_CSS_PREFIX}container`]: 'rgba(12, 138, 228, 0.07)',
     },
     special: {
-      [`${SPECIAL_CSS_PREFIX}surface`]: '#0d0d0d',
+      [`${SPECIAL_CSS_PREFIX}surface`]: '#000000',
+      [`${SPECIAL_CSS_PREFIX}on-surface`]: 'rgba(255,255,255,0.8)',
+      [`${SPECIAL_CSS_PREFIX}overlay`]: 'rgba(13,13,13,0.4)',
+      [`${SPECIAL_CSS_PREFIX}selected-alt-1-primary`]: '#927fb9',
+      [`${SPECIAL_CSS_PREFIX}selected-alt-1-container`]: 'rgba(146,127,185,0.1)',
+      [`${SPECIAL_CSS_PREFIX}selected-alt-2-primary`]: '#59bfb5',
+      [`${SPECIAL_CSS_PREFIX}selected-alt-2-container`]: 'rgba(89,191,181,0.1)',
+      [`${SPECIAL_CSS_PREFIX}selected-alt-3-primary`]: '#acdea0',
+      [`${SPECIAL_CSS_PREFIX}selected-alt-3-container`]: 'rgba(172,222,160,0.1)',
     },
     chart: {
       [`${CHART_CSS_PREFIX}yellow-red-5`]: '#b10026',
@@ -162,10 +178,10 @@ const LIGHT_THEME: Theme = {
       [`${CODE_CSS_PREFIX}teal`]: '#529f99',
     },
     cta: {
-      [`${CTA_CSS_PREFIX}primary`]: '#FFFFFF',
+      [`${CTA_CSS_PREFIX}primary`]: '#ffffff',
       [`${CTA_CSS_PREFIX}secondary`]: 'rgba(255,255,255,0.6)',
-      [`${CTA_CSS_PREFIX}container`]: '#0C8AE4',
-    }
+      [`${CTA_CSS_PREFIX}container`]: '#0c8ae4',
+    },
   },
 };
 

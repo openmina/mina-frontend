@@ -39,6 +39,11 @@ const routes: Routes = [
         title: NETWORK_TITLE,
       },
       {
+        path: 'propagation',
+        loadChildren: () => import('./propagation/network-propagation.routing').then(m => m.NetworkPropagationRouting),
+        title: NETWORK_TITLE,
+      },
+      {
         path: '**',
         redirectTo: 'messages',
         pathMatch: 'full',

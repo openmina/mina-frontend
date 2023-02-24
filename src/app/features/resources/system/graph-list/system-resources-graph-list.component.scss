@@ -1,0 +1,18 @@
+@import 'variables';
+
+.gr-wrapper {
+	transition: opacity 1s;
+	opacity: 0;
+
+	&.fade {
+		opacity: 1;
+	}
+
+	&:hover:not(.bg-selected-container) {
+		background-color: $base-container;
+	}
+
+	&.bg-selected-container .graph-title {
+		color: $selected-primary;
+	}
+}

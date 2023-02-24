@@ -94,9 +94,21 @@ export class JsHandle {
 */
   is_peer_id_valid(id: string): void;
 /**
+* @param {string} pk
+*/
+  is_account_pk_valid(pk: string): void;
+/**
 * @returns {Promise<any>}
 */
   global_state_get(): Promise<any>;
+/**
+* @returns {Promise<any>}
+*/
+  action_stats_since_start_get(): Promise<any>;
+/**
+* @returns {Promise<any>}
+*/
+  best_tip_summary(): Promise<any>;
 /**
 * @param {string} addr
 * @returns {Promise<string>}
@@ -114,9 +126,9 @@ export class JsHandle {
   generate_account_keys(): any;
 /**
 * @param {any} data
-* @returns {Promise<any>}
+* @returns {Promise<string>}
 */
-  payment_sign_and_inject(data: any): Promise<any>;
+  payment_sign_and_inject(data: any): Promise<string>;
 /**
 * @returns {WatchedAccounts}
 */
@@ -188,7 +200,10 @@ export interface InitOutput {
   readonly jshandle_logs_range: (a: number, b: number, c: number, d: number, e: number) => number;
   readonly jshandle_manual_connector: (a: number) => number;
   readonly jshandle_is_peer_id_valid: (a: number, b: number, c: number, d: number) => void;
+  readonly jshandle_is_account_pk_valid: (a: number, b: number, c: number, d: number) => void;
   readonly jshandle_global_state_get: (a: number) => number;
+  readonly jshandle_action_stats_since_start_get: (a: number) => number;
+  readonly jshandle_best_tip_summary: (a: number) => number;
   readonly jshandle_peer_connect: (a: number, b: number, c: number) => number;
   readonly jshandle_pubsub_publish: (a: number, b: number, c: number, d: number) => number;
   readonly jshandle_generate_account_keys: (a: number) => number;
@@ -209,14 +224,14 @@ export interface InitOutput {
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
   readonly __wbindgen_export_3: WebAssembly.Table;
-  readonly _dyn_core__ops__function__FnMut___A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h38eed171e9dfcc13: (a: number, b: number, c: number) => void;
-  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h7285e2050aa4f5b4: (a: number, b: number, c: number) => void;
-  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h3137f9e73c5bc6db: (a: number, b: number) => void;
-  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h2ccfc423a977a38c: (a: number, b: number) => void;
+  readonly _dyn_core__ops__function__FnMut___A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hf6095eaffb8acc8e: (a: number, b: number, c: number) => void;
+  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h7e766a04a1afb3ee: (a: number, b: number, c: number) => void;
+  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h49dccfef7a303cdb: (a: number, b: number) => void;
+  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h1ace8829c1af1eec: (a: number, b: number) => void;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_exn_store: (a: number) => void;
-  readonly wasm_bindgen__convert__closures__invoke2_mut__h27930b235f6379ab: (a: number, b: number, c: number, d: number) => void;
+  readonly wasm_bindgen__convert__closures__invoke2_mut__h16dafbe231267050: (a: number, b: number, c: number, d: number) => void;
   readonly __wbindgen_thread_destroy: () => void;
   readonly __wbindgen_start: () => void;
 }

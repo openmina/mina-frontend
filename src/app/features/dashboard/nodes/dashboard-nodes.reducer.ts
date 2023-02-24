@@ -4,23 +4,29 @@ import { DashboardNodesState } from '@dashboard/nodes/dashboard-nodes.state';
 import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
 import {
   DASHBOARD_NODES_CLOSE,
-  DASHBOARD_NODES_GET_NODES_SUCCESS,
+  DASHBOARD_NODES_GET_NODE_SUCCESS,
   DASHBOARD_NODES_GET_TRACES_SUCCESS,
+  DASHBOARD_NODES_INIT,
   DASHBOARD_NODES_SET_ACTIVE_BLOCK,
   DASHBOARD_NODES_SET_ACTIVE_NODE,
   DASHBOARD_NODES_SET_EARLIEST_BLOCK,
-  DASHBOARD_NODES_SORT, DASHBOARD_NODES_TOGGLE_FILTER, DASHBOARD_NODES_TOGGLE_LATENCY, DASHBOARD_NODES_TOGGLE_NODES_SHOWING,
+  DASHBOARD_NODES_SORT,
+  DASHBOARD_NODES_TOGGLE_FILTER,
+  DASHBOARD_NODES_TOGGLE_LATENCY,
+  DASHBOARD_NODES_TOGGLE_NODES_SHOWING,
   DashboardNodesActions,
 } from '@dashboard/nodes/dashboard-nodes.actions';
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
+import { CONFIG } from '@shared/constants/config';
+import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 
 const initialState: DashboardNodesState = {
   nodes: [],
   filteredNodes: [],
   nodeCount: {} as DashboardNodeCount,
-  showOfflineNodes: false,
+  showOfflineNodes: true,
   latencyFromFastest: false,
   sort: {
     sortBy: 'timestamp',
@@ -36,22 +42,47 @@ const initialState: DashboardNodesState = {
 
 export function reducer(state: DashboardNodesState = initialState, action: DashboardNodesActions): DashboardNodesState {
   switch (action.type) {
-    case DASHBOARD_NODES_GET_NODES_SUCCESS: {
-      const sortedNodes = sortNodes(action.payload, state.sort);
-      const nodes = applyNewLatencies(sortedNodes, state.latencyFromFastest);
-      const nodeCount: DashboardNodeCount = {
-        nodes: nodes.filter((node: any) => node.url.includes('node') && node.status === AppNodeStatusTypes.SYNCED).length,
-        producers: nodes.filter((node: any) => node.url.includes('prod') && node.status === AppNodeStatusTypes.SYNCED).length,
-        snarkers: nodes.filter((node: any) => node.url.includes('snarker') && node.status === AppNodeStatusTypes.SYNCED).length,
-        seeders: nodes.filter((node: any) => node.url.includes('seed') && node.status === AppNodeStatusTypes.SYNCED).length,
-        transactionGenerators: nodes.filter((node: any) => node.url.includes('transaction-generator') && node.status === AppNodeStatusTypes.SYNCED).length,
+
+    case DASHBOARD_NODES_INIT: {
+      const name = (node: string) => {
+        let org = origin;
+        let url: string;
+        if (org.includes('localhost:4200')) {
+          const strings = node.split('/');
+          url = '/' + strings[strings.length - 1];
+        } else {
+          url = node.replace(org, '');
+        }
+        return `${url}/graphql`;
       };
+
+      const nodes = sortNodes(CONFIG.configs.map((node: MinaNode) => {
+        return ({
+          ...{} as any,
+          url: node.backend + '/graphql',
+          name: name(node.backend),
+          status: AppNodeStatusTypes.OFFLINE,
+        });
+      }), state.sort);
+      const nodeCount: DashboardNodeCount = getNodeCount(nodes);
       return {
         ...state,
         nodes,
-        filteredNodes: filterNodes(nodes),
+        filteredNodes: !state.showOfflineNodes ? getActiveNodes(nodes) : nodes,
         nodeCount,
-        // allFilters: Array.from(new Set(action.payload.map(n => n.hash))),
+      };
+    }
+
+    case DASHBOARD_NODES_GET_NODE_SUCCESS: {
+      const otherNodes = action.payload[0] ? state.nodes.filter(n => n.url !== action.payload[0].url) : state.nodes;
+      const newNodes = [...otherNodes, ...action.payload].map((n, index) => ({ ...n, index }));
+      const sortedNodes = sortNodes(newNodes, state.sort);
+      const nodes = applyNewLatencies(sortedNodes, state.latencyFromFastest);
+      return {
+        ...state,
+        nodes,
+        filteredNodes: !state.showOfflineNodes ? getActiveNodes(nodes) : nodes,
+        allFilters: Array.from(new Set(nodes.map(n => n.hash).filter(Boolean))),
       };
     }
 
@@ -64,33 +95,45 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
     }
 
     case DASHBOARD_NODES_TOGGLE_NODES_SHOWING: {
+      const filteredNodes = filterNodes(state.nodes, state.activeFilters);
+      const showOfflineNodes = !state.showOfflineNodes;
+      const filteredNodesByOffline = showOfflineNodes ? sortNodes(filteredNodes, state.sort) : sortNodes(getActiveNodes(filteredNodes), state.sort);
+      const nodeCount: DashboardNodeCount = getNodeCount(showOfflineNodes ? filteredNodes : filteredNodes.filter(n => n.status !== AppNodeStatusTypes.OFFLINE));
       return {
         ...state,
         showOfflineNodes: !state.showOfflineNodes,
-        filteredNodes: !state.showOfflineNodes ? sortNodes(state.nodes, state.sort) : sortNodes(filterNodes(state.nodes), state.sort),
+        filteredNodes: filteredNodesByOffline,
+        nodeCount,
       };
     }
 
     case DASHBOARD_NODES_TOGGLE_LATENCY: {
+      const latencyFromFastest = !state.latencyFromFastest;
       return {
         ...state,
-        latencyFromFastest: !state.latencyFromFastest,
-        filteredNodes: sortNodes(applyNewLatencies(state.filteredNodes, !state.latencyFromFastest), state.sort),
+        latencyFromFastest,
+        filteredNodes: sortNodes(applyNewLatencies(state.filteredNodes, latencyFromFastest), state.sort),
       };
     }
-    // case  DASHBOARD_NODES_TOGGLE_FILTER: {
-    //   const activeFilters = state.activeFilters.includes(action.payload)
-    //     ? state.activeFilters.filter(f => f !== action.payload)
-    //     : [...state.activeFilters, action.payload];
-    //
-    //   const filteredNodes = state.allFilters.length < 2 ? state.nodes : filterNodes(state.nodes, activeFilters);
-    //
-    //   return {
-    //     ...state,
-    //     activeFilters,
-    //     filteredNodes,
-    //   };
-    // }
+
+    case DASHBOARD_NODES_TOGGLE_FILTER: {
+      const activeFilters = state.activeFilters.includes(action.payload)
+        ? state.activeFilters.filter(f => f !== action.payload)
+        : [...state.activeFilters, action.payload];
+
+      const showOfflineNodes = state.showOfflineNodes;
+      let filteredNodes = showOfflineNodes ? state.nodes : getActiveNodes(state.nodes);
+      filteredNodes = state.allFilters.length === 0 ? filteredNodes : filterNodes(filteredNodes, activeFilters);
+      filteredNodes = applyNewLatencies(filteredNodes, state.latencyFromFastest);
+      const nodeCount: DashboardNodeCount = getNodeCount(showOfflineNodes ? filteredNodes : filteredNodes.filter(n => n.status !== AppNodeStatusTypes.OFFLINE));
+
+      return {
+        ...state,
+        activeFilters,
+        filteredNodes,
+        nodeCount,
+      };
+    }
 
     case DASHBOARD_NODES_SET_ACTIVE_BLOCK: {
       return {
@@ -110,7 +153,7 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
     case DASHBOARD_NODES_SET_ACTIVE_NODE: {
       return {
         ...state,
-        activeNode: action.payload,
+        activeNode: action.payload.node,
       };
     }
 
@@ -129,21 +172,27 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
   }
 }
 
-function filterNodes(nodes: DashboardNode[]): DashboardNode[] {
+function getNodeCount(nodes: DashboardNode[]): DashboardNodeCount {
+  return {
+    nodes: new Set(nodes.filter(node => node.url.includes('node')).map(n => n.url)).size,
+    producers: new Set(nodes.filter(node => node.url.includes('prod')).map(n => n.url)).size,
+    snarkers: new Set(nodes.filter(node => node.url.includes('snarker')).map(n => n.url)).size,
+    seeders: new Set(nodes.filter(node => node.url.includes('seed')).map(n => n.url)).size,
+    transactionGenerators: new Set(nodes.filter(node => node.url.includes('transaction-generator')).map(n => n.url)).size,
+  };
+}
+
+function getActiveNodes(nodes: DashboardNode[]): DashboardNode[] {
   return nodes.filter((node: DashboardNode) => node.status !== AppNodeStatusTypes.OFFLINE);
 }
 
 function sortNodes(messages: DashboardNode[], tableSort: TableSort<DashboardNode>): DashboardNode[] {
   return sort<DashboardNode>(messages, tableSort, ['addr', 'source', 'status', 'name', 'hash'], true);
 }
-//
-// function filterNodes(nodes: DashboardNode[], activeFilters: string[]): DashboardNode[] {
-//   return activeFilters.length > 0 ? nodes.filter(n => activeFilters.includes(n.hash)) : nodes;
-// }
-//
-// function sortNodes(messages: DashboardNode[], tableSort: TableSort<DashboardNode>): DashboardNode[] {
-//   return sort<DashboardNode>(messages, tableSort, ['addr', 'source', 'status', 'url', 'hash'], true);
-// }
+
+function filterNodes(nodes: DashboardNode[], activeFilters: string[]): DashboardNode[] {
+  return activeFilters.length > 0 ? nodes.filter(n => activeFilters.includes(n.hash)) : nodes;
+}
 
 function applyNewLatencies(nodes: DashboardNode[], fromFastest: boolean): DashboardNode[] {
   if (nodes.length === 0) {

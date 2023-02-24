@@ -8,10 +8,9 @@ export const environment: Readonly<MinaEnv> = {
   },
   configs: [
     {
-      backend: 'https://trace.dev.openmina.com:3086',
-      minaExplorer: 'https://devnet.api.minaexplorer.com',
-      features: ['tracing'],
-      name: 'lower-latency',
+      backend: 'https://webrtc.webnode.openmina.com',
+      features: ['web-node-demo'],
+      name: 'Web Node Demo',
     },
   ],
 };

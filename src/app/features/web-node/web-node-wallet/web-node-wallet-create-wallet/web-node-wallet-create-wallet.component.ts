@@ -38,7 +38,7 @@ export class WebNodeWalletCreateWalletComponent extends ManualDetection {
       this.getTokens();
       return;
     } else if (this.activeStep === 2) {
-      this.router.navigate([Routes.WEB_NODE, Routes.WALLET]);
+      this.router.navigate([Routes.WEB_NODE, Routes.WALLET], { queryParamsHandling: 'merge' });
       this.store.dispatch<WebNodeWalletChangeWallet>({ type: WEB_NODE_WALLET_CHANGE_WALLET, payload: this.newWallet });
     }
     this.activeStep++;

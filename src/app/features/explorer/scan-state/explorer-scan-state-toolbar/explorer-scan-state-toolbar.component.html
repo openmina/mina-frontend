@@ -32,10 +32,12 @@
     <span class="mina-icon f-18">last_page</span>
   </button>
   <div class="tertiary">
-    {{ txCount }} transactions, {{ snarksCount }} snarks
+    {{ txCount }} transactions, {{ snarksCount }} snarks, {{ userCommandsCount }} user commands, {{ feeTransferCount }} fee transfers, {{ zkappCommandsCount }} zkapp commands
   </div>
 </div>
 <div>
+  <button class="h-sm btn-primary mr-10"
+          (click)="centerTrees()">Center Trees</button>
   <button class="h-sm btn-primary mr-10"
           (click)="toggleLeafsMarking()">{{ !leafsMarking ? 'Highlight snarks' : 'Hide snarks' }}</button>
 </div>

@@ -101,12 +101,13 @@ export class NetworkBlocksTableComponent extends ManualDetection implements OnIn
   }
 
   seeMessageInMessages(messageId: number): void {
-    this.router.navigate([Routes.NETWORK, Routes.MESSAGES, messageId]);
+    this.router.navigate([Routes.NETWORK, Routes.MESSAGES, messageId], { queryParamsHandling: 'merge' });
   }
 
   seeMessagesForAddress(addr: string): void {
     this.router.navigate([Routes.NETWORK, Routes.MESSAGES], {
       queryParams: { addr },
+      queryParamsHandling: 'merge',
     });
   }
 

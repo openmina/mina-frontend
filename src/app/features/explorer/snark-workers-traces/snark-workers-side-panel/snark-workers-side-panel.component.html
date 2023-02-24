@@ -1,0 +1,60 @@
+<div class="flex-column h-100">
+  <div fxFlex="42px" class="flex-row flex-between p-12">
+    <span class="secondary f-600">Job Details</span>
+    <span class="mina-icon pointer tertiary primary-hover f-18"
+          (click)="closeSidePanel()">close
+    </span>
+  </div>
+  <div *ngIf="activeRow"
+       fxFlex="calc(100% - 42px)"
+       class="times flex-column pl-12 pr-12">
+    <div class="flex-row align-center flex-between h-md">
+      <span>Kind</span>
+      <span>{{ activeRow.kind }}</span>
+    </div>
+    <div class="flex-row align-center flex-between h-md">
+      <span>Worker</span>
+      <span>{{ workers[activeRow.worker] | truncateMid: 6: 12 }}</span>
+    </div>
+    <div class="flex-row align-center flex-between h-md">
+      <span>Job Get Init</span>
+      <span>{{ activeRow.jobInit | readableDate }}</span>
+    </div>
+    <div class="flex-row align-center flex-between h-md">
+      <span>Job Get Node Received</span>
+      <span [innerHTML]="(activeRow.jobGetNodeReceived - activeRow.jobInit) / 1000 | secDuration: secConfig"></span>
+    </div>
+    <div class="flex-row align-center flex-between h-md">
+      <span>Job Get Node Request Work Init</span>
+      <span [innerHTML]="(activeRow.jobGetNodeRequestWorkInit - activeRow.jobGetNodeReceived) / 1000 | secDuration: secConfig"></span>
+    </div>
+    <div class="flex-row align-center flex-between h-md">
+      <span>Job Get Node Request Work Success</span>
+      <span [innerHTML]="(activeRow.jobGetNodeRequestWorkSuccess - activeRow.jobGetNodeRequestWorkInit) / 1000 | secDuration: secConfig"></span>
+    </div>
+    <div class="flex-row align-center flex-between h-md">
+      <span>Job Get Success</span>
+      <span [innerHTML]="(activeRow.jobGetSuccess - activeRow.jobGetNodeRequestWorkSuccess) / 1000 | secDuration: secConfig"></span>
+    </div>
+    <div class="flex-row align-center flex-between h-md">
+      <span>Work Create Success</span>
+      <span [innerHTML]="(activeRow.workCreateSuccess - activeRow.jobGetSuccess) / 1000 | secDuration: secConfig"></span>
+    </div>
+    <div class="flex-row align-center flex-between h-md">
+      <span>Work Submit Node Received</span>
+      <span [innerHTML]="(activeRow.workSubmitNodeReceived - activeRow.workCreateSuccess) / 1000 | secDuration: secConfig"></span>
+    </div>
+    <div class="flex-row align-center flex-between h-md">
+      <span>Work Submit Node Add Work Init</span>
+      <span [innerHTML]="(activeRow.workSubmitNodeAddWorkInit - activeRow.workSubmitNodeReceived) / 1000 | secDuration: secConfig"></span>
+    </div>
+    <div class="flex-row align-center flex-between h-md">
+      <span>Work Submit Node Add Work Success</span>
+      <span [innerHTML]="(activeRow.workSubmitNodeAddWorkSuccess - activeRow.workSubmitNodeAddWorkInit) / 1000 | secDuration: secConfig"></span>
+    </div>
+    <div class="flex-row align-center flex-between h-md">
+      <span>Work Submit Success</span>
+      <span [innerHTML]="(activeRow.workSubmitSuccess - activeRow.workSubmitNodeAddWorkSuccess) / 1000 | secDuration: secConfig"></span>
+    </div>
+  </div>
+</div>

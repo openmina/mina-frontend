@@ -18,16 +18,11 @@ import { SharedModule } from '@shared/shared.module';
 export class BlockStructuredTraceComponent extends ManualDetection {
 
   readonly timeColorScheme: SecDurationConfig = { red: 1, orange: 0.3, yellow: 0.1, color: true };
-  readonly closeEmitter$ = new EventEmitter<void>();
 
   title: string;
   checkpoints: TracingTraceCheckpoint[] = [];
   expandedParents: string[] = [];
   allExpanded: boolean;
-
-  closeSidePanel(): void {
-    this.closeEmitter$.emit();
-  }
 
   toggleExpanding(checkpoint: TracingTraceGroup | TracingTraceCheckpoint): void {
     if (!checkpoint.checkpoints.length) {

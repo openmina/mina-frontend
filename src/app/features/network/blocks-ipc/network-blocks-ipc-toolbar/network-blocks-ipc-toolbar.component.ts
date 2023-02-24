@@ -83,6 +83,6 @@ export class NetworkBlocksIpcToolbarComponent extends ManualDetection implements
 
   getBlock(height: number): void {
     this.store.dispatch<NetworkBlocksIpcSetActiveBlock>({ type: NETWORK_BLOCKS_IPC_SET_ACTIVE_BLOCK, payload: { height, fetchNew: true } });
-    this.router.navigate([Routes.NETWORK, Routes.BLOCKS_IPC, height]);
+    this.router.navigate([Routes.NETWORK, Routes.BLOCKS_IPC, height], { queryParamsHandling: 'merge' });
   }
 }

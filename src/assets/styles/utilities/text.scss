@@ -18,8 +18,12 @@
 	white-space: nowrap;
 }
 
-.break-word {
+.break-all {
 	word-break: break-all;
+}
+
+.break-word {
+	word-break: break-word;
 }
 
 .text-underline {

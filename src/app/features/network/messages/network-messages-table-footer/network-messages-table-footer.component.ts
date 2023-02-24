@@ -213,13 +213,13 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
           this.router.navigate(this.urlMessageId ? [Routes.NETWORK, Routes.MESSAGES, this.urlMessageId] : [Routes.NETWORK, Routes.MESSAGES], {
             queryParamsHandling: 'merge',
             queryParams: {
-              from: response.from, to: response.to,
+              from: response.from / ONE_THOUSAND, to: response.to / ONE_THOUSAND,
             },
           });
           this.store.dispatch<NetworkMessagesSetTimestampInterval>({
             type: NETWORK_SET_TIMESTAMP_INTERVAL,
             payload: {
-              timestamp: { from: response.from, to: response.to },
+              timestamp: { from: response.from / ONE_THOUSAND, to: response.to / ONE_THOUSAND },
               direction: NetworkMessagesDirection.FORWARD,
             },
           });

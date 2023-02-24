@@ -22,11 +22,18 @@ export class ExplorerBlocksService {
             }
             consensusState {
               blockHeight
+              slotSinceGenesis
             }
           }
           transactions {
             userCommands {
-              id
+              nonce
+            }
+            feeTransfer {
+              fee
+            }
+            zkappCommands {
+              hash
             }
           }
           stateHash
@@ -36,8 +43,10 @@ export class ExplorerBlocksService {
       .pipe(
         map((response: any) => response.bestChain.map((chain: any) => ({
           height: Number(chain.protocolState.consensusState.blockHeight),
+          globalSlot: Number(chain.protocolState.consensusState.slotSinceGenesis),
           hash: chain.stateHash,
           txCount: chain.transactions.userCommands.length,
+          totalTxCount: chain.transactions.userCommands.length + chain.transactions.feeTransfer.length + chain.transactions.zkappCommands.length + 1,
           snarkCount: chain.snarkJobs.length,
           date: toReadableDate(chain.protocolState.blockchainState.date),
           timestamp: chain.protocolState.blockchainState.date,

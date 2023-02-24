@@ -10,7 +10,13 @@ import * as fromWebNode from '@web-node/web-node.reducer';
 import { WebNodeAction } from '@web-node/web-node.reducer';
 import * as fromBenchmarks from '@benchmarks/benchmarks.reducer';
 import * as fromDashboard from '@dashboard/dashboard.reducer';
+import { DashboardAction } from '@dashboard/dashboard.reducer';
 import * as fromExplorer from '@explorer/explorer.reducer';
+import { ExplorerAction } from '@explorer/explorer.reducer';
+import * as fromResources from '@resources/resources.reducer';
+import { ResourcesAction } from '@resources/resources.reducer';
+import * as fromLogs from '@logs/logs.reducer';
+import { LogsAction } from '@logs/logs.actions';
 
 import { AppState } from '@app/app.state';
 import { ErrorPreviewState } from '@error-preview/error-preview.state';
@@ -22,9 +28,9 @@ import { ErrorPreviewAction } from '@error-preview/error-preview.actions';
 import { BenchmarksState } from '@benchmarks/benchmarks.state';
 import { BenchmarksAction } from '@benchmarks/benchmarks.actions';
 import { DashboardState } from '@dashboard/dashboard.state';
-import { DashboardAction } from '@dashboard/dashboard.reducer';
 import { ExplorerState } from '@explorer/explorer.state';
-import { ExplorerAction } from '@explorer/explorer.reducer';
+import { ResourcesState } from '@resources/resources.state';
+import { LogsState } from '@logs/logs.state';
 
 export interface MinaState {
   app: AppState;
@@ -35,6 +41,8 @@ export interface MinaState {
   benchmarks: BenchmarksState;
   dashboard: DashboardState;
   explorer: ExplorerState;
+  resources: ResourcesState;
+  logs: LogsState;
 }
 
 type MinaAction =
@@ -46,6 +54,8 @@ type MinaAction =
   & BenchmarksAction
   & DashboardAction
   & ExplorerAction
+  & ResourcesAction
+  & LogsAction
   ;
 
 export const reducers: ActionReducerMap<MinaState, MinaAction> = {
@@ -57,6 +67,8 @@ export const reducers: ActionReducerMap<MinaState, MinaAction> = {
   benchmarks: fromBenchmarks.reducer,
   dashboard: fromDashboard.reducer,
   explorer: fromExplorer.reducer,
+  resources: fromResources.reducer,
+  logs: fromLogs.reducer,
 };
 
 export const metaReducers: MetaReducer<MinaState, MinaAction>[] = [];

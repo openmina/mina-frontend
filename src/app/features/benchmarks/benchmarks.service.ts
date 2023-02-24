@@ -371,9 +371,6 @@ const WALLETS: any[] = [
     publicKey: 'B62qpyWQ8sGFEnMFxpf4yEPQCErnrkGudfnLUZxo7mEwFUVMPdxGFHp',
     privateKey: 'EKENDkD2JN1XdP4kNT2vjcNKnF1gg9WT7MQk374bh4T6Hje1etU4',
   }, {
-    publicKey: 'B62qrAX9j3QwGMrcdBVHxM3dEhV1GqsuSdrquEBqdubnL3LHjgAkv8v',
-    privateKey: 'EKEYVP34cCbPSTxsm8TiAXG4jsSu87wo7MTXf667gdM2EBtcEx81',
-  }, {
     publicKey: 'B62qkoi34AqBCDFN6Wqn96217aZCEhLyqd2X6dDnnTf2Y57kuD84FKM',
     privateKey: 'EKEBPBq3MAS147Z5xRmD4r2KKdu48EuseLMcoYDoRjf3VD38hXtK',
   }, {
@@ -511,13 +508,19 @@ const WALLETS: any[] = [
   }, {
     publicKey: 'B62qkJNwxtoMdTH74YdAxte3MeVDKyYVQXb8Fpak3S1wCAm8uEGrLZi',
     privateKey: 'EKDrdLGqVTE4fcSVtziPeTQvkoR2bBYT64Gg4aBksYd9eM157nFM',
-  }, {
+  },
+  {
+    publicKey: 'B62qrAX9j3QwGMrcdBVHxM3dEhV1GqsuSdrquEBqdubnL3LHjgAkv8v',
+    privateKey: 'EKEYVP34cCbPSTxsm8TiAXG4jsSu87wo7MTXf667gdM2EBtcEx81',
+  },
+  {
     publicKey: 'B62qnacSPpdk8wdkEKQGtqGy6fWoaveLo8s521vrjG6TDWjKBdfuQoL',
     privateKey: 'EKFNS4JNz9zyk9uVdkRVxDx71dRPYwyaVqqD2fEZ3QjiYQ8HJcLC',
   }, {
     publicKey: 'B62qjpdXHeSamg1LYVsbYv5SG4gLx4bt67rjBmLJYJubcMyC3qNuPFY',
     privateKey: 'EKFR1ZM7pGi9aXTu5qxPmCB3NdcyYzRAUz8YQNJ2ME26EGy1gCrv',
-  }, {
+  },
+  {
     publicKey: 'B62qnnrKBqRoP1by1rGUWATUaMUcm4ai26G1GhTe3MLigtbLAfB3q1q',
     privateKey: 'EKDwUyhB57p8mT4MhDovjACunp2T5uVzMwSBXozcKTqeb1U4K4hr',
   }, {

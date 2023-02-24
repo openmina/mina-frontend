@@ -40,3 +40,13 @@ export function sort<T = any>(inpArray: T[], sort: TableSort<T>, strings: Array<
 export function lastItem<T = any>(array: T[]): T {
   return array[array.length - 1];
 }
+
+export function toggleItem<T>(array: T[], item: T, comparator: (curr: T) => boolean = (curr: T) => curr === item): T[] {
+  const index = array.findIndex(comparator);
+  if (index !== -1) {
+    array = [...array.slice(0, index), ...array.slice(index + 1)];
+  } else {
+    array = [...array, item];
+  }
+  return array;
+}

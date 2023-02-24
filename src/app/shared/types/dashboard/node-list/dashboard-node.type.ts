@@ -1,4 +1,5 @@
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
+import { TracingBlockTraceStatus } from '@shared/types/tracing/blocks/tracing-block-trace.type';
 
 export interface DashboardNode {
   index: number;
@@ -21,4 +22,6 @@ export interface DashboardNode {
   snarkDiffReceived: number;
   snarkDiffBroadcasted: number;
   pendingSnarkWork: number;
+  loaded: boolean;
+  traceStatus: TracingBlockTraceStatus;
 }

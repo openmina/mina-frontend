@@ -1,0 +1,11 @@
+<div class="flex-column">
+  <div class="flex-row flex-between p-12" fxFlex="42px">
+    <span class="secondary f-600">Log details</span>
+    <span class="mina-icon pointer tertiary primary-hover f-18"
+          (click)="closeSidePanel()">close
+    </span>
+  </div>
+  <mina-json-viewer [json]="activeLog || {}"
+                    [expandTracking]="expandTracking"
+                    [expanded]="false"></mina-json-viewer>
+</div>

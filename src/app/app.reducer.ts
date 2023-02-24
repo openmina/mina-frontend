@@ -42,7 +42,7 @@ export function reducer(state: AppState = initialState, action: any): AppState {
       return {
         ...state,
         nodes: CONFIG.configs,
-        activeNode: CONFIG.configs[0],
+        activeNode: CONFIG.configs.find(c => c.name === action.payload.nodeName) || CONFIG.configs[0],
       };
     }
 
@@ -84,7 +84,7 @@ export function reducer(state: AppState = initialState, action: any): AppState {
     case APP_CHANGE_SUB_MENUS: {
       return {
         ...state,
-        subMenus: action.payload,
+        subMenus: action.payload.filter(Boolean),
       };
     }
 

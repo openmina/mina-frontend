@@ -7,7 +7,7 @@ import { APP_CHANGE_SUB_MENUS, AppChangeSubMenus } from '@app/app.actions';
 import { Routes } from '@shared/enums/routes.enum';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { LoadingService } from '@core/services/loading.service';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WEB_NODE_SHARED_INIT, WebNodeSharedInit } from '@web-node/web-node.actions';
 import { DOCUMENT } from '@angular/common';
 
@@ -46,13 +46,14 @@ export class WebNodeComponent extends ManualDetection implements OnInit, AfterVi
     if (this.webNodeService.wasmIsAlreadyLoaded) {
       return;
     }
-
-    // import('../../../assets/webnode/mina-rust/wasm.js').then((wasm: any) => {
+    // await import('../../../assets/webnode/mina-rust/wasm.js').then((wasm: any) => {
+    //   console.log('wasm');
+    //   console.log(wasm);
     //   (window as any).WebnodeWasm = wasm;
-      this.webNodeService.instantiateWasm(null);
     // });
+    this.webNodeService.instantiateWasm(null);
 
-    this.webNodeService.wasmReady$.subscribe(() => {
+    this.webNodeService.wasmReady$.pipe(untilDestroyed(this)).subscribe(() => {
       this.wasmLoaded = true;
       this.detect();
     });

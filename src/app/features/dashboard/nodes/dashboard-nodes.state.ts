@@ -32,8 +32,8 @@ export const selectDashboardNodesActiveNode = select((state: DashboardNodesState
 export const selectDashboardNodesSorting = select((state: DashboardNodesState): TableSort<DashboardNode> => state.sort);
 export const selectDashboardNodesNodeCount = select((state: DashboardNodesState): DashboardNodeCount => state.nodeCount);
 export const selectDashboardNodesBlockTraces = select((state: DashboardNodesState): TracingTraceGroup[] => state.blockTraces);
-export const selectDashboardNodesActiveBlock = select((state: DashboardNodesState): number => state.activeBlock);
-export const selectDashboardNodesEarliestBlock = select((state: DashboardNodesState): number => state.earliestBlock);
+export const selectDashboardNodesActiveBlockLevel = select((state: DashboardNodesState): number => state.activeBlock);
+export const selectDashboardNodesEarliestBlockLevel = select((state: DashboardNodesState): number => state.earliestBlock);
 export const selectDashboardNodesAllFilters = select((state: DashboardNodesState): string[] => state.allFilters);
 export const selectDashboardNodesActiveFilters = select((state: DashboardNodesState): string[] => state.activeFilters);
 export const selectDashboardNodesShowOfflineNodes = select((state: DashboardNodesState): boolean => state.showOfflineNodes);

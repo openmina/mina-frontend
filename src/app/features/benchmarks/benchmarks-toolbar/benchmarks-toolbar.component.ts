@@ -1,15 +1,36 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { selectBenchmarksBlockSending, selectBenchmarksSendingBatch, selectBenchmarksSentTransactionsStats } from '@benchmarks/benchmarks.state';
+import {
+  selectBenchmarksActiveWallet,
+  selectBenchmarksBlockSending,
+  selectBenchmarksRandomWallet,
+  selectBenchmarksSendingBatch, selectBenchmarksSendingFee,
+  selectBenchmarksSentTransactionsStats,
+  selectBenchmarksWallets,
+} from '@benchmarks/benchmarks.state';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BENCHMARKS_CHANGE_TRANSACTION_BATCH, BENCHMARKS_SEND_TXS, BenchmarksChangeTransactionBatch, BenchmarksSendTxs } from '@benchmarks/benchmarks.actions';
+import {
+  BENCHMARKS_CHANGE_FEE,
+  BENCHMARKS_CHANGE_TRANSACTION_BATCH,
+  BENCHMARKS_SELECT_WALLET,
+  BENCHMARKS_SEND_TXS,
+  BENCHMARKS_TOGGLE_RANDOM_WALLET, BenchmarksChangeFee,
+  BenchmarksChangeTransactionBatch,
+  BenchmarksSelectWallet,
+  BenchmarksSendTxs,
+  BenchmarksToggleRandomWallet,
+} from '@benchmarks/benchmarks.actions';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { distinctUntilChanged, filter } from 'rxjs';
+import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { TemplatePortal } from '@angular/cdk/portal';
+import { BenchmarksWallet } from '@shared/types/benchmarks/benchmarks-wallet.type';
 
 interface TransactionForm {
   batch: FormControl<number>;
+  fee: FormControl<number>;
 }
 
 @UntilDestroy()
@@ -27,16 +48,46 @@ export class BenchmarksToolbarComponent extends ManualDetection implements OnIni
   streamSending: boolean;
   successSentTransactions: number;
   failSentTransactions: number;
+  randomWallet: boolean;
+  activeWallet: BenchmarksWallet;
+  wallets: BenchmarksWallet[];
 
   private currentBatch: number;
+  private walletsLength: number;
+
+  private overlayRef: OverlayRef;
+
+  @ViewChild('walletDropdown') private walletDropdown: TemplateRef<any>;
+  @ViewChild('dropdownTrigger') private dropdownTrigger: ElementRef<HTMLDivElement>;
 
   constructor(private store: Store<MinaState>,
-              private formBuilder: FormBuilder) { super(); }
+              private formBuilder: FormBuilder,
+              private overlay: Overlay,
+              private viewContainerRef: ViewContainerRef) { super(); }
 
   ngOnInit(): void {
     this.initForm();
+    this.listenToWalletsChanges();
     this.listenToTransactionChanges();
     this.listenToStressingSendStreaming();
+    this.listenToBatchChange();
+    this.listenToFeeChange();
+  }
+
+  private listenToWalletsChanges(): void {
+    this.store.select(selectBenchmarksWallets)
+      .pipe(untilDestroyed(this))
+      .subscribe(wallets => {
+        this.wallets = wallets;
+        this.walletsLength = wallets.length;
+        this.detect();
+      });
+    this.store.select(selectBenchmarksActiveWallet)
+      .pipe(untilDestroyed(this))
+      .subscribe(activeWallet => {
+        this.activeWallet = activeWallet;
+        this.detect();
+      });
   }
 
   private listenToTransactionChanges(): void {
@@ -47,11 +98,23 @@ export class BenchmarksToolbarComponent extends ManualDetection implements OnIni
         this.failSentTransactions = stats.fail;
         this.detect();
       });
+  }
+
+  private listenToBatchChange(): void {
     this.store.select(selectBenchmarksSendingBatch)
       .pipe(untilDestroyed(this))
       .subscribe(batch => {
         this.currentBatch = batch;
         this.formGroup.get('batch').setValue(batch, { emitEvent: false });
+        this.detect();
+      });
+  }
+
+  private listenToFeeChange(): void {
+    this.store.select(selectBenchmarksSendingFee)
+      .pipe(untilDestroyed(this))
+      .subscribe(fee => {
+        this.formGroup.get('fee').setValue(Math.abs(fee));
         this.detect();
       });
   }
@@ -63,11 +126,18 @@ export class BenchmarksToolbarComponent extends ManualDetection implements OnIni
         this.streamSending = streamSending;
         this.detect();
       });
+    this.store.select(selectBenchmarksRandomWallet)
+      .pipe(untilDestroyed(this))
+      .subscribe(randomWallet => {
+        this.randomWallet = randomWallet;
+        this.detect();
+      });
   }
 
   private initForm(): void {
     this.formGroup = this.formBuilder.group<TransactionForm>({
       batch: new FormControl(0),
+      fee: new FormControl(0),
     });
 
     this.formGroup.get('batch')
@@ -78,18 +148,69 @@ export class BenchmarksToolbarComponent extends ManualDetection implements OnIni
         filter(v => v !== null),
       )
       .subscribe((value: number) => {
-        const payload = Math.ceil(value || 1);
+        let payload = Math.ceil(value || 1);
+        if (payload > this.walletsLength) {
+          payload = this.randomWallet ? this.walletsLength : (this.walletsLength - 1);
+        }
         this.formGroup.get('batch').patchValue(payload);
         if (this.currentBatch !== payload) {
           this.store.dispatch<BenchmarksChangeTransactionBatch>({ type: BENCHMARKS_CHANGE_TRANSACTION_BATCH, payload });
         }
       });
-
+    this.formGroup.get('fee')
+      .valueChanges
+      .pipe(
+        untilDestroyed(this),
+        distinctUntilChanged(),
+        filter(v => v !== null),
+      )
+      .subscribe((value: number) => {
+        this.store.dispatch<BenchmarksChangeFee>({ type: BENCHMARKS_CHANGE_FEE, payload: value });
+      });
   }
 
   send(): void {
     if (!this.streamSending) {
       this.store.dispatch<BenchmarksSendTxs>({ type: BENCHMARKS_SEND_TXS });
+    }
+  }
+
+  toggleRandomWallet(): void {
+    this.store.dispatch<BenchmarksToggleRandomWallet>({ type: BENCHMARKS_TOGGLE_RANDOM_WALLET });
+  }
+
+  changeWallet(wallet: BenchmarksWallet) {
+    this.store.dispatch<BenchmarksSelectWallet>({ type: BENCHMARKS_SELECT_WALLET, payload: wallet });
+  }
+
+  openDropdown(event: MouseEvent): void {
+    if (this.overlayRef?.hasAttached()) {
+      this.overlayRef.detach();
+      return;
+    }
+
+    this.overlayRef = this.overlay.create({
+      hasBackdrop: false,
+      width: 650,
+      positionStrategy: this.overlay.position()
+        .flexibleConnectedTo(this.dropdownTrigger.nativeElement)
+        .withPositions([{
+          originX: 'start',
+          originY: 'top',
+          overlayX: 'start',
+          overlayY: 'top',
+          offsetY: 35,
+        }]),
+    });
+    event.stopPropagation();
+
+    const portal = new TemplatePortal(this.walletDropdown, this.viewContainerRef);
+    this.overlayRef.attach(portal);
+  }
+
+  detachOverlay(): void {
+    if (this.overlayRef?.hasAttached()) {
+      this.overlayRef.detach();
     }
   }
 }

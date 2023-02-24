@@ -21,3 +21,11 @@ export function getURL(pathOrUrl: string): string {
   }
   return pathOrUrl;
 }
+
+export function isVanilla(): boolean {
+  return CONFIG.isVanilla;
+}
+
+export function isNotVanilla(): boolean {
+  return !CONFIG.isVanilla;
+}

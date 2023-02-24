@@ -7,15 +7,16 @@ import { Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { Routes } from '@shared/enums/routes.enum';
 import {
-  selectExplorerLeafsMarking,
+  selectExplorerScanStateLeafsMarking,
   selectExplorerScanStateActiveBlock,
   selectExplorerScanStateEarliestBlock,
   selectExplorerScanStateFirstBlock,
   selectExplorerScanStateTxSnarks,
 } from '@explorer/scan-state/explorer-scan-state.state';
 import {
+  EXPLORER_SCAN_STATE_CENTER_TREES,
   EXPLORER_SCAN_STATE_SET_ACTIVE_BLOCK,
-  EXPLORER_SCAN_STATE_TOGGLE_LEAFS_MARKING,
+  EXPLORER_SCAN_STATE_TOGGLE_LEAFS_MARKING, ExplorerScanStateCenterTrees,
   ExplorerScanStateSetActiveBlock,
   ExplorerScanStateToggleLeafsMarking,
 } from '@explorer/scan-state/explorer-scan-state.actions';
@@ -35,6 +36,9 @@ export class ExplorerScanStateToolbarComponent extends ManualDetection implement
   firstBlock: number;
   txCount: number;
   snarksCount: number;
+  userCommandsCount: number;
+  feeTransferCount: number;
+  zkappCommandsCount: number;
   leafsMarking: boolean;
 
   constructor(private store: Store<MinaState>,
@@ -47,9 +51,12 @@ export class ExplorerScanStateToolbarComponent extends ManualDetection implement
   private listenToStore(): void {
     this.store.select(selectExplorerScanStateTxSnarks)
       .pipe(untilDestroyed(this))
-      .subscribe(({ txCount, snarksCount }: { txCount: number, snarksCount: number }) => {
-        this.txCount = txCount;
-        this.snarksCount = snarksCount;
+      .subscribe((data: { txCount: number; snarksCount: number; userCommandsCount: number; feeTransferCount: number; zkappCommandsCount: number }) => {
+        this.txCount = data.txCount;
+        this.snarksCount = data.snarksCount;
+        this.userCommandsCount = data.userCommandsCount;
+        this.feeTransferCount = data.feeTransferCount;
+        this.zkappCommandsCount = data.zkappCommandsCount;
         this.detect();
       });
     this.store.select(selectExplorerScanStateActiveBlock)
@@ -79,7 +86,7 @@ export class ExplorerScanStateToolbarComponent extends ManualDetection implement
         this.firstBlock = firstBlock;
         this.detect();
       });
-    this.store.select(selectExplorerLeafsMarking)
+    this.store.select(selectExplorerScanStateLeafsMarking)
       .pipe(untilDestroyed(this))
       .subscribe((leafsMarking: boolean) => {
         this.leafsMarking = leafsMarking;
@@ -89,10 +96,14 @@ export class ExplorerScanStateToolbarComponent extends ManualDetection implement
 
   getBlock(height: number): void {
     this.store.dispatch<ExplorerScanStateSetActiveBlock>({ type: EXPLORER_SCAN_STATE_SET_ACTIVE_BLOCK, payload: { height } });
-    this.router.navigate([Routes.EXPLORER, Routes.SCAN_STATE, height]);
+    this.router.navigate([Routes.EXPLORER, Routes.SCAN_STATE, height], { queryParamsHandling: 'merge' });
   }
 
   toggleLeafsMarking(): void {
     this.store.dispatch<ExplorerScanStateToggleLeafsMarking>({ type: EXPLORER_SCAN_STATE_TOGGLE_LEAFS_MARKING });
+  }
+
+  centerTrees(): void {
+    this.store.dispatch<ExplorerScanStateCenterTrees>({ type: EXPLORER_SCAN_STATE_CENTER_TREES });
   }
 }

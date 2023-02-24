@@ -6,11 +6,14 @@ import { Store } from '@ngrx/store';
 import { MinaState, selectMinaState } from '@app/app.setup';
 import { TracingOverviewService } from '@tracing/tracing-overview/tracing-overview.service';
 import {
+  TRACING_OVERVIEW_CLOSE,
   TRACING_OVERVIEW_GET_CHECKPOINTS,
   TRACING_OVERVIEW_GET_CHECKPOINTS_SUCCESS,
   TracingOverviewActions,
+  TracingOverviewClose,
+  TracingOverviewGetCheckpoints,
 } from '@tracing/tracing-overview/tracing-overview.actions';
-import { catchError, map, repeat, switchMap } from 'rxjs';
+import { catchError, EMPTY, map, repeat, switchMap } from 'rxjs';
 import { TracingOverviewCheckpoint } from '@shared/types/tracing/overview/tracing-overview-checkpoint.type';
 import { addError } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
@@ -22,8 +25,6 @@ export class TracingOverviewEffects extends MinaBaseEffect<TracingOverviewAction
 
   readonly getCheckpoints$: Effect;
 
-  // readonly getTraceDetails$: Effect;
-
   constructor(private actions$: Actions,
               private tracingOverviewService: TracingOverviewService,
               store: Store<MinaState>) {
@@ -31,8 +32,13 @@ export class TracingOverviewEffects extends MinaBaseEffect<TracingOverviewAction
     super(store, selectMinaState);
 
     this.getCheckpoints$ = createEffect(() => this.actions$.pipe(
-      ofType(TRACING_OVERVIEW_GET_CHECKPOINTS),
-      switchMap(() => this.tracingOverviewService.getStatistics()),
+      ofType(TRACING_OVERVIEW_GET_CHECKPOINTS, TRACING_OVERVIEW_CLOSE),
+      this.latestActionState<TracingOverviewGetCheckpoints | TracingOverviewClose>(),
+      switchMap(({ action }) =>
+        action.type === TRACING_OVERVIEW_CLOSE
+          ? EMPTY
+          : this.tracingOverviewService.getStatistics(),
+      ),
       map((payload: TracingOverviewCheckpoint[]) => ({ type: TRACING_OVERVIEW_GET_CHECKPOINTS_SUCCESS, payload })),
       catchError((error: Error) => [
         addError(error, MinaErrorType.GRAPH_QL),
@@ -40,13 +46,5 @@ export class TracingOverviewEffects extends MinaBaseEffect<TracingOverviewAction
       ]),
       repeat(),
     ));
-
-    // this.getTraceDetails$ = createEffect(() => this.actions$.pipe(
-    //   ofType(TRACING_BLOCKS_SELECT_ROW),
-    //   this.latestActionState<TracingBlocksSelectRow>(),
-    //   filter(({ state }) => !!state.tracing.blocks.activeTrace),
-    //   switchMap(({ action }) => this.tracingOverviewService.getBlockTraceGroups(action.payload.hash)),
-    //   map((payload: TracingTraceGroup[]) => ({ type: TRACING_BLOCKS_GET_DETAILS_SUCCESS, payload })),
-    // ));
   }
 }

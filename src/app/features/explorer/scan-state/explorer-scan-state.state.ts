@@ -10,7 +10,11 @@ export interface ExplorerScanState {
   firstBlock: number;
   txCount: number;
   snarksCount: number;
+  userCommandsCount: number;
+  feeTransferCount: number;
+  zkappCommandsCount: number;
   leafsMarking: boolean;
+  centerTrees: boolean;
 }
 
 const select = <T>(selector: (state: ExplorerScanState) => T): MemoizedSelector<MinaState, T> => createSelector(
@@ -22,7 +26,14 @@ export const selectExplorerScanStateTree = select((state: ExplorerScanState): Ex
 export const selectExplorerScanStateActiveBlock = select((state: ExplorerScanState): number => state.activeBlock);
 export const selectExplorerScanStateEarliestBlock = select((state: ExplorerScanState): number => state.earliestBlock);
 export const selectExplorerScanStateFirstBlock = select((state: ExplorerScanState): number => state.firstBlock);
-export const selectExplorerScanStateTxSnarks = select((state: ExplorerScanState): { txCount: number, snarksCount: number } =>
-  ({ txCount: state.txCount, snarksCount: state.snarksCount }),
-);
-export const selectExplorerLeafsMarking  = select((state: ExplorerScanState): boolean => state.leafsMarking);
+export const selectExplorerScanStateTxSnarks = select((state: ExplorerScanState): {
+  txCount: number, snarksCount: number, userCommandsCount: number, feeTransferCount: number, zkappCommandsCount: number,
+} => ({
+  txCount: state.txCount,
+  snarksCount: state.snarksCount,
+  userCommandsCount: state.userCommandsCount,
+  feeTransferCount: state.feeTransferCount,
+  zkappCommandsCount: state.zkappCommandsCount,
+}));
+export const selectExplorerScanStateLeafsMarking = select((state: ExplorerScanState): boolean => state.leafsMarking);
+export const selectExplorerScanStateCenterTrees = select((state: ExplorerScanState): boolean => state.centerTrees);
