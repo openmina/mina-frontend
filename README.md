@@ -49,13 +49,13 @@ The application is divided into three main sections:
 
 ## Available features (pages)
 
-1. Dashboard - This page shows a summary of the current status of each node connected to the application.
-2. Explorer - The Explorer page enables you to access blockchain data recorded in the form of blocks, transaction pool, snark pool, scan state and snark traces.
-3. Resources - The Resources page allows you to view how much resources are being used over time by the currently active node.
-4. Network - The Network page allows you to view the network communication of the currently active node.
-5. Tracing - The Tracing page allows you to follow the traces of each block of the currently active node.
-6. Benchmarks - The Benchmarks page allows you to send transactions within currently active node in order to track its behaviour and spot potential issues.
-7. Web Node - The Web Node page allows you to connect to a node running in the browser.
+1. [Dashboard](http://1.k8.openmina.com:31308/dashboard) - This page shows a summary of the current status of each node connected to the application.
+2. [Explorer](http://1.k8.openmina.com:31308/explorer) - The Explorer page enables you to access blockchain data recorded in the form of blocks, transaction pool, snark pool, scan state and snark traces.
+3. [Resources](http://1.k8.openmina.com:31308/resources) - The Resources page allows you to view how much resources are being used over time by the currently active node.
+4. [Network](http://1.k8.openmina.com:31308/network) - The Network page allows you to view the network communication of the currently active node.
+5. [Tracing](http://1.k8.openmina.com:31308/tracing) - The Tracing page allows you to follow the traces of each block of the currently active node.
+6. [Benchmarks](http://1.k8.openmina.com:31308/benchmarks) - The Benchmarks page allows you to send transactions within currently active node in order to track its behaviour and spot potential issues.
+7. [Web Node](https://openmina-webnode.web.app/web-node) - The Web Node page allows you to connect to a node running in the browser.
 
 ## Architecture
 
@@ -144,20 +144,4 @@ npm run tests:headless
 The tests are run in headless mode. To run the tests in the browser, you need to run the following command:
 ```bash
 npm run tests
-```
-
-## Web node integration steps
-The integration of the web node is done by using the **wasm-pack** tool. The tool is used to compile the Rust code to WebAssembly and to generate the Javascript and Typescript bindings. The bindings are used to communicate with the Rust code from the Typescript code. The integration process is done by following these steps:
-
-```bash
-1. Get the latest version of the node.
-2. Navigate to wasm directory (the one which contains Cargo.toml: `openmina/node/wasm`)
-3. Run `eval 'ssh-agent -s'`
-4. Run `ssh-add`
-5. Run `cargo update` or `cargo update -p mina-p2p-messages`
-6. Run `wasm-pack build --target web` or `rustup run nightly wasm-pack build --target web`
-7. Copy the content of **pkg** directory (in Windows run `explorer.exe .` and copy)
-8. Paste the content inside **mina-frontend/assets/webnode/mina-rust**
-9. In **wasm.d.ts** add Typescript lines from alteration.txt
-10. In **wasm.js** add Javascript lines from alteration.txt
 ```

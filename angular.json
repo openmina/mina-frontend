@@ -189,27 +189,6 @@
               ],
               "outputHashing": "all"
             },
-            "webnodedemo": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "2mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "4kb",
-                  "maximumError": "8kb"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.webnodedemo.ts"
-                }
-              ],
-              "outputHashing": "all"
-            },
             "cyp": {
               "budgets": [
                 {
