@@ -1,4 +1,4 @@
-# The Metrics & Tracing Interface
+# The Metrics & Tracing
 
 
 ## Table of Contents
