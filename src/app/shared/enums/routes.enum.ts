@@ -12,7 +12,7 @@ export enum Routes {
   STATE = 'state',
   WALLETS = 'wallets',
   TRANSACTIONS = 'transactions',
-  SNARKS = 'snarks',
+  SNARK_POOL = 'snark-pool',
   DASHBOARD = 'dashboard',
   BLOCKS_IPC = 'blocks-ipc',
   BLOCK = 'block',
@@ -20,4 +20,8 @@ export enum Routes {
   NODES = 'nodes',
   SCAN_STATE = 'scan-state',
   EXPLORER = 'explorer',
+  PROPAGATION = 'propagation',
+  SYSTEM = 'system',
+  SNARK_TRACES = 'snark-traces',
+  RESOURCES = 'resources',
 }

@@ -26,3 +26,7 @@
 		}
 	}
 }
+
+.node:focus {
+	outline: 2px solid $selected-primary;
+}

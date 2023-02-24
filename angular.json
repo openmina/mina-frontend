@@ -44,19 +44,20 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
-            "scripts": [],
+            "scripts": [
+            ],
             "stylePreprocessorOptions": {
               "includePaths": [
                 "src/assets",
                 "src/assets/styles",
-                "src/assets/styles/utilities"
+                "src/assets/styles/utilities",
+                "src/assets/images"
               ]
             },
             "aot": true
@@ -205,6 +206,48 @@
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.webnodedemo.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "cyp": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "2mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kb",
+                  "maximumError": "8kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.cyp.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "openmina": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "2mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kb",
+                  "maximumError": "8kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.openmina.ts"
                 }
               ],
               "outputHashing": "all"

@@ -83,7 +83,7 @@ export class WebNodeWalletService {
     return this.http.get<any>(this.config.MINA_EXPLORER + '/accounts/' + publicKey);
   }
 
-  createTransaction(transaction: WebNodeTransaction): Observable<WebNodeTransaction> {
+  createTransaction(transaction: WebNodeTransaction): Observable<string> {
     return this.webNodeService.createTransaction(transaction);
   }
 

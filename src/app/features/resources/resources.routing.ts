@@ -4,16 +4,11 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: 'system',
-    loadChildren: () => import('./system-resources/system-resources.module').then(module => module.SystemResourcesModule),
-  },
-  {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: 'system',
+    loadChildren: () => import('./system/system-resources.module').then(module => module.SystemResourcesModule),
   },
   {
     path: '**',
-    redirectTo: '',
+    redirectTo: 'system',
     pathMatch: 'full',
   },
 ];

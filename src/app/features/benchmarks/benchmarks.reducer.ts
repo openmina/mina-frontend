@@ -1,17 +1,21 @@
 import { BenchmarksState } from '@benchmarks/benchmarks.state';
 import {
+  BENCHMARKS_CHANGE_FEE,
   BENCHMARKS_CHANGE_TRANSACTION_BATCH,
   BENCHMARKS_CLOSE,
   BENCHMARKS_GET_MEMPOOL_TRANSACTIONS_SUCCESS,
   BENCHMARKS_GET_WALLETS,
   BENCHMARKS_GET_WALLETS_SUCCESS,
+  BENCHMARKS_SELECT_WALLET,
   BENCHMARKS_SEND_TX_SUCCESS,
   BENCHMARKS_SEND_TXS,
+  BENCHMARKS_TOGGLE_RANDOM_WALLET,
   BENCHMARKS_UPDATE_WALLETS_SUCCESS,
   BenchmarksActions,
 } from '@benchmarks/benchmarks.actions';
 import { BenchmarksWallet } from '@shared/types/benchmarks/benchmarks-wallet.type';
 import { BenchmarksTransaction } from '@shared/types/benchmarks/benchmarks-transaction.type';
+import { ONE_BILLION } from '@shared/constants/unit-measurements';
 
 const initialState: BenchmarksState = {
   wallets: [],
@@ -24,6 +28,9 @@ const initialState: BenchmarksState = {
     fail: 0,
   },
   sentTxCount: 0,
+  randomWallet: true,
+  activeWallet: undefined,
+  sendingFee: 1,
 };
 
 export function reducer(state: BenchmarksState = initialState, action: BenchmarksActions): BenchmarksState {
@@ -35,6 +42,7 @@ export function reducer(state: BenchmarksState = initialState, action: Benchmark
         wallets: action.payload,
         blockSending: false,
         txSendingBatch: state.txSendingBatch === undefined ? action.payload.length : state.txSendingBatch,
+        activeWallet: action.payload[0],
       };
     }
 
@@ -74,29 +82,61 @@ export function reducer(state: BenchmarksState = initialState, action: Benchmark
       };
     }
 
+    case BENCHMARKS_TOGGLE_RANDOM_WALLET: {
+      return {
+        ...state,
+        randomWallet: !state.randomWallet,
+      };
+    }
+
     case BENCHMARKS_SEND_TXS: {
-      const txsToSend: BenchmarksTransaction[] = state.wallets
-        .slice(0, state.txSendingBatch)
-        .map((wallet: BenchmarksWallet, i: number) => {
-          const txsInMempool = state.mempoolTxs.filter(tx => tx.from === wallet.publicKey).map(tx => tx.nonce);
-          const nonce = Math.max(wallet.nonce, txsInMempool.length ? (Math.max(...txsInMempool) + 1) : 0).toString();
+      let txsToSend: BenchmarksTransaction[];
+      if (state.randomWallet) {
+        txsToSend = state.wallets
+          .slice(0, state.txSendingBatch)
+          .map((wallet: BenchmarksWallet, i: number) => {
+            const nonce = getNonceForWallet(wallet, state).toString();
+            const counter = state.sentTxCount + i;
+            const memo = Date.now() + ',' + (counter + 1) + ',' + localStorage.getItem('browserId');
+            const payment = {
+              from: wallet.publicKey,
+              nonce,
+              to: getRandomReceiver(wallet, state.wallets),
+              fee: (state.sendingFee * ONE_BILLION).toString(),
+              amount: '2000000000',
+              memo,
+              validUntil: '4294967295',
+            };
+
+            return {
+              ...payment,
+              privateKey: wallet.privateKey,
+            };
+          });
+      } else {
+        const wallet = state.activeWallet;
+        let nonce = getNonceForWallet(wallet, state);
+
+        txsToSend = Array(state.txSendingBatch).fill(void 0).map((_, i: number) => {
           const counter = state.sentTxCount + i;
           const memo = Date.now() + ',' + (counter + 1) + ',' + localStorage.getItem('browserId');
           const payment = {
             from: wallet.publicKey,
-            nonce,
-            to: getRandomReceiver(wallet, state.wallets),
-            fee: '1000000000',
-            amount: '2000000000',
+            nonce: nonce.toString(),
+            to: state.wallets[i].publicKey,
+            fee: (state.sendingFee * ONE_BILLION).toString(),
+            amount: '1000000000',
             memo,
             validUntil: '4294967295',
           };
+          nonce++;
 
           return {
             ...payment,
             privateKey: wallet.privateKey,
           };
         });
+      }
 
       return {
         ...state,
@@ -147,6 +187,20 @@ export function reducer(state: BenchmarksState = initialState, action: Benchmark
       };
     }
 
+    case BENCHMARKS_SELECT_WALLET: {
+      return {
+        ...state,
+        activeWallet: action.payload,
+      };
+    }
+
+    case BENCHMARKS_CHANGE_FEE: {
+      return {
+        ...state,
+        sendingFee: action.payload,
+      };
+    }
+
     case BENCHMARKS_CLOSE: {
       return {
         ...initialState,
@@ -165,4 +219,9 @@ function getRandomReceiver(currentWallet: BenchmarksWallet, wallets: BenchmarksW
     return getRandomReceiver(currentWallet, wallets);
   }
   return wallets[index].publicKey;
-};
+}
+
+function getNonceForWallet(wallet: BenchmarksWallet, state: BenchmarksState): number {
+  const txsInMempool = state.mempoolTxs.filter(tx => tx.from === wallet.publicKey).map(tx => tx.nonce);
+  return Math.max(wallet.nonce, txsInMempool.length ? (Math.max(...txsInMempool) + 1) : 0);
+}

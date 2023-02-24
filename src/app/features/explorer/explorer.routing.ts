@@ -19,13 +19,18 @@ const routes: Routes = [
         title: EXPLORER_TITLE,
       },
       {
-        path: 'snarks',
+        path: 'snark-pool',
         loadChildren: () => import('./snarks/explorer-snarks.module').then(m => m.SnarksModule),
         title: EXPLORER_TITLE,
       },
       {
         path: 'scan-state',
         loadChildren: () => import('./scan-state/explorer-scan-state.module').then(m => m.ExplorerScanStateModule),
+        title: EXPLORER_TITLE,
+      },
+      {
+        path: 'snark-traces',
+        loadChildren: () => import('./snark-workers-traces/snark-workers-traces.module').then(m => m.SnarkWorkersTracesModule),
         title: EXPLORER_TITLE,
       },
       {

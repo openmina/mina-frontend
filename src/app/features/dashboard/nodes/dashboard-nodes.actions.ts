@@ -7,7 +7,8 @@ enum DashboardNodesActionTypes {
   DASHBOARD_NODES_INIT = 'DASHBOARD_NODES_INIT',
   DASHBOARD_NODES_CLOSE = 'DASHBOARD_NODES_CLOSE',
   DASHBOARD_NODES_GET_NODES = 'DASHBOARD_NODES_GET_NODES',
-  DASHBOARD_NODES_GET_NODES_SUCCESS = 'DASHBOARD_NODES_GET_NODES_SUCCESS',
+  DASHBOARD_NODES_GET_NODE = 'DASHBOARD_NODES_GET_NODE',
+  DASHBOARD_NODES_GET_NODE_SUCCESS = 'DASHBOARD_NODES_GET_NODE_SUCCESS',
   DASHBOARD_NODES_SORT = 'DASHBOARD_NODES_SORT',
   DASHBOARD_NODES_SET_ACTIVE_NODE = 'DASHBOARD_NODES_SET_ACTIVE_NODE',
   DASHBOARD_NODES_GET_TRACES_SUCCESS = 'DASHBOARD_NODES_GET_TRACES_SUCCESS',
@@ -22,7 +23,8 @@ enum DashboardNodesActionTypes {
 export const DASHBOARD_NODES_INIT = DashboardNodesActionTypes.DASHBOARD_NODES_INIT;
 export const DASHBOARD_NODES_CLOSE = DashboardNodesActionTypes.DASHBOARD_NODES_CLOSE;
 export const DASHBOARD_NODES_GET_NODES = DashboardNodesActionTypes.DASHBOARD_NODES_GET_NODES;
-export const DASHBOARD_NODES_GET_NODES_SUCCESS = DashboardNodesActionTypes.DASHBOARD_NODES_GET_NODES_SUCCESS;
+export const DASHBOARD_NODES_GET_NODE = DashboardNodesActionTypes.DASHBOARD_NODES_GET_NODE;
+export const DASHBOARD_NODES_GET_NODE_SUCCESS = DashboardNodesActionTypes.DASHBOARD_NODES_GET_NODE_SUCCESS;
 export const DASHBOARD_NODES_SORT = DashboardNodesActionTypes.DASHBOARD_NODES_SORT;
 export const DASHBOARD_NODES_SET_ACTIVE_NODE = DashboardNodesActionTypes.DASHBOARD_NODES_SET_ACTIVE_NODE;
 export const DASHBOARD_NODES_GET_TRACES_SUCCESS = DashboardNodesActionTypes.DASHBOARD_NODES_GET_TRACES_SUCCESS;
@@ -51,8 +53,14 @@ export class DashboardNodesGetNodes implements DashboardNodesAction {
   constructor(public payload?: { height: number }) {}
 }
 
-export class DashboardNodesGetNodesSuccess implements DashboardNodesAction {
-  readonly type = DASHBOARD_NODES_GET_NODES_SUCCESS;
+export class DashboardNodesGetNode implements DashboardNodesAction {
+  readonly type = DASHBOARD_NODES_GET_NODE;
+
+  constructor(public payload: { node: DashboardNode, height: number }) {}
+}
+
+export class DashboardNodesGetNodeSuccess implements DashboardNodesAction {
+  readonly type = DASHBOARD_NODES_GET_NODE_SUCCESS;
 
   constructor(public payload: DashboardNode[]) {}
 }
@@ -66,7 +74,7 @@ export class DashboardNodesSort implements DashboardNodesAction {
 export class DashboardNodesSetActiveNode implements DashboardNodesAction {
   readonly type = DASHBOARD_NODES_SET_ACTIVE_NODE;
 
-  constructor(public payload: DashboardNode) { }
+  constructor(public payload: { node: DashboardNode }) { }
 }
 
 export class DashboardNodesGetTracesSuccess implements DashboardNodesAction {
@@ -110,7 +118,8 @@ export type DashboardNodesActions =
   | DashboardNodesInit
   | DashboardNodesClose
   | DashboardNodesGetNodes
-  | DashboardNodesGetNodesSuccess
+  | DashboardNodesGetNode
+  | DashboardNodesGetNodeSuccess
   | DashboardNodesSort
   | DashboardNodesSetActiveNode
   | DashboardNodesGetTracesSuccess

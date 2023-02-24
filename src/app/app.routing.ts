@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { FeatureGuard } from '@shared/guards/feature.guard';
+import { CONFIG } from '@shared/constants/config';
+import { FeatureGuard } from '@core/guards/feature.guard';
 
 const APP_TITLE: string = 'Open Mina';
 
@@ -11,6 +12,7 @@ export const WEB_NODE_TITLE: string = APP_TITLE + ' - Web Node';
 export const BENCHMARKS_TITLE: string = APP_TITLE + ' - Benchmarks';
 export const DASHBOARD_TITLE: string = APP_TITLE + ' - Dashboard';
 export const EXPLORER_TITLE: string = APP_TITLE + ' - Explorer';
+export const LOGS_TITLE: string = APP_TITLE + ' - Logs';
 
 
 export const routes: Routes = [
@@ -39,12 +41,6 @@ export const routes: Routes = [
     canActivate: [FeatureGuard],
   },
   {
-    path: 'web-node-demo',
-    loadChildren: () => import('./features/web-node-demo/web-node-demo.module').then(module => module.WebNodeDemoModule),
-    title: WEB_NODE_TITLE,
-    canActivate: [FeatureGuard],
-  },
-  {
     path: 'benchmarks',
     loadChildren: () => import('@benchmarks/benchmarks.module').then(module => module.BenchmarksModule),
     title: BENCHMARKS_TITLE,
@@ -63,8 +59,14 @@ export const routes: Routes = [
     canActivate: [FeatureGuard],
   },
   {
+    path: 'logs',
+    loadChildren: () => import('@logs/logs.module').then(m => m.LogsModule),
+    title: LOGS_TITLE,
+    canActivate: [FeatureGuard],
+  },
+  {
     path: '**',
-    redirectTo: 'dashboard',
+    redirectTo: CONFIG.configs[0].features[0],
     pathMatch: 'full',
   },
 ];
@@ -72,6 +74,7 @@ export const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
+      // enableTracing: true,
       preloadingStrategy: PreloadAllModules,
       relativeLinkResolution: 'legacy',
       onSameUrlNavigation: 'ignore',

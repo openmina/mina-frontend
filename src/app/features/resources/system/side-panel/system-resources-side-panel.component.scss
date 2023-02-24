@@ -1,0 +1,37 @@
+@import 'variables';
+
+.sys-res-side-panel {
+	transition: opacity 1s;
+	opacity: 0;
+
+	&.fade {
+		opacity: 1;
+	}
+}
+
+.point {
+	width: 10px;
+	height: 10px;
+}
+
+.path {
+	color: $base-secondary;
+
+	&:hover:not(.active) {
+		background-color: $base-container;
+	}
+
+	&.active {
+		background-color: $selected-container;
+		color: $selected-primary;
+	}
+}
+
+.row {
+	display: grid;
+	grid-template-columns: 1fr 100px;
+
+	span:last-child {
+		justify-content: flex-end;
+	}
+}

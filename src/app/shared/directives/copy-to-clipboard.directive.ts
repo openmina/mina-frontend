@@ -22,7 +22,7 @@ export class CopyToClipboardDirective {
   private onClick(): void {
     this.clipboard.copy(this.copyToClipboard);
     this.tooltipService.openTooltipsWithClipboardClick.push(0);
-    MinaTooltipDirective.showTooltip(this.popup, this.el.nativeElement, 'Copied to clipboard');
+    MinaTooltipDirective.showTooltip(this.popup, this.el.nativeElement, 'Copied to clipboard', 250);
 
     setTimeout(() => {
       this.tooltipService.openTooltipsWithClipboardClick.pop();

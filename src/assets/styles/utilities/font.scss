@@ -1,7 +1,19 @@
 @import 'variables';
 
+.inter {
+	font-family: $inter-font;
+}
+
 .monospace {
 	font-family: $mono-font;
+}
+
+.raleway {
+	font-family: $raleway-font;
+}
+
+.f-700 {
+	font-weight: 700;
 }
 
 .f-600 {

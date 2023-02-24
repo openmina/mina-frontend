@@ -45,7 +45,7 @@
         </ng-template>
       </ng-container>
       <ng-container *ngSwitchCase="2">
-        <div class="hex break-word ml-8 pl-10 pr-5 monospace">{{ activeRowHexDisplayedValue }}</div>
+        <div class="hex break-all ml-8 pl-10 pr-5 monospace">{{ activeRowHexDisplayedValue }}</div>
       </ng-container>
       <ng-container *ngSwitchCase="3">
         <mina-json-viewer [json]="connection || {}" [expanded]="false"></mina-json-viewer>

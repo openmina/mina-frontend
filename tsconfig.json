@@ -5,6 +5,7 @@
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "allowJs": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
@@ -49,7 +50,7 @@
         "src/app/features/resources/*"
       ],
       "@system-resources/*": [
-        "src/app/features/resources/system-resources/*"
+        "src/app/features/resources/system/*"
       ],
       "@network/*": [
         "src/app/features/network/*"
@@ -71,7 +72,10 @@
       ],
       "@explorer/*": [
         "src/app/features/explorer/*"
-      ]
+      ],
+      "@logs/*": [
+        "src/app/features/logs/*"
+      ],
     }
   },
   "angularCompilerOptions": {

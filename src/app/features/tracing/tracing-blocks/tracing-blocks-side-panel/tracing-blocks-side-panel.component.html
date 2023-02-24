@@ -1,1 +1,35 @@
-<ng-container #traces></ng-container>
+<div class="flex-column h-100">
+  <div fxFlex="42px" class="flex-row flex-between p-12">
+    <span class="secondary f-600">{{ title }}</span>
+    <span class="mina-icon pointer tertiary primary-hover f-18"
+          (click)="closeSidePanel()">close
+    </span>
+  </div>
+  <div fxFlex="34px" class="tab-group pl-12 pb-10 pr-10">
+    <button class="tab mr-10" [class.selected]="selectedTabIndex === 0"
+            (click)="selectTab(0)">Checkpoints
+    </button>
+    <button class="tab mr-10" [class.selected]="selectedTabIndex === 1"
+            (click)="selectTab(1)">Metadata
+    </button>
+  </div>
+
+  <div class="flex-column" fxFlex="calc(100% - 76px)">
+    <ng-container [ngSwitch]="selectedTabIndex">
+      <ng-container *ngSwitchCase="0">
+        <div class="h-100 overflow-y-auto">
+          <ng-container #traces></ng-container>
+        </div>
+      </ng-container>
+      <ng-container *ngSwitchCase="1">
+        <div class="h-100 overflow-y-auto pr-12 flex-column">
+          <div *ngIf="!activeTraceMetadata" class="tertiary pl-12 monospace">null</div>
+          <mina-json-viewer *ngIf="activeTraceMetadata"
+                            [json]="activeTraceMetadata"
+                            [expandTracking]="expandTracking"
+                            [expanded]="false"></mina-json-viewer>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

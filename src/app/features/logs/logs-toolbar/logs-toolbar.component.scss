@@ -1,0 +1,10 @@
+@import 'variables';
+
+.download-button {
+	background-color: $base-container;
+	color: $base-primary;
+
+	&:hover {
+		background-color: $base-divider;
+	}
+}

@@ -16,6 +16,7 @@ import { StepperComponent } from './components/stepper/stepper.component';
 import { CopyToClipboardDirective } from './directives/copy-to-clipboard.directive';
 import { IntervalSelectComponent } from '@shared/components/interval-select/interval-select.component';
 import { EagerSharedModule } from '@shared/eager-shared.module';
+import { ReadableDatePipe } from '@shared/pipes/readable-date.pipe';
 
 
 const COMPONENTS = [
@@ -35,6 +36,7 @@ const PIPES = [
   TruncateMidPipe,
   SecDurationPipe,
   ThousandPipe,
+  ReadableDatePipe,
 ];
 
 const MODULES = [

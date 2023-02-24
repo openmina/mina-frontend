@@ -1,4 +1,4 @@
-<div class="debugger-status ml-8 border-rad-4 flex-row align-center"
+<div class="debugger-status mr-8 border-rad-4 flex-row align-center"
      *ngIf="enabledDebugger && debuggerStatus"
      [tooltip]="debuggerTooltip"
      [class.failed]="debuggerStatus.failed"
@@ -10,7 +10,7 @@
   <div *ngIf="!debuggerStatus.isOnline && !isMobile" class="ml-5 mr-5">Offline</div>
 </div>
 
-<div class="web-node-status ml-8 border-rad-4 flex-row align-center"
+<div class="web-node-status mr-8 border-rad-4 flex-row align-center"
      *ngIf="enabledWebNode && webNodeStatus"
      [tooltip]="webNodeTooltip"
      [class.offline]="!webNodeStatus.peers && !webNodeStatus.messages">
@@ -21,7 +21,7 @@
   </div>
 </div>
 
-<div class="node-status ml-8 mr-8 border-rad-4 p-relative overflow-hidden">
+<div class="node-status mr-8 border-rad-4 p-relative overflow-hidden">
   <div *ngIf="status === 'catchup' || status === 'bootstrap'"
        class="shining-border p-absolute overflow-hidden"></div>
   <div class="bg-surface border-rad-4">

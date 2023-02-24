@@ -9,7 +9,7 @@ export class TruncateMidPipe implements PipeTransform {
     if (!value) {
       return '';
     }
-    return value.length > (firstSlice + 7) ? value.slice(0, firstSlice) + '...' + value.slice(value.length - secondSlice) : value;
+    return value.length > (firstSlice + secondSlice) ? value.slice(0, firstSlice) + '...' + value.slice(value.length - secondSlice) : value;
   }
 
 }

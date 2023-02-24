@@ -23,11 +23,13 @@
         <a class="underline primary"
            [tooltip]="'See block in network'"
            [showDelay]="500"
-           [href]="'https://openmina-network.web.app/network/blocks/' + trace.height"
+           [href]="origin + '/network/blocks/' + trace.height + (activeNodeName ? '?node=' + activeNodeName : '')"
            target="_blank"
            (click)="seeBlockInNetwork(trace.height)">{{ trace.height }}</a>
       </span>
-      <span class="tertiary truncate">{{ trace.hash | truncateMid: 15 }}</span>
+      <span class="tertiary">{{ trace.globalSlot || '-' }}</span>
+      <span class="truncate">{{ trace.hash | truncateMid: 15 }}</span>
+      <span class="tertiary truncate">{{ trace.creator || '-' | truncateMid: 15 }}</span>
       <span [innerHTML]="trace.totalTime | secDuration: secDurationConfig"></span>
       <span>{{ trace.source }}</span>
       <span [ngClass]="trace.status">{{ trace.status }}</span>

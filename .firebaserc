@@ -1,7 +1,7 @@
 {
   "projects": {
-    "default": "openminademo",
-    "demo": "openminademo"
+    "default": "openmina-9c3e6",
   },
+  "targets": {},
   "etags": {}
 }

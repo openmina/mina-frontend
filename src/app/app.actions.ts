@@ -1,6 +1,7 @@
 import { FeatureAction } from '@shared/types/store/feature-action.type';
 import { NodeStatus } from '@shared/types/app/node-status.type';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
+import { Routes } from '@shared/enums/routes.enum';
 
 enum AppActionTypes {
   APP_INIT = 'APP_INIT',
@@ -36,6 +37,8 @@ export interface AppAction extends FeatureAction<AppActionTypes> {
 
 export class AppInit implements AppAction {
   readonly type = APP_INIT;
+
+  constructor(public payload: { nodeName: string }) {}
 }
 
 export class AppStartBackgroundChecks implements AppAction {
@@ -83,7 +86,7 @@ export class AppChangeMenuCollapsing implements AppAction {
 export class AppChangeSubMenus implements AppAction {
   readonly type = APP_CHANGE_SUB_MENUS;
 
-  constructor(public payload: string[]) { }
+  constructor(public payload: Routes[]) {}
 }
 
 export class AppToggleMobile implements AppAction {

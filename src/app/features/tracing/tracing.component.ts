@@ -1,11 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
-import { UntilDestroy } from '@ngneat/until-destroy';
-import { APP_CHANGE_SUB_MENUS, AppChangeSubMenus } from '@app/app.actions';
+import { AppChangeSubMenus } from '@app/app.actions';
 import { Routes } from '@shared/enums/routes.enum';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-tracing',
   templateUrl: './tracing.component.html',
@@ -13,11 +10,9 @@ import { Routes } from '@shared/enums/routes.enum';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'h-100' },
 })
-export class TracingComponent implements OnInit {
-
-  constructor(private store: Store<MinaState>) { }
+export class TracingComponent extends StoreDispatcher implements OnInit {
 
   ngOnInit(): void {
-    this.store.dispatch<AppChangeSubMenus>({ type: APP_CHANGE_SUB_MENUS, payload: [Routes.OVERVIEW, Routes.BLOCKS] });
+    this.dispatch(AppChangeSubMenus, [Routes.OVERVIEW, Routes.BLOCKS]);
   }
 }

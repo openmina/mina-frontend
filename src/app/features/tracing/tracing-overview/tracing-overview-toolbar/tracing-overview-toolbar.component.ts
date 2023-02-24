@@ -1,18 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { SortDirection } from '@shared/types/shared/table-sort.type';
 import { selectTracingOverviewCondensedView, selectTracingOverviewSortDirection } from '@tracing/tracing-overview/tracing-overview.state';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import {
-  TRACING_OVERVIEW_SORT,
-  TRACING_OVERVIEW_TOGGLE_CONDENSED_VIEW,
-  TracingOverviewSort,
-  TracingOverviewToggleCondensedView,
-} from '@tracing/tracing-overview/tracing-overview.actions';
+import { TracingOverviewSort, TracingOverviewToggleCondensedView } from '@tracing/tracing-overview/tracing-overview.actions';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-tracing-overview-toolbar',
   templateUrl: './tracing-overview-toolbar.component.html',
@@ -20,13 +11,11 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-row align-center flex-between pl-12' },
 })
-export class TracingOverviewToolbarComponent extends ManualDetection implements OnInit {
+export class TracingOverviewToolbarComponent extends StoreDispatcher implements OnInit {
 
   readonly SORT_DIRECTIONS = SortDirection;
   currentSort: SortDirection;
   condensedView: boolean;
-
-  constructor(private store: Store<MinaState>) { super(); }
 
   ngOnInit(): void {
     this.listenToSortChange();
@@ -34,21 +23,17 @@ export class TracingOverviewToolbarComponent extends ManualDetection implements 
   }
 
   private listenToSortChange(): void {
-    this.store.select(selectTracingOverviewSortDirection)
-      .pipe(untilDestroyed(this))
-      .subscribe((sort: SortDirection) => {
-        this.currentSort = sort;
-        this.detect();
-      });
+    this.select(selectTracingOverviewSortDirection, (sort: SortDirection) => {
+      this.currentSort = sort;
+      this.detect();
+    });
   }
 
   private listenToCondensedViewChange(): void {
-    this.store.select(selectTracingOverviewCondensedView)
-      .pipe(untilDestroyed(this))
-      .subscribe((condensedView: boolean) => {
-        this.condensedView = condensedView;
-        this.detect();
-      });
+    this.select(selectTracingOverviewCondensedView, (condensedView: boolean) => {
+      this.condensedView = condensedView;
+      this.detect();
+    });
   }
 
   sort(sort: SortDirection): void {
@@ -56,13 +41,13 @@ export class TracingOverviewToolbarComponent extends ManualDetection implements 
       return;
     }
     const payload = this.currentSort === SortDirection.ASC ? SortDirection.DSC : SortDirection.ASC;
-    this.store.dispatch<TracingOverviewSort>({ type: TRACING_OVERVIEW_SORT, payload });
+    this.dispatch(TracingOverviewSort, payload);
   }
 
   toggleCondensedView(condensed: boolean): void {
     if (condensed === this.condensedView) {
       return;
     }
-    this.store.dispatch<TracingOverviewToggleCondensedView>({ type: TRACING_OVERVIEW_TOGGLE_CONDENSED_VIEW });
+    this.dispatch(TracingOverviewToggleCondensedView);
   }
 }

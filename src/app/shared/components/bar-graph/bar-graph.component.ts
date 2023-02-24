@@ -17,7 +17,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { getXTicks } from '@shared/helpers/graph.helper';
+import { getXTicks, niceYScale } from '@shared/helpers/graph.helper';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -229,62 +229,4 @@ export class BarGraphComponent extends ManualDetection implements OnInit, AfterV
   ngOnDestroy(): void {
     this.detachOverlay();
   }
-}
-
-/**
- * Instantiates a new instance of the NiceScale class.
- *
- * Calculate and update values for tick spacing and nice
- * minimum and maximum data points on the axis.
- */
-function niceYScale(min: number, max: number, maxTicks: number): [tickSpacing: number, niceMax: number, niceMin: number] {
-  const minPoint = min;
-  const maxPoint = max;
-  const range = niceNum(maxPoint - minPoint, false);
-  const tickSpacing = niceNum(range / (maxTicks - 1), true);
-  const niceMin = Math.floor(minPoint / tickSpacing) * tickSpacing;
-  const niceMax = Math.ceil(maxPoint / tickSpacing) * tickSpacing;
-  return [tickSpacing, niceMax, niceMin];
-}
-
-/**
- * Returns a "nice" number approximately equal to range Rounds
- * the number if round = true Takes the ceiling if round = false.
- *
- *  localRange the data range
- *  round whether to round the result
- *  a "nice" number to be used for the data range
- */
-function niceNum(localRange: number, round: boolean): number {
-  /** exponent of localRange */
-  let exponent: number;
-  /** fractional part of localRange */
-  let fraction: number;
-  /** nice, rounded fraction */
-  let niceFraction: number;
-
-  exponent = Math.floor(Math.log10(localRange));
-  fraction = localRange / Math.pow(10, exponent);
-
-  if (round) {
-    if (fraction < 1.5)
-      niceFraction = 1;
-    else if (fraction < 3)
-      niceFraction = 2;
-    else if (fraction < 7)
-      niceFraction = 5;
-    else
-      niceFraction = 10;
-  } else {
-    if (fraction <= 1)
-      niceFraction = 1;
-    else if (fraction <= 2)
-      niceFraction = 2;
-    else if (fraction <= 5)
-      niceFraction = 5;
-    else
-      niceFraction = 10;
-  }
-
-  return niceFraction * Math.pow(10, exponent);
 }

@@ -9,7 +9,10 @@ import { APP_CHANGE_MENU_COLLAPSING, APP_TOGGLE_MENU_OPENING, AppChangeMenuColla
 import { ThemeType } from '@shared/types/core/theme/theme-types.type';
 import { DOCUMENT } from '@angular/common';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
-import { filter } from 'rxjs';
+import { filter, map, tap } from 'rxjs';
+import { CONFIG } from '@shared/constants/config';
+import { NavigationEnd, Router } from '@angular/router';
+import { removeParamsFromURL } from '@shared/helpers/router.helper';
 
 interface MenuItem {
   name: string;
@@ -18,11 +21,12 @@ interface MenuItem {
 
 const MENU_ITEMS: MenuItem[] = [
   { name: 'Dashboard', icon: 'dashboard' },
+  { name: 'Explorer', icon: 'explore' },
   { name: 'Resources', icon: 'analytics' },
+  // { name: 'Logs', icon: 'code_blocks' },
   { name: 'Network', icon: 'account_tree' },
   { name: 'Tracing', icon: 'grid_view' },
   { name: 'Web Node', icon: 'blur_circular' },
-  { name: 'Explorer', icon: 'explore' },
   { name: 'Benchmarks', icon: 'dynamic_form' },
 ];
 
@@ -39,16 +43,30 @@ export class MenuComponent extends ManualDetection implements OnInit {
   menuItems: MenuItem[] = [];
   menu: AppMenu;
   currentTheme: ThemeType;
-
-  private activeNode: MinaNode;
+  appIdentifier: string = CONFIG.identifier;
+  activeNode: MinaNode;
+  activeRoute: string;
 
   constructor(@Inject(DOCUMENT) private readonly document: Document,
+              private router: Router,
               private store: Store<MinaState>) { super(); }
 
   ngOnInit(): void {
     this.currentTheme = localStorage.getItem('theme') as ThemeType;
     this.listenToCollapsingMenu();
     this.listenToActiveNodeChange();
+    let lastUrl: string;
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      map((event: any) => event.url),
+      filter(url => url !== lastUrl),
+      tap(url => lastUrl = url),
+      map(removeParamsFromURL),
+      map(url => url.split('/')[1]),
+    ).subscribe((url: string) => {
+      this.activeRoute = url;
+      this.detect();
+    });
   }
 
   changeTheme(): void {

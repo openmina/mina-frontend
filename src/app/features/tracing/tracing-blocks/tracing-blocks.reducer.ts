@@ -70,5 +70,5 @@ export function reducer(state: TracingBlocksState = initialState, action: Tracin
 }
 
 function sortTraces(blocks: TracingBlockTrace[], tableSort: TableSort<TracingBlockTrace>): TracingBlockTrace[] {
-  return sort(blocks, tableSort, ['source', 'hash', 'status']);
+  return sort(blocks, tableSort, ['source', 'hash', 'status', 'creator']);
 }

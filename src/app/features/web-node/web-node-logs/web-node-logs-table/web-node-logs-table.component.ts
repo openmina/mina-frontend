@@ -82,7 +82,7 @@ export class WebNodeLogsTableComponent extends ManualDetection implements OnInit
 
   onRowClick(log: WebNodeLog): void {
     if (this.activeLog?.id !== log.id) {
-      this.router.navigate([Routes.WEB_NODE, Routes.LOGS, log.id]);
+      this.router.navigate([Routes.WEB_NODE, Routes.LOGS, log.id], { queryParamsHandling: 'merge' });
       this.activeLog = log;
       this.selectLog(log);
     }

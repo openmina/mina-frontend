@@ -24,15 +24,17 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-//
+
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { map, Subscription } from 'rxjs';
+import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 
 declare global {
   namespace Cypress {
     interface Chainable {
       then(store: Store<MinaState> | any): Chainable<any>;
+
       its(store: 'store'): Chainable<Store<MinaState>>;
     }
   }
@@ -40,6 +42,31 @@ declare global {
 
 export const PROMISE = (resolveFunction: (resolve: (result?: unknown) => void) => void) => new Cypress.Promise(resolveFunction);
 export const storeSubscription = (store: Store<MinaState>, slice: keyof MinaState, observer: any): Subscription => store.select(slice).subscribe(observer);
+export const getActiveNode = (store: Store<MinaState>) => {
+  const promiseBody = (resolve: (result?: unknown) => void): void => {
+    const observer = (node: MinaNode) => {
+      if (node) {
+        return resolve(node);
+      }
+      setTimeout(() => resolve(), 3000);
+    };
+    store.select('app').pipe(map(app => app.activeNode)).subscribe(observer);
+  };
+  return PROMISE(promiseBody);
+};
+export const getNodes = (store: Store<MinaState>) => {
+  const promiseBody = (resolve: (result?: unknown) => void): void => {
+    const observer = (nodes: MinaNode[]) => {
+      if (nodes.length) {
+        return resolve(nodes);
+      }
+      setTimeout(() => resolve(), 3000);
+    };
+    store.select('app').pipe(map(app => app.nodes)).subscribe(observer);
+  };
+  return PROMISE(promiseBody);
+};
+
 export const storeNetworkSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('network').subscribe(observer);
 
 export const storeWebNodeWalletSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('webNode').pipe(map(wn => wn.wallet)).subscribe(observer);
@@ -47,4 +74,6 @@ export const storeWebNodeLogsSubscription = (store: Store<MinaState>, observer: 
 export const storeWebNodePeersSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('webNode').pipe(map(wn => wn.peers)).subscribe(observer);
 export const storeWebNodeSharedSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('webNode').pipe(map(wn => wn.shared)).subscribe(observer);
 
-export const storeDashboardSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('dashboard').subscribe(observer);
+export const storeDashboardSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('dashboard').pipe(map(d => d.nodes)).subscribe(observer);
+
+Cypress.Commands.overwrite('log', (subject, message) => cy.task('log', message));

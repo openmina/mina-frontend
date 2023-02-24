@@ -87,6 +87,6 @@ export class NetworkBlocksToolbarComponent extends ManualDetection implements On
 
   getBlock(height: number): void {
     this.store.dispatch<NetworkBlocksSetActiveBlock>({ type: NETWORK_BLOCKS_SET_ACTIVE_BLOCK, payload: { height, fetchNew: true } });
-    this.router.navigate([Routes.NETWORK, Routes.BLOCKS, height]);
+    this.router.navigate([Routes.NETWORK, Routes.BLOCKS, height], { queryParamsHandling: 'merge' });
   }
 }

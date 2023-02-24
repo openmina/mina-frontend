@@ -1,4 +1,4 @@
-<div class="mina-table flex-grow overflow-x-auto">
+<div *ngIf="!currentHeightIsTooBig; else mismatch" class="mina-table flex-grow overflow-x-auto">
   <div class="row head sorting p-relative pr-12" *ngIf="currentSort">
     <span *ngFor="let tableHead of tableHeads; let i=index"
           (click)="sortTable(tableHead.sort ?? tableHead.name)"
@@ -25,15 +25,36 @@
       <span>
         <span class="status f-600" [ngClass]="node.status.toLowerCase()">{{ node.status }}</span>
       </span>
-      <span>{{ node.hash | truncateMid }}</span>
-      <span>{{ node.blockchainLength }}</span>
-      <span>{{ node.addr }}</span>
+      <span>{{ node.hash || '-' | truncateMid }}</span>
+      <span>{{ node.blockchainLength || '-' }}</span>
+      <span>{{ node.addr || '-' }}</span>
       <span>{{ node.date || '-' }}</span>
       <span [innerHTML]="node.latency | secDuration: secConfig"></span>
       <span [innerHTML]="node.blockApplication | secDuration: secConfig"></span>
-      <span>{{ node.source }}</span>
-      <span [tooltip]="node.addedTx + ' added, ' + node.broadcastedTx + ' broadcasted, ' + node.receivedTx + ' received'">{{ node.txPool }}</span>
-      <span [tooltip]="node.snarkDiffBroadcasted + ' broadcasted, ' + node.snarkDiffReceived + ' received, ' + node.pendingSnarkWork + ' pending snark work'">{{ node.snarkPool }}</span>
+      <span>{{ node.source || '-' }}</span>
+      <span [tooltip]="node.addedTx + ' added, ' + node.broadcastedTx + ' broadcasted, ' + node.receivedTx + ' received'">{{ node.txPool || '-' }}</span>
+      <span [tooltip]="node.snarkDiffBroadcasted + ' broadcasted, ' + node.snarkDiffReceived + ' received, ' + node.pendingSnarkWork + ' pending snark work'">{{ node.snarkPool || '-' }}</span>
+      <span class="flex-row align-center">
+        <button class="btn-primary flex-row align-center flex-center primary-hover"
+                [disabled]="downloadingNodes.includes(i)"
+                (click)="downloadLogs(node, i, $event)">
+          <span class="mina-icon icon-200 f-20">{{ downloadingNodes.includes(i) ? 'more_horiz' : 'download' }}</span>
+        </button>
+      </span>
     </div>
   </cdk-virtual-scroll-viewport>
 </div>
+<ng-template #mismatch>
+  <div class="no-results p-absolute w-100 h-100 z-1 flex-column align-center flex-center">
+    <span class="mina-icon mb-16 icon-100 f-40">error</span>
+    <span class="f-600 f-big">No results</span>
+    <span class="tertiary mt-8 text-center">
+      The current selected height is bigger than the biggest height in the network.
+    </span>
+    <button class="btn-selected flex-row align-center pl-12 pr-12 mt-16 h-lg"
+            (click)="setActiveBlock()">
+      <span class="mr-5 mina-icon icon-200 f-20">arrow_right_alt</span>
+      See latest height ({{ latestHeight }})
+    </button>
+  </div>
+</ng-template>

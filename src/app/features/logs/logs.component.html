@@ -1,0 +1,16 @@
+<div class="flex-column h-100">
+  <mina-logs-toolbar></mina-logs-toolbar>
+  <div #parent class="h-100 w-100 flex-row p-relative">
+    <mina-logs-table [class.shrink]="isActiveRow"></mina-logs-table>
+    <mina-horizontal-resizable-container (endResizing)="toggleResizing()"
+                                         (startResizing)="toggleResizing()"
+                                         (widthChange)="onWidthChange($event)"
+                                         [class.show]="isActiveRow"
+                                         [maxWidthElement]="parent"
+                                         [minWidth]="420"
+                                         class="no-transition"
+                                         localStorageKey="logs-side-panel-width">
+      <mina-logs-side-panel></mina-logs-side-panel>
+    </mina-horizontal-resizable-container>
+  </div>
+</div>

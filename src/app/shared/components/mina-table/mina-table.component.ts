@@ -38,7 +38,6 @@ export class MinaTableComponent<T = any> extends ManualDetection {
   constructor(private store: Store<MinaState>) { super(); }
 
   init(): void {
-    console.log('init MinaTableComponent');
     this.listenToMenuChange();
     this.addGridTemplateColumns();
     // this.createMobileItems();

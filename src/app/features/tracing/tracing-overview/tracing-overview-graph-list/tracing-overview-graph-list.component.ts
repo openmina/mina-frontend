@@ -1,14 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { TracingOverviewCheckpoint } from '@shared/types/tracing/overview/tracing-overview-checkpoint.type';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
 import { selectTracingOverviewCheckpoints, selectTracingOverviewCondensedView } from '@tracing/tracing-overview/tracing-overview.state';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { selectAppMenu } from '@app/app.state';
 import { AppMenu } from '@shared/types/app/app-menu.type';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-tracing-overview-graph-list',
   templateUrl: './tracing-overview-graph-list.component.html',
@@ -16,13 +12,11 @@ import { AppMenu } from '@shared/types/app/app-menu.type';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-column' },
 })
-export class TracingOverviewGraphListComponent extends ManualDetection implements OnInit {
+export class TracingOverviewGraphListComponent extends StoreDispatcher implements OnInit {
 
   checkpoints: TracingOverviewCheckpoint[];
   condensedView: boolean;
   menuCollapsed: boolean;
-
-  constructor(private store: Store<MinaState>) { super(); }
 
   ngOnInit(): void {
     this.listenToCheckpointChanges();
@@ -31,29 +25,23 @@ export class TracingOverviewGraphListComponent extends ManualDetection implement
   }
 
   private listenToCheckpointChanges(): void {
-    this.store.select(selectTracingOverviewCheckpoints)
-      .pipe(untilDestroyed(this))
-      .subscribe((checkpoints: TracingOverviewCheckpoint[]) => {
-        this.checkpoints = checkpoints;
-        this.detect();
-      });
+    this.select(selectTracingOverviewCheckpoints, (checkpoints: TracingOverviewCheckpoint[]) => {
+      this.checkpoints = checkpoints;
+      this.detect();
+    });
   }
 
   private listenToCondensedViewChange(): void {
-    this.store.select(selectTracingOverviewCondensedView)
-      .pipe(untilDestroyed(this))
-      .subscribe((condensedView: boolean) => {
-        this.condensedView = condensedView;
-        this.detect();
-      });
+    this.select(selectTracingOverviewCondensedView, (condensedView: boolean) => {
+      this.condensedView = condensedView;
+      this.detect();
+    });
   }
 
   private listenToMenuCollapsing(): void {
-    this.store.select(selectAppMenu)
-      .pipe(untilDestroyed(this))
-      .subscribe((menu: AppMenu) => {
-        this.menuCollapsed = menu.collapsed;
-        this.detect();
-      });
+    this.select(selectAppMenu, (menu: AppMenu) => {
+      this.menuCollapsed = menu.collapsed;
+      this.detect();
+    });
   }
 }

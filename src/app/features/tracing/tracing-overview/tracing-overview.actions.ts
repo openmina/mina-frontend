@@ -3,7 +3,6 @@ import { TracingOverviewCheckpoint } from '@shared/types/tracing/overview/tracin
 import { SortDirection } from '@shared/types/shared/table-sort.type';
 
 enum TracingOverviewActionTypes {
-  TRACING_OVERVIEW_INIT = 'TRACING_OVERVIEW_INIT',
   TRACING_OVERVIEW_GET_CHECKPOINTS = 'TRACING_OVERVIEW_GET_CHECKPOINTS',
   TRACING_OVERVIEW_GET_CHECKPOINTS_SUCCESS = 'TRACING_OVERVIEW_GET_CHECKPOINTS_SUCCESS',
   TRACING_OVERVIEW_SORT = 'TRACING_OVERVIEW_SORT',
@@ -11,7 +10,6 @@ enum TracingOverviewActionTypes {
   TRACING_OVERVIEW_CLOSE = 'TRACING_OVERVIEW_CLOSE',
 }
 
-export const TRACING_OVERVIEW_INIT = TracingOverviewActionTypes.TRACING_OVERVIEW_INIT;
 export const TRACING_OVERVIEW_GET_CHECKPOINTS = TracingOverviewActionTypes.TRACING_OVERVIEW_GET_CHECKPOINTS;
 export const TRACING_OVERVIEW_GET_CHECKPOINTS_SUCCESS = TracingOverviewActionTypes.TRACING_OVERVIEW_GET_CHECKPOINTS_SUCCESS;
 export const TRACING_OVERVIEW_SORT = TracingOverviewActionTypes.TRACING_OVERVIEW_SORT;
@@ -20,10 +18,6 @@ export const TRACING_OVERVIEW_CLOSE = TracingOverviewActionTypes.TRACING_OVERVIE
 
 export interface TracingOverviewAction extends FeatureAction<TracingOverviewActionTypes> {
   readonly type: TracingOverviewActionTypes;
-}
-
-export class TracingOverviewInit implements TracingOverviewAction {
-  readonly type = TRACING_OVERVIEW_INIT;
 }
 
 export class TracingOverviewGetCheckpoints implements TracingOverviewAction {
@@ -52,7 +46,6 @@ export class TracingOverviewClose implements TracingOverviewAction {
 
 
 export type TracingOverviewActions =
-  | TracingOverviewInit
   | TracingOverviewGetCheckpoints
   | TracingOverviewGetCheckpointsSuccess
   | TracingOverviewSort

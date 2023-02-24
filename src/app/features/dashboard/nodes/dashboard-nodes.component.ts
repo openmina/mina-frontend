@@ -42,7 +42,7 @@ export class DashboardNodesComponent extends ManualDetection implements OnInit, 
   constructor(private store: Store<MinaState>) { super(); }
 
   ngOnInit(): void {
-    this.store.dispatch<DashboardNodesGetNodes>({ type: DASHBOARD_NODES_GET_NODES });
+    this.store.dispatch<DashboardNodesInit>({ type: DASHBOARD_NODES_INIT });
     this.listenToRouteChange();
     this.listenToActiveRowChange();
     this.listenToActiveBlockChangeFromNode();
@@ -76,35 +76,35 @@ export class DashboardNodesComponent extends ManualDetection implements OnInit, 
   }
 
   private listenToRouteChange(): void {
-    // this.store.select(getMergedRoute)
-    //   .pipe(
-    //     untilDestroyed(this),
-    //     take(1),
-    //     filter(route => route.params['height']),
-    //   )
-    //   .subscribe((route: MergedRoute) => {
-    //     this.blockHeight = Number(route.params['height']);
-    //     this.store.dispatch<DashboardNodesSetActiveBlock>({
-    //       type: DASHBOARD_NODES_SET_ACTIVE_BLOCK,
-    //       payload: { height: this.blockHeight },
-    //     });
-    //   });
+    this.store.select(getMergedRoute)
+      .pipe(
+        untilDestroyed(this),
+        take(1),
+        filter(route => route.params['height']),
+      )
+      .subscribe((route: MergedRoute) => {
+        this.blockHeight = Number(route.params['height']);
+        this.store.dispatch<DashboardNodesSetActiveBlock>({
+          type: DASHBOARD_NODES_SET_ACTIVE_BLOCK,
+          payload: { height: this.blockHeight },
+        });
+      });
   }
 
   private listenToActiveBlockChangeFromNode(): void {
-    // merge(
-    //   this.store.select(selectAppNodeStatus)
-    //     .pipe(
-    //       untilDestroyed(this),
-    //       filter(Boolean),
-    //       filter((node: NodeStatus) => node.status !== AppNodeStatusTypes.CONNECTING),
-    //     ),
-    //   timer(0, 10000),
-    // )
-    //   .pipe(untilDestroyed(this), throttleTime(1000))
-    //   .subscribe(() => {
-    //     this.store.dispatch<DashboardNodesGetEarliestBlock>({ type: DASHBOARD_NODES_GET_EARLIEST_BLOCK });
-    //   });
+    merge(
+      this.store.select(selectAppNodeStatus)
+        .pipe(
+          untilDestroyed(this),
+          filter(Boolean),
+          filter((node: NodeStatus) => node.status !== AppNodeStatusTypes.CONNECTING),
+        ),
+      timer(0, 20000),
+    )
+      .pipe(untilDestroyed(this), throttleTime(1000))
+      .subscribe(() => {
+        this.store.dispatch<DashboardNodesGetEarliestBlock>({ type: DASHBOARD_NODES_GET_EARLIEST_BLOCK });
+      });
   }
 
   ngOnDestroy(): void {

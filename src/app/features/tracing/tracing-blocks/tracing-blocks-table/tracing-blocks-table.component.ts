@@ -8,13 +8,22 @@ import { Router } from '@angular/router';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
-import { filter, Observable } from 'rxjs';
+import { filter } from 'rxjs';
 import { Routes } from '@shared/enums/routes.enum';
 import { selectTracingActiveTrace, selectTracingBlocksSorting, selectTracingTraces } from '@tracing/tracing-blocks/tracing-blocks.state';
-import { TRACING_BLOCKS_SELECT_ROW, TRACING_BLOCKS_SORT, TracingBlocksSelectRow, TracingBlocksSort } from '@tracing/tracing-blocks/tracing-blocks.actions';
+import {
+  TRACING_BLOCKS_SELECT_ROW,
+  TRACING_BLOCKS_SORT,
+  TracingBlocksGetTraces,
+  TracingBlocksSelectRow,
+  TracingBlocksSort,
+} from '@tracing/tracing-blocks/tracing-blocks.actions';
 import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
 import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
 import { TableHeadSorting } from '@shared/types/shared/table-head-sorting.type';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
+import { selectActiveNode } from '@app/app.state';
+import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 
 const secDurationConfig: SecDurationConfig = {
   red: 50,
@@ -24,7 +33,6 @@ const secDurationConfig: SecDurationConfig = {
   onlySeconds: true,
 };
 
-@UntilDestroy()
 @Component({
   selector: 'mina-tracing-blocks-table',
   templateUrl: './tracing-blocks-table.component.html',
@@ -32,87 +40,84 @@ const secDurationConfig: SecDurationConfig = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'h-100 flex-column' },
 })
-export class TracingBlocksTableComponent extends ManualDetection implements OnInit {
+export class TracingBlocksTableComponent extends StoreDispatcher implements OnInit {
 
   readonly itemSize: number = 36;
   readonly secDurationConfig: SecDurationConfig = secDurationConfig;
   readonly tableHeads: TableHeadSorting<TracingBlockTrace>[] = [
     { name: 'height' },
+    { name: 'global slot', sort: 'globalSlot' },
     { name: 'hash' },
+    { name: 'creator' },
     { name: 'total time', sort: 'totalTime' },
     { name: 'source' },
     { name: 'status' },
   ];
+  readonly origin: string = origin;
 
   traces: TracingBlockTrace[] = [];
   activeTrace: TracingBlockTrace;
   currentSort: TableSort<TracingBlockTrace>;
+  activeNodeName: string;
 
   @ViewChild(CdkVirtualScrollViewport) private scrollViewport: CdkVirtualScrollViewport;
   private hashFromRoute: string;
   private preselect: boolean;
 
-  constructor(private store: Store<MinaState>,
-              private router: Router) { super(); }
+  constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
     this.listenToTracesChanges();
     this.listenToSortingChanges();
     this.listenToActiveTraceChange();
     this.listenToRouteChange();
+    this.listenToActiveNodeChange();
+  }
+
+  private listenToActiveNodeChange(): void {
+    this.select(selectActiveNode, (node: MinaNode) => {
+      this.activeNodeName = node.name;
+    }, filter(Boolean));
   }
 
   sortTable(sortBy: string): void {
     const sortDirection = sortBy !== this.currentSort.sortBy
       ? this.currentSort.sortDirection
       : this.currentSort.sortDirection === SortDirection.ASC ? SortDirection.DSC : SortDirection.ASC;
-    this.store.dispatch<TracingBlocksSort>({
-      type: TRACING_BLOCKS_SORT,
-      payload: { sortBy: sortBy as keyof TracingBlockTrace, sortDirection },
-    });
+    this.dispatch(TracingBlocksSort, { sortBy: sortBy as keyof TracingBlockTrace, sortDirection });
   }
 
   onRowClick(trace: TracingBlockTrace): void {
     if (this.activeTrace?.hash !== trace.hash) {
-      this.router.navigate([Routes.TRACING, Routes.BLOCKS, trace.hash]);
+      this.router.navigate([Routes.TRACING, Routes.BLOCKS, trace.hash], { queryParamsHandling: 'merge' });
       this.activeTrace = trace;
-      this.store.dispatch<TracingBlocksSelectRow>({ type: TRACING_BLOCKS_SELECT_ROW, payload: trace });
+      this.dispatch(TracingBlocksSelectRow, trace);
     }
   }
 
   private listenToRouteChange(): void {
-    this.store.select(getMergedRoute)
-      .pipe(untilDestroyed(this))
-      .subscribe((route: MergedRoute) => {
-        if (route.params['hash'] && this.traces.length === 0) {
-          this.hashFromRoute = route.params['hash'];
-          this.preselect = true;
-        }
-      });
+    this.select(getMergedRoute, (route: MergedRoute) => {
+      if (route.params['hash'] && this.traces.length === 0) {
+        this.hashFromRoute = route.params['hash'];
+        this.preselect = true;
+      }
+    });
   }
 
   private listenToTracesChanges(): void {
-    this.store.select(selectTracingTraces)
-      .pipe(
-        untilDestroyed(this),
-        filter(Boolean),
-      )
-      .subscribe((traces: TracingBlockTrace[]) => {
-        this.traces = traces;
-        if (this.preselect) {
-          this.store.dispatch<TracingBlocksSelectRow>({
-            type: TRACING_BLOCKS_SELECT_ROW,
-            payload: this.traces.find(t => t.hash === this.hashFromRoute),
-          });
-          this.preselect = false;
-          this.detect();
-          this.scrollToElement();
-          return;
-        } else {
-          this.scrollViewport.scrollTo({ top: 0 });
-        }
+    this.select(selectTracingTraces, (traces: TracingBlockTrace[]) => {
+      this.traces = traces;
+      if (this.preselect) {
+        this.dispatch(TracingBlocksSelectRow, this.traces.find(t => t.hash === this.hashFromRoute));
+        this.preselect = false;
         this.detect();
-      });
+        this.scrollToElement();
+        return;
+      } else {
+        this.scrollViewport.scrollTo({ top: 0 });
+      }
+      this.detect();
+    }, filter(Boolean));
   }
 
   private scrollToElement(): void {
@@ -125,27 +130,20 @@ export class TracingBlocksTableComponent extends ManualDetection implements OnIn
   }
 
   private listenToActiveTraceChange(): void {
-    this.store.select(selectTracingActiveTrace)
-      .pipe(
-        untilDestroyed(this),
-        filter(trace => trace !== this.activeTrace),
-      )
-      .subscribe((activeTrace: TracingBlockTrace) => {
-        this.activeTrace = activeTrace;
-        this.detect();
-      });
+    this.select(selectTracingActiveTrace, (activeTrace: TracingBlockTrace) => {
+      this.activeTrace = activeTrace;
+      this.detect();
+    }, filter(trace => trace !== this.activeTrace));
   }
 
   private listenToSortingChanges(): void {
-    this.store.select(selectTracingBlocksSorting)
-      .pipe(untilDestroyed(this))
-      .subscribe(sort => {
-        this.currentSort = sort;
-        this.detect();
-      });
+    this.select(selectTracingBlocksSorting, (sort: TableSort<TracingBlockTrace>) => {
+      this.currentSort = sort;
+      this.detect();
+    });
   }
 
-  seeBlockInNetwork(height: number) : void{
+  seeBlockInNetwork(height: number): void {
 
   }
 }

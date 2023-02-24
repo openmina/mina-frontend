@@ -1,69 +1,56 @@
-<!--<div fxFlex="50" class="flex-row align-center f-600">-->
-<!--  <span class="tertiary mr-10">Height</span>-->
-<!--  <div class="pagination-group flex-row align-center bg-selected-container ml-10 border-rad-4">-->
-<!--    <button class="h-sm w-sm flex-row flex-center align-center"-->
-<!--            [class.disabled]="!earliestBlock || activeBlock === 1"-->
-<!--            [tooltip]="'Prev block'"-->
-<!--            [showDelay]="500"-->
-<!--            (click)="getBlock(activeBlock - 1)">-->
-<!--      <span class="mina-icon f-18">navigate_before</span>-->
-<!--    </button>-->
-<!--    <span class="selected-primary pl-5 pr-5">{{ activeBlock ?? '-' }}</span>-->
-<!--    <button class="h-sm w-sm flex-row flex-center align-center"-->
-<!--            [class.disabled]="earliestBlock === activeBlock"-->
-<!--            [tooltip]="'Next block'"-->
-<!--            [showDelay]="500"-->
-<!--            (click)="getBlock(activeBlock + 1)">-->
-<!--      <span class="mina-icon f-18">navigate_next</span>-->
-<!--    </button>-->
-<!--  </div>-->
-<!--  <button class="btn-secondary h-sm w-sm mr-10 ml-5 flex-row flex-center align-center"-->
-<!--          [class.disabled]="!earliestBlock || earliestBlock === activeBlock"-->
-<!--          [tooltip]="'Last block'"-->
-<!--          [showDelay]="500"-->
-<!--          (click)="getBlock(earliestBlock)">-->
-<!--    <span class="mina-icon f-18">last_page</span>-->
-<!--  </button>-->
-<!--  <span class="tertiary">Synced: </span>-->
-<!--  <span class="bg-selected-container ml-10 p-5 border-rad-4 selected-primary">{{ count.nodes }} Node{{ count.nodes !== 1 ? 's' : '' }}</span>-->
-<!--  <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.producers }} Producer{{ count.producers !== 1 ? 's' : '' }}</span>-->
-<!--  <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.snarkers }} Snarker{{ count.snarkers !== 1 ? 's' : '' }}</span>-->
-<!--  <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.seeders }} Seeder{{ count.seeders !== 1 ? 's' : '' }}</span>-->
-<!--  <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.transactionGenerators }} Transaction Generator{{ count.transactionGenerators !== 1 ? 's' : '' }}</span>-->
-<!--</div>-->
-
-<!--<div fxFlex="50" fxLayout="row wrap" class="align-center h-100">-->
-<!--  <span class="tertiary mr-10 f-600">Block candidates</span>-->
-<!--  <button *ngFor="let filter of allFilters"-->
-<!--          (click)="toggleFilter(filter)"-->
-<!--          class="mr-5 border-rad-6 f-600 flex-row align-center"-->
-<!--          [ngClass]="activeFilters.includes(filter) ? 'btn-selected' : 'btn-primary'">-->
-<!--    <span>{{ filter | truncateMid }}</span>-->
-<!--  </button>-->
-<!--</div>-->
-<div class="h-lg pl-12 f-600 flex-row align-center flex-between border-bottom">
-  <div class="flex-row align-center">
-    <span class="tertiary">Synced:</span>
-    <span class="bg-selected-container ml-10 p-5 border-rad-4 selected-primary">{{ count.nodes }}
-      Node{{ count.nodes !== 1 ? 's' : '' }}</span>
-    <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.producers }}
-      Producer{{ count.producers !== 1 ? 's' : '' }}</span>
-    <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.snarkers }}
-      Snarker{{ count.snarkers !== 1 ? 's' : '' }}</span>
-    <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.seeders }}
-      Seeder{{ count.seeders !== 1 ? 's' : '' }}</span>
-    <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.transactionGenerators }}
-      Transaction Generator{{ count.transactionGenerators !== 1 ? 's' : '' }}</span>
-  </div>
-  <div class="flex-row">
-    <button class="h-sm btn-primary mr-5"
-            (click)="toggleShowLatencyFromFastest()">{{ latencyFromFastest ? 'Show latency from second fastest' : 'Show latency from fastest' }}</button>
-    <button class="h-sm btn-primary mr-5"
-            (click)="toggleNodesShowing()">{{ showOffline ? 'Show active nodes' : 'Show all nodes' }}</button>
-    <button class="btn-primary mr-10 flex-row align-center pl-10" (click)="refreshData()"
-            [class.disabled]="loadingNodes">
-      <span>Refresh</span>
-      <span class="mina-icon f-18 icon-300">sync</span>
+<div fxFlex="50" class="row1 flex-row flex-wrap align-center f-600 pl-12">
+  <span class="tertiary mr-10">Height</span>
+  <div class="pagination-group flex-row align-center bg-selected-container ml-10 border-rad-4">
+    <button class="h-sm w-sm flex-row flex-center align-center"
+            [class.disabled]="!earliestBlock || activeBlock === 1"
+            [tooltip]="'Prev block'"
+            [showDelay]="500"
+            (click)="getBlock(activeBlock - 1)">
+      <span class="mina-icon f-18">navigate_before</span>
+    </button>
+    <span class="selected-primary pl-5 pr-5">{{ activeBlock ?? '-' }}</span>
+    <button class="h-sm w-sm flex-row flex-center align-center"
+            [class.disabled]="!earliestBlock || earliestBlock === activeBlock"
+            [tooltip]="'Next block'"
+            [showDelay]="500"
+            (click)="getBlock(activeBlock + 1)">
+      <span class="mina-icon f-18">navigate_next</span>
     </button>
   </div>
+  <button class="btn-secondary h-sm w-sm mr-10 ml-5 flex-row flex-center align-center"
+          [class.disabled]="!earliestBlock || earliestBlock === activeBlock"
+          [tooltip]="'Last block'"
+          [showDelay]="500"
+          (click)="getBlock(earliestBlock)">
+    <span class="mina-icon f-18">last_page</span>
+  </button>
+  <div fxFlex class="pl-12 f-600 flex-row flex-wrap align-center flex-between">
+    <div class="flex-row flex-wrap align-center">
+      <span class="tertiary">Count:</span>
+      <span class="bg-selected-container ml-10 p-5 border-rad-4 selected-primary">{{ count.nodes }} Node{{ count.nodes !== 1 ? 's' : '' }}</span>
+      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.producers }} Producer{{ count.producers !== 1 ? 's' : '' }}</span>
+      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.snarkers }} Snarker{{ count.snarkers !== 1 ? 's' : '' }}</span>
+      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.seeders }} Seeder{{ count.seeders !== 1 ? 's' : '' }}</span>
+      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.transactionGenerators }} Transaction Generator{{ count.transactionGenerators !== 1 ? 's' : '' }}</span>
+    </div>
+    <div class="flex-row">
+      <button class="h-sm btn-primary mr-5"
+              [class.disabled]="loadingNodes"
+              (click)="toggleShowLatencyFromFastest()">{{ latencyFromFastest ? 'Show latency from second fastest' : 'Show latency from fastest' }}</button>
+      <button class="h-sm btn-primary mr-5"
+              [class.disabled]="loadingNodes"
+              (click)="toggleNodesShowing()">{{ showOffline ? 'Show active nodes' : 'Show all nodes' }}</button>
+    </div>
+  </div>
+
+</div>
+
+<div fxFlex="50" fxLayout="row wrap" class="row2 align-center h-100 pl-12">
+  <span class="tertiary mr-10 f-600">Block candidates</span>
+  <button *ngFor="let filter of allFilters"
+          (click)="toggleFilter(filter)"
+          class="mr-5 border-rad-6 f-600 flex-row align-center"
+          [ngClass]="activeFilters.includes(filter) ? 'btn-selected' : 'btn-primary'">
+    <span>{{ filter | truncateMid }}</span>
+  </button>
 </div>

@@ -1,52 +1,40 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
 import { selectActiveNode, selectAppNodeStatus } from '@app/app.state';
 import { filter, skip } from 'rxjs';
-import { EXPLORER_BLOCKS_CLOSE, EXPLORER_BLOCKS_GET_BLOCKS, ExplorerBlocksClose, ExplorerBlocksGetBlocks } from '@explorer/blocks/explorer-blocks.actions';
+import { ExplorerBlocksClose, ExplorerBlocksGetBlocks } from '@explorer/blocks/explorer-blocks.actions';
 import { NodeStatus } from '@shared/types/app/node-status.type';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-explorer-blocks',
   templateUrl: './explorer-blocks.component.html',
   styleUrls: ['./explorer-blocks.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExplorerBlocksComponent implements OnInit, OnDestroy {
+export class ExplorerBlocksComponent extends StoreDispatcher implements OnInit, OnDestroy {
 
   private blockLevel: number;
-
-  constructor(private store: Store<MinaState>) { }
 
   ngOnInit(): void {
     this.listenToActiveNodeAndBlockChange();
   }
 
   private listenToActiveNodeAndBlockChange(): void {
-    this.store.select(selectActiveNode)
-      .pipe(untilDestroyed(this), filter(Boolean), skip(1))
-      .subscribe(() => {
-        this.getBlocks();
-      });
-    this.store.select(selectAppNodeStatus)
-      .pipe(
-        untilDestroyed(this),
-        filter(Boolean),
-        filter(status => status.blockLevel !== this.blockLevel),
-      )
-      .subscribe((status: NodeStatus) => {
-        this.blockLevel = status.blockLevel;
-        this.getBlocks();
-      });
+    this.select(selectActiveNode, () => {
+      this.getBlocks();
+    }, filter(Boolean), skip(1));
+    this.select(selectAppNodeStatus, (status: NodeStatus) => {
+      this.blockLevel = status.blockLevel;
+      this.getBlocks();
+    }, filter(Boolean), filter((status: NodeStatus) => status.blockLevel !== this.blockLevel));
   }
 
   private getBlocks(): void {
-    this.store.dispatch<ExplorerBlocksGetBlocks>({ type: EXPLORER_BLOCKS_GET_BLOCKS });
+    this.dispatch(ExplorerBlocksGetBlocks);
   }
 
-  ngOnDestroy(): void {
-    this.store.dispatch<ExplorerBlocksClose>({ type: EXPLORER_BLOCKS_CLOSE });
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.dispatch(ExplorerBlocksClose);
   }
 }

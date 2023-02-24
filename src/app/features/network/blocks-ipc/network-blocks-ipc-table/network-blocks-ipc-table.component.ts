@@ -108,12 +108,13 @@ export class NetworkBlocksIpcTableComponent extends ManualDetection implements O
   }
 
   seeMessageInMessages(messageId: number): void {
-    this.router.navigate([Routes.NETWORK, Routes.MESSAGES, messageId]);
+    this.router.navigate([Routes.NETWORK, Routes.MESSAGES, messageId], { queryParamsHandling: 'merge' });
   }
 
   seeMessagesForAddress(addr: string): void {
     this.router.navigate([Routes.NETWORK, Routes.MESSAGES], {
       queryParams: { addr },
+      queryParamsHandling: 'merge',
     });
   }
 

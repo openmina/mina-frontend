@@ -3,7 +3,7 @@ import { MinaState, selectMinaState } from '@app/app.setup';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { MinaBaseEffect } from '@shared/base-classes/mina-base.effect';
 import { Effect } from '@shared/types/store/effect.type';
-import { filter, map, mergeMap, switchMap } from 'rxjs';
+import { concatMap, filter, map, mergeMap, switchMap } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import {
@@ -13,10 +13,12 @@ import {
   BENCHMARKS_GET_WALLETS_SUCCESS,
   BENCHMARKS_SEND_TX,
   BENCHMARKS_SEND_TX_SUCCESS,
+  BENCHMARKS_SEND_TX_SYNCED,
   BENCHMARKS_SEND_TXS,
   BenchmarksActions,
   BenchmarksSendTx,
   BenchmarksSendTxSuccess,
+  BenchmarksSendTxSynced,
 } from '@benchmarks/benchmarks.actions';
 import { BenchmarksService } from '@benchmarks/benchmarks.service';
 import { BenchmarksWallet } from '@shared/types/benchmarks/benchmarks-wallet.type';
@@ -31,6 +33,7 @@ export class BenchmarksEffects extends MinaBaseEffect<BenchmarksActions> {
   readonly getWallets$: Effect;
   readonly sendTxs$: Effect;
   readonly sendTx$: Effect;
+  readonly sendTxSynced$: Effect;
   readonly sendTxSuccess$: Effect;
   readonly getMempoolTxs$: Effect;
 
@@ -50,7 +53,11 @@ export class BenchmarksEffects extends MinaBaseEffect<BenchmarksActions> {
     this.sendTxs$ = createEffect(() => this.actions$.pipe(
       ofType(BENCHMARKS_SEND_TXS),
       this.latestActionState<BenchmarksSendTxSuccess>(),
-      switchMap(({ state }) => state.benchmarks.txsToSend.map(tx => ({ type: BENCHMARKS_SEND_TX, payload: tx }))),
+      switchMap(({ state }) =>
+        state.benchmarks.randomWallet
+          ? state.benchmarks.txsToSend.map(tx => ({ type: BENCHMARKS_SEND_TX, payload: tx }))
+          : [{ type: BENCHMARKS_SEND_TX_SYNCED, payload: state.benchmarks.txsToSend }],
+      ),
     ));
 
     this.sendTx$ = createEffect(() => this.actions$.pipe(
@@ -58,6 +65,14 @@ export class BenchmarksEffects extends MinaBaseEffect<BenchmarksActions> {
       this.latestActionState<BenchmarksSendTx>(),
       mergeMap(({ action }) => this.benchmarksService.sendOneTx(action.payload)),
       map((payload: BenchmarksTransaction | { error: Error }) => ({ type: BENCHMARKS_SEND_TX_SUCCESS, payload })),
+    ));
+
+    this.sendTxSynced$ = createEffect(() => this.actions$.pipe(
+      ofType(BENCHMARKS_SEND_TX_SYNCED),
+      this.latestActionState<BenchmarksSendTxSynced>(),
+      switchMap(({ action }) => action.payload),
+      concatMap((tx: BenchmarksTransaction) => this.benchmarksService.sendOneTx(tx)),
+      map((payload) => ({ type: BENCHMARKS_SEND_TX_SUCCESS, payload })),
     ));
 
     this.sendTxSuccess$ = createEffect(() => this.actions$.pipe(

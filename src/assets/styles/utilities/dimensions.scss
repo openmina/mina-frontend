@@ -2,8 +2,16 @@
 	height: 100% !important;
 }
 
+.h-100vh {
+	height: 100vh !important;
+}
+
 .w-100 {
 	width: 100% !important;
+}
+
+.h-xs {
+	height: 20px !important;
 }
 
 .h-sm {
@@ -38,6 +46,10 @@
 	line-height: 24px;
 }
 
+.lh-md {
+	line-height: 32px;
+}
+
 .lh-lg {
 	line-height: 36px;
 }
@@ -67,12 +79,20 @@
 }
 
 @media (max-width: 700px) {
+	.h-xs {
+		height: 24px !important;
+	}
+
 	.h-sm {
 		height: 32px !important;
 	}
 
 	.h-md {
 		height: 36px !important;
+	}
+
+	.lh-md {
+		line-height: 36px !important;
 	}
 
 	.h-lg {

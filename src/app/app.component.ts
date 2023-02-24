@@ -7,8 +7,6 @@ import { AppMenu } from '@shared/types/app/app-menu.type';
 import { selectAppMenu } from '@app/app.state';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { MIN_WIDTH_700 } from '@shared/constants/breakpoint-observer';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter, map } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -19,10 +17,8 @@ import { filter, map } from 'rxjs';
 export class AppComponent extends ManualDetection implements OnInit {
 
   menu: AppMenu = {} as AppMenu;
-  currentUrl: string;
 
   constructor(private store: Store<MinaState>,
-              private router: Router,
               private breakpointObserver: BreakpointObserver) {
     super();
     if ((window as any).Cypress) {
@@ -33,15 +29,6 @@ export class AppComponent extends ManualDetection implements OnInit {
   ngOnInit(): void {
     this.listenToCollapsingMenu();
     this.listenToWindowResizing();
-    this.router.events
-      .pipe(
-        filter(e => e instanceof NavigationEnd),
-        map(e => e as NavigationEnd),
-      )
-      .subscribe((evt: NavigationEnd) => {
-        this.currentUrl = evt.url.split('/')[1];
-        this.detect();
-      });
   }
 
   private listenToCollapsingMenu(): void {

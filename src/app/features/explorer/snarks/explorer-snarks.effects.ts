@@ -4,13 +4,15 @@ import { Effect } from '@shared/types/store/effect.type';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaState, selectMinaState } from '@app/app.setup';
-import { catchError, map, repeat, switchMap } from 'rxjs';
+import { catchError, EMPTY, map, repeat, switchMap } from 'rxjs';
 import { addError } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import {
+  EXPLORER_SNARKS_CLOSE,
   EXPLORER_SNARKS_GET_SNARKS,
   EXPLORER_SNARKS_GET_SNARKS_SUCCESS,
   ExplorerSnarksActions,
+  ExplorerSnarksClose,
   ExplorerSnarksGetSnarks,
 } from '@explorer/snarks/explorer-snarks.actions';
 import { ExplorerSnarksService } from '@explorer/snarks/explorer-snarks.service';
@@ -30,9 +32,13 @@ export class ExplorerSnarksEffects extends MinaBaseEffect<ExplorerSnarksActions>
     super(store, selectMinaState);
 
     this.getSnarks$ = createEffect(() => this.actions$.pipe(
-      ofType(EXPLORER_SNARKS_GET_SNARKS),
-      this.latestActionState<ExplorerSnarksGetSnarks>(),
-      switchMap(() => this.snarksService.getSnarks()),
+      ofType(EXPLORER_SNARKS_GET_SNARKS, EXPLORER_SNARKS_CLOSE),
+      this.latestActionState<ExplorerSnarksGetSnarks | ExplorerSnarksClose>(),
+      switchMap(({ action }) =>
+        action.type === EXPLORER_SNARKS_CLOSE
+          ? EMPTY
+          : this.snarksService.getSnarks(),
+      ),
       map((payload: ExplorerSnark[]) => ({ type: EXPLORER_SNARKS_GET_SNARKS_SUCCESS, payload })),
       catchError((error: Error) => [
         addError(error, MinaErrorType.GRAPH_QL),

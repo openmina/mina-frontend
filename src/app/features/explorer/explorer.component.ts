@@ -1,23 +1,20 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
-import { APP_CHANGE_SUB_MENUS, AppChangeSubMenus } from '@app/app.actions';
+import { AppChangeSubMenus } from '@app/app.actions';
 import { Routes } from '@shared/enums/routes.enum';
+import { isVanilla } from '@shared/constants/config';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
 @Component({
   selector: 'mina-explorer',
   templateUrl: './explorer.component.html',
   styleUrls: ['./explorer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExplorerComponent implements OnInit {
-
-  constructor(private store: Store<MinaState>) { }
+export class ExplorerComponent extends StoreDispatcher implements OnInit {
 
   ngOnInit(): void {
-    this.store.dispatch<AppChangeSubMenus>({
-      type: APP_CHANGE_SUB_MENUS,
-      payload: [Routes.BLOCKS, Routes.TRANSACTIONS, Routes.SNARKS, Routes.SCAN_STATE],
-    });
+    this.dispatch(AppChangeSubMenus, [
+      Routes.BLOCKS, Routes.TRANSACTIONS, Routes.SNARK_POOL, ...(isVanilla() ? [null] : [Routes.SCAN_STATE, Routes.SNARK_TRACES])
+    ]);
   }
 }

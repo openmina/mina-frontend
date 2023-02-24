@@ -1,0 +1,19 @@
+.bullet {
+	border-radius: 50%;
+	width: 12px;
+	height: 12px;
+}
+
+.bullet + span {
+	line-height: 17px;
+}
+
+.point {
+	border-radius: 50%;
+	width: 10px;
+	height: 10px;
+}
+
+.d3-tooltip {
+	width: 220px;
+}

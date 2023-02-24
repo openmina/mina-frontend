@@ -1,0 +1,47 @@
+@import 'variables';
+
+.dropdown {
+	box-sizing: border-box;
+	max-height: 500px;
+
+	.dropdown-item {
+		display: grid;
+		height: 24px;
+		grid-template-columns: 30px 140px;
+		color: $base-secondary;
+		box-sizing: border-box;
+
+		&:not(.active) .mina-icon {
+			color: $base-divider;
+		}
+
+		&:hover:not(.active) {
+			background-color: $base-container;
+
+			span:nth-child(2) {
+				color: $base-primary;
+			}
+		}
+
+		&.active {
+			background-color: $selected-container;
+
+			span {
+				color: $selected-primary;
+			}
+		}
+
+		&:last-child {
+			margin-bottom: 0 !important;
+		}
+	}
+
+	@media (max-width: 700px) {
+		width: 100vw;
+		max-height: 60vh;
+
+		.dropdown-item {
+			height: 48px;
+		}
+	}
+}

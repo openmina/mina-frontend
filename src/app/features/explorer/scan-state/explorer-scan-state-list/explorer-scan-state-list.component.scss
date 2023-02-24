@@ -63,9 +63,9 @@
 
 .leaf {
 	border-radius: 50%;
-	min-width: 19px;
-	height: 19px;
-	margin-right: 2px;
+	min-width: 24px;
+	height: 24px;
+	margin-right: 1px;
 	background-color: $base-surface-top;
 	border: 1px solid $base-divider;
 	@include flexRowFullCenter();

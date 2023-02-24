@@ -1,17 +1,13 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { TracingBlocksTableComponent } from '@tracing/tracing-blocks/tracing-blocks-table/tracing-blocks-table.component';
 import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TracingBlockTrace } from '@shared/types/tracing/blocks/tracing-block-trace.type';
-import { TRACING_BLOCKS_CLOSE, TRACING_BLOCKS_GET_TRACES, TracingBlocksClose, TracingBlocksGetTraces } from '@tracing/tracing-blocks/tracing-blocks.actions';
+import { TracingBlocksClose, TracingBlocksGetTraces } from '@tracing/tracing-blocks/tracing-blocks.actions';
 import { selectTracingActiveTrace } from '@tracing/tracing-blocks/tracing-blocks.state';
 import { selectActiveNode } from '@app/app.state';
 import { filter } from 'rxjs';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-tracing-blocks',
   templateUrl: './tracing-blocks.component.html',
@@ -19,7 +15,7 @@ import { filter } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'h-100 w-100' },
 })
-export class TracingBlocksComponent extends ManualDetection implements OnInit, OnDestroy {
+export class TracingBlocksComponent extends StoreDispatcher implements OnInit, OnDestroy {
 
   isActiveTrace: boolean;
 
@@ -28,19 +24,15 @@ export class TracingBlocksComponent extends ManualDetection implements OnInit, O
   @ViewChild(TracingBlocksTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
   @ViewChild(HorizontalResizableContainerComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
 
-  constructor(private store: Store<MinaState>) { super(); }
-
   ngOnInit(): void {
     this.listenToActiveNodeChange();
     this.listenToActiveRowChange();
   }
 
   private listenToActiveNodeChange(): void {
-    this.store.select(selectActiveNode)
-      .pipe(untilDestroyed(this), filter(Boolean))
-      .subscribe(() => {
-        this.store.dispatch<TracingBlocksGetTraces>({ type: TRACING_BLOCKS_GET_TRACES });
-      });
+    this.select(selectActiveNode, () => {
+      this.dispatch(TracingBlocksGetTraces);
+    }, filter(Boolean));
   }
 
   toggleResizing(): void {
@@ -53,24 +45,23 @@ export class TracingBlocksComponent extends ManualDetection implements OnInit, O
   }
 
   private listenToActiveRowChange(): void {
-    this.store.select(selectTracingActiveTrace)
-      .pipe(untilDestroyed(this))
-      .subscribe((row: TracingBlockTrace) => {
-        if (row && !this.isActiveTrace) {
-          this.isActiveTrace = true;
-          if (!this.removedClass) {
-            this.removedClass = true;
-            this.horizontalResizableContainer.nativeElement.classList.remove('no-transition');
-          }
-          this.detect();
-        } else if (!row && this.isActiveTrace) {
-          this.isActiveTrace = false;
-          this.detect();
+    this.select(selectTracingActiveTrace, (row: TracingBlockTrace) => {
+      if (row && !this.isActiveTrace) {
+        this.isActiveTrace = true;
+        if (!this.removedClass) {
+          this.removedClass = true;
+          this.horizontalResizableContainer.nativeElement.classList.remove('no-transition');
         }
-      });
+        this.detect();
+      } else if (!row && this.isActiveTrace) {
+        this.isActiveTrace = false;
+        this.detect();
+      }
+    });
   }
 
-  ngOnDestroy(): void {
-    this.store.dispatch<TracingBlocksClose>({ type: TRACING_BLOCKS_CLOSE });
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.dispatch(TracingBlocksClose);
   }
 }
