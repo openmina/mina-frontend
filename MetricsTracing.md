@@ -130,13 +130,10 @@ We then tested the optimization by running two servers extended with internal tr
 For block 7881 on `berkeleynet`, which includes 76 completed works, here are the times for the unpatched and patched nodes:
 
 **Unoptimized node (8.86s) / Block Total (12.03s)**
-
-
-TBD <screenshot - unoptimized node>
-
 **Optimized node (0.015s) / Block Total (1.5s)**
+![1-4-Patched UnparchedCompare](https://user-images.githubusercontent.com/1679939/221126116-0312a086-e4b7-4e80-9166-fc03c62f683c.png)
 
-TBD <screenshot - optimized node>
+
 
 By tracing these checkpoints, not only are we informed of particularly slow processes, but we can also confirm whether our implemented changes have resulted in better performance.
 
