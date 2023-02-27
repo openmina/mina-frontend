@@ -28,7 +28,7 @@ export const environment: Readonly<MinaEnv> = {
     // },
     {
       backend: 'http://1.k8.openmina.com:31311/node1',
-      debugger: 'http://1.k8.openmina.com:31311/node1/bpf-debugger',
+      debugger: 'http://1.k8.openmina.com:30675',
       name: 'node1',
       features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs'],
     },
