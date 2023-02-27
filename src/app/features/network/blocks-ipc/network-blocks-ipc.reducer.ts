@@ -105,10 +105,8 @@ function sortBlocks(blocks: NetworkBlockIpc[], tableSort: TableSort<NetworkBlock
 
 function applyNewLatencies(blocks: NetworkBlockIpc[]): NetworkBlockIpc[] {
   const fastestTime = Math.min(...blocks.map(b => b.timestamp));
-  const realFastestTime = Math.min(...blocks.map(b => b.realTimestamp));
   return blocks.map(b => ({
     ...b,
     blockLatency: (b.timestamp - fastestTime) / ONE_MILLION,
-    realBlockLatency: (b.realTimestamp - realFastestTime) / ONE_MILLION,
   }));
 }

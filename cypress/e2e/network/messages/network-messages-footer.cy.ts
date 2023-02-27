@@ -1,7 +1,7 @@
 import { NetworkMessagesState } from '@network/messages/network-messages.state';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { PROMISE, storeNetworkSubscription } from '../../support/commands';
+import { PROMISE, storeNetworkSubscription } from '../../../support/commands';
 
 const getNetwork = (store: Store<MinaState>) => {
   const promiseBody = (resolve: (result?: unknown) => void): void => {
@@ -16,9 +16,9 @@ const getNetwork = (store: Store<MinaState>) => {
   return PROMISE(promiseBody);
 };
 
-describe('NETWORK FOOTER', () => {
+describe('NETWORK MESSAGES FOOTER', () => {
   beforeEach(() => {
-    cy.visit(Cypress.env('baseUrl') + '/network');
+    cy.visit(Cypress.config().baseUrl + '/network');
   });
 
   it('in live mode messages are retrieved every 10 seconds', () => {

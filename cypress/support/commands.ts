@@ -67,6 +67,22 @@ export const getNodes = (store: Store<MinaState>) => {
   return PROMISE(promiseBody);
 };
 
+export const stateSliceAsPromise = <T = MinaState | MinaState[keyof MinaState]>(
+  store: Store<MinaState>, resolveCondition: (state: T) => boolean, slice: keyof MinaState, subSlice: string, timeout: number = 3000,
+) => {
+  return new Cypress.Promise((resolve: (result?: T | void) => void): void => {
+    const observer = (state: T) => {
+      if (resolveCondition(state)) {
+        return resolve(state);
+      }
+      setTimeout(() => resolve(), timeout);
+    };
+    store.select(slice).pipe(
+      map((subState: MinaState[keyof MinaState]) => subSlice ? subState[subSlice] : subState),
+    ).subscribe(observer);
+  });
+};
+
 export const storeNetworkSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('network').subscribe(observer);
 
 export const storeWebNodeWalletSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('webNode').pipe(map(wn => wn.wallet)).subscribe(observer);
