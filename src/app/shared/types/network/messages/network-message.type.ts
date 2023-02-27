@@ -5,7 +5,10 @@ export interface NetworkMessage {
   size: number;
   incoming: 'Incoming' | 'Outgoing';
   timestamp: string;
-  exactTime: string;
+  exactTime: {
+    secs: number;
+    nanos: number;
+  };
   streamKind: string;
   messageKind: string;
   failedToDecryptPercentage?: number;

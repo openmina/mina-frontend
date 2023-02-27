@@ -187,7 +187,7 @@ export class NetworkMessagesTableComponent extends ManualDetection implements On
   }
 
   onRowClick(row: NetworkMessage): void {
-    if (row.exactTime !== this.activeRow?.exactTime) {
+    if (row.exactTime.secs !== this.activeRow?.exactTime.secs && row.exactTime.nanos !== this.activeRow?.exactTime.nanos) {
       this.router.navigate([Routes.NETWORK, Routes.MESSAGES, row.exactTime], { queryParamsHandling: 'merge' });
       this.store.dispatch<NetworkMessagesSetActiveRow>({ type: NETWORK_SET_ACTIVE_ROW, payload: row });
     }

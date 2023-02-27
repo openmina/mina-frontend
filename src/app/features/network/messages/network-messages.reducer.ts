@@ -34,7 +34,7 @@ const initialState: NetworkMessagesState = {
   },
   stream: false,
   connection: undefined,
-  limit: 10,
+  limit: 25,
   direction: NetworkMessagesDirection.REVERSE,
   activePage: {},
   pages: [],
@@ -154,9 +154,10 @@ export function reducer(state: NetworkMessagesState = initialState, action: Netw
         direction: action.payload.direction,
         activePage: {
           ...state.activePage,
-          firstPageIdWithFilters: action.payload.id === 0 ? -1 : state.activePage.firstPageIdWithFilters,
-          lastPageIdWithTimestamp: action.payload.timestamp?.to && action.payload.timestamp?.from ? null : -1,
+          // firstPageIdWithFilters: action.payload.id === 0 ? -1 : state.activePage.firstPageIdWithFilters,
+          // lastPageIdWithTimestamp: action.payload.timestamp?.to && action.payload.timestamp?.from ? null : -1,
         },
+        timestamp: action.payload.timestamp,
       };
     }
 

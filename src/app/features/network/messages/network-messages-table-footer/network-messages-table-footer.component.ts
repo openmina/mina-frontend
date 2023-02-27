@@ -135,17 +135,21 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
 
   previousPage(): void {
     let payload: NetworkMessagesGetPaginatedMessages['payload'];
-    if (this.currentTimestamp) {
-      payload = {
-        id: this.state.activePage.start.id - this.state.limit,
-        timestamp: { from: undefined, to: this.currentTimestamp.to },
-        direction: NetworkMessagesDirection.FORWARD,
-      };
-    } else {
-      payload = {
-        id: this.state.activePage.start.id - 1,
-        direction: NetworkMessagesDirection.REVERSE,
-      };
+    // if (this.currentTimestamp) {
+    //   payload = {
+    //     id: this.state.activePage.start.id - this.state.limit,
+    //     timestamp: { from: undefined, to: this.currentTimestamp.to },
+    //     direction: NetworkMessagesDirection.FORWARD,
+    //   };
+    // } else {
+    //   payload = {
+    //     id: this.state.activePage.start.id - 1,
+    //     direction: NetworkMessagesDirection.REVERSE,
+    //   };
+    // }
+    payload = {
+      timestamp: { from: this.state.messages[0].exactTime.secs, to: undefined },
+      direction: NetworkMessagesDirection.REVERSE,
     }
     this.store.dispatch<NetworkMessagesGetPaginatedMessages>({ type: NETWORK_GET_PAGINATED_MESSAGES, payload });
   }

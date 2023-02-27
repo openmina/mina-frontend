@@ -69,7 +69,10 @@ export class NetworkMessagesService {
     return messages.map(message => ({
       id: undefined,
       timestamp: toReadableDate((message.timestamp.secs_since_epoch * ONE_THOUSAND) + message.timestamp.nanos_since_epoch / ONE_MILLION),
-      exactTime: message.timestamp.secs_since_epoch + '' + message.timestamp.nanos_since_epoch,
+      exactTime: {
+        secs: message.timestamp.secs_since_epoch,
+        nanos: message.timestamp.nanos_since_epoch,
+      },
       incoming: message.incoming ? 'Incoming' : 'Outgoing',
       connectionId: message.connection_id,
       address: message.remote_addr,
