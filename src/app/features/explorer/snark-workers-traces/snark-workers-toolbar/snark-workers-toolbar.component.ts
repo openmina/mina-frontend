@@ -58,7 +58,7 @@ export class SnarkWorkersToolbarComponent extends ManualDetection implements OnI
           this.buildActiveIntervalText(filter.from, filter.to);
         }
         this.currentTimestamp = { from: filter.from, to: filter.to };
-        this.navigateToTimestamp( this.currentTimestamp)
+        this.navigateToTimestamp(this.currentTimestamp);
         this.detect();
       });
   }

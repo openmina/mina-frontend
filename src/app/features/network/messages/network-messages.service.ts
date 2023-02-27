@@ -19,17 +19,14 @@ export class NetworkMessagesService {
   constructor(private http: HttpClient,
               private config: ConfigService) { }
 
-  getNetworkMessages(limit: number, id: number | undefined, direction: NetworkMessagesDirection, activeFilters: NetworkMessagesFilter[], from: number | undefined, to: number | undefined): Observable<NetworkMessage[]> {
+  getNetworkMessages(limit: number, direction: NetworkMessagesDirection, activeFilters: NetworkMessagesFilter[], from: number | undefined, to: number | undefined): Observable<NetworkMessage[]> {
     let url = `${this.config.DEBUGGER}/messages?limit=${limit}&direction=${direction}`;
 
-    if (id) {
-      url += `&id=${id}`;
-    }
     if (from) {
       url += `&timestamp=${from}`;
     }
     if (to) {
-      url += `&timestamp_limit=${to}`;
+      url += `&limit_timestamp=${to}`;
     }
     Object.values(NetworkMessagesFilterTypes).forEach((filterType: string) => {
       if (activeFilters.some(f => f.type === filterType)) {
@@ -70,15 +67,16 @@ export class NetworkMessagesService {
     }
 
     return messages.map(message => ({
-      id: message[0],
-      timestamp: toReadableDate((message[1].timestamp.secs_since_epoch * ONE_THOUSAND) + message[1].timestamp.nanos_since_epoch / ONE_MILLION),
-      incoming: message[1].incoming ? 'Incoming' : 'Outgoing',
-      connectionId: message[1].connection_id,
-      address: message[1].remote_addr,
-      size: message[1].size,
-      streamKind: message[1].stream_kind,
-      failedToDecryptPercentage: message[1].message?.total_failed ? NetworkMessagesService.getFailedToDecryptPercentage(message) : undefined,
-      messageKind: NetworkMessagesService.getMessageKind(message),
+      id: undefined,
+      timestamp: toReadableDate((message.timestamp.secs_since_epoch * ONE_THOUSAND) + message.timestamp.nanos_since_epoch / ONE_MILLION),
+      exactTime: message.timestamp.secs_since_epoch + '' + message.timestamp.nanos_since_epoch,
+      incoming: message.incoming ? 'Incoming' : 'Outgoing',
+      connectionId: message.connection_id,
+      address: message.remote_addr,
+      size: message.size,
+      streamKind: message.stream_kind,
+      failedToDecryptPercentage: message.message?.total_failed ? NetworkMessagesService.getFailedToDecryptPercentage(message) : undefined,
+      messageKind: message.message,
     } as NetworkMessage));
   }
 
@@ -86,8 +84,7 @@ export class NetworkMessagesService {
     return Number((100 * message[1].message.total_failed / (message[1].message.total_decrypted + message[1].message.total_failed)).toFixed(1));
   }
 
-  private static getMessageKind(message: any): string {
-    return message[1].message;
+  // private static getMessageKind(message: any): string {
     // const messageKind = message[1].message[0]?.message?.type
     //   ?? message[1].message[0]?.type
     //   ?? message[1].message.type
@@ -96,7 +93,7 @@ export class NetworkMessagesService {
     //   return messageKind;
     // }
     // return typeof message[1].message === 'string' ? message[1].message : 'Error Report';
-  }
+  // }
 
   private static mapNetworkConnectionResponse(connection: any): NetworkMessageConnection {
     return {

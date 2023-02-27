@@ -187,8 +187,8 @@ export class NetworkMessagesTableComponent extends ManualDetection implements On
   }
 
   onRowClick(row: NetworkMessage): void {
-    if (row.id !== this.activeRow?.id) {
-      this.router.navigate([Routes.NETWORK, Routes.MESSAGES, row.id], { queryParamsHandling: 'merge' });
+    if (row.exactTime !== this.activeRow?.exactTime) {
+      this.router.navigate([Routes.NETWORK, Routes.MESSAGES, row.exactTime], { queryParamsHandling: 'merge' });
       this.store.dispatch<NetworkMessagesSetActiveRow>({ type: NETWORK_SET_ACTIVE_ROW, payload: row });
     }
   }

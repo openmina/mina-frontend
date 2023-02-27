@@ -91,20 +91,38 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
 
   private listenToTimestampIntervalChange(): void {
     this.store.select(selectNetworkTimestampInterval)
-      .pipe(
-        untilDestroyed(this),
-        filter(timestamp => !!timestamp.from),
-      )
+      .pipe(untilDestroyed(this))
       .subscribe((timestamp: TimestampInterval) => {
-        this.currentTimestamp = timestamp;
-        const from = this.datePipe.transform(timestamp.from * ONE_THOUSAND, 'MMM d, H:mm:ss');
-        let to = this.datePipe.transform(timestamp.to * ONE_THOUSAND, 'MMM d, H:mm:ss');
-        if (from.split(',')[0] === to.split(',')[0]) {
-          to = this.datePipe.transform(timestamp.to * ONE_THOUSAND, 'H:mm:ss');
+        if (this.currentTimestamp?.from !== timestamp.from || this.currentTimestamp?.to !== timestamp.to) {
+          this.buildActiveIntervalText(timestamp.from, timestamp.to);
         }
-        this.activeInterval = from + ' - ' + to;
+        this.currentTimestamp = { from: timestamp.from, to: timestamp.to };
+        // this.navigateToTimestamp(this.currentTimestamp);
         this.detect();
       });
+  }
+
+  private buildActiveIntervalText(fromParam: number, toParam: number): void {
+    let from;
+    if (fromParam) {
+      from = this.datePipe.transform(fromParam * ONE_THOUSAND, 'MMM d, H:mm:ss');
+    }
+    let to;
+    if (toParam) {
+      to = this.datePipe.transform(toParam * ONE_THOUSAND, 'MMM d, H:mm:ss');
+    }
+    if (from && to) {
+      if (from.split(',')[0] === to.split(',')[0]) {
+        to = this.datePipe.transform(toParam * ONE_THOUSAND, 'H:mm:ss');
+      }
+      this.activeInterval = from + ' - ' + to;
+    } else if (from && !to) {
+      this.activeInterval = 'From ' + from;
+    } else if (to && !from) {
+      this.activeInterval = 'Until ' + to;
+    } else {
+      this.activeInterval = undefined;
+    }
   }
 
   goLive(): void {
@@ -200,6 +218,8 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
     this.intervalSelectComponent = this.overlayRef.attach<IntervalSelectComponent>(portal);
     this.intervalSelectComponent.instance.from = this.currentTimestamp?.from;
     this.intervalSelectComponent.instance.to = this.currentTimestamp?.to;
+    this.intervalSelectComponent.instance.skipTo = true;
+    this.intervalSelectComponent.instance.skipFrom = true;
     setTimeout(() => {
       this.intervalSelectComponent.instance.animate = true;
       this.intervalSelectComponent.instance.detect();

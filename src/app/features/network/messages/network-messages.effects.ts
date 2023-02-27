@@ -95,11 +95,10 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
       switchMap(({ action, state }) =>
         this.networkMessagesService.getNetworkMessages(
           state.network.messages.limit,
-          (action as any).payload?.id,
           state.network.messages.direction,
           state.network.messages.activeFilters,
-          (action as any).payload?.timestamp?.from,
-          (action as any).payload?.timestamp?.to,
+          state.network.messages.timestamp.from,
+          state.network.messages.timestamp.to,
         ),
       ),
       tap(() => this.waitingForServer = false),
@@ -116,7 +115,6 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
         forkJoin([
           this.networkMessagesService.getNetworkMessages(
             state.network.messages.limit / 2,
-            action.payload.id,
             NetworkMessagesDirection.REVERSE,
             state.network.messages.activeFilters,
             undefined,
@@ -124,7 +122,6 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
           ),
           this.networkMessagesService.getNetworkMessages(
             state.network.messages.limit / 2 + 1,
-            action.payload.id,
             NetworkMessagesDirection.FORWARD,
             state.network.messages.activeFilters,
             undefined,
