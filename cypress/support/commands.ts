@@ -78,7 +78,12 @@ export const stateSliceAsPromise = <T = MinaState | MinaState[keyof MinaState]>(
       setTimeout(() => resolve(), timeout);
     };
     store.select(slice).pipe(
-      map((subState: MinaState[keyof MinaState]) => subSlice ? subState[subSlice] : subState),
+      map((subState: MinaState[keyof MinaState]) => {
+        cy.log(slice);
+        cy.log(subSlice);
+        cy.log(JSON.stringify(subState[subSlice]));
+        return subSlice ? subState[subSlice] : subState;
+      }),
     ).subscribe(observer);
   });
 };
