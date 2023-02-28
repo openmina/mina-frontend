@@ -4,7 +4,9 @@
   "cli": {
     "analytics": false,
     "cache": {
-      "enabled": false
+      "enabled": true,
+      "path": "node_modules/.cache/angular",
+      "environment": "all"
     }
   },
   "newProjectRoot": "projects",

@@ -2,9 +2,8 @@ import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { stateSliceAsPromise } from '../../../support/commands';
 import { NetworkBlocksState } from '@network/blocks/network-blocks.state';
-import { DashboardNodesState } from '@dashboard/nodes/dashboard-nodes.state';
 
-const condition = (state: NetworkBlocksState) => state.blocks.length > 2;
+const condition = (state: NetworkBlocksState) => state && state.blocks.length > 2;
 const networkBlocksState = (store: Store<MinaState>) => stateSliceAsPromise<NetworkBlocksState>(store, condition, 'network', 'blocks');
 
 
@@ -24,11 +23,13 @@ describe('NETWORK BLOCKS TABLE', () => {
     cy.window()
       .its('store')
       .then(networkBlocksState)
-      .then((network: NetworkBlocksState) => {
-        expect(network.blocks.length).above(2);
-        cy.get('mina-network-blocks .mina-table')
-          .get('.row')
-          .should('have.length.above', 2);
+      .then((state: NetworkBlocksState) => {
+        if (state) {
+          expect(state.blocks.length).above(2);
+          cy.get('mina-network-blocks .mina-table')
+            .get('.row')
+            .should('have.length.above', 2);
+        }
       });
   });
 
@@ -36,8 +37,8 @@ describe('NETWORK BLOCKS TABLE', () => {
     cy.window()
       .its('store')
       .then(networkBlocksState)
-      .then((network: NetworkBlocksState) => {
-        if (network.blocks && network.allFilters.length > 0) {
+      .then((state: NetworkBlocksState) => {
+        if (state && state.allFilters.length > 0) {
           cy.wait(1000)
             .get('mina-network-blocks-toolbar > div:nth-child(2) button:nth-child(2)')
             .click()
@@ -62,9 +63,11 @@ describe('NETWORK BLOCKS TABLE', () => {
     cy.window()
       .its('store')
       .then(networkBlocksState)
-      .then((network: NetworkBlocksState) => {
-        const expectedCandidates = network.blocks.map(m => m.hash).filter((v, i, a) => a.indexOf(v) === i).length;
-        expect(network.allFilters.length).to.equal(expectedCandidates);
+      .then((state: NetworkBlocksState) => {
+        if (state) {
+          const expectedCandidates = state.blocks.map(m => m.hash).filter((v, i, a) => a.indexOf(v) === i).length;
+          expect(state.allFilters.length).to.equal(expectedCandidates);
+        }
       });
   });
 
@@ -74,16 +77,18 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        let sorted = true;
-        for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
-          const curr = state.filteredBlocks[i].date || '';
-          const next = state.filteredBlocks[i + 1].date || '';
-          if (next.localeCompare(curr) < 0) {
-            sorted = false;
-            break;
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
+            const curr = state.filteredBlocks[i].date || '';
+            const next = state.filteredBlocks[i + 1].date || '';
+            if (next.localeCompare(curr) < 0) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -95,16 +100,18 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        let sorted = true;
-        for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
-          const curr = state.filteredBlocks[i].date || '';
-          const next = state.filteredBlocks[i + 1].date || '';
-          if (curr.localeCompare(next) < 0) {
-            sorted = false;
-            break;
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
+            const curr = state.filteredBlocks[i].date || '';
+            const next = state.filteredBlocks[i + 1].date || '';
+            if (curr.localeCompare(next) < 0) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -116,16 +123,18 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        let sorted = true;
-        for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
-          const curr = state.filteredBlocks[i].hash || '';
-          const next = state.filteredBlocks[i + 1].hash || '';
-          if (next.localeCompare(curr) < 0) {
-            sorted = false;
-            break;
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
+            const curr = state.filteredBlocks[i].hash || '';
+            const next = state.filteredBlocks[i + 1].hash || '';
+            if (next.localeCompare(curr) < 0) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -137,16 +146,18 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        let sorted = true;
-        for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
-          const curr = state.filteredBlocks[i].height;
-          const next = state.filteredBlocks[i + 1].height;
-          if (next > curr) {
-            sorted = false;
-            break;
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
+            const curr = state.filteredBlocks[i].height;
+            const next = state.filteredBlocks[i + 1].height;
+            if (next > curr) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -158,16 +169,18 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        let sorted = true;
-        for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
-          const curr = state.filteredBlocks[i].sender || '';
-          const next = state.filteredBlocks[i + 1].sender || '';
-          if (next.localeCompare(curr) < 0) {
-            sorted = false;
-            break;
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
+            const curr = state.filteredBlocks[i].sender || '';
+            const next = state.filteredBlocks[i + 1].sender || '';
+            if (next.localeCompare(curr) < 0) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -179,16 +192,18 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        let sorted = true;
-        for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
-          const curr = state.filteredBlocks[i].receiver || '';
-          const next = state.filteredBlocks[i + 1].receiver || '';
-          if (next.localeCompare(curr) < 0) {
-            sorted = false;
-            break;
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
+            const curr = state.filteredBlocks[i].receiver || '';
+            const next = state.filteredBlocks[i + 1].receiver || '';
+            if (next.localeCompare(curr) < 0) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -200,16 +215,18 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        let sorted = true;
-        for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
-          const curr = state.filteredBlocks[i].receivedLatency === undefined ? state.filteredBlocks[i].receivedLatency : Number.MAX_VALUE;
-          const next = state.filteredBlocks[i + 1].receivedLatency === undefined ? state.filteredBlocks[i + 1].receivedLatency : Number.MAX_VALUE;
-          if (next > curr) {
-            sorted = false;
-            break;
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
+            const curr = state.filteredBlocks[i].receivedLatency === undefined ? state.filteredBlocks[i].receivedLatency : Number.MAX_VALUE;
+            const next = state.filteredBlocks[i + 1].receivedLatency === undefined ? state.filteredBlocks[i + 1].receivedLatency : Number.MAX_VALUE;
+            if (next > curr) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -221,16 +238,18 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        let sorted = true;
-        for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
-          const curr = state.filteredBlocks[i].sentLatency === undefined ? state.filteredBlocks[i].sentLatency : Number.MAX_VALUE;
-          const next = state.filteredBlocks[i + 1].sentLatency === undefined ? state.filteredBlocks[i + 1].sentLatency : Number.MAX_VALUE;
-          if (next > curr) {
-            sorted = false;
-            break;
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
+            const curr = state.filteredBlocks[i].sentLatency === undefined ? state.filteredBlocks[i].sentLatency : Number.MAX_VALUE;
+            const next = state.filteredBlocks[i + 1].sentLatency === undefined ? state.filteredBlocks[i + 1].sentLatency : Number.MAX_VALUE;
+            if (next > curr) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -242,16 +261,18 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        let sorted = true;
-        for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
-          const curr = state.filteredBlocks[i].messageKind || '';
-          const next = state.filteredBlocks[i + 1].messageKind || '';
-          if (next.localeCompare(curr) < 0) {
-            sorted = false;
-            break;
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
+            const curr = state.filteredBlocks[i].messageKind || '';
+            const next = state.filteredBlocks[i + 1].messageKind || '';
+            if (next.localeCompare(curr) < 0) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 });

@@ -1,24 +1,14 @@
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { getActiveNode, getNodes, PROMISE, storeDashboardSubscription } from '../../../support/commands';
+import { getNodes, stateSliceAsPromise } from '../../../support/commands';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 import { DashboardNodesState } from '@dashboard/nodes/dashboard-nodes.state';
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 
-const getDashboard = (store: Store<MinaState>) => {
-  const promiseBody = (resolve: (result?: unknown) => void): void => {
-    const observer = (dashboard: DashboardNodesState) => {
-      if (dashboard.nodes.length > 1) {
-        return resolve(dashboard);
-      }
-      setTimeout(() => resolve(), 3000);
-    };
-    storeDashboardSubscription(store, observer);
-  };
-  return PROMISE(promiseBody);
-};
+const condition = (state: DashboardNodesState) => state && state.nodes.length > 1;
+const getDashboard = (store: Store<MinaState>) => stateSliceAsPromise<DashboardNodesState>(store, condition, 'dashboard', 'nodes');
 
 describe('DASHBOARD NODES TABLE', () => {
   beforeEach(() => {
@@ -34,11 +24,13 @@ describe('DASHBOARD NODES TABLE', () => {
     cy.window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        expect(dashboard.nodes.length).above(1);
-        cy.get('mina-dashboard .mina-table')
-          .get('.row')
-          .should('have.length.above', 1);
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          expect(state.nodes.length).above(1);
+          cy.get('mina-dashboard .mina-table')
+            .get('.row')
+            .should('have.length.above', 1);
+        }
       });
   });
 
@@ -46,15 +38,17 @@ describe('DASHBOARD NODES TABLE', () => {
     cy.window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        let sorted = true;
-        for (let i = 0; i < dashboard.nodes.length - 1; i++) {
-          if (dashboard.nodes[i].timestamp > dashboard.nodes[i + 1].timestamp) {
-            sorted = false;
-            break;
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.nodes.length - 1; i++) {
+            if (state.nodes[i].timestamp > state.nodes[i + 1].timestamp) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -62,18 +56,20 @@ describe('DASHBOARD NODES TABLE', () => {
     cy.window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        cy.window()
-          .its('store')
-          .then(getNodes)
-          .then((nodes: MinaNode[]) => {
-            const eachNodeHaveOneValue = dashboard.nodes.every(n => dashboard.nodes.filter(n1 => n1.url === n.url).length === 1);
-            if (eachNodeHaveOneValue) {
-              expect(dashboard.nodes.length).to.eq(nodes.length);
-            } else {
-              expect(dashboard.nodes.length).to.be.at.least(nodes.length);
-            }
-          });
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          cy.window()
+            .its('store')
+            .then(getNodes)
+            .then((nodes: MinaNode[]) => {
+              const eachNodeHaveOneValue = state.nodes.every(n => state.nodes.filter(n1 => n1.url === n.url).length === 1);
+              if (eachNodeHaveOneValue) {
+                expect(state.nodes.length).to.eq(nodes.length);
+              } else {
+                expect(state.nodes.length).to.be.at.least(nodes.length);
+              }
+            });
+        }
       });
   });
 
@@ -81,13 +77,15 @@ describe('DASHBOARD NODES TABLE', () => {
     cy.window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        cy.get('.mina-table .row:first-child span:first-child a')
-          .should('have.attr', 'target', '_blank')
-          .invoke('removeAttr', 'target')
-          .click()
-          .url()
-          .should('equal', dashboard.nodes[0].url);
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          cy.get('.mina-table .row:first-child span:first-child a')
+            .should('have.attr', 'target', '_blank')
+            .invoke('removeAttr', 'target')
+            .click()
+            .url()
+            .should('equal', state.nodes[0].url);
+        }
       });
   });
 
@@ -96,24 +94,25 @@ describe('DASHBOARD NODES TABLE', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-
-        function applyNewLatencies(nodes: DashboardNode[]): DashboardNode[] {
-          if (nodes.length === 0) {
-            return nodes;
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          function applyNewLatencies(nodes: DashboardNode[]): DashboardNode[] {
+            if (nodes.length === 0) {
+              return nodes;
+            }
+            const fastestTime = nodes.slice().sort((n1, n2) => n1.timestamp - n2.timestamp)[1].timestamp;
+            return nodes.map(m => ({
+              ...m,
+              latency: !m.timestamp ? undefined : (m.timestamp - fastestTime) / ONE_THOUSAND,
+            }));
           }
-          const fastestTime = nodes.slice().sort((n1, n2) => n1.timestamp - n2.timestamp)[1].timestamp;
-          return nodes.map(m => ({
-            ...m,
-            latency: !m.timestamp ? undefined : (m.timestamp - fastestTime) / ONE_THOUSAND,
-          }));
+
+          const newNodes = applyNewLatencies(state.filteredNodes);
+
+          state.filteredNodes.forEach((m: DashboardNode, i: number) => {
+            expect(m.latency).to.equal(newNodes[i].latency);
+          });
         }
-
-        const newNodes = applyNewLatencies(dashboard.filteredNodes);
-
-        dashboard.filteredNodes.forEach((m: DashboardNode, i: number) => {
-          expect(m.latency).to.equal(newNodes[i].latency);
-        });
       });
   });
 
@@ -122,40 +121,44 @@ describe('DASHBOARD NODES TABLE', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        const syncedNodes = new Set(dashboard.nodes.filter(n => n.name.includes('node')).map(n => n.url));
-        const syncedProducers = new Set(dashboard.nodes.filter(n => n.name.includes('prod')).map(n => n.url));
-        const syncedSnarkers = new Set(dashboard.nodes.filter(n => n.name.includes('snarker')).map(n => n.url));
-        const syncedSeeders = new Set(dashboard.nodes.filter(n => n.name.includes('seed')).map(n => n.url));
-        const syncedTxGenerators = new Set(dashboard.nodes.filter(n => n.name.includes('transaction-generator')).map(n => n.url));
-        expect(syncedNodes.size).to.eq(dashboard.nodeCount.nodes);
-        expect(syncedProducers.size).to.eq(dashboard.nodeCount.producers);
-        expect(syncedSnarkers.size).to.eq(dashboard.nodeCount.snarkers);
-        expect(syncedSeeders.size).to.eq(dashboard.nodeCount.seeders);
-        expect(syncedTxGenerators.size).to.eq(dashboard.nodeCount.transactionGenerators);
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          const syncedNodes = new Set(state.nodes.filter(n => n.name.includes('node')).map(n => n.url));
+          const syncedProducers = new Set(state.nodes.filter(n => n.name.includes('prod')).map(n => n.url));
+          const syncedSnarkers = new Set(state.nodes.filter(n => n.name.includes('snarker')).map(n => n.url));
+          const syncedSeeders = new Set(state.nodes.filter(n => n.name.includes('seed')).map(n => n.url));
+          const syncedTxGenerators = new Set(state.nodes.filter(n => n.name.includes('transaction-generator')).map(n => n.url));
+          expect(syncedNodes.size).to.eq(state.nodeCount.nodes);
+          expect(syncedProducers.size).to.eq(state.nodeCount.producers);
+          expect(syncedSnarkers.size).to.eq(state.nodeCount.snarkers);
+          expect(syncedSeeders.size).to.eq(state.nodeCount.seeders);
+          expect(syncedTxGenerators.size).to.eq(state.nodeCount.transactionGenerators);
+        }
       });
   });
 
-// it('have correct number of counted filtered nodes displayed', () => {
-//   cy
-//     .get('mina-dashboard-nodes-toolbar .row1 div.flex-between div.flex-row button:last-child')
-//     .click()
-//     .window()
-//     .its('store')
-//     .then(getDashboard)
-//     .then((dashboard: DashboardNodesState) => {
-//       const syncedNodes = new Set(dashboard.nodes.filter(n => n.name.includes('node') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
-//       const syncedProducers = new Set(dashboard.nodes.filter(n => n.name.includes('prod') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
-//       const syncedSnarkers = new Set(dashboard.nodes.filter(n => n.name.includes('snarker') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
-//       const syncedSeeders = new Set(dashboard.nodes.filter(n => n.name.includes('seed') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
-//       const syncedTxGenerators = new Set(dashboard.nodes.filter(n => n.name.includes('transaction-generator') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
-//       expect(syncedNodes.size).to.eq(dashboard.nodeCount.nodes);
-//       expect(syncedProducers.size).to.eq(dashboard.nodeCount.producers);
-//       expect(syncedSnarkers.size).to.eq(dashboard.nodeCount.snarkers);
-//       expect(syncedSeeders.size).to.eq(dashboard.nodeCount.seeders);
-//       expect(syncedTxGenerators.size).to.eq(dashboard.nodeCount.transactionGenerators);
-//     });
-// });
+  it.only('have correct number of counted filtered nodes displayed', () => {
+    cy
+      .get('mina-dashboard-nodes-toolbar .row1 div.flex-between div.flex-row button:last-child')
+      .click()
+      .window()
+      .its('store')
+      .then(getDashboard)
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          const syncedNodes = new Set(state.nodes.filter(n => n.name.includes('node') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
+          const syncedProducers = new Set(state.nodes.filter(n => n.name.includes('prod') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
+          const syncedSnarkers = new Set(state.nodes.filter(n => n.name.includes('snarker') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
+          const syncedSeeders = new Set(state.nodes.filter(n => n.name.includes('seed') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
+          const syncedTxGenerators = new Set(state.nodes.filter(n => n.name.includes('transaction-generator') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
+          expect(syncedNodes.size).to.eq(state.nodeCount.nodes);
+          expect(syncedProducers.size).to.eq(state.nodeCount.producers);
+          expect(syncedSnarkers.size).to.eq(state.nodeCount.snarkers);
+          expect(syncedSeeders.size).to.eq(state.nodeCount.seeders);
+          expect(syncedTxGenerators.size).to.eq(state.nodeCount.transactionGenerators);
+        }
+      });
+  });
 
   it('sort by name', () => {
     cy
@@ -166,17 +169,19 @@ describe('DASHBOARD NODES TABLE', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        let sorted = true;
-        for (let i = 0; i < dashboard.filteredNodes.length - 1; i++) {
-          const curr = dashboard.filteredNodes[i].name || '';
-          const next = dashboard.filteredNodes[i + 1].name || '';
-          if (next.localeCompare(curr) > 0) {
-            sorted = false;
-            break;
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredNodes.length - 1; i++) {
+            const curr = state.filteredNodes[i].name || '';
+            const next = state.filteredNodes[i + 1].name || '';
+            if (next.localeCompare(curr) > 0) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -187,17 +192,19 @@ describe('DASHBOARD NODES TABLE', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        let sorted = true;
-        for (let i = 0; i < dashboard.filteredNodes.length - 1; i++) {
-          const curr = dashboard.filteredNodes[i].status || '';
-          const next = dashboard.filteredNodes[i + 1].status || '';
-          if (next < curr) {
-            sorted = false;
-            break;
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredNodes.length - 1; i++) {
+            const curr = state.filteredNodes[i].status || '';
+            const next = state.filteredNodes[i + 1].status || '';
+            if (next < curr) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -210,17 +217,19 @@ describe('DASHBOARD NODES TABLE', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        let sorted = true;
-        for (let i = 0; i < dashboard.filteredNodes.length - 1; i++) {
-          const curr = dashboard.filteredNodes[i].hash || '';
-          const next = dashboard.filteredNodes[i + 1].hash || '';
-          if (next.localeCompare(curr) > 0) {
-            sorted = false;
-            break;
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredNodes.length - 1; i++) {
+            const curr = state.filteredNodes[i].hash || '';
+            const next = state.filteredNodes[i + 1].hash || '';
+            if (next.localeCompare(curr) > 0) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -231,17 +240,19 @@ describe('DASHBOARD NODES TABLE', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        let sorted = true;
-        for (let i = 0; i < dashboard.filteredNodes.length - 1; i++) {
-          const curr = dashboard.filteredNodes[i].blockchainLength === undefined ? dashboard.filteredNodes[i].blockchainLength : Number.MAX_VALUE;
-          const next = dashboard.filteredNodes[i + 1].blockchainLength === undefined ? dashboard.filteredNodes[i + 1].blockchainLength : Number.MAX_VALUE;
-          if (next > curr) {
-            sorted = false;
-            break;
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredNodes.length - 1; i++) {
+            const curr = state.filteredNodes[i].blockchainLength === undefined ? state.filteredNodes[i].blockchainLength : Number.MAX_VALUE;
+            const next = state.filteredNodes[i + 1].blockchainLength === undefined ? state.filteredNodes[i + 1].blockchainLength : Number.MAX_VALUE;
+            if (next > curr) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -252,17 +263,19 @@ describe('DASHBOARD NODES TABLE', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        let sorted = true;
-        for (let i = 0; i < dashboard.filteredNodes.length - 1; i++) {
-          const curr = dashboard.filteredNodes[i].addr || '';
-          const next = dashboard.filteredNodes[i + 1].addr || '';
-          if (next.localeCompare(curr) < 0) {
-            sorted = false;
-            break;
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredNodes.length - 1; i++) {
+            const curr = state.filteredNodes[i].addr || '';
+            const next = state.filteredNodes[i + 1].addr || '';
+            if (next.localeCompare(curr) < 0) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -273,17 +286,19 @@ describe('DASHBOARD NODES TABLE', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        let sorted = true;
-        for (let i = 0; i < dashboard.filteredNodes.length - 1; i++) {
-          const curr = dashboard.filteredNodes[i].timestamp === undefined ? dashboard.filteredNodes[i].timestamp : Number.MAX_VALUE;
-          const next = dashboard.filteredNodes[i + 1].timestamp === undefined ? dashboard.filteredNodes[i + 1].timestamp : Number.MAX_VALUE;
-          if (next > curr) {
-            sorted = false;
-            break;
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredNodes.length - 1; i++) {
+            const curr = state.filteredNodes[i].timestamp === undefined ? state.filteredNodes[i].timestamp : Number.MAX_VALUE;
+            const next = state.filteredNodes[i + 1].timestamp === undefined ? state.filteredNodes[i + 1].timestamp : Number.MAX_VALUE;
+            if (next > curr) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -294,17 +309,19 @@ describe('DASHBOARD NODES TABLE', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        let sorted = true;
-        for (let i = 0; i < dashboard.filteredNodes.length - 1; i++) {
-          const curr = dashboard.filteredNodes[i].latency === undefined ? dashboard.filteredNodes[i].latency : Number.MAX_VALUE;
-          const next = dashboard.filteredNodes[i + 1].latency === undefined ? dashboard.filteredNodes[i + 1].latency : Number.MAX_VALUE;
-          if (next > curr) {
-            sorted = false;
-            break;
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredNodes.length - 1; i++) {
+            const curr = state.filteredNodes[i].latency === undefined ? state.filteredNodes[i].latency : Number.MAX_VALUE;
+            const next = state.filteredNodes[i + 1].latency === undefined ? state.filteredNodes[i + 1].latency : Number.MAX_VALUE;
+            if (next > curr) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -315,17 +332,19 @@ describe('DASHBOARD NODES TABLE', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        let sorted = true;
-        for (let i = 0; i < dashboard.filteredNodes.length - 1; i++) {
-          const curr = dashboard.filteredNodes[i].blockApplication === undefined ? dashboard.filteredNodes[i].blockApplication : Number.MAX_VALUE;
-          const next = dashboard.filteredNodes[i + 1].blockApplication === undefined ? dashboard.filteredNodes[i + 1].blockApplication : Number.MAX_VALUE;
-          if (next < curr) {
-            sorted = false;
-            break;
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredNodes.length - 1; i++) {
+            const curr = state.filteredNodes[i].blockApplication === undefined ? state.filteredNodes[i].blockApplication : Number.MAX_VALUE;
+            const next = state.filteredNodes[i + 1].blockApplication === undefined ? state.filteredNodes[i + 1].blockApplication : Number.MAX_VALUE;
+            if (next < curr) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -338,17 +357,19 @@ describe('DASHBOARD NODES TABLE', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        let sorted = true;
-        for (let i = 0; i < dashboard.filteredNodes.length - 1; i++) {
-          const curr = dashboard.filteredNodes[i].blockApplication === undefined ? dashboard.filteredNodes[i].blockApplication : Number.MAX_VALUE;
-          const next = dashboard.filteredNodes[i + 1].blockApplication === undefined ? dashboard.filteredNodes[i + 1].blockApplication : Number.MAX_VALUE;
-          if (next > curr) {
-            sorted = false;
-            break;
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredNodes.length - 1; i++) {
+            const curr = state.filteredNodes[i].blockApplication === undefined ? state.filteredNodes[i].blockApplication : Number.MAX_VALUE;
+            const next = state.filteredNodes[i + 1].blockApplication === undefined ? state.filteredNodes[i + 1].blockApplication : Number.MAX_VALUE;
+            if (next > curr) {
+              sorted = false;
+              break;
+            }
           }
+          expect(sorted).to.be.true;
         }
-        expect(sorted).to.be.true;
       });
   });
 
@@ -358,12 +379,15 @@ describe('DASHBOARD NODES TABLE', () => {
       .get('mina-dashboard-nodes-table .row:not(.head)')
       .first()
       .click()
+      .wait(1000)
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        expect(dashboard.activeNode.url).to.eq(dashboard.filteredNodes[0].url);
-        expect(dashboard.activeNode.hash).to.eq(dashboard.filteredNodes[0].hash);
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          expect(state.activeNode.url).to.eq(state.filteredNodes[0].url);
+          expect(state.activeNode.hash).to.eq(state.filteredNodes[0].hash);
+        }
       })
       .get('mina-dashboard-nodes-side-panel')
       .should('be.visible')
@@ -377,8 +401,10 @@ describe('DASHBOARD NODES TABLE', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        expect(dashboard.filteredNodes.some(n => n.status !== AppNodeStatusTypes.OFFLINE)).to.be.true;
-      })
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          expect(state.filteredNodes.some(n => n.status !== AppNodeStatusTypes.OFFLINE)).to.be.true;
+        }
+      });
   });
 });

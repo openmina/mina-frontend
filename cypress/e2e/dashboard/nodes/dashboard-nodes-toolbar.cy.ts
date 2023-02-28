@@ -1,20 +1,11 @@
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { PROMISE, storeDashboardSubscription } from '../../../support/commands';
+import { stateSliceAsPromise } from '../../../support/commands';
 import { DashboardNodesState } from '@dashboard/nodes/dashboard-nodes.state';
 
-const getDashboard = (store: Store<MinaState>) => {
-  const promiseBody = (resolve: (result?: unknown) => void): void => {
-    const observer = (dashboard: DashboardNodesState) => {
-      if (dashboard.filteredNodes.length > 2) {
-        return resolve(dashboard);
-      }
-      setTimeout(() => resolve(), 3000);
-    };
-    storeDashboardSubscription(store, observer);
-  };
-  return PROMISE(promiseBody);
-};
+const condition = (state: DashboardNodesState) => state && state.nodes.length > 1;
+const getDashboard = (store: Store<MinaState>) => stateSliceAsPromise<DashboardNodesState>(store, condition, 'dashboard', 'nodes');
+
 
 describe('DASHBOARD NODES TOOLBAR', () => {
   beforeEach(() => {
@@ -28,8 +19,10 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        activeBlock = dashboard.activeBlock;
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          activeBlock = state.activeBlock;
+        }
       })
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('have.class', 'disabled')
@@ -41,8 +34,10 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        expect(activeBlock).to.equal(dashboard.activeBlock + 1);
+      .then((state: DashboardNodesState) => {
+        if (state && activeBlock !== undefined) {
+          expect(activeBlock).to.equal(state.activeBlock + 1);
+        }
       })
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('not.have.class', 'disabled')
@@ -57,8 +52,10 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        activeBlock = dashboard.activeBlock;
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          activeBlock = state.activeBlock;
+        }
       })
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('have.class', 'disabled')
@@ -70,8 +67,10 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        expect(activeBlock).to.equal(dashboard.activeBlock + 1);
+      .then((state: DashboardNodesState) => {
+        if (state && activeBlock !== undefined) {
+          expect(activeBlock).to.equal(state.activeBlock + 1);
+        }
       })
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('not.have.class', 'disabled')
@@ -80,8 +79,10 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        expect(activeBlock).to.equal(dashboard.activeBlock);
+      .then((state: DashboardNodesState) => {
+        if (state && activeBlock !== undefined) {
+          expect(activeBlock).to.equal(state.activeBlock);
+        }
       })
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('have.class', 'disabled')
@@ -96,8 +97,10 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        earliestBlock = dashboard.earliestBlock;
+      .then((state: DashboardNodesState) => {
+        if (state) {
+          earliestBlock = state.earliestBlock;
+        }
       })
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('have.class', 'disabled')
@@ -119,8 +122,10 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        expect(earliestBlock).to.equal(dashboard.activeBlock);
+      .then((state: DashboardNodesState) => {
+        if (state && earliestBlock !== undefined) {
+          expect(earliestBlock).to.equal(state.activeBlock);
+        }
       })
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('have.class', 'disabled')

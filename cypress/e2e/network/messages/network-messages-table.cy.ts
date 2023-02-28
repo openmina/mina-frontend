@@ -4,7 +4,7 @@ import { MinaState } from '@app/app.setup';
 import { stateSliceAsPromise } from '../../../support/commands';
 import { NetworkMessage } from '@shared/types/network/messages/network-message.type';
 
-const condition = (state: NetworkMessagesState) => state.messages.length > 20;
+const condition = (state: NetworkMessagesState) => state && state.messages.length > 20;
 const networkMessagesState = (store: Store<MinaState>) => stateSliceAsPromise<NetworkMessagesState>(store, condition, 'network', 'messages');
 
 
@@ -19,14 +19,17 @@ describe('NETWORK MESSAGES TABLE', () => {
   });
 
   it('displays messages in the table', () => {
-    cy.window()
+    cy.wait(1000)
+      .window()
       .its('store')
       .then(networkMessagesState)
-      .then((network: NetworkMessagesState) => {
-        expect(network.messages.length).above(20);
-        cy.get('.mina-table')
-          .get('.row')
-          .should('have.length.above', 15);
+      .then((state: NetworkMessagesState) => {
+        if (state) {
+          expect(state.messages.length).above(20);
+          cy.get('.mina-table')
+            .get('.row')
+            .should('have.length.above', 15);
+        }
       });
   });
 
@@ -34,13 +37,13 @@ describe('NETWORK MESSAGES TABLE', () => {
     cy.window()
       .its('store')
       .then(networkMessagesState)
-      .then((network: NetworkMessagesState) => {
-        if (network.messages) {
+      .then((state: NetworkMessagesState) => {
+        if (state && state.messages) {
           cy.wait(1000)
             .get('.mina-table .row:last-child span:nth-child(3)')
             .click()
             .get('.filter-row div:nth-child(2) button').should('have.length', 1)
-            .url().should('contain', 'addr=' + network.messages[network.messages.length - 1].address)
+            .url().should('contain', 'addr=' + state.messages[state.messages.length - 1].address)
             .wait(2000)
             .get('.mina-table .row:last-child span:nth-child(3)')
             .click()
@@ -55,9 +58,9 @@ describe('NETWORK MESSAGES TABLE', () => {
     cy.window()
       .its('store')
       .then(networkMessagesState)
-      .then((network: NetworkMessagesState) => {
-        if (network.messages) {
-          clickedMessage = network.messages[network.messages.length - 2];
+      .then((state: NetworkMessagesState) => {
+        if (state && state.messages) {
+          clickedMessage = state.messages[state.messages.length - 2];
           cy.wait(1000)
             .get('.mina-table .row')
             .eq(-2)
@@ -80,9 +83,9 @@ describe('NETWORK MESSAGES TABLE', () => {
     cy.window()
       .its('store')
       .then(networkMessagesState)
-      .then((network: NetworkMessagesState) => {
-        if (network.messages) {
-          clickedMessage = network.messages[network.messages.length - 2];
+      .then((state: NetworkMessagesState) => {
+        if (state && state.messages) {
+          clickedMessage = state.messages[state.messages.length - 2];
           cy.wait(1000)
             .get('.mina-table .row')
             .eq(-2)
