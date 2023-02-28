@@ -93,6 +93,4 @@ export const storeWebNodeLogsSubscription = (store: Store<MinaState>, observer: 
 export const storeWebNodePeersSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('webNode').pipe(map(wn => wn.peers)).subscribe(observer);
 export const storeWebNodeSharedSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('webNode').pipe(map(wn => wn.shared)).subscribe(observer);
 
-export const storeDashboardSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('dashboard').pipe(map(d => d.nodes)).subscribe(observer);
-
 Cypress.Commands.overwrite('log', (subject, message) => cy.task('log', message));

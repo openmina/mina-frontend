@@ -19,6 +19,7 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
+        cy.log(JSON.stringify(state.nodes))
         if (state) {
           activeBlock = state.activeBlock;
         }
@@ -34,6 +35,7 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
+        cy.log(JSON.stringify(state.nodes))
         if (state && activeBlock !== undefined) {
           expect(activeBlock).to.equal(state.activeBlock + 1);
         }
@@ -51,6 +53,7 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
+        cy.log(JSON.stringify(state.nodes))
         if (state) {
           activeBlock = state.activeBlock;
         }
@@ -66,6 +69,7 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
+        cy.log(JSON.stringify(state.nodes))
         if (state && activeBlock !== undefined) {
           expect(activeBlock).to.equal(state.activeBlock + 1);
         }
@@ -78,6 +82,7 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
+        cy.log(JSON.stringify(state.nodes))
         if (state && activeBlock !== undefined) {
           expect(activeBlock).to.equal(state.activeBlock);
         }
@@ -95,6 +100,7 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
+        cy.log(JSON.stringify(state.nodes))
         if (state) {
           earliestBlock = state.earliestBlock;
         }
@@ -120,6 +126,7 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
+        cy.log(JSON.stringify(state.nodes))
         if (state && earliestBlock !== undefined) {
           expect(earliestBlock).to.equal(state.activeBlock);
         }
