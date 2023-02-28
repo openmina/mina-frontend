@@ -11,6 +11,7 @@ module.exports = defineConfig({
     },
     specPattern: '**/*.cy.ts',
   },
+  numTestsKeptInMemory: 20,
   e2e: {
     baseUrl: "http://frontend-server:80",
     setupNodeEvents(on, config) {
