@@ -14,8 +14,7 @@ describe('DASHBOARD NODES TOOLBAR', () => {
 
   it('goes to previous block', () => {
     let activeBlock: number;
-    cy
-      .wait(1000)
+    cy.wait(1000)
       .window()
       .its('store')
       .then(getDashboard)
@@ -47,8 +46,7 @@ describe('DASHBOARD NODES TOOLBAR', () => {
 
   it('goes to next block', () => {
     let activeBlock: number;
-    cy
-      .wait(1000)
+    cy.wait(1000)
       .window()
       .its('store')
       .then(getDashboard)
@@ -92,8 +90,7 @@ describe('DASHBOARD NODES TOOLBAR', () => {
 
   it('goes to earliest block', () => {
     let earliestBlock: number;
-    cy
-      .wait(1000)
+    cy.wait(1000)
       .window()
       .its('store')
       .then(getDashboard)
