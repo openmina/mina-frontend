@@ -24,6 +24,7 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
+        cy.log(JSON.stringify(state));
         if (state) {
           expect(state.blocks.length).above(2);
           cy.get('mina-network-blocks .mina-table')
