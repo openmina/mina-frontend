@@ -59,4 +59,47 @@ describe('NETWORK BLOCKS IPC TABLE', () => {
         }
       });
   });
+
+  it('have as many filters as unique candidates from the messages', () => {
+    cy.window()
+      .its('store')
+      .then(networkBlocksIpcState)
+      .then((state: NetworkBlocksIpcState) => {
+        if (state) {
+          const expectedCandidates = state.blocks.map(m => m.hash).filter((v, i, a) => a.indexOf(v) === i).length;
+          expect(state.allFilters.length).to.equal(expectedCandidates);
+        }
+      });
+  });
+
+  it('sort by date', () => {
+    cy.window()
+      .its('store')
+      .then(networkBlocksIpcState)
+      .then((state: NetworkBlocksIpcState) => {
+        if (state) {
+          let sorted = true;
+          for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
+            const curr = state.filteredBlocks[i].date || '';
+            const next = state.filteredBlocks[i + 1].date || '';
+            if (next.localeCompare(curr) < 0) {
+              sorted = false;
+              break;
+            }
+          }
+          expect(sorted).to.be.true;
+        }
+      });
+  });
+
+  it('has higher time than network blocks', () => {
+    cy.window()
+      .its('store')
+      .then(networkBlocksIpcState)
+      .then((state: NetworkBlocksIpcState) => {
+        if (state) {
+          const currentHeight = state.activeBlock;
+        }
+      });
+  });
 });

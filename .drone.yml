@@ -64,7 +64,7 @@ steps:
   - name: network-blocks-ipc-table
     image: cypress/included:12.6.0
     commands:
-      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/network/blocks/network-blocks-ipc-table.cy.ts"
+      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/network/blocks-ipc/network-blocks-ipc-table.cy.ts"
     depends_on:
       - prepare-tests
 
