@@ -79,7 +79,7 @@ export const stateSliceAsPromise = <T = MinaState | MinaState[keyof MinaState]>(
     };
     store.select(slice).pipe(
       map((subState: MinaState[keyof MinaState]) => {
-        cy.log(slice, subSlice);
+        cy.log(' ');
         return subSlice ? subState[subSlice] : subState;
       }),
     ).subscribe(observer);
