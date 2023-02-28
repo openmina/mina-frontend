@@ -24,7 +24,6 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        cy.log(JSON.stringify(state));
         if (state) {
           expect(state.blocks.length).above(2);
           cy.get('mina-network-blocks .mina-table')
@@ -73,8 +72,7 @@ describe('NETWORK BLOCKS TABLE', () => {
   });
 
   it('sort by date', () => {
-    cy
-      .window()
+    cy.window()
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
@@ -94,8 +92,7 @@ describe('NETWORK BLOCKS TABLE', () => {
   });
 
   it('sort by date reversed', () => {
-    cy
-      .get('.mina-table .head > span:nth-child(2)')
+    cy.get('.mina-table .head > span:nth-child(2)')
       .click()
       .window()
       .its('store')
@@ -117,8 +114,7 @@ describe('NETWORK BLOCKS TABLE', () => {
   });
 
   it('sort by hash', () => {
-    cy
-      .get('.mina-table .head > span:nth-child(3)')
+    cy.get('.mina-table .head > span:nth-child(3)')
       .click()
       .window()
       .its('store')
@@ -140,8 +136,7 @@ describe('NETWORK BLOCKS TABLE', () => {
   });
 
   it('sort by height', () => {
-    cy
-      .get('.mina-table .head > span:nth-child(4)')
+    cy.get('.mina-table .head > span:nth-child(4)')
       .click()
       .window()
       .its('store')
@@ -163,8 +158,7 @@ describe('NETWORK BLOCKS TABLE', () => {
   });
 
   it('sort by sender', () => {
-    cy
-      .get('.mina-table .head > span:nth-child(5)')
+    cy.get('.mina-table .head > span:nth-child(5)')
       .click()
       .window()
       .its('store')
@@ -186,8 +180,7 @@ describe('NETWORK BLOCKS TABLE', () => {
   });
 
   it('sort by receiver', () => {
-    cy
-      .get('.mina-table .head > span:nth-child(6)')
+    cy.get('.mina-table .head > span:nth-child(6)')
       .click()
       .window()
       .its('store')
@@ -209,8 +202,7 @@ describe('NETWORK BLOCKS TABLE', () => {
   });
 
   it('sort by recv time', () => {
-    cy
-      .get('.mina-table .head > span:nth-child(7)')
+    cy.get('.mina-table .head > span:nth-child(7)')
       .click()
       .window()
       .its('store')
@@ -232,8 +224,7 @@ describe('NETWORK BLOCKS TABLE', () => {
   });
 
   it('sort by sent time', () => {
-    cy
-      .get('.mina-table .head > span:nth-child(8)')
+    cy.get('.mina-table .head > span:nth-child(8)')
       .click()
       .window()
       .its('store')
@@ -255,8 +246,7 @@ describe('NETWORK BLOCKS TABLE', () => {
   });
 
   it('sort by sent message kind', () => {
-    cy
-      .get('.mina-table .head > span:nth-child(9)')
+    cy.get('.mina-table .head > span:nth-child(9)')
       .click()
       .window()
       .its('store')
