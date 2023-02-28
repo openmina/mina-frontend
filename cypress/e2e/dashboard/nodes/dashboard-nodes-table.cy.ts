@@ -137,7 +137,7 @@ describe('DASHBOARD NODES TABLE', () => {
       });
   });
 
-  it.only('have correct number of counted filtered nodes displayed', () => {
+  it('have correct number of counted filtered nodes displayed', () => {
     cy
       .get('mina-dashboard-nodes-toolbar .row1 div.flex-between div.flex-row button:last-child')
       .click({ force: true })
