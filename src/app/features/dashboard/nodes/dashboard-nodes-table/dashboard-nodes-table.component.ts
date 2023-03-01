@@ -95,8 +95,10 @@ export class DashboardNodesTableComponent extends ManualDetection implements OnI
     if (this.activeHeight > this.latestHeight && !this.currentHeightIsTooBig) {
       this.currentHeightIsTooBig = true;
       this.detect();
-    } else if (this.activeHeight <= this.latestHeight && this.currentHeightIsTooBig) {
-      this.currentHeightIsTooBig = false;
+    } else if (this.currentHeightIsTooBig) {
+      if (this.activeHeight <= this.latestHeight) {
+        this.currentHeightIsTooBig = false;
+      }
       this.detect();
     }
   }

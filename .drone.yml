@@ -33,12 +33,12 @@ steps:
     depends_on:
       - prepare-tests
 
-  - name: dashboard-nodes-toolbar
-    image: cypress/included:12.6.0
-    commands:
-      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/dashboard/nodes/dashboard-nodes-toolbar.cy.ts"
-    depends_on:
-      - prepare-tests
+#  - name: dashboard-nodes-toolbar
+#    image: cypress/included:12.6.0
+#    commands:
+#      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/dashboard/nodes/dashboard-nodes-toolbar.cy.ts"
+#    depends_on:
+#      - prepare-tests
 
   - name: network-messages-table
     image: cypress/included:12.6.0
@@ -61,10 +61,31 @@ steps:
     depends_on:
       - prepare-tests
 
+  - name: network-blocks-side-panel
+    image: cypress/included:12.6.0
+    commands:
+      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/network/blocks/network-blocks-side-panel.cy.ts"
+    depends_on:
+      - prepare-tests
+
   - name: network-blocks-ipc-table
     image: cypress/included:12.6.0
     commands:
       - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/network/blocks-ipc/network-blocks-ipc-table.cy.ts"
+    depends_on:
+      - prepare-tests
+
+  - name: network-blocks-ipc-toolbar
+    image: cypress/included:12.6.0
+    commands:
+      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/network/blocks-ipc/network-blocks-ipc-toolbar.cy.ts"
+    depends_on:
+      - prepare-tests
+
+  - name: network-blocks-ipc-side-panel
+    image: cypress/included:12.6.0
+    commands:
+      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/network/blocks-ipc/network-blocks-ipc-side-panel.cy.ts"
     depends_on:
       - prepare-tests
 

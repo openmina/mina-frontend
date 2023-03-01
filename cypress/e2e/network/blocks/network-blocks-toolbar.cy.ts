@@ -129,6 +129,4 @@ describe('NETWORK BLOCKS TOOLBAR', () => {
       .get('mina-network-blocks-toolbar > div:first-child button:last-child')
       .should('have.class', 'disabled');
   });
-
-
 });

@@ -1,20 +1,10 @@
 import { NetworkMessagesState } from '@network/messages/network-messages.state';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { PROMISE, storeNetworkSubscription } from '../../../support/commands';
+import { stateSliceAsPromise } from '../../../support/commands';
 
-const getNetwork = (store: Store<MinaState>) => {
-  const promiseBody = (resolve: (result?: unknown) => void): void => {
-    const observer = (network: NetworkMessagesState) => {
-      if (network.messages.length > 20) {
-        return resolve(network);
-      }
-      setTimeout(() => resolve(), 3000);
-    };
-    storeNetworkSubscription(store, observer);
-  };
-  return PROMISE(promiseBody);
-};
+const condition = (state: NetworkMessagesState) => state && state.messages.length > 20;
+const getNetworkMessages = (store: Store<MinaState>) => stateSliceAsPromise<NetworkMessagesState>(store, condition, 'network', 'messages');
 
 describe('NETWORK MESSAGES FOOTER', () => {
   beforeEach(() => {
@@ -25,7 +15,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
     let responseCount: number = 0;
     cy.window()
       .its('store')
-      .then(getNetwork)
+      .then(getNetworkMessages)
       .then((network: NetworkMessagesState) => {
         expect(network.stream).to.be.true;
       })
@@ -44,7 +34,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
 
   it('in pause mode no messages are retrieved', () => {
     let responseCount: number = 0;
-    cy.get('mina-network-table-footer .pause-button')
+    cy.get('mina-network-messages-table-footer .pause-button')
       .click()
       .intercept('/messages?limit=1000&direction=reverse', req => {
         req.continue(res => {
@@ -60,14 +50,14 @@ describe('NETWORK MESSAGES FOOTER', () => {
   it('scroll table to top', () => {
     let firstItemID: string;
     cy.wait(1000)
-      .get('mina-network-table-footer button.icon-button:nth-child(4)')
+      .get('mina-network-messages-table-footer button.icon-button:nth-child(4)')
       .click()
       .wait(1000)
-      .get('mina-network-table cdk-virtual-scroll-viewport .row:nth-child(1) > span:nth-child(1)')
+      .get('mina-network-messages-table cdk-virtual-scroll-viewport .row:nth-child(1) > span:nth-child(1)')
       .then((span: JQuery<HTMLSpanElement>) => firstItemID = span.text())
       .window()
       .its('store')
-      .then(getNetwork)
+      .then(getNetworkMessages)
       .then((network: NetworkMessagesState) => {
         expect(network.messages[0].id.toString()).to.equal(firstItemID);
         expect(network.stream).to.be.false;
@@ -77,23 +67,23 @@ describe('NETWORK MESSAGES FOOTER', () => {
   it('jump to first page', () => {
     cy.intercept('/messages?limit=1000&direction=forward')
       .as('getMessages')
-      .get('mina-network-table-footer button.icon-button:nth-child(5)')
+      .get('mina-network-messages-table-footer button.icon-button:nth-child(5)')
       .click()
       .wait(1000)
       .wait('@getMessages', { timeout: 10000 })
-      .get('mina-network-table-footer button.icon-button:nth-child(5)')
+      .get('mina-network-messages-table-footer button.icon-button:nth-child(5)')
       .should('be.disabled')
-      .get('mina-network-table-footer button.icon-button:nth-child(6)')
+      .get('mina-network-messages-table-footer button.icon-button:nth-child(6)')
       .should('be.disabled')
       .window()
       .its('store')
-      .then(getNetwork)
+      .then(getNetworkMessages)
       .then((network: NetworkMessagesState) => {
         expect(network.messages[0].id).to.equal(0);
         if (network.messages.length === network.limit) {
-          cy.get('mina-network-table-footer button.icon-button:nth-child(7)')
+          cy.get('mina-network-messages-table-footer button.icon-button:nth-child(7)')
             .should('not.be.disabled')
-            .get('mina-network-table-footer button.icon-button:nth-child(8)')
+            .get('mina-network-messages-table-footer button.icon-button:nth-child(8)')
             .should('not.be.disabled');
         }
       });
@@ -105,24 +95,24 @@ describe('NETWORK MESSAGES FOOTER', () => {
       .as('getMessages')
       .window()
       .its('store')
-      .then(getNetwork)
+      .then(getNetworkMessages)
       .then((network: NetworkMessagesState) => firstMessageID = network.messages[0].id)
-      .get('mina-network-table-footer button.icon-button:nth-child(6)')
+      .get('mina-network-messages-table-footer button.icon-button:nth-child(6)')
       .click()
       .wait('@getMessages', { timeout: 10000 })
       .window()
       .its('store')
-      .then(getNetwork)
+      .then(getNetworkMessages)
       .then((network: NetworkMessagesState) => {
         expect(network.messages[0].id).to.equal(firstMessageID - network.limit);
         if (network.messages.length === network.limit && network.messages[0].id > 1) {
-          cy.get('mina-network-table-footer button.icon-button:nth-child(5)')
+          cy.get('mina-network-messages-table-footer button.icon-button:nth-child(5)')
             .should('not.be.disabled')
-            .get('mina-network-table-footer button.icon-button:nth-child(6)')
+            .get('mina-network-messages-table-footer button.icon-button:nth-child(6)')
             .should('not.be.disabled')
-            .get('mina-network-table-footer button.icon-button:nth-child(7)')
+            .get('mina-network-messages-table-footer button.icon-button:nth-child(7)')
             .should('not.be.disabled')
-            .get('mina-network-table-footer button.icon-button:nth-child(8)')
+            .get('mina-network-messages-table-footer button.icon-button:nth-child(8)')
             .should('not.be.disabled');
         }
       });
@@ -132,29 +122,29 @@ describe('NETWORK MESSAGES FOOTER', () => {
     let firstMessageID: number;
     cy.intercept('/messages?limit=1000&direction=forward*')
       .as('getMessages')
-      .get('mina-network-table-footer button.icon-button:nth-child(5)')
+      .get('mina-network-messages-table-footer button.icon-button:nth-child(5)')
       .click()
       .wait('@getMessages', { timeout: 10000 })
       .window()
       .its('store')
-      .then(getNetwork)
+      .then(getNetworkMessages)
       .then((network: NetworkMessagesState) => firstMessageID = network.messages[0].id)
-      .get('mina-network-table-footer button.icon-button:nth-child(7)')
+      .get('mina-network-messages-table-footer button.icon-button:nth-child(7)')
       .click()
       .wait('@getMessages', { timeout: 10000 })
       .window()
       .its('store')
-      .then(getNetwork)
+      .then(getNetworkMessages)
       .then((network: NetworkMessagesState) => {
         expect(network.messages[0].id).to.equal(firstMessageID + network.limit);
         if (network.messages.length === network.limit) {
-          cy.get('mina-network-table-footer button.icon-button:nth-child(5)')
+          cy.get('mina-network-messages-table-footer button.icon-button:nth-child(5)')
             .should('not.be.disabled')
-            .get('mina-network-table-footer button.icon-button:nth-child(6)')
+            .get('mina-network-messages-table-footer button.icon-button:nth-child(6)')
             .should('not.be.disabled')
-            .get('mina-network-table-footer button.icon-button:nth-child(7)')
+            .get('mina-network-messages-table-footer button.icon-button:nth-child(7)')
             .should('not.be.disabled')
-            .get('mina-network-table-footer button.icon-button:nth-child(8)')
+            .get('mina-network-messages-table-footer button.icon-button:nth-child(8)')
             .should('not.be.disabled');
         }
       });
@@ -166,29 +156,29 @@ describe('NETWORK MESSAGES FOOTER', () => {
       .as('getFirstPageMessages')
       .intercept('/messages?limit=1000&direction=reverse*')
       .as('getLastPageMessages')
-      .get('mina-network-table-footer button.icon-button:nth-child(5)')
+      .get('mina-network-messages-table-footer button.icon-button:nth-child(5)')
       .click()
       .wait('@getFirstPageMessages', { timeout: 10000 })
       .window()
       .its('store')
-      .then(getNetwork)
+      .then(getNetworkMessages)
       .then((network: NetworkMessagesState) => firstMessageID = network.messages[network.messages.length - 1].id)
-      .get('mina-network-table-footer button.icon-button:nth-child(8)')
+      .get('mina-network-messages-table-footer button.icon-button:nth-child(8)')
       .click()
       .wait('@getLastPageMessages', { timeout: 10000 })
       .window()
       .its('store')
-      .then(getNetwork)
+      .then(getNetworkMessages)
       .then((network: NetworkMessagesState) => {
         expect(network.messages[0].id).to.be.greaterThan(firstMessageID);
         if (network.messages.length === network.limit) {
-          cy.get('mina-network-table-footer button.icon-button:nth-child(5)')
+          cy.get('mina-network-messages-table-footer button.icon-button:nth-child(5)')
             .should('not.be.disabled')
-            .get('mina-network-table-footer button.icon-button:nth-child(6)')
+            .get('mina-network-messages-table-footer button.icon-button:nth-child(6)')
             .should('not.be.disabled')
-            .get('mina-network-table-footer button.icon-button:nth-child(7)')
+            .get('mina-network-messages-table-footer button.icon-button:nth-child(7)')
             .should('be.disabled')
-            .get('mina-network-table-footer button.icon-button:nth-child(8)')
+            .get('mina-network-messages-table-footer button.icon-button:nth-child(8)')
             .should('be.disabled');
         }
       });
@@ -200,7 +190,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
     const dayToday = new Date().getDate();
     cy.get('.cdk-overlay-container mina-interval-select')
       .should('not.exist')
-      .get('mina-network-table-footer button:last-child')
+      .get('mina-network-messages-table-footer button:last-child')
       .click()
       .get('.cdk-overlay-container mina-interval-select')
       .should('exist')
@@ -226,7 +216,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
     const hourNow = date.getHours();
     const minuteNow = date.getMinutes();
     let secondNow: number;
-    cy.get('mina-network-table-footer button:last-child')
+    cy.get('mina-network-messages-table-footer button:last-child')
       .click()
       .get('.cdk-overlay-container mina-interval-select .container div:nth-child(2) form button')
       .click()
@@ -280,7 +270,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
     const hoursOneMinuteAgo = dateOneMinuteAgo.getHours();
     const minutesOneMinuteAgo = dateOneMinuteAgo.getMinutes();
     let secondsOneMinuteAgo: number;
-    cy.get('mina-network-table-footer button:last-child')
+    cy.get('mina-network-messages-table-footer button:last-child')
       .click()
       .get('.cdk-overlay-container mina-interval-select .container div:nth-child(1) button:nth-child(2)')
       .click()
@@ -333,7 +323,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
     const hoursFiveMinutesAgo = dateFiveMinutesAgo.getHours();
     const minutesFiveMinutesAgo = dateFiveMinutesAgo.getMinutes();
     let secondsFiveMinutesAgo: number;
-    cy.get('mina-network-table-footer button:last-child')
+    cy.get('mina-network-messages-table-footer button:last-child')
       .click()
       .get('.cdk-overlay-container mina-interval-select .container div:nth-child(1) button:nth-child(3)')
       .click()
@@ -386,7 +376,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
     const hoursThirtyMinutesAgo = dateThirtyMinutesAgo.getHours();
     const minutesThirtyMinutesAgo = dateThirtyMinutesAgo.getMinutes();
     let secondsThirtyMinutesAgo: number;
-    cy.get('mina-network-table-footer button:last-child')
+    cy.get('mina-network-messages-table-footer button:last-child')
       .click()
       .get('.cdk-overlay-container mina-interval-select .container div:nth-child(1) button:nth-child(4)')
       .click()
@@ -439,7 +429,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
     const hoursOneHourAgo = dateOneHourAgo.getHours();
     const minutesOneHourAgo = dateOneHourAgo.getMinutes();
     let secondsOneHourAgo: number;
-    cy.get('mina-network-table-footer button:last-child')
+    cy.get('mina-network-messages-table-footer button:last-child')
       .click()
       .get('.cdk-overlay-container mina-interval-select .container div:nth-child(1) button:nth-child(5)')
       .click()
@@ -492,7 +482,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
     const hoursTwelveHoursAgo = dateTwelveHoursAgo.getHours();
     const minutesTwelveHoursAgo = dateTwelveHoursAgo.getMinutes();
     let secondsTwelveHoursAgo: number;
-    cy.get('mina-network-table-footer button:last-child')
+    cy.get('mina-network-messages-table-footer button:last-child')
       .click()
       .get('.cdk-overlay-container mina-interval-select .container div:nth-child(1) button:nth-child(6)')
       .click()
@@ -545,7 +535,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
     const hoursOneDayAgo = dateOneDayAgo.getHours();
     const minutesOneDayAgo = dateOneDayAgo.getMinutes();
     let secondsOneDayAgo: number;
-    cy.get('mina-network-table-footer button:last-child')
+    cy.get('mina-network-messages-table-footer button:last-child')
       .click()
       .get('.cdk-overlay-container mina-interval-select .container div:nth-child(1) button:nth-child(7)')
       .click()
@@ -598,7 +588,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
     const hoursTwoDaysAgo = dateTwoDaysAgo.getHours();
     const minutesTwoDaysAgo = dateTwoDaysAgo.getMinutes();
     let secondsTwoDaysAgo: number;
-    cy.get('mina-network-table-footer button:last-child')
+    cy.get('mina-network-messages-table-footer button:last-child')
       .click()
       .get('.cdk-overlay-container mina-interval-select .container div:nth-child(1) button:nth-child(8)')
       .click()
@@ -651,7 +641,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
     const hoursSevenDaysAgo = dateSevenDaysAgo.getHours();
     const minutesSevenDaysAgo = dateSevenDaysAgo.getMinutes();
     let secondsSevenDaysAgo: number;
-    cy.get('mina-network-table-footer button:last-child')
+    cy.get('mina-network-messages-table-footer button:last-child')
       .click()
       .get('.cdk-overlay-container mina-interval-select .container div:nth-child(1) button:nth-child(9)')
       .click()
@@ -704,7 +694,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
     const hoursThirtyDaysAgo = dateThirtyDaysAgo.getHours();
     const minutesThirtyDaysAgo = dateThirtyDaysAgo.getMinutes();
     let secondsThirtyDaysAgo: number;
-    cy.get('mina-network-table-footer button:last-child')
+    cy.get('mina-network-messages-table-footer button:last-child')
       .click()
       .get('.cdk-overlay-container mina-interval-select .container div:nth-child(1) button:nth-child(10)')
       .click()
@@ -745,7 +735,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
   it('get messages in last 1 minute', () => {
     let date: Date;
     let dateOneMinuteAgo: Date;
-    cy.get('mina-network-table-footer button:last-child')
+    cy.get('mina-network-messages-table-footer button:last-child')
       .click()
       .get('.cdk-overlay-container mina-interval-select .container div:nth-child(1) button:nth-child(2)')
       .click()
@@ -759,7 +749,7 @@ describe('NETWORK MESSAGES FOOTER', () => {
       .click()
       .get('.cdk-overlay-container mina-interval-select')
       .should('not.exist')
-      .get('mina-network-table-footer button:last-child')
+      .get('mina-network-messages-table-footer button:last-child')
       .then((btn: any) => {
         const twoDigit = (val: number) => val < 10 ? `0${val}` : val;
 
@@ -779,13 +769,13 @@ describe('NETWORK MESSAGES FOOTER', () => {
       .wait(500)
       .window()
       .its('store')
-      .then(getNetwork)
+      .then(getNetworkMessages)
       .then((network: NetworkMessagesState) => {
         if (network.messages && network.messages.length > 20) {
           expect(network.stream).to.be.false;
           expect(network.messages).to.not.be.empty;
         }
-      })
+      });
 
   });
 });
