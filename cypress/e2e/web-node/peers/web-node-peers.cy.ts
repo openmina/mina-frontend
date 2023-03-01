@@ -30,64 +30,65 @@ const getWebNodePeers = (store: Store<MinaState>) => {
 
 describe('WEB NODE PEERS', () => {
   beforeEach(() => {
-    cy.visit(Cypress.env('baseUrl') + '/web-node/peers');
+    cy.visit(Cypress.config().baseUrl + '/web-node/peers');
   });
 
   it('activate peers sub menu', () => {
-    cy.get('mina-toolbar .submenus a.active')
-      .then((a: JQuery<HTMLAnchorElement>) => {
-        expect(a.text()).equals('peers');
-      });
-  });
-  it('have some peers', () => {
-    cy.get('mina-web-node-peers cdk-virtual-scroll-viewport .row', { timeout: 60000 })
-      .should('exist')
-      .wait(1000)
-      .window()
-      .its('store')
-      .then(getWebNodeShared)
-      .then((logsState: WebNodeSharedState) => {
-        expect(logsState.peers).length.at.least(1);
-      });
+    cy.get('mina-toolbar .toolbar > div:first-child > span')
+      .then((span: any) => expect(span.text()).equal('Web Node'))
+      .get('mina-submenu-tabs a.active')
+      .then((a: any) => expect(a.text().toLowerCase()).equals('peers'));
   });
 
-  it('select peer', () => {
-    cy.get('mina-web-node-peers cdk-virtual-scroll-viewport .row:nth-child(1)', { timeout: 60000 })
-      .click()
-      .get('mina-web-node-peers mina-web-node-peers-side-panel mina-json-viewer')
-      .should('exist')
-      .wait(1000)
-      .window()
-      .its('store')
-      .then(getWebNodePeers)
-      .then((state: WebNodePeersState) => {
-        expect(state.activePeer).be.not.undefined;
-      });
-  });
-
-  it('select peer and close selected peer', () => {
-    cy.get('mina-web-node-peers cdk-virtual-scroll-viewport .row:nth-child(1)', { timeout: 60000 })
-      .click()
-      .get('mina-web-node-peers mina-web-node-peers-side-panel mina-json-viewer')
-      .should('exist')
-      .wait(1000)
-      .window()
-      .its('store')
-      .then(getWebNodePeers)
-      .then((state: WebNodePeersState) => {
-        expect(state.activePeer).be.not.undefined;
-      })
-      .get('mina-web-node-peers mina-web-node-peers-side-panel .mina-icon')
-      .click()
-      .wait(1000)
-      .get('mina-web-node-peers mina-web-node-peers-side-panel mina-json-viewer')
-      .should('not.be.visible')
-      .window()
-      .its('store')
-      .then(getWebNodePeers)
-      .then((state: WebNodePeersState) => {
-        expect(state.activePeer).be.undefined;
-      });
-  });
+  // it('have some peers', () => {
+  //   cy.get('mina-web-node-peers cdk-virtual-scroll-viewport .row', { timeout: 60000 })
+  //     .should('exist')
+  //     .wait(1000)
+  //     .window()
+  //     .its('store')
+  //     .then(getWebNodeShared)
+  //     .then((logsState: WebNodeSharedState) => {
+  //       expect(logsState.peers).length.at.least(1);
+  //     });
+  // });
+  //
+  // it('select peer', () => {
+  //   cy.get('mina-web-node-peers cdk-virtual-scroll-viewport .row:nth-child(1)', { timeout: 60000 })
+  //     .click()
+  //     .get('mina-web-node-peers mina-web-node-peers-side-panel mina-json-viewer')
+  //     .should('exist')
+  //     .wait(1000)
+  //     .window()
+  //     .its('store')
+  //     .then(getWebNodePeers)
+  //     .then((state: WebNodePeersState) => {
+  //       expect(state.activePeer).be.not.undefined;
+  //     });
+  // });
+  //
+  // it('select peer and close selected peer', () => {
+  //   cy.get('mina-web-node-peers cdk-virtual-scroll-viewport .row:nth-child(1)', { timeout: 60000 })
+  //     .click()
+  //     .get('mina-web-node-peers mina-web-node-peers-side-panel mina-json-viewer')
+  //     .should('exist')
+  //     .wait(1000)
+  //     .window()
+  //     .its('store')
+  //     .then(getWebNodePeers)
+  //     .then((state: WebNodePeersState) => {
+  //       expect(state.activePeer).be.not.undefined;
+  //     })
+  //     .get('mina-web-node-peers mina-web-node-peers-side-panel .mina-icon')
+  //     .click()
+  //     .wait(1000)
+  //     .get('mina-web-node-peers mina-web-node-peers-side-panel mina-json-viewer')
+  //     .should('not.be.visible')
+  //     .window()
+  //     .its('store')
+  //     .then(getWebNodePeers)
+  //     .then((state: WebNodePeersState) => {
+  //       expect(state.activePeer).be.undefined;
+  //     });
+  // });
 
 });

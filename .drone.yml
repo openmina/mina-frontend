@@ -89,6 +89,27 @@ steps:
     depends_on:
       - prepare-tests
 
+  - name: web-node-wallet
+    image: cypress/included:12.6.0
+    commands:
+      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/web-node/wallet/web-node-wallet.cy.ts"
+    depends_on:
+      - prepare-tests
+
+  - name: web-node-logs
+    image: cypress/included:12.6.0
+    commands:
+      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/web-node/logs/web-node-logs.cy.ts"
+    depends_on:
+      - prepare-tests
+
+  - name: web-node-peers
+    image: cypress/included:12.6.0
+    commands:
+      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/web-node/peers/web-node-peers.cy.ts"
+    depends_on:
+      - prepare-tests
+
 image_pull_secrets:
   - docker_pull_secret
 

@@ -28,7 +28,7 @@ export class ExplorerScanStateService {
            }
          }
        }
-       bestChain(maxLength: 0) {
+       bestChain(maxLength: 1) {
          protocolState {
            consensusState {
              blockHeight

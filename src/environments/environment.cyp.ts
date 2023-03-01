@@ -6,32 +6,32 @@ export const environment: Readonly<MinaEnv> = {
   configs: [{
     backend: 'http://1.k8.openmina.com:31308/node1',
     debugger: 'http://1.k8.openmina.com:31308/node1/bpf-debugger',
-    features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs'],
+    features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs', 'web-node'],
     name: 'node1',
   }, {
     backend: 'http://1.k8.openmina.com:31308/node2',
     debugger: 'http://1.k8.openmina.com:31308/node2/bpf-debugger',
-    features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs'],
+    features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs', 'web-node'],
     name: 'node2',
   }, {
     backend: 'http://1.k8.openmina.com:31308/node3',
     debugger: 'http://1.k8.openmina.com:31308/node3/bpf-debugger',
-    features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs'],
+    features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs', 'web-node'],
     name: 'node3',
   }, {
     backend: 'http://1.k8.openmina.com:31308/node4',
     debugger: 'http://1.k8.openmina.com:31308/node4/bpf-debugger',
-    features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs'],
+    features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs', 'web-node'],
     name: 'node4',
   }, {
     backend: 'http://1.k8.openmina.com:31308/node5',
     debugger: 'http://1.k8.openmina.com:31308/node5/bpf-debugger',
-    features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs'],
+    features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs', 'web-node'],
     name: 'node5',
   }, {
     backend: 'http://1.k8.openmina.com:31308/snarker9',
     debugger: 'http://1.k8.openmina.com:31308/snarker9/bpf-debugger',
-    features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs'],
+    features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs', 'web-node'],
     name: 'snarker9',
   }],
 };
