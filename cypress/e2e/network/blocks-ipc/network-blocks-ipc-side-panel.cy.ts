@@ -16,7 +16,15 @@ describe('NETWORK BLOCKS IPC SIDE PANEL', () => {
     cy.get('mina-network-blocks-ipc-side-panel div:nth-child(1) button:nth-child(2)')
       .should('not.be.visible')
       .get('mina-bar-graph')
-      .should('not.be.visible');
+      .should('not.be.visible')
+      .window()
+      .its('store')
+      .then(networkBlocksIpcState)
+      .then((state: NetworkBlocksIpcState) => {
+        if (state && state.blocks.length > 0) {
+          expect(state.openSidePanel).to.be.false;
+        }
+      });
   });
 
   it('toggle side panel', () => {
@@ -25,13 +33,29 @@ describe('NETWORK BLOCKS IPC SIDE PANEL', () => {
       .wait(700)
       .get('mina-bar-graph')
       .should('be.visible')
+      .window()
+      .its('store')
+      .then(networkBlocksIpcState)
+      .then((state: NetworkBlocksIpcState) => {
+        if (state && state.blocks.length > 0) {
+          expect(state.openSidePanel).to.be.true;
+        }
+      })
       .get('mina-network-blocks-ipc-side-panel div:nth-child(1) button:nth-child(2)')
       .click()
       .wait(700)
       .get('mina-network-blocks-ipc-side-panel div:nth-child(1) button:nth-child(2)')
       .should('not.be.visible')
       .get('mina-bar-graph')
-      .should('not.be.visible');
+      .should('not.be.visible')
+      .window()
+      .its('store')
+      .then(networkBlocksIpcState)
+      .then((state: NetworkBlocksIpcState) => {
+        if (state && state.blocks.length > 0) {
+          expect(state.openSidePanel).to.be.false;
+        }
+      });
   });
 
   it('displays correct number of bars in the bar graph', () => {
@@ -80,8 +104,8 @@ describe('NETWORK BLOCKS IPC SIDE PANEL', () => {
       .its('store')
       .then(networkBlocksIpcState)
       .then((state: NetworkBlocksIpcState) => {
-        if (state) {
-          const bars = state.blocks.map(b => b.blockLatency);
+        if (state && state.filteredBlocks.length > 0) {
+          const bars = state.filteredBlocks.map(b => b.blockLatency);
           const thirdBarValues = bars.filter(b => b <= 3 && b > 3 - 1);
           const fourthBarValues = bars.filter(b => b <= 4 && b > 4 - 1);
           const fifthBarValues = bars.filter(b => b <= 5 && b > 5 - 1);
@@ -136,7 +160,7 @@ describe('NETWORK BLOCKS IPC SIDE PANEL', () => {
       .then(networkBlocksIpcState)
       .then((state: NetworkBlocksIpcState) => {
         if (state) {
-          const bars = state.blocks.map(b => b.blockLatency);
+          const bars = state.filteredBlocks.map(b => b.blockLatency);
           const thirdBarValues = bars.filter(b => b <= 3 && b > 3 - 1);
           const fourthBarValues = bars.filter(b => b <= 4 && b > 4 - 1);
           const fifthBarValues = bars.filter(b => b <= 5 && b > 5 - 1);

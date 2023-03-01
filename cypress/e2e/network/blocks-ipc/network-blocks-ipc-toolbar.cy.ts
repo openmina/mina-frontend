@@ -23,6 +23,7 @@ describe('NETWORK BLOCKS IPC TOOLBAR', () => {
           activeBlock = state.activeBlock;
         }
       })
+      .log('')
       .get('mina-network-blocks-ipc-toolbar > div:first-child .pagination-group button:last-child')
       .should('have.class', 'disabled')
       .get('mina-network-blocks-ipc-toolbar > div:first-child button:last-child')
@@ -38,6 +39,7 @@ describe('NETWORK BLOCKS IPC TOOLBAR', () => {
           expect(activeBlock).to.equal(state.activeBlock + 1);
         }
       })
+      .log('')
       .get('mina-network-blocks-ipc-toolbar > div:first-child .pagination-group button:last-child')
       .should('not.have.class', 'disabled')
       .get('mina-network-blocks-ipc-toolbar > div:first-child button:last-child')
@@ -82,6 +84,7 @@ describe('NETWORK BLOCKS IPC TOOLBAR', () => {
           expect(activeBlock).to.equal(state.activeBlock);
         }
       })
+      .log('')
       .get('mina-network-blocks-ipc-toolbar > div:first-child .pagination-group button:last-child')
       .should('have.class', 'disabled')
       .get('mina-network-blocks-ipc-toolbar > div:first-child button:last-child')
@@ -99,6 +102,7 @@ describe('NETWORK BLOCKS IPC TOOLBAR', () => {
           earliestBlock = state.earliestBlock;
         }
       })
+      .log('')
       .get('mina-network-blocks-ipc-toolbar > div:first-child .pagination-group button:last-child')
       .should('have.class', 'disabled')
       .get('mina-network-blocks-ipc-toolbar > div:first-child button:last-child')
@@ -106,12 +110,14 @@ describe('NETWORK BLOCKS IPC TOOLBAR', () => {
       .get('mina-network-blocks-ipc-toolbar > div:first-child .pagination-group button:first-child')
       .click({ force: true })
       .wait(1000)
+      .log('')
       .get('mina-network-blocks-ipc-toolbar > div:first-child .pagination-group button:last-child')
       .should('not.have.class', 'disabled')
       .get('mina-network-blocks-ipc-toolbar > div:first-child button:last-child')
       .get('mina-network-blocks-ipc-toolbar > div:first-child .pagination-group button:first-child')
       .click({ force: true })
       .wait(1000)
+      .log('')
       .get('mina-network-blocks-ipc-toolbar > div:first-child > button')
       .should('not.have.class', 'disabled')
       .click({ force: true })
@@ -124,6 +130,7 @@ describe('NETWORK BLOCKS IPC TOOLBAR', () => {
           expect(earliestBlock).to.equal(state.activeBlock);
         }
       })
+      .log('')
       .get('mina-network-blocks-ipc-toolbar > div:first-child .pagination-group button:last-child')
       .should('have.class', 'disabled')
       .get('mina-network-blocks-ipc-toolbar > div:first-child button:last-child')

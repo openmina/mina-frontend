@@ -73,7 +73,7 @@ describe('NETWORK BLOCKS SIDE PANEL', () => {
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
         if (state) {
-          const bars = state.blocks.filter(b => b.receivedLatency || b.sentLatency).map(b => b.receivedLatency || b.sentLatency);
+          const bars = state.filteredBlocks.filter(b => b.receivedLatency || b.sentLatency).map(b => b.receivedLatency || b.sentLatency);
           const thirdBarValues = bars.filter(b => b <= 3 && b > 3 - 1);
           const fourthBarValues = bars.filter(b => b <= 4 && b > 4 - 1);
           const fifthBarValues = bars.filter(b => b <= 5 && b > 5 - 1);
@@ -125,7 +125,7 @@ describe('NETWORK BLOCKS SIDE PANEL', () => {
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
         if (state) {
-          const bars = state.blocks.filter(b => b.receivedLatency || b.sentLatency).map(b => b.receivedLatency || b.sentLatency);
+          const bars = state.filteredBlocks.filter(b => b.receivedLatency || b.sentLatency).map(b => b.receivedLatency || b.sentLatency);
           const thirdBarValues = bars.filter(b => b <= 3 && b > 3 - 1);
           const fourthBarValues = bars.filter(b => b <= 4 && b > 4 - 1);
           const fifthBarValues = bars.filter(b => b <= 5 && b > 5 - 1);
