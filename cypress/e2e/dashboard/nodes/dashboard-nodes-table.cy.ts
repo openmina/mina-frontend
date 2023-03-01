@@ -85,9 +85,8 @@ describe('DASHBOARD NODES TABLE', () => {
             .click()
             .wait(1000)
             .log('')
-            .then(() => {
-              expect(window.location.href).to.eq(state.nodes[0].url);
-            })
+            .url()
+            .should('equal', state.nodes[0].url);
         }
       });
   });
