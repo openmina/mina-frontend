@@ -83,6 +83,8 @@ describe('DASHBOARD NODES TABLE', () => {
             .should('have.attr', 'target', '_blank')
             .invoke('removeAttr', 'target')
             .click()
+            .log('')
+            .wait(500)
             .url()
             .should('equal', state.nodes[0].url);
         }
