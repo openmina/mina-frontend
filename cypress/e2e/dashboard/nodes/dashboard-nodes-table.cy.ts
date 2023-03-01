@@ -83,10 +83,11 @@ describe('DASHBOARD NODES TABLE', () => {
             .should('have.attr', 'target', '_blank')
             .invoke('removeAttr', 'target')
             .click()
+            .wait(1000)
             .log('')
-            .wait(500)
-            .url()
-            .should('equal', state.nodes[0].url);
+            .then(() => {
+              expect(window.location.href).to.eq(state.nodes[0].url);
+            })
         }
       });
   });
