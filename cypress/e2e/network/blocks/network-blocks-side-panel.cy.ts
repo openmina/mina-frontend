@@ -21,6 +21,7 @@ describe('NETWORK BLOCKS SIDE PANEL', () => {
     cy.get('mina-network-blocks-side-panel div:nth-child(1) button:nth-child(2)')
       .click()
       .wait(500)
+      .log('')
       .get('mina-network-blocks-side-panel div:nth-child(1) button:nth-child(2)')
       .should('not.be.visible')
       .get('mina-network-blocks-graph')
@@ -28,6 +29,7 @@ describe('NETWORK BLOCKS SIDE PANEL', () => {
       .get('.mina-table .row.head button')
       .click()
       .wait(500)
+      .log('')
       .get('mina-network-blocks-graph')
       .should('be.visible');
   });
