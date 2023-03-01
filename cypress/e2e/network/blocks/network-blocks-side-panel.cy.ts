@@ -17,7 +17,7 @@ describe('NETWORK BLOCKS SIDE PANEL', () => {
       .should('be.visible');
   });
 
-  it('toggle side panel', () => {
+  it('show/hide side panel', () => {
     cy.get('mina-network-blocks-side-panel div:nth-child(1) button:nth-child(2)')
       .click()
       .wait(1000)
