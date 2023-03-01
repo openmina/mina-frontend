@@ -370,7 +370,7 @@ describe('DASHBOARD NODES TABLE', () => {
       });
   });
 
-  it.only('open side panel', () => {
+  it('open side panel', () => {
     cy.wait(5000)
       .get('mina-dashboard-nodes-table .head > span:nth-child(1)')
       .click()

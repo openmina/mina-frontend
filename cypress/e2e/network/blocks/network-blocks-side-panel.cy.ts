@@ -24,13 +24,13 @@ describe('NETWORK BLOCKS SIDE PANEL', () => {
       .log('')
       .get('mina-network-blocks-side-panel div:nth-child(1) button:nth-child(2)')
       .should('not.be.visible')
-      .get('mina-network-blocks mina-network-blocks-side-panel mina-network-blocks-graph')
+      .get('mina-bar-graph .y-grid-marks')
       .should('not.be.visible')
       .get('.mina-table .row.head button')
       .click()
       .wait(1000)
       .log('')
-      .get('mina-network-blocks-graph')
+      .get('mina-bar-graph .y-grid-marks')
       .should('be.visible');
   });
 
