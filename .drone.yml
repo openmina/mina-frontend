@@ -89,6 +89,27 @@ steps:
     depends_on:
       - prepare-tests
 
+  - name: explorer-blocks-table
+    image: cypress/included:12.6.0
+    commands:
+      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/explorer/blocks/explorer-blocks-table.cy.ts"
+    depends_on:
+      - prepare-tests
+
+  - name: explorer-snark-pool-table
+    image: cypress/included:12.6.0
+    commands:
+      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/explorer/snark-pool/explorer-snark-pool-table.cy.ts"
+    depends_on:
+      - prepare-tests
+
+  - name: explorer-snark-pool-toolbar
+    image: cypress/included:12.6.0
+    commands:
+      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/explorer/snark-pool/explorer-snark-pool-toolbar.cy.ts"
+    depends_on:
+      - prepare-tests
+
   - name: web-node-wallet
     image: cypress/included:12.6.0
     commands:
