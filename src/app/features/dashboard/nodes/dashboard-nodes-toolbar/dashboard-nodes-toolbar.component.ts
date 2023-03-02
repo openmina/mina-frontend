@@ -20,7 +20,7 @@ import {
   selectDashboardNodesAllFilters,
   selectDashboardNodesEarliestBlockLevel,
   selectDashboardNodesLatencyFromFastest,
-  selectDashboardNodesNodeCount,
+  selectDashboardNodesNodeCount, selectDashboardNodesRemainingRequests,
   selectDashboardNodesShowOfflineNodes,
 } from '@dashboard/nodes/dashboard-nodes.state';
 import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
@@ -47,6 +47,7 @@ export class DashboardNodesToolbarComponent extends ManualDetection implements O
   showOffline: boolean = true;
   latencyFromFastest: boolean = true;
   loadingNodes: boolean = true;
+  hideFilters: boolean = true;
 
   private urlRemoved: boolean;
 
@@ -66,6 +67,17 @@ export class DashboardNodesToolbarComponent extends ManualDetection implements O
       .subscribe((show: boolean) => {
         this.showOffline = show;
         this.detect();
+      });
+    this.store.select(selectDashboardNodesRemainingRequests)
+      .pipe(untilDestroyed(this))
+      .subscribe((remaining: number) => {
+        if (this.hideFilters && remaining === 0) {
+          this.hideFilters = false;
+          this.detect();
+        } else if (!this.hideFilters && remaining > 0) {
+          this.hideFilters = true;
+          this.detect();
+        }
       });
     this.store.select(selectDashboardNodesLatencyFromFastest)
       .pipe(untilDestroyed(this))

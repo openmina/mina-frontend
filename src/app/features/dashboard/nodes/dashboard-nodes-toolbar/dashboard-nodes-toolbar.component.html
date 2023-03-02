@@ -46,11 +46,13 @@
 </div>
 
 <div fxFlex="50" fxLayout="row wrap" class="row2 align-center h-100 pl-12">
-  <span class="tertiary mr-10 f-600">Block candidates</span>
-  <button *ngFor="let filter of allFilters"
-          (click)="toggleFilter(filter)"
-          class="mr-5 border-rad-6 f-600 flex-row align-center"
-          [ngClass]="activeFilters.includes(filter) ? 'btn-selected' : 'btn-primary'">
-    <span>{{ filter | truncateMid }}</span>
-  </button>
+  <span class="tertiary mr-10 f-600">{{ hideFilters ? 'Loading' : 'Block' }} candidates</span>
+  <ng-container *ngIf="!hideFilters">
+    <button *ngFor="let filter of allFilters"
+            (click)="toggleFilter(filter)"
+            class="mr-5 border-rad-6 f-600 flex-row align-center"
+            [ngClass]="activeFilters.includes(filter) ? 'btn-selected' : 'btn-primary'">
+      <span>{{ filter | truncateMid }}</span>
+    </button>
+  </ng-container>
 </div>

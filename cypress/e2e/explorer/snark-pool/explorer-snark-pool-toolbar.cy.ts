@@ -7,7 +7,7 @@ import { ExplorerSnark } from '@shared/types/explorer/snarks/explorer-snarks.typ
 const condition = (state: ExplorerSnarksState) => state && state.snarks.length > 1;
 const getSnarkPool = (store: Store<MinaState>) => stateSliceAsPromise<ExplorerSnarksState>(store, condition, 'explorer', 'snarks', 10000);
 
-describe('EXPLORER SNARK POOL TABLE', () => {
+describe('EXPLORER SNARK POOL TOOLBAR', () => {
   beforeEach(() => {
     cy.visit(Cypress.config().baseUrl + '/explorer/snark-pool');
   });

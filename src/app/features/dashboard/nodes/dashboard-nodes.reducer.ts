@@ -38,6 +38,7 @@ const initialState: DashboardNodesState = {
   earliestBlock: undefined,
   allFilters: [],
   activeFilters: [],
+  remainingOngoingRequests: 0,
 };
 
 export function reducer(state: DashboardNodesState = initialState, action: DashboardNodesActions): DashboardNodesState {
@@ -70,6 +71,7 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
         nodes,
         filteredNodes: !state.showOfflineNodes ? getActiveNodes(nodes) : nodes,
         nodeCount,
+        remainingOngoingRequests: nodes.length,
       };
     }
 
@@ -83,6 +85,7 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
         nodes,
         filteredNodes: !state.showOfflineNodes ? getActiveNodes(nodes) : nodes,
         allFilters: Array.from(new Set(nodes.map(n => n.hash).filter(Boolean))),
+        remainingOngoingRequests: (state.remainingOngoingRequests - 1) > 0 ? (state.remainingOngoingRequests - 1) : 0,
       };
     }
 
@@ -140,6 +143,7 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
         ...state,
         activeBlock: action.payload.height,
         activeFilters: [],
+        remainingOngoingRequests: state.nodes.length,
       };
     }
 

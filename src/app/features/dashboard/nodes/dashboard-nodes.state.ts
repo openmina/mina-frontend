@@ -20,6 +20,7 @@ export interface DashboardNodesState {
   activeFilters: string[];
   showOfflineNodes: boolean;
   latencyFromFastest: boolean;
+  remainingOngoingRequests: number;
 }
 
 const select = <T>(selector: (state: DashboardNodesState) => T): MemoizedSelector<MinaState, T> => createSelector(
@@ -38,3 +39,4 @@ export const selectDashboardNodesAllFilters = select((state: DashboardNodesState
 export const selectDashboardNodesActiveFilters = select((state: DashboardNodesState): string[] => state.activeFilters);
 export const selectDashboardNodesShowOfflineNodes = select((state: DashboardNodesState): boolean => state.showOfflineNodes);
 export const selectDashboardNodesLatencyFromFastest = select((state: DashboardNodesState): boolean => state.latencyFromFastest);
+export const selectDashboardNodesRemainingRequests = select((state: DashboardNodesState): number => state.remainingOngoingRequests);
