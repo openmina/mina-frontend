@@ -37,7 +37,7 @@ describe('EXPLORER SNARK TRACES TOOLBAR', () => {
       });
   });
 
-  it.only('select multiple workers', () => {
+  it('select multiple workers', () => {
     let jobs: SnarkWorkerTraceJob[];
     cy.intercept('GET', '/snarker-http-coordinator/worker-stats*')
       .as('getSnarkJobs')
