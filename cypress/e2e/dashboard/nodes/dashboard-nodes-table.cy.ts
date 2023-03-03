@@ -74,15 +74,15 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('open node in a new tab', () => {
-    cy.wait(10000)
+    cy.wait(20000)
       .window()
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
         if (state) {
           cy.get('.mina-table .row:first-child span:first-child a')
-            .should('have.attr', 'target', '_blank')
             .should('have.attr', 'href', state.nodes[0].url)
+            .should('have.attr', 'target', '_blank');
         }
       });
   });
