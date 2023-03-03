@@ -127,7 +127,7 @@ steps:
   - name: explorer-snark-traces-toolbar
     image: cypress/included:12.6.0
     commands:
-      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/explorer/snark-traces/explorer-snak-traces-toolbar.cy.ts"
+      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/explorer/snark-traces/explorer-snark-traces-toolbar.cy.ts"
     depends_on:
       - prepare-tests
 
