@@ -104,6 +104,7 @@ describe('EXPLORER SNARK TRACES TOOLBAR', () => {
     const minutesOneMinuteAgo = dateOneMinuteAgo.getMinutes();
     let secondsOneMinuteAgo: number;
     let jobs: SnarkWorkerTraceJob[];
+    const twoDigit = (val: number) => val < 10 ? `0${val}` : val;
     cy.intercept('GET', '/snarker-http-coordinator/worker-stats*')
       .as('getSnarkJobs')
       .visit(Cypress.config().baseUrl + '/explorer/snark-traces')
@@ -159,8 +160,8 @@ describe('EXPLORER SNARK TRACES TOOLBAR', () => {
             .click()
             .wait(1000)
             .get('mina-snark-workers-toolbar > div > button:nth-child(4)')
-            .should('contain.text', '' + hoursOneMinuteAgo + ':' + minutesOneMinuteAgo)
-            .should('contain.text', '' + hourNow + ':' + minuteNow);
+            .should('contain.text', '' + twoDigit(hoursOneMinuteAgo) + ':' + twoDigit(minutesOneMinuteAgo))
+            .should('contain.text', '' + twoDigit(hourNow) + ':' + twoDigit(minuteNow));
         }
       });
   });
