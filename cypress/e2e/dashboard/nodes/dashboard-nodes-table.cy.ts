@@ -74,7 +74,8 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('open node in a new tab', () => {
-    cy.window()
+    cy.wait(10000)
+      .window()
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {

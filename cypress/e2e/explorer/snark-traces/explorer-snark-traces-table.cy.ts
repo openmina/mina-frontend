@@ -11,10 +11,6 @@ const condition = (state: SnarkWorkersTracesState) => state && state.workers.len
 const getSnarkTraces = (store: Store<MinaState>) => stateSliceAsPromise<SnarkWorkersTracesState>(store, condition, 'explorer', 'snarksTraces', 10000);
 
 describe('EXPLORER SNARK TRACES TABLE', () => {
-  beforeEach(() => {
-    // cy.visit(Cypress.config().baseUrl + '/explorer/snark-traces');
-  });
-
   it('display explorer title', () => {
     cy.visit(Cypress.config().baseUrl + '/explorer/snark-traces')
       .get('mina-toolbar span')
