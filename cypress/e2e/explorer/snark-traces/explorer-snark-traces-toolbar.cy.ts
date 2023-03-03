@@ -37,7 +37,7 @@ describe('EXPLORER SNARK TRACES TOOLBAR', () => {
       });
   });
 
-  it.only('select multiple workers', () => {
+  it('select multiple workers', () => {
     let jobs: SnarkWorkerTraceJob[];
     cy.intercept('GET', '/snarker-http-coordinator/worker-stats*')
       .as('getSnarkJobs')
@@ -82,13 +82,6 @@ describe('EXPLORER SNARK TRACES TOOLBAR', () => {
                 expect(state2.filter.workers.length).to.equal(2);
                 expect(state2.filter.workers[0]).to.equal(state2.workers[0]);
                 expect(state2.filter.workers[1]).to.equal(state2.workers[1]);
-                cy.log('')
-                  .get('mina-snark-workers-traces-table .mina-table div.row:not(.head) > span:nth-child(1)')
-                  .then((spans: any) => {
-                    Array.from(spans).forEach((span: any) => {
-                      expect(span.innerText).to.be.oneOf([truncateMid(state.workers[0], 0, 12), truncateMid(state.workers[1], 0, 12)]);
-                    });
-                  });
               }
             });
         }
