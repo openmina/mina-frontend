@@ -6,7 +6,7 @@ import { SnarkWorkerTraceJob } from '@shared/types/explorer/snark-traces/snark-w
 import { SnarkWorkerTraceFilter } from '@shared/types/explorer/snark-traces/snark-worker-trace-filters.type';
 
 export interface SnarkWorkersTracesState {
-  jobs: SnarkWorkerTraceJob[];
+  workers: string[];
   filter: SnarkWorkerTraceFilter;
   sort: TableSort<SnarkWorkerTraceJob>;
   activeRow: SnarkWorkerTraceJob;
@@ -17,7 +17,7 @@ const select = <T>(selector: (state: SnarkWorkersTracesState) => T): MemoizedSel
   selector,
 );
 
-export const selectSWTracesJobs = select((state: SnarkWorkersTracesState): SnarkWorkerTraceJob[] => state.jobs);
+export const selectSWTracesWorkers = select((state: SnarkWorkersTracesState): string[] => state.workers);
 export const selectSWTracesFilter = select((state: SnarkWorkersTracesState): SnarkWorkerTraceFilter => state.filter);
 export const selectSWTracesSort = select((state: SnarkWorkersTracesState): TableSort<SnarkWorkerTraceJob> => state.sort);
 export const selectSWTracesActiveRow = select((state: SnarkWorkersTracesState): SnarkWorkerTraceJob => state.activeRow);

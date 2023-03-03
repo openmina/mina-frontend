@@ -7,6 +7,7 @@ import { ConfigService } from '@core/services/config.service';
 import { hasValue } from '@shared/helpers/values.helper';
 import { SnarkWorkerTraceJob } from '@shared/types/explorer/snark-traces/snark-worker-trace-job.type';
 import { SnarkWorkerTraceFilter } from '@shared/types/explorer/snark-traces/snark-worker-trace-filters.type';
+import { removeLast } from '@shared/helpers/array.helper';
 
 @Injectable({
   providedIn: 'root',
@@ -62,8 +63,3 @@ export class SnarkWorkersTracesService {
       []);
   }
 }
-
-function removeLast<T>(arr: T[]): T[] {
-  return arr.slice(0, arr.length - 1);
-}
-
