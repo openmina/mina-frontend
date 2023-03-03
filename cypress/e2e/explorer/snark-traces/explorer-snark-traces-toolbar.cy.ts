@@ -37,7 +37,7 @@ describe('EXPLORER SNARK TRACES TOOLBAR', () => {
       });
   });
 
-  it('select multiple workers', () => {
+  it.only('select multiple workers', () => {
     let jobs: SnarkWorkerTraceJob[];
     cy.intercept('GET', '/snarker-http-coordinator/worker-stats*')
       .as('getSnarkJobs')
@@ -71,6 +71,9 @@ describe('EXPLORER SNARK TRACES TOOLBAR', () => {
             .get('body .cdk-overlay-container .monospace > div:nth-child(2)')
             .should('have.class', 'active')
             .wait(1000)
+            .get('.mina-table')
+            .click()
+            .wait(500)
             .window()
             .its('store')
             .then(getSnarkTraces)
