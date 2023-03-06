@@ -21,6 +21,17 @@ describe('WEB NODE WALLET', () => {
     cy.visit(Cypress.config().baseUrl + '/web-node/wallet');
   });
 
+  it('navigate to transaction creation', () => {
+    cy.window()
+      .its('store')
+      .then(getWebNodeWallet)
+      .get('.wallet-toolbar div button')
+      .click({ force: true })
+      .wait(5000)
+      .url()
+      .should('include', '/wallet/new-transaction');
+  });
+
   it('displays web node title', () => {
     cy.get('mina-toolbar .toolbar > div:first-child > span')
       .then((span: any) => expect(span.text()).equal('Web Node'))
@@ -47,7 +58,6 @@ describe('WEB NODE WALLET', () => {
   });
 
   it('navigate to wallet creation', () => {
-    // let publicKey: string;
     cy.window()
       .its('store')
       .then(getWebNodeWallet)
@@ -56,86 +66,5 @@ describe('WEB NODE WALLET', () => {
       .click({ force: true })
       .url()
       .should('include', '/wallet/new');
-    // .get('.stepper-footer button:last-child')
-    // .click()
-    // .wait(1000)
-    // .get('mina-stepper .stepper-body .monospace')
-    // .then((keys: any[]) => {
-    //   publicKey = keys[0].textContent;
-    //   expect(keys[0].textContent).have.length.above(10);
-    //   expect(keys[1].textContent).have.length.above(10);
-    // })
-    // .get('.stepper-footer button:last-child')
-    // .click()
-    // .wait(500)
-    // .intercept('/faucet').as('getTokens')
-    // .get('.stepper-footer button:last-child')
-    // .click()
-    // .wait('@getTokens')
-    // .wait(1000)
-    // .get('.stepper-footer button:last-child')
-    // .click()
-    // .wait(1000)
-    // .window()
-    // .its('store')
-    // .then(getWebNodeWallet)
-    // .then((walletState: WebNodeWalletState) => {
-    //   expect(publicKey).equals(walletState.activeWallet.publicKey);
-    // });
   });
-
-  it('navigate to transaction creation', () => {
-    cy.window()
-      .its('store')
-      .then(getWebNodeWallet)
-      .get('.wallet-toolbar div button')
-      .click({ force: true })
-      .wait(5000)
-      .url()
-      .should('include', '/wallet/new-transaction');
-    // .get('form')
-    // .find('input')
-    // .eq(0)
-    // .type('1')
-    // .get('form')
-    // .find('input')
-    // .eq(1)
-    // .type('1')
-    // .get('.stepper-footer .btn-selected')
-    // .click()
-    // .wait(500)
-    // .get('.stepper-footer .btn-selected')
-    // .click()
-    // .wait(500)
-    // .get('.stepper-footer .btn-selected')
-    // .click()
-    // .wait(10000)
-    // .get('mina-web-node-wallet-transactions cdk-virtual-scroll-viewport .row', { timeout: 20000 })
-    // .should('exist')
-    // .window()
-    // .its('store')
-    // .then(getWebNodeWallet)
-    // .then((walletState: WebNodeWalletState) => {
-    //   expect(walletState.transactions).have.length.least(1);
-    //   expect(walletState.transactions.find(t => t.status === 'pending')).to.not.be.undefined;
-    //   expect(walletState.transactions.some(t => t.from === walletState.activeWallet.publicKey)).to.be.true;
-    // });
-  });
-  //
-  // it('switch wallet', () => {
-  //   cy.window()
-  //     .its('store')
-  //     .then(getWebNodeWallet)
-  //     .get('.wallet-toolbar .btn-selected')
-  //     .click()
-  //     .wait(500)
-  //     .get('.cdk-overlay-container .dropdown-item:nth-child(2)')
-  //     .click()
-  //     .window()
-  //     .its('store')
-  //     .then(getWebNodeWallet)
-  //     .then((walletState: WebNodeWalletState) => {
-  //       expect(walletState.activeWallet).equals(walletState.wallets[1]);
-  //     });
-  // });
 });
