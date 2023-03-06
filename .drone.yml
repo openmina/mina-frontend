@@ -151,17 +151,17 @@ steps:
       - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/web-node/peers/web-node-peers.cy.ts"
     volumes:
       - name: test-vol
-        path: /tmp/cache
+        path: /home/openmina/mina-frontend-videos
     depends_on:
       - prepare-tests
 
   - name: copy-videos
     image: alpine
     commands:
-      - cp -R /drone/src/cypress/videos/ /data
+      - cp -R /drone/src/cypress/videos/ /home/openmina/mina-frontend-videos
     volumes:
       - name: test-vol
-        path: /tmp/cache
+        path: /home/openmina/mina-frontend-videos
         mode: "rw"
         temp: false
     depends_on:
