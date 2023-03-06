@@ -88,8 +88,7 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('calculate block latency correctly', () => {
-    cy
-      .window()
+    cy.window()
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
@@ -115,8 +114,7 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('have correct number of counted nodes displayed', () => {
-    cy
-      .window()
+    cy.window()
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
@@ -136,8 +134,7 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('have correct number of counted filtered nodes displayed', () => {
-    cy
-      .get('mina-dashboard-nodes-toolbar .row1 div.flex-between div.flex-row button:last-child')
+    cy.get('mina-dashboard-nodes-toolbar .row1 div.flex-between div.flex-row button:last-child')
       .click({ force: true })
       .window()
       .its('store')
@@ -159,8 +156,7 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('sort by name', () => {
-    cy
-      .get('mina-dashboard-nodes-table .head > span:nth-child(1)')
+    cy.get('mina-dashboard-nodes-table .head > span:nth-child(1)')
       .click()
       .get('mina-dashboard-nodes-table .head > span:nth-child(1)')
       .click()
@@ -184,8 +180,7 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('sort by status', () => {
-    cy
-      .get('mina-dashboard-nodes-table .head > span:nth-child(2)')
+    cy.get('mina-dashboard-nodes-table .head > span:nth-child(2)')
       .click()
       .window()
       .its('store')
@@ -207,8 +202,7 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('sort by hash reversed', () => {
-    cy
-      .get('mina-dashboard-nodes-table .head > span:nth-child(3)')
+    cy.get('mina-dashboard-nodes-table .head > span:nth-child(3)')
       .click()
       .get('mina-dashboard-nodes-table .head > span:nth-child(3)')
       .click()
@@ -232,8 +226,7 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('sort by height', () => {
-    cy
-      .get('mina-dashboard-nodes-table .head > span:nth-child(4)')
+    cy.get('mina-dashboard-nodes-table .head > span:nth-child(4)')
       .click()
       .window()
       .its('store')
@@ -255,8 +248,7 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('sort by address', () => {
-    cy
-      .get('mina-dashboard-nodes-table .head > span:nth-child(5)')
+    cy.get('mina-dashboard-nodes-table .head > span:nth-child(5)')
       .click()
       .window()
       .its('store')
@@ -278,8 +270,7 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('sort by date', () => {
-    cy
-      .get('mina-dashboard-nodes-table .head > span:nth-child(6)')
+    cy.get('mina-dashboard-nodes-table .head > span:nth-child(6)')
       .click()
       .window()
       .its('store')
@@ -301,8 +292,7 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('sort by latency', () => {
-    cy
-      .get('mina-dashboard-nodes-table .head > span:nth-child(7)')
+    cy.get('mina-dashboard-nodes-table .head > span:nth-child(7)')
       .click()
       .window()
       .its('store')
@@ -324,8 +314,7 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('sort by block application', () => {
-    cy
-      .get('mina-dashboard-nodes-table .head > span:nth-child(8)')
+    cy.get('mina-dashboard-nodes-table .head > span:nth-child(8)')
       .click()
       .window()
       .its('store')
@@ -347,8 +336,7 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('sort by block block application reversed', () => {
-    cy
-      .get('mina-dashboard-nodes-table .head > span:nth-child(8)')
+    cy.get('mina-dashboard-nodes-table .head > span:nth-child(8)')
       .click()
       .get('mina-dashboard-nodes-table .head > span:nth-child(8)')
       .click()
@@ -395,14 +383,14 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('some nodes are online', () => {
-    cy
-      .wait(7000)
+    cy.wait(7000)
       .window()
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
-          expect(state.filteredNodes.some(n => n.status !== AppNodeStatusTypes.OFFLINE)).to.be.true;
+        const someAreOnline = state.filteredNodes.some(n => n.status !== AppNodeStatusTypes.OFFLINE);
+        if (state && someAreOnline) {
+          expect(someAreOnline).to.be.true;
         }
       });
   });
