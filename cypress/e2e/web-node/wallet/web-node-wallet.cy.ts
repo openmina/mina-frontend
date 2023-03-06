@@ -90,7 +90,9 @@ describe('WEB NODE WALLET', () => {
       .get('.wallet-toolbar div button')
       .click({ force: true })
       .wait(5000)
-      .then(() => cy.url().should('include', '/wallet/new-transaction'));
+      .then(() => {
+        expect(location.href).to.include('/wallet/new-transaction');
+      });
     // .get('form')
     // .find('input')
     // .eq(0)
