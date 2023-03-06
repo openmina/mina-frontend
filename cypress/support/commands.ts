@@ -29,6 +29,8 @@ import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { map, Subscription } from 'rxjs';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
+import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
+import { NodeStatus } from '@shared/types/app/node-status.type';
 
 declare global {
   namespace Cypress {
@@ -43,7 +45,7 @@ declare global {
 export const PROMISE = (resolveFunction: (resolve: (result?: unknown) => void) => void) => new Cypress.Promise(resolveFunction);
 export const storeSubscription = (store: Store<MinaState>, slice: keyof MinaState, observer: any): Subscription => store.select(slice).subscribe(observer);
 export const getActiveNode = (store: Store<MinaState>) => {
-  const promiseBody = (resolve: (result?: unknown) => void): void => {
+  const promiseBody = (resolve: (result?: MinaNode) => void): void => {
     const observer = (node: MinaNode) => {
       if (node) {
         return resolve(node);
@@ -51,6 +53,18 @@ export const getActiveNode = (store: Store<MinaState>) => {
       setTimeout(() => resolve(), 3000);
     };
     store.select('app').pipe(map(app => app.activeNode)).subscribe(observer);
+  };
+  return PROMISE(promiseBody);
+};
+export const getActiveNodeStatus = (store: Store<MinaState>) => {
+  const promiseBody = (resolve: (result?: NodeStatus) => void): void => {
+    const observer = (status: NodeStatus) => {
+      if (status) {
+        return resolve(status);
+      }
+      setTimeout(() => resolve(), 3000);
+    };
+    store.select('app').pipe(map(app => app.nodeStatus)).subscribe(observer);
   };
   return PROMISE(promiseBody);
 };

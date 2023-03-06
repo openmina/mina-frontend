@@ -1,7 +1,9 @@
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { PROMISE, storeWebNodeWalletSubscription } from '../../../support/commands';
+import { getActiveNodeStatus, PROMISE, storeWebNodeWalletSubscription } from '../../../support/commands';
 import { WebNodeWalletState } from '@web-node/web-node-wallet/web-node-wallet.state';
+import { NodeStatus } from '@shared/types/app/node-status.type';
+import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 
 const getWebNodeWallet = (store: Store<MinaState>) => {
   const promiseBody = (resolve: (result?: unknown) => void): void => {
@@ -25,11 +27,27 @@ describe('WEB NODE WALLET', () => {
     cy.window()
       .its('store')
       .then(getWebNodeWallet)
-      .get('.wallet-toolbar div button')
-      .click({ force: true })
-      .wait(5000)
-      .url()
-      .should('include', '/wallet/new-transaction');
+      .then((state: WebNodeWalletState) => {
+        if (state && state.activeWallet) {
+          cy.window()
+            .its('store')
+            .then(getActiveNodeStatus)
+            .then((node: NodeStatus) => {
+              if (node.status === AppNodeStatusTypes.SYNCED) {
+                cy.wait(500)
+                  .get('.wallet-toolbar div button')
+                  .click()
+                  .wait(1000)
+                  .url()
+                  .should('include', '/wallet/new-transaction');
+              } else {
+                cy.wait(500)
+                  .get('.wallet-toolbar div button')
+                  .should('be.disabled');
+              }
+            })
+        }
+      });
   });
 
   it('displays web node title', () => {
