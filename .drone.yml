@@ -161,6 +161,10 @@ steps:
         path: /tmp/cache
         mode: "rw"
         temp: false
+    when:
+      status:
+        - failure
+        - success
     depends_on:
       - dashboard-nodes-table
       - network-messages-table
