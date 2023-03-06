@@ -30,23 +30,8 @@ steps:
     image: cypress/included:12.6.0
     commands:
       - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/dashboard/nodes/dashboard-nodes-table.cy.ts"
-    volumes:
-      - name: test-vol
-        path: /tmp/cache
     depends_on:
       - prepare-tests
-
-  - name: copy-videos
-    image: alpine
-    commands:
-      - cp -R /drone/src/cypress/videos/ /data
-    volumes:
-      - name: test-vol
-        path: /tmp/cache
-        mode: "rw"
-        temp: false
-    depends_on:
-      - dashboard-nodes-table
 
 #  - name: dashboard-nodes-toolbar
 #    image: cypress/included:12.6.0
@@ -164,8 +149,23 @@ steps:
     image: cypress/included:12.6.0
     commands:
       - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/web-node/peers/web-node-peers.cy.ts"
+    volumes:
+      - name: test-vol
+        path: /tmp/cache
     depends_on:
       - prepare-tests
+
+  - name: copy-videos
+    image: alpine
+    commands:
+      - cp -R /drone/src/cypress/videos/ /data
+    volumes:
+      - name: test-vol
+        path: /tmp/cache
+        mode: "rw"
+        temp: false
+    depends_on:
+      - dashboard-nodes-table
 
 image_pull_secrets:
   - docker_pull_secret
