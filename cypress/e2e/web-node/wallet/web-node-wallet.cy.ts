@@ -54,7 +54,8 @@ describe('WEB NODE WALLET', () => {
       .get('.wallet-toolbar button')
       .eq(-1)
       .click({ force: true })
-      .then(() => cy.url().should('include', '/wallet/new'));
+      .url()
+      .should('include', '/wallet/new');
     // .get('.stepper-footer button:last-child')
     // .click()
     // .wait(1000)
@@ -90,9 +91,8 @@ describe('WEB NODE WALLET', () => {
       .get('.wallet-toolbar div button')
       .click({ force: true })
       .wait(5000)
-      .then(() => {
-        expect(location.href).to.include('/wallet/new-transaction');
-      });
+      .url()
+      .should('include', '/wallet/new-transaction');
     // .get('form')
     // .find('input')
     // .eq(0)
