@@ -171,6 +171,9 @@ volumes:
   - name: docker_sock
     host:
       path: /var/run/docker.sock
+  - name: test-vol
+    host:
+      path: /home/openmina/mina-frontend-videos
 
 trigger:
   branch:
