@@ -154,10 +154,4 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
       ),
     );
   }
-
-  setURLSearchParam(key: string, value: string): void {
-    const url = new URL(window.location.href);
-    url.searchParams.set(key, value);
-    window.history.pushState({ path: url.href }, '', url.href);
-  }
 }

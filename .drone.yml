@@ -162,6 +162,22 @@ steps:
         mode: "rw"
         temp: false
     depends_on:
+      - dashboard-blocks-table
+      - network-messages-table
+      - network-blocks-table
+      - network-blocks-toolbar
+      - network-blocks-side-panel
+      - network-blocks-ipc-table
+      - network-blocks-ipc-toolbar
+      - network-blocks-ipc-side-panel
+      - explorer-blocks-table
+      - explorer-snark-pool-table
+      - explorer-snark-pool-toolbar
+      - explorer-scan-state
+      - explorer-snark-traces-table
+      - explorer-snark-traces-toolbar
+      - web-node-wallet
+      - web-node-logs
       - web-node-peers
 
 image_pull_secrets:
