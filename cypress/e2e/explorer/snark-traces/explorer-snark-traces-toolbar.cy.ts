@@ -160,8 +160,8 @@ describe('EXPLORER SNARK TRACES TOOLBAR', () => {
             .click()
             .wait(1000)
             .get('mina-snark-workers-toolbar > div > button:nth-child(4)')
-            .should('contain.text', '' + twoDigit(hoursOneMinuteAgo) + ':' + twoDigit(minutesOneMinuteAgo))
-            .should('contain.text', '' + twoDigit(hourNow) + ':' + twoDigit(minuteNow));
+            .should('contain.text', '' + hoursOneMinuteAgo + ':' + twoDigit(minutesOneMinuteAgo))
+            .should('contain.text', '' + hourNow + ':' + twoDigit(minuteNow));
         }
       });
   });
