@@ -162,7 +162,7 @@ steps:
         mode: "rw"
         temp: false
     depends_on:
-      - dashboard-blocks-table
+      - dashboard-nodes-table
       - network-messages-table
       - network-blocks-table
       - network-blocks-toolbar
