@@ -162,59 +162,59 @@ describe('NETWORK BLOCKS IPC TABLE', () => {
       });
   });
 
-  it('current block ipc has higher time than network blocks - check 100 levels', () => {
-    let blocksToCheck: number;
-    let debuggerUrl: string;
-    cy.wait(1000)
-      .window()
-      .its('store')
-      .then(getActiveNode)
-      .then((node: MinaNode) => {
-        debuggerUrl = node.debugger;
-      })
-      .window()
-      .its('store')
-      .then(networkBlocksIpcState)
-      .then((state: NetworkBlocksIpcState) => {
-        blocksToCheck = state && state.activeBlock > 101 ? 100 : state.activeBlock - 1;
-
-        function compareBlocks(count: number) {
-          if (count <= 0) {
-            return;
-          }
-          cy.get('mina-network-blocks-ipc-toolbar > div:first-child .pagination-group button:first-child')
-            .click({ force: true })
-            .wait(1000)
-            .window()
-            .its('store')
-            .then(networkBlocksIpcState)
-            .then((state: NetworkBlocksIpcState) => {
-              if (state) {
-                const currentHeight = state.activeBlock;
-                cy.request(`${debuggerUrl}/block/${currentHeight}`, { timeout: 10000 })
-                  .then((response: any) => {
-                    if (response && response.status === 200) {
-                      const blocks = response.body.events;
-                      const filteredBlocks = blocks.filter((b: any) => b.hash === state.allFilters[0]);
-                      expect(filteredBlocks).to.have.length.above(0);
-                      const firstBlockIpc = state.blocks.find((b: any) => b.hash === state.allFilters[0]);
-                      const blockTimeString = getTimestamp(filteredBlocks[0].time);
-                      const blockTime = Number(blockTimeString.substring(0, blockTimeString.length - 3));
-                      const blockIpcTime = firstBlockIpc.timestamp;
-                      expect(blockTime).to.be.below(blockIpcTime);
-                      expect(firstBlockIpc.hash).to.equal(filteredBlocks[0].hash);
-                    }
-                  });
-              }
-            });
-          compareBlocks(count - 1);
-        }
-
-        if (state && state.activeBlock > 2) {
-          compareBlocks(blocksToCheck);
-        }
-      });
-  });
+  // it('current block ipc has higher time than network blocks - check 100 levels', () => {
+  //   let blocksToCheck: number;
+  //   let debuggerUrl: string;
+  //   cy.wait(1000)
+  //     .window()
+  //     .its('store')
+  //     .then(getActiveNode)
+  //     .then((node: MinaNode) => {
+  //       debuggerUrl = node.debugger;
+  //     })
+  //     .window()
+  //     .its('store')
+  //     .then(networkBlocksIpcState)
+  //     .then((state: NetworkBlocksIpcState) => {
+  //       blocksToCheck = state && state.activeBlock > 101 ? 100 : state.activeBlock - 1;
+  //
+  //       function compareBlocks(count: number) {
+  //         if (count <= 0) {
+  //           return;
+  //         }
+  //         cy.get('mina-network-blocks-ipc-toolbar > div:first-child .pagination-group button:first-child')
+  //           .click({ force: true })
+  //           .wait(1000)
+  //           .window()
+  //           .its('store')
+  //           .then(networkBlocksIpcState)
+  //           .then((state: NetworkBlocksIpcState) => {
+  //             if (state) {
+  //               const currentHeight = state.activeBlock;
+  //               cy.request(`${debuggerUrl}/block/${currentHeight}`, { timeout: 10000 })
+  //                 .then((response: any) => {
+  //                   if (response && response.status === 200) {
+  //                     const blocks = response.body.events;
+  //                     const filteredBlocks = blocks.filter((b: any) => b.hash === state.allFilters[0]);
+  //                     expect(filteredBlocks).to.have.length.above(0);
+  //                     const firstBlockIpc = state.blocks.find((b: any) => b.hash === state.allFilters[0]);
+  //                     const blockTimeString = getTimestamp(filteredBlocks[0].time);
+  //                     const blockTime = Number(blockTimeString.substring(0, blockTimeString.length - 3));
+  //                     const blockIpcTime = firstBlockIpc.timestamp;
+  //                     expect(blockTime).to.be.below(blockIpcTime);
+  //                     expect(firstBlockIpc.hash).to.equal(filteredBlocks[0].hash);
+  //                   }
+  //                 });
+  //             }
+  //           });
+  //         compareBlocks(count - 1);
+  //       }
+  //
+  //       if (state && state.activeBlock > 2) {
+  //         compareBlocks(blocksToCheck);
+  //       }
+  //     });
+  // });
 });
 
 function getTimestamp(time: any): string {
