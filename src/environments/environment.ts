@@ -6,6 +6,12 @@ export const environment: Readonly<MinaEnv> = {
   aggregator: 'http://1.k8.openmina.com:31311/aggregator',
   isVanilla: false,
   configs: [
+    {
+      backend: 'http://1.k8.openmina.com:31311/node1',
+      debugger: 'http://1.k8.openmina.com:31311/node1/bpf-debugger',
+      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs', 'web-node'],
+      name: 'node1',
+    },
     // {
     //   // backend: 'http://sandbox.dev.openmina.com:3085',
     //   backend: 'https://trace.dev.openmina.com:3086',
