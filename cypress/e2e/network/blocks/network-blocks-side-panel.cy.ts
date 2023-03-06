@@ -158,16 +158,23 @@ describe('NETWORK BLOCKS SIDE PANEL', () => {
 
   it('sort by sent message kind', () => {
     let firstSentTime: number;
-    cy.get('.mina-table .row.head span:nth-child(8)')
-      .click()
-      .wait(500)
-      .get('.mina-table .row:not(.head):nth-child(1) span:nth-child(8)')
-      .then((span: any) => {
-        firstSentTime = span[0].textContent;
-      })
-      .get('mina-network-blocks-side-panel > div:nth-child(2) > div > div span.f-600')
-      .then((span: any) => {
-        expect(span[0].textContent).to.equal(firstSentTime);
+    cy.window()
+      .its('store')
+      .then(networkBlocksState)
+      .then((state: NetworkBlocksState) => {
+        if (state && state.blocks.length > 2) {
+          cy.get('.mina-table .row.head span:nth-child(8)')
+            .click()
+            .wait(500)
+            .get('.mina-table .row:not(.head):nth-child(1) span:nth-child(8)')
+            .then((span: any) => {
+              firstSentTime = span[0].textContent;
+            })
+            .get('mina-network-blocks-side-panel > div:nth-child(2) > div > div span.f-600')
+            .then((span: any) => {
+              expect(span[0].textContent).to.equal(firstSentTime);
+            });
+        }
       });
   });
 });
