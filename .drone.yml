@@ -155,7 +155,7 @@ steps:
   - name: copy-videos
     image: alpine
     commands:
-      - cp -R /drone/src/cypress/videos/ /home/openmina/mina-frontend-videos
+      - cp -R /drone/src/cypress/videos/ /tmp/cache
     volumes:
       - name: test-vol
         path: /tmp/cache
