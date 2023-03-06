@@ -14,7 +14,7 @@ module.exports = defineConfig({
   numTestsKeptInMemory: 20,
   experimentalMemoryManagement: true,
   defaultCommandTimeout: 10000,
-  videoUploadOnPasses: false,
+  videoUploadOnPasses: true,
   e2e: {
     baseUrl: 'http://frontend-server:80',
     setupNodeEvents(on, config) {
