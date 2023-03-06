@@ -149,9 +149,6 @@ steps:
     image: cypress/included:12.6.0
     commands:
       - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/web-node/peers/web-node-peers.cy.ts"
-    volumes:
-      - name: test-vol
-        path: /home/openmina/mina-frontend-videos
     depends_on:
       - prepare-tests
 
@@ -161,7 +158,7 @@ steps:
       - cp -R /drone/src/cypress/videos/ /home/openmina/mina-frontend-videos
     volumes:
       - name: test-vol
-        path: /home/openmina/mina-frontend-videos
+        path: /tmp/cache
         mode: "rw"
         temp: false
     depends_on:
