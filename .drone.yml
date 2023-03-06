@@ -165,7 +165,7 @@ steps:
         mode: "rw"
         temp: false
     depends_on:
-      - dashboard-nodes-table
+      - web-node-peers
 
 image_pull_secrets:
   - docker_pull_secret
