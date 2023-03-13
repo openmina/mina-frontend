@@ -23,33 +23,6 @@ describe('WEB NODE WALLET', () => {
     cy.visit(Cypress.config().baseUrl + '/web-node/wallet');
   });
 
-  it('navigate to transaction creation', () => {
-    cy.window()
-      .its('store')
-      .then(getWebNodeWallet)
-      .then((state: WebNodeWalletState) => {
-        if (state && state.activeWallet) {
-          cy.window()
-            .its('store')
-            .then(getActiveNodeStatus)
-            .then((node: NodeStatus) => {
-              if (node.status === AppNodeStatusTypes.SYNCED) {
-                cy.wait(500)
-                  .get('.wallet-toolbar div button')
-                  .click()
-                  .wait(1000)
-                  .url()
-                  .should('include', '/wallet/new-transaction');
-              } else {
-                cy.wait(500)
-                  .get('.wallet-toolbar div button')
-                  .should('be.disabled');
-              }
-            })
-        }
-      });
-  });
-
   it('displays web node title', () => {
     cy.get('mina-toolbar .toolbar > div:first-child > span')
       .then((span: any) => expect(span.text()).equal('Web Node'))
@@ -84,5 +57,32 @@ describe('WEB NODE WALLET', () => {
       .click({ force: true })
       .url()
       .should('include', '/wallet/new');
+  });
+
+  it('navigate to transaction creation', () => {
+    cy.window()
+      .its('store')
+      .then(getWebNodeWallet)
+      .then((state: WebNodeWalletState) => {
+        if (state && state.activeWallet) {
+          cy.window()
+            .its('store')
+            .then(getActiveNodeStatus)
+            .then((node: NodeStatus) => {
+              if (node.status === AppNodeStatusTypes.SYNCED) {
+                cy.wait(500)
+                  .get('.wallet-toolbar div button')
+                  .click()
+                  .wait(1000)
+                  .url()
+                  .should('include', '/wallet/new-transaction');
+              } else {
+                cy.wait(500)
+                  .get('.wallet-toolbar div button')
+                  .should('be.disabled');
+              }
+            });
+        }
+      });
   });
 });

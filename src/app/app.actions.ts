@@ -38,7 +38,7 @@ export interface AppAction extends FeatureAction<AppActionTypes> {
 export class AppInit implements AppAction {
   readonly type = APP_INIT;
 
-  constructor(public payload: { nodeName: string }) {}
+  constructor(public payload: { node: MinaNode }) {}
 }
 
 export class AppStartBackgroundChecks implements AppAction {

@@ -28,9 +28,11 @@ import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum'
 import { NodeStatus } from '@shared/types/app/node-status.type';
 import { GraphQLService } from '@core/services/graph-ql.service';
 import { Router } from '@angular/router';
-import { FeatureType } from '@shared/types/core/environment/mina-env.type';
+import { FeatureType, MinaNode } from '@shared/types/core/environment/mina-env.type';
 import { withLatestFrom } from 'rxjs/operators';
 import { removeParamsFromURL } from '@shared/helpers/router.helper';
+import { CONFIG } from '@shared/constants/config';
+import { AppService } from './app.service';
 
 const INIT_EFFECTS = '@ngrx/effects/init';
 
@@ -53,6 +55,7 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
   private readonly debuggerCheckInterval$ = new BehaviorSubject<number>(10000);
 
   constructor(private actions$: Actions,
+              private appService: AppService,
               private graphQL: GraphQLService,
               private blockService: BlockService,
               private router: Router,
@@ -62,7 +65,8 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
 
     this.ngrxEffectsInit$ = createEffect(() => this.actions$.pipe(
       ofType(INIT_EFFECTS),
-      map(() => ({ type: APP_INIT, payload: { nodeName: new URL(location.href).searchParams.get('node') } })),
+      switchMap(() => this.appService.getActiveNode()),
+      map((node: MinaNode) => ({ type: APP_INIT, payload: { node } })),
     ));
 
     this.init$ = createEffect(() => this.actions$.pipe(
