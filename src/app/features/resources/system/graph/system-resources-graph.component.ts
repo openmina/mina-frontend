@@ -296,7 +296,7 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
   private addXAxis(): void {
     this.xScale = d3.scaleLinear()
       .domain([0, this.data.length - 1])
-      .domain(d3.extent<SystemResourcesPoint, number>(this.data, (d) => { return d.timestamp; }))
+      .domain(d3.extent<SystemResourcesPoint, number>(this.data, d => d.timestamp))
       .range([0, this.width]);
     this.xAxisElement = this.mainG.append('g')
       .attr('class', 'xAxis inter tertiary f-base user-none')

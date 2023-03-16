@@ -31,7 +31,6 @@ import { Router } from '@angular/router';
 import { FeatureType, MinaNode } from '@shared/types/core/environment/mina-env.type';
 import { withLatestFrom } from 'rxjs/operators';
 import { removeParamsFromURL } from '@shared/helpers/router.helper';
-import { CONFIG } from '@shared/constants/config';
 import { AppService } from './app.service';
 
 const INIT_EFFECTS = '@ngrx/effects/init';

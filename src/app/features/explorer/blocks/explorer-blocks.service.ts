@@ -48,6 +48,7 @@ export class ExplorerBlocksService {
           txCount: chain.transactions.userCommands.length,
           totalTxCount: chain.transactions.userCommands.length + chain.transactions.feeTransfer.length + chain.transactions.zkappCommands.length + 1,
           snarkCount: chain.snarkJobs.length,
+          zkAppsCount: chain.transactions.zkappCommands.length,
           date: toReadableDate(chain.protocolState.blockchainState.date),
           timestamp: chain.protocolState.blockchainState.date,
           snarkedLedgerHash: chain.protocolState.blockchainState.snarkedLedgerHash,
