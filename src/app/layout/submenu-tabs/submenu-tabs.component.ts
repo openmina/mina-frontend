@@ -8,6 +8,7 @@ import { selectAppSubMenus } from '@app/app.state';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { removeParamsFromURL } from '@shared/helpers/router.helper';
+import { filter } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -35,6 +36,7 @@ export class SubmenuTabsComponent extends ManualDetection implements OnInit {
 
   private listenToRouteChange(): void {
     this.store.select(getMergedRoute)
+      .pipe(filter(Boolean))
       .subscribe((route: MergedRoute) => {
         this.baseRoute = removeParamsFromURL(route.url.split('/')[1]);
         this.activeSubMenu = removeParamsFromURL(route.url.split('/')[2]);

@@ -32,12 +32,22 @@ export const environment: Readonly<MinaEnv> = {
     //   features: ['dashboard', 'resources', 'network', 'tracing', 'web-node', 'benchmarks', 'explorer'],
     //   name: 'debug',
     // },
-
     {
       backend: 'http://1.k8.openmina.com:31319/node1',
-      debugger: 'http://1.k8.openmina.com:31319/node1/bpf-debugger',
+      debugger: 'http://1.k8.openmina.com:31319/node1/bpf-debugger', /* OPTIONAL */
+      minaExplorer: 'https://berkeley.api.minaexplorer.com', /* OPTIONAL */
       name: 'node1',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs', 'web-node'],
+      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs'],
+      subFeatures: { /* OPTIONAL */
+        dashboard: ['nodes'],
+        explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
+        resources: ['system'],
+        network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
+        tracing: ['overview', 'blocks'],
+        benchmarks: ['wallets'],
+        logs: [],
+        'web-node': ['wallet', 'peers', 'logs', 'state'],
+      },
     },
     {
       backend: 'http://1.k8.openmina.com:31319/node2',

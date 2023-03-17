@@ -40,7 +40,7 @@ const MENU_ITEMS: MenuItem[] = [
 })
 export class MenuComponent extends ManualDetection implements OnInit {
 
-  menuItems: MenuItem[] = [];
+  menuItems: MenuItem[] = MENU_ITEMS;
   menu: AppMenu;
   currentTheme: ThemeType;
   appIdentifier: string = CONFIG.identifier;

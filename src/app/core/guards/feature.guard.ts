@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, UrlTree } from '@angular/router';
 import { filter, Observable, of, switchMap } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
@@ -16,7 +16,7 @@ export class FeatureGuard implements CanActivate {
   constructor(private router: Router,
               private store: Store<MinaState>) { }
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): CanActivateReturnType {
+  canActivate(route: ActivatedRouteSnapshot): CanActivateReturnType {
     return this.store.select(selectActiveNode)
       .pipe(
         filter(Boolean),

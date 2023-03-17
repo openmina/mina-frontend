@@ -11,13 +11,15 @@ import {
   APP_GET_NODE_STATUS,
   APP_GET_NODE_STATUS_SUCCESS,
   APP_INIT,
+  APP_INIT_SUCCESS,
   APP_START_BACKGROUND_CHECKS,
   APP_UPDATE_DEBUGGER_STATUS,
-  AppAction,
+  AppActions,
   AppChangeActiveNode,
   AppGetDebuggerStatus,
   AppGetNodeStatus,
   AppInit,
+  AppInitSuccess,
   AppUpdateDebuggerStatus,
 } from '@app/app.actions';
 import { BlockService } from '@shared/services/block.service';
@@ -38,10 +40,11 @@ const INIT_EFFECTS = '@ngrx/effects/init';
 @Injectable({
   providedIn: 'root',
 })
-export class AppEffects extends MinaBaseEffect<AppAction> {
+export class AppEffects extends MinaBaseEffect<AppActions> {
 
-  readonly ngrxEffectsInit$: Effect;
+  readonly initEffects$: Effect;
   readonly init$: Effect;
+  readonly initSuccess$: Effect;
   readonly backgroundChecks1$: Effect;
   readonly backgroundChecks2$: Effect;
   readonly onNodeChange$: Effect;
@@ -62,15 +65,20 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
 
     super(store, selectMinaState);
 
-    this.ngrxEffectsInit$ = createEffect(() => this.actions$.pipe(
+    this.initEffects$ = createEffect(() => this.actions$.pipe(
       ofType(INIT_EFFECTS),
-      switchMap(() => this.appService.getActiveNode()),
-      map((node: MinaNode) => ({ type: APP_INIT, payload: { node } })),
+      map(() => ({ type: APP_INIT })),
     ));
 
     this.init$ = createEffect(() => this.actions$.pipe(
       ofType(APP_INIT),
-      this.latestActionState<AppInit>(),
+      switchMap(() => this.appService.getActiveNode()),
+      map((node: MinaNode) => ({ type: APP_INIT_SUCCESS, payload: { node } })),
+    ));
+
+    this.initSuccess$ = createEffect(() => this.actions$.pipe(
+      ofType(APP_INIT_SUCCESS),
+      this.latestActionState<AppInitSuccess>(),
       tap(({ state }) => this.graphQL.changeGraphQlProvider(state.app.activeNode)),
       map(() => ({ type: APP_START_BACKGROUND_CHECKS })),
     ));
@@ -115,7 +123,7 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
     ));
 
     this.getNodeStatus$ = createEffect(() => this.actions$.pipe(
-      ofType(APP_INIT, APP_GET_NODE_STATUS),
+      ofType(APP_INIT_SUCCESS, APP_GET_NODE_STATUS),
       this.latestActionState<AppInit | AppGetNodeStatus>(),
       mergeMap(() => this.blockService.getNodeStatus()),
       map((payload: NodeStatus) => ({ type: APP_GET_NODE_STATUS_SUCCESS, payload })),
@@ -130,7 +138,7 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
     ));
 
     this.getDebuggerStatus$ = createEffect(() => this.actions$.pipe(
-      ofType(APP_INIT, APP_GET_DEBUGGER_STATUS),
+      ofType(APP_INIT_SUCCESS, APP_GET_DEBUGGER_STATUS),
       this.latestActionState<AppInit | AppGetDebuggerStatus>(),
       filter(({ state }) => !!state.app.activeNode.debugger),
       mergeMap(() => this.blockService.getDebuggerStatus()),

@@ -78,7 +78,7 @@ export const routes: Routes = [
       preloadingStrategy: PreloadAllModules,
       relativeLinkResolution: 'legacy',
       onSameUrlNavigation: 'ignore',
-      initialNavigation: 'enabledBlocking',
+      initialNavigation: 'enabledNonBlocking',
     }),
   ],
   exports: [RouterModule],

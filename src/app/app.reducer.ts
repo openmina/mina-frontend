@@ -3,8 +3,8 @@ import {
   APP_CHANGE_ACTIVE_NODE,
   APP_CHANGE_MENU_COLLAPSING,
   APP_CHANGE_SUB_MENUS,
-  APP_GET_NODE_STATUS_SUCCESS,
-  APP_INIT,
+  APP_GET_NODE_STATUS_SUCCESS, APP_INIT,
+  APP_INIT_SUCCESS,
   APP_TOGGLE_MENU_OPENING,
   APP_TOGGLE_MOBILE,
   APP_UPDATE_DEBUGGER_STATUS,
@@ -39,6 +39,12 @@ export function reducer(state: AppState = initialState, action: any): AppState {
   switch (action.type) {
 
     case APP_INIT: {
+      return {
+        ...state,
+      };
+    }
+
+    case APP_INIT_SUCCESS: {
       return {
         ...state,
         nodes: CONFIG.configs,

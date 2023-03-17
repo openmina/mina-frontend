@@ -5,6 +5,7 @@ import { Routes } from '@shared/enums/routes.enum';
 
 enum AppActionTypes {
   APP_INIT = 'APP_INIT',
+  APP_INIT_SUCCESS = 'APP_INIT_SUCCESS',
   APP_CHANGE_ACTIVE_NODE = 'APP_CHANGE_ACTIVE_NODE',
   APP_ADD_NODE = 'APP_ADD_NODE',
   APP_START_BACKGROUND_CHECKS = 'APP_START_BACKGROUND_CHECKS',
@@ -19,6 +20,7 @@ enum AppActionTypes {
 }
 
 export const APP_INIT = AppActionTypes.APP_INIT;
+export const APP_INIT_SUCCESS = AppActionTypes.APP_INIT_SUCCESS;
 export const APP_CHANGE_ACTIVE_NODE = AppActionTypes.APP_CHANGE_ACTIVE_NODE;
 export const APP_ADD_NODE = AppActionTypes.APP_ADD_NODE;
 export const APP_START_BACKGROUND_CHECKS = AppActionTypes.APP_START_BACKGROUND_CHECKS;
@@ -37,6 +39,10 @@ export interface AppAction extends FeatureAction<AppActionTypes> {
 
 export class AppInit implements AppAction {
   readonly type = APP_INIT;
+}
+
+export class AppInitSuccess implements AppAction {
+  readonly type = APP_INIT_SUCCESS;
 
   constructor(public payload: { node: MinaNode }) {}
 }
@@ -101,6 +107,7 @@ export class AppToggleMenuOpening implements AppAction {
 
 export type AppActions =
   | AppInit
+  | AppInitSuccess
   | AppStartBackgroundChecks
   | AppChangeActiveNode
   | AppGetNodeStatus
