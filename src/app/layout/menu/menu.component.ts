@@ -10,7 +10,7 @@ import { ThemeType } from '@shared/types/core/theme/theme-types.type';
 import { DOCUMENT } from '@angular/common';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 import { filter, map, tap } from 'rxjs';
-import { CONFIG } from '@shared/constants/config';
+import { CONFIG, getAvailableFeatures } from '@shared/constants/config';
 import { NavigationEnd, Router } from '@angular/router';
 import { removeParamsFromURL } from '@shared/helpers/router.helper';
 
@@ -105,7 +105,8 @@ export class MenuComponent extends ManualDetection implements OnInit {
   }
 
   private get allowedMenuItems(): MenuItem[] {
-    return MENU_ITEMS.filter((opt: MenuItem) => this.activeNode.features.find(f => f === opt.name.toLowerCase().split(' ').join('-')));
+    const features = getAvailableFeatures(this.activeNode);
+    return MENU_ITEMS.filter((opt: MenuItem) => features.find(f => f === opt.name.toLowerCase().split(' ').join('-')));
   }
 
   toggleMenu(): void {

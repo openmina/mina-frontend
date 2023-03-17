@@ -3,7 +3,7 @@
     <div class="a-wrap flex-row align-center w-100">
       <a [class.active]="activeSubMenu === subMenu"
          [routerLink]="baseRoute + '/' + subMenu"
-         [queryParams]="activeNode ? { node: activeNode } : null"
+         [queryParams]="activeNodeName ? { node: activeNodeName } : null"
          [class.ml-8]="i > 0"
          class="text-capitalize h-sm lh-sm f-600 flex-center flex-row flex-grow">{{
         subMenu === 'blocks-ipc' ? 'Blocks IPC'

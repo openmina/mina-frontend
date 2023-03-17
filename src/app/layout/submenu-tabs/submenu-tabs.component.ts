@@ -4,11 +4,13 @@ import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
-import { selectAppSubMenus } from '@app/app.state';
+import { selectActiveNode } from '@app/app.state';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { removeParamsFromURL } from '@shared/helpers/router.helper';
-import { filter } from 'rxjs';
+import { combineLatest, debounceTime, filter } from 'rxjs';
+import { getAvailableFeatures, getFeaturesConfig } from '@shared/constants/config';
+import { FeatureType, MinaNode } from '@shared/types/core/environment/mina-env.type';
 
 @UntilDestroy()
 @Component({
@@ -24,32 +26,39 @@ export class SubmenuTabsComponent extends ManualDetection implements OnInit {
   activeSubMenu: string;
   baseRoute: string;
   isMobile: boolean;
-  activeNode: string;
+  activeNodeName: string;
 
   constructor(private router: Router,
               private store: Store<MinaState>) { super(); }
 
   ngOnInit(): void {
     this.listenToRouteChange();
-    this.listenToSubMenuChange();
   }
 
   private listenToRouteChange(): void {
-    this.store.select(getMergedRoute)
-      .pipe(filter(Boolean))
-      .subscribe((route: MergedRoute) => {
+    combineLatest([
+      this.store.select(selectActiveNode)
+        .pipe(filter(Boolean)),
+      this.store.select(getMergedRoute)
+        .pipe(filter(Boolean)),
+    ])
+      .pipe(
+        untilDestroyed(this),
+        debounceTime(100),
+      )
+      .subscribe((response: [MinaNode, MergedRoute]) => {
+        const route = response[1];
         this.baseRoute = removeParamsFromURL(route.url.split('/')[1]);
         this.activeSubMenu = removeParamsFromURL(route.url.split('/')[2]);
-        this.activeNode = route.queryParams['node'];
+        this.activeNodeName = route.queryParams['node'];
+
+        this.setSubMenusOfActiveNodeForNewPage(response[0]);
         this.detect();
       });
   }
 
-  private listenToSubMenuChange(): void {
-    this.store.select(selectAppSubMenus)
-      .subscribe((subMenus: string[]) => {
-        this.subMenus = subMenus;
-        this.detect();
-      });
+  private setSubMenusOfActiveNodeForNewPage(node: MinaNode): void {
+    const feature = getAvailableFeatures(node).find((f: FeatureType) => f === this.baseRoute) as FeatureType;
+    this.subMenus = getFeaturesConfig(node)[feature] || [];
   }
 }

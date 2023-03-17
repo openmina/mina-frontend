@@ -3,8 +3,9 @@ import { ActivatedRouteSnapshot, CanActivate, Router, UrlTree } from '@angular/r
 import { filter, Observable, of, switchMap } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { MinaNode } from '@shared/types/core/environment/mina-env.type';
+import { FeatureType, MinaNode } from '@shared/types/core/environment/mina-env.type';
 import { selectActiveNode } from '@app/app.state';
+import { getAvailableFeatures, getFirstFeature } from '@shared/constants/config';
 
 type CanActivateReturnType = Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree;
 
@@ -21,8 +22,8 @@ export class FeatureGuard implements CanActivate {
       .pipe(
         filter(Boolean),
         switchMap((node: MinaNode) => {
-          const hasThisFeature = node?.features.some((name: string) => name === route.routeConfig.path);
-          return hasThisFeature ? of(hasThisFeature) : this.router.navigateByUrl(node?.features[0]);
+          const hasThisFeature = getAvailableFeatures(node).some((f: FeatureType) => f === route.routeConfig.path);
+          return hasThisFeature ? of(hasThisFeature) : this.router.navigateByUrl(getFirstFeature(node));
         }),
       );
   }

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { CONFIG } from '@shared/constants/config';
+import { getFirstFeature } from '@shared/constants/config';
 import { FeatureGuard } from '@core/guards/feature.guard';
 
 const APP_TITLE: string = 'Open Mina';
@@ -66,7 +66,7 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: CONFIG.configs[0].features[0],
+    redirectTo: getFirstFeature(),
     pathMatch: 'full',
   },
 ];

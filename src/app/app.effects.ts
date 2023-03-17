@@ -34,6 +34,7 @@ import { FeatureType, MinaNode } from '@shared/types/core/environment/mina-env.t
 import { withLatestFrom } from 'rxjs/operators';
 import { removeParamsFromURL } from '@shared/helpers/router.helper';
 import { AppService } from './app.service';
+import { getFirstFeature, isFeatureEnabled } from '@shared/constants/config';
 
 const INIT_EFFECTS = '@ngrx/effects/init';
 
@@ -109,14 +110,13 @@ export class AppEffects extends MinaBaseEffect<AppActions> {
       tap(({ state }) => {
         this.graphQL.changeGraphQlProvider(state.app.activeNode);
         this.nodeCheckInterval$.next(10000);
-        const activePage = removeParamsFromURL(this.router.url.split('/')[1]);
+        const activePage = removeParamsFromURL(this.router.url.split('/')[1]) as FeatureType;
         this.router.navigate([], {
           queryParams: { node: state.app.activeNode.name },
           queryParamsHandling: 'merge',
         });
-        const features = state.app.activeNode.features;
-        if (!features.some((feature: FeatureType) => feature === activePage)) {
-          this.router.navigate([features[0]]);
+        if (!isFeatureEnabled(state.app.activeNode, activePage)) {
+          this.router.navigate([getFirstFeature(state.app.activeNode)]);
         }
       }),
       map(() => ({ type: APP_GET_NODE_STATUS })),

@@ -13,7 +13,7 @@ import { AppMenu } from '@shared/types/app/app-menu.type';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
-import { CONFIG } from '@shared/constants/config';
+import { CONFIG, isFeatureEnabled } from '@shared/constants/config';
 import { NodePickerComponent } from '@app/layout/node-picker/node-picker.component';
 
 const TOOLTIP_MESSAGES: { [p: string]: string } = {
@@ -161,7 +161,7 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
       .subscribe((activeNode: MinaNode) => {
         this.activeNode = activeNode;
         this.enabledDebugger = !!activeNode.debugger;
-        this.enabledWebNode = activeNode.features.includes('web-node');
+        this.enabledWebNode = isFeatureEnabled(activeNode, 'web-node');
         this.detect();
       });
   }

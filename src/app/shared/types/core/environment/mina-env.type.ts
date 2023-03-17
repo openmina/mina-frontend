@@ -9,8 +9,7 @@ export interface MinaEnv {
   sentry?: SentryConfig;
   firebase?: FirebaseOptions;
   globalConfig?: {
-    features?: FeatureType[];
-    subFeatures?: SubFeaturesConfig;
+    features?: FeaturesConfig;
   }
 }
 
@@ -19,9 +18,12 @@ export interface MinaNode {
   backend: string;
   debugger?: string;
   minaExplorer?: string;
-  features?: FeatureType[];
-  subFeatures?: SubFeaturesConfig;
+  features: FeaturesConfig;
 }
+
+export type FeaturesConfig = {
+  [key in FeatureType]?: string[];
+};
 
 export type FeatureType =
   | 'dashboard'
@@ -33,10 +35,6 @@ export type FeatureType =
   | 'explorer'
   | 'logs'
   ;
-
-export type SubFeaturesConfig = {
-  [key in FeatureType]?: string[];
-};
 
 interface SentryConfig {
   dsn: string;

@@ -1,10 +1,10 @@
 import { MinaEnv } from '@shared/types/core/environment/mina-env.type';
 
 export const environment: Readonly<MinaEnv> = {
-  production: false,
-  identifier: 'local',
-  aggregator: 'http://1.k8.openmina.com:31319/aggregator',
-  isVanilla: false,
+  production: false, /* OPTIONAL */
+  identifier: 'local', /* OPTIONAL */
+  aggregator: 'http://1.k8.openmina.com:31319/aggregator', /* OPTIONAL */
+  isVanilla: false, /* OPTIONAL */
   configs: [
     // {
     //   backend: 'http://1.k8.openmina.com:31319/node1',
@@ -37,10 +37,9 @@ export const environment: Readonly<MinaEnv> = {
       debugger: 'http://1.k8.openmina.com:31319/node1/bpf-debugger', /* OPTIONAL */
       minaExplorer: 'https://berkeley.api.minaexplorer.com', /* OPTIONAL */
       name: 'node1',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs'],
-      subFeatures: { /* OPTIONAL */
+      features: {
         dashboard: ['nodes'],
-        explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
+        explorer: ['blocks', 'transactions',],
         resources: ['system'],
         network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
         tracing: ['overview', 'blocks'],
@@ -53,13 +52,27 @@ export const environment: Readonly<MinaEnv> = {
       backend: 'http://1.k8.openmina.com:31319/node2',
       debugger: 'http://1.k8.openmina.com:31319/node2/bpf-debugger',
       name: 'node2',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'web-node'],
+      features: {
+        dashboard: ['nodes'],
+        explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
+        resources: ['system'],
+        network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
+        tracing: ['overview', 'blocks'],
+        benchmarks: ['wallets'],
+      },
     },
     {
       backend: 'http://1.k8.openmina.com:31319/node3',
       debugger: 'http://1.k8.openmina.com:31319/node3/bpf-debugger',
       name: 'node3',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'web-node'],
+      features: {
+        dashboard: ['nodes'],
+        explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
+        resources: ['system'],
+        network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
+        tracing: ['overview', 'blocks'],
+        benchmarks: ['wallets'],
+      },
     },
     // {
     //   backend: 'http://1.k8.openmina.com:31319/node4',

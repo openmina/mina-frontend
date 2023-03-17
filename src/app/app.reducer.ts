@@ -118,7 +118,15 @@ export function reducer(state: AppState = initialState, action: any): AppState {
     case APP_ADD_NODE: {
       const newNode: MinaNode = {
         backend: action.payload,
-        features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'web-node'],
+        features: {
+          dashboard: ['nodes'],
+          explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
+          resources: ['system'],
+          network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
+          tracing: ['overview', 'blocks'],
+          benchmarks: ['wallets'],
+          'web-node': ['wallet', 'peers', 'logs', 'state'],
+        },
         name: action.payload.split('/')[action.payload.split('/').length - 1] || ('custom-node' + ++state.nodes.filter(n => n.name.includes('custom-node')).length),
       };
       return {
