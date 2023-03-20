@@ -182,7 +182,7 @@ Beside a node-specific configuration, you can also add a global configuration th
 The global configuration is optional and if it is not present, the default values will be used.
 > Please note that the global configuration is not merged with the node-specific configuration. If a node-specific configuration is present, it will override the global configuration entirely.
 
-Here is a setup that exemplifies the global configuration:
+Here is a setup that exemplifies the global configuration with all currently available features:
 ```typescript
 import { MinaEnv } from '@shared/types/core/environment/mina-env.type';
 

@@ -1,7 +1,7 @@
-<div fxFlex="50" class="flex-row align-center pl-10">
+<div class="h-50 fx-row-vert-cent pl-10">
   <span class="tertiary mr-10 f-600">Height</span>
-  <div class="pagination-group flex-row align-center bg-selected-container ml-10 border-rad-4">
-    <button class="h-sm w-sm flex-row flex-center align-center"
+  <div class="pagination-group fx-row-vert-cent bg-selected-container ml-10 border-rad-4">
+    <button class="h-sm w-sm fx-row-full-cent"
             [class.disabled]="activeBlock === 1"
             [tooltip]="'Prev block'"
             [showDelay]="500"
@@ -9,7 +9,7 @@
       <span class="mina-icon f-18">navigate_before</span>
     </button>
     <span class="f-600 selected-primary pl-5 pr-5">{{ activeBlock }}</span>
-    <button class="h-sm w-sm flex-row flex-center align-center"
+    <button class="h-sm w-sm fx-row-full-cent"
             [class.disabled]="earliestBlock === activeBlock"
             [tooltip]="'Next block'"
             [showDelay]="500"
@@ -17,7 +17,7 @@
       <span class="mina-icon f-18">navigate_next</span>
     </button>
   </div>
-  <button class="btn-secondary h-sm w-sm mr-10 ml-5 flex-row flex-center align-center"
+  <button class="btn-secondary h-sm w-sm mr-10 ml-5 fx-row-full-cent"
           [class.disabled]="earliestBlock === activeBlock"
           [tooltip]="'Last block'"
           [showDelay]="500"
@@ -25,12 +25,12 @@
     <span class="mina-icon f-18">last_page</span>
   </button>
 </div>
-<div fxFlex="50" fxLayout="row wrap" class="align-center h-100 pl-10">
+<div class="h-50 fx-row-vert-cent flex-wrap h-100 pl-10">
   <span class="tertiary mr-10 f-600">Block candidates</span>
   <button *ngFor="let filter of allFilters"
           (click)="toggleFilter(filter)"
-          class="mr-5 border-rad-6 f-600 flex-row align-center"
-          [ngClass]="activeFilters.includes(filter) ? 'btn-selected' : 'btn-primary'">
+          class="mr-5 border-rad-6 f-600 fx-row-vert-cent"
+          [ngClass]="'btn-' + (activeFilters.includes(filter) ? 'selected' : 'primary')">
     <span>{{ filter | truncateMid }}</span>
   </button>
 </div>

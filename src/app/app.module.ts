@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ErrorHandler, Injectable, NgModule, Provider } from '@angular/core';
+import { APP_INITIALIZER, ErrorHandler, Injectable, LOCALE_ID, NgModule, Provider } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRouting } from './app.routing';
@@ -27,7 +27,10 @@ import { GlobalErrorHandlerService } from '@core/services/global-error-handler.s
 import { Router } from '@angular/router';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAnalyticsModule } from '@angular/fire/compat/analytics';
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
 
+registerLocaleData(localeFr, 'fr');
 
 export const SENTRY_PROVIDER: Provider = {
   provide: ErrorHandler,
@@ -93,7 +96,9 @@ export class AppGlobalErrorhandler implements ErrorHandler {
     INTERCEPTOR_PROVIDER,
     THEME_PROVIDER,
     { provide: ErrorHandler, useClass: AppGlobalErrorhandler, deps: [GlobalErrorHandlerService] },
+    { provide: LOCALE_ID, useValue: 'fr'},
   ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
+

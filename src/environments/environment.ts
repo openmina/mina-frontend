@@ -568,22 +568,22 @@ export const environment: Readonly<MinaEnv> = {
     //   backend: 'http://1.k8.openmina.com:31308/node130',
     //   name: 'node130',
     // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31308/prod1',
-    //   name: 'prod1',
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31308/prod2',
-    //   name: 'prod2',
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31308/prod3',
-    //   name: 'prod3',
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31308/prod4',
-    //   name: 'prod4',
-    // },
+    {
+      backend: 'http://1.k8.openmina.com:31308/prod1',
+      name: 'prod1',
+    },
+    {
+      backend: 'http://1.k8.openmina.com:31308/prod2',
+      name: 'prod2',
+    },
+    {
+      backend: 'http://1.k8.openmina.com:31308/prod3',
+      name: 'prod3',
+    },
+    {
+      backend: 'http://1.k8.openmina.com:31308/prod4',
+      name: 'prod4',
+    },
     // {
     //   backend: 'http://1.k8.openmina.com:31308/prod5',
     //   name: 'prod5',
@@ -608,10 +608,10 @@ export const environment: Readonly<MinaEnv> = {
     //   backend: 'http://1.k8.openmina.com:31308/prod10',
     //   name: 'prod10',
     // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31308/snarker1',
-    //   name: 'snarker1',
-    // },
+    {
+      backend: 'http://1.k8.openmina.com:31308/snarker1',
+      name: 'snarker1',
+    },
     // {
     //   backend: 'http://1.k8.openmina.com:31308/snarker2',
     //   name: 'snarker2',
@@ -656,14 +656,14 @@ export const environment: Readonly<MinaEnv> = {
     //   backend: 'http://1.k8.openmina.com:31308/seed2',
     //   name: 'seed2',
     // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31308/seed3',
-    //   name: 'seed3',
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31308/seed4',
-    //   name: 'seed4',
-    // },
+    {
+      backend: 'http://1.k8.openmina.com:31308/seed3',
+      name: 'seed3',
+    },
+    {
+      backend: 'http://1.k8.openmina.com:31308/seed4',
+      name: 'seed4',
+    },
     // {
     //   backend: 'http://1.k8.openmina.com:31308/seed5',
     //   name: 'seed5',

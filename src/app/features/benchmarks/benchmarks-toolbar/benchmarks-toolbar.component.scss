@@ -1,5 +1,13 @@
 @import 'variables';
 
+.mina-input[formcontrolname='batch'] {
+	width: 44px;
+}
+
+.mina-input[formcontrolname='fee'] {
+	width: 60px;
+}
+
 .button-group {
 	button:first-child {
 		margin-right: 2px;
@@ -19,7 +27,6 @@
 
 	.dropdown-item {
 		display: grid;
-		height: 24px;
 		grid-template-columns: 30px 210px 1fr;
 		color: $base-tertiary;
 		box-sizing: border-box;

@@ -4,7 +4,7 @@
           (click)="toggleMenu()">
     <span>OpenMina</span>
     <span [class.flipped]="menu.isMobile ? false : menu.collapsed"
-          class="mina-icon f-20">{{ !menu.isMobile ? 'first_page' : 'close'}}</span>
+          class="mina-icon f-20">{{ !menu.isMobile ? 'first_page' : 'close' }}</span>
   </button>
   <a *ngFor="let item of menuItems"
      [routerLink]="'/' + item.name.toLowerCase().split(' ').join('-')"

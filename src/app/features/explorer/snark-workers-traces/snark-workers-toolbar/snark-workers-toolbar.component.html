@@ -8,7 +8,7 @@
           (click)="openDropdown($event)">
     <div class="fx-row-vert-cent">
       <span>
-        {{ filter.workers.length === 0 ? 'Select' : (filter.workers.length + ' worker' + (filter.workers.length !== 1 ? 's' : '')) }}
+        {{ filter.workers.length === 0 ? 'Select' : (filter.workers.length + ' worker' + (filter.workers.length | plural)) }}
       </span>
       <span class="mina-icon" [class.tertiary]="filter.workers.length === 0">arrow_drop_down</span>
     </div>

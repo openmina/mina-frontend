@@ -17,6 +17,7 @@ import { CopyToClipboardDirective } from './directives/copy-to-clipboard.directi
 import { IntervalSelectComponent } from '@shared/components/interval-select/interval-select.component';
 import { EagerSharedModule } from '@shared/eager-shared.module';
 import { ReadableDatePipe } from '@shared/pipes/readable-date.pipe';
+import { PluralPipe } from '@shared/pipes/plural.pipe';
 
 
 const COMPONENTS = [
@@ -37,6 +38,7 @@ const PIPES = [
   SecDurationPipe,
   ThousandPipe,
   ReadableDatePipe,
+  PluralPipe,
 ];
 
 const MODULES = [

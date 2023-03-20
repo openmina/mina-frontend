@@ -24,14 +24,14 @@
           (click)="getBlock(earliestBlock)">
     <span class="mina-icon f-18">last_page</span>
   </button>
-  <div fxFlex class="pl-12 f-600 fx-row-vert-cent flex-wrap flex-between">
+  <div class="pl-12 f-600 fx-row-vert-cent flex-wrap flex-1 flex-between">
     <div class="fx-row-vert-cent flex-wrap">
       <span class="tertiary">Count:</span>
-      <span class="bg-selected-container ml-10 p-5 border-rad-4 selected-primary">{{ count.nodes }} Node{{ count.nodes !== 1 ? 's' : '' }}</span>
-      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.producers }} Producer{{ count.producers !== 1 ? 's' : '' }}</span>
-      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.snarkers }} Snarker{{ count.snarkers !== 1 ? 's' : '' }}</span>
-      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.seeders }} Seeder{{ count.seeders !== 1 ? 's' : '' }}</span>
-      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.transactionGenerators }} Transaction Generator{{ count.transactionGenerators !== 1 ? 's' : '' }}</span>
+      <span class="bg-selected-container ml-10 p-5 border-rad-4 selected-primary">{{ count.nodes }} Node{{ count.nodes | plural }}</span>
+      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.producers }} Producer{{ count.producers | plural }}</span>
+      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.snarkers }} Snarker{{ count.snarkers | plural }}</span>
+      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.seeders }} Seeder{{ count.seeders | plural }}</span>
+      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.transactionGenerators }} Transaction Generator{{ count.transactionGenerators | plural }}</span>
     </div>
     <div class="flex-row">
       <button class="h-sm btn-primary mr-5"

@@ -1,12 +1,12 @@
-<div class="flex-row flex-between p-12" fxFlex="42px">
+<div class="flex-row flex-between p-12 h-xl">
   <span class="secondary f-600">Distributions</span>
-  <button class="toggle h-sm w-sm flex-row align-center flex-center btn-selected p-0"
+  <button class="toggle h-sm w-sm fx-row-full-cent btn-selected p-0"
           (click)="toggleSidePanel()">
     <span class="mina-icon f-20">view_sidebar</span>
   </button>
 </div>
 <div class="flex-column flex-grow pr-12">
-  <div fxFlex="30">
+  <div [style.height.%]="30">
     <ng-container #minaBarGraph></ng-container>
   </div>
 </div>
