@@ -31,18 +31,36 @@ export function isNotVanilla(): boolean {
   return !CONFIG.isVanilla;
 }
 
-export function getAvailableFeatures(config: MinaNode): FeatureType[] {
+export function getAvailableFeatures(config: MinaNode): FeatureType[] | string[] {
+  if (Array.isArray(config.features)) {
+    return config.features;
+  }
+
   return Object.keys(getFeaturesConfig(config)) as FeatureType[];
 }
 
-export function getFirstFeature(config: MinaNode = CONFIG.configs[0]): FeatureType {
+export function getFirstFeature(config: MinaNode = CONFIG.configs[0]): FeatureType | string {
+
+  if (Array.isArray(config.features)) {
+    return config.features[0];
+  }
+
   return Object.keys(getFeaturesConfig(config))[0] as FeatureType;
 }
 
 export function isFeatureEnabled(config: MinaNode, feature: FeatureType): boolean {
+
+  if (Array.isArray(config.features)) {
+    return !!(config.features[0]);
+  }
+
   return hasValue(getFeaturesConfig(config)[feature]);
 }
 
-export function getFeaturesConfig(config: MinaNode): FeaturesConfig {
+export function getFeaturesConfig(config: MinaNode): FeaturesConfig | string[] {
+
+  if (Array.isArray(config.features)) {
+    return config.features;
+  }
   return config.features || CONFIG.globalConfig?.features;
 }

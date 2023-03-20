@@ -67,13 +67,15 @@ export class DashboardNodesService {
       nodes.map(node =>
         this.http
           .post(node.url, { query: latestBlockHeight }, this.options)
-          .pipe(catchError(() => EMPTY)),
+          .pipe(
+            map((response: any) => Number(lastItem(response.data.bestChain).protocolState.consensusState.blockchainLength)),
+            catchError(() => EMPTY)
+          ),
       ),
     ).pipe(
       concatAll(),
       filter(Boolean),
       take(1),
-      map((response: any) => Number(lastItem(response.data.bestChain).protocolState.consensusState.blockchainLength)),
     );
   }
 

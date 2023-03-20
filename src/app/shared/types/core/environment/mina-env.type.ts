@@ -18,7 +18,7 @@ export interface MinaNode {
   backend: string;
   debugger?: string;
   minaExplorer?: string;
-  features?: FeaturesConfig;
+  features?: FeaturesConfig | string[];
 }
 
 export type FeaturesConfig = {

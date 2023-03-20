@@ -11,7 +11,7 @@
      [queryParams]="activeNode ? { node: activeNode.name } : null"
      [tooltip]="item.name"
      [tooltipDisabled]="!menu.collapsed || menu.isMobile"
-     [class.active]="activeRoute === item.name.toLowerCase()"
+     [class.active]="activeRoute === item.name.toLowerCase().split(' ').join('-')"
      class="item h-lg">
     <span class="item-content h-sm">
       <span class="mina-icon">{{ item.icon }}</span>

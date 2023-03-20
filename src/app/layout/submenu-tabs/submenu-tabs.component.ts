@@ -58,7 +58,21 @@ export class SubmenuTabsComponent extends ManualDetection implements OnInit {
   }
 
   private setSubMenusOfActiveNodeForNewPage(node: MinaNode): void {
-    const feature = getAvailableFeatures(node).find((f: FeatureType) => f === this.baseRoute) as FeatureType;
-    this.subMenus = getFeaturesConfig(node)[feature] || [];
+    const feature = getAvailableFeatures(node).find((f: FeatureType | string) => f === this.baseRoute) as FeatureType;
+    // this.subMenus = getFeaturesConfig(node)[feature] || [];
+    this.subMenus = this.features()[feature] || [];
   }
+
+  features() {
+    return {
+      dashboard: ['nodes'],
+      explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
+      resources: ['system'],
+      network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
+      tracing: ['overview', 'blocks'],
+      benchmarks: ['wallets'],
+      'web-node': ['wallet', 'peers', 'logs', 'state'],
+    };
+  }
+
 }

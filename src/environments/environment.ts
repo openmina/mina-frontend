@@ -49,43 +49,17 @@ export const environment: Readonly<MinaEnv> = {
       debugger: 'http://1.k8.openmina.com:31308/node1/bpf-debugger', /* OPTIONAL */
       minaExplorer: 'https://berkeley.api.minaexplorer.com', /* OPTIONAL */
       name: 'node1',
-      features: {
-        dashboard: ['nodes'],
-        explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
-        resources: ['system'],
-        network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
-        tracing: ['overview', 'blocks'],
-        benchmarks: ['wallets'],
-        logs: [],
-        'web-node': ['wallet', 'peers', 'logs', 'state'],
-      },
-    },
+      features: ['dashboard', 'resources', 'network', 'tracing', 'web-node', 'benchmarks', 'explorer'],  },
     {
       backend: 'http://1.k8.openmina.com:31308/node2',
       debugger: 'http://1.k8.openmina.com:31308/node2/bpf-debugger',
       name: 'node2',
-      features: {
-        dashboard: ['nodes'],
-        explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
-        resources: ['system'],
-        network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
-        tracing: ['overview', 'blocks'],
-        benchmarks: ['wallets'],
-      },
-    },
+      features: ['dashboard', 'resources', 'network', 'tracing', 'web-node', 'benchmarks', 'explorer'],   },
     {
       backend: 'http://1.k8.openmina.com:31308/node3',
       debugger: 'http://1.k8.openmina.com:31308/node3/bpf-debugger',
       name: 'node3',
-      features: {
-        dashboard: ['nodes'],
-        explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
-        resources: ['system'],
-        network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
-        tracing: ['overview', 'blocks'],
-        benchmarks: ['wallets'],
-      },
-    },
+      features: ['dashboard', 'resources', 'network', 'tracing', 'web-node', 'benchmarks', 'explorer'],},
     {
       backend: 'http://1.k8.openmina.com:31308/node4',
       name: 'node4',
