@@ -5,7 +5,7 @@
     <mina-horizontal-resizable-container (widthChange)="onWidthChange($event)"
                                          (startResizing)="toggleResizing()"
                                          (endResizing)="toggleResizing()"
-                                         [minWidth]="400"
+                                         [minWidth]="460"
                                          [maxWidthElement]="table"
                                          [class.show]="isActiveRow"
                                          localStorageKey="network-messages-side-panel-width"
@@ -13,5 +13,5 @@
       <mina-network-messages-side-panel></mina-network-messages-side-panel>
     </mina-horizontal-resizable-container>
   </div>
-  <mina-network-messages-table-footer fxFlex="36px" (onScrollTopClick)="scrollToTop()"></mina-network-messages-table-footer>
+  <mina-network-messages-table-footer (onScrollTopClick)="scrollToTop()"></mina-network-messages-table-footer>
 </div>

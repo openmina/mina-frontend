@@ -1,9 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { TracingBlockTrace } from '@shared/types/tracing/blocks/tracing-block-trace.type';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Router } from '@angular/router';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
@@ -11,13 +7,7 @@ import { MergedRoute } from '@shared/router/merged-route';
 import { filter } from 'rxjs';
 import { Routes } from '@shared/enums/routes.enum';
 import { selectTracingActiveTrace, selectTracingBlocksSorting, selectTracingTraces } from '@tracing/tracing-blocks/tracing-blocks.state';
-import {
-  TRACING_BLOCKS_SELECT_ROW,
-  TRACING_BLOCKS_SORT,
-  TracingBlocksGetTraces,
-  TracingBlocksSelectRow,
-  TracingBlocksSort,
-} from '@tracing/tracing-blocks/tracing-blocks.actions';
+import { TracingBlocksSelectRow, TracingBlocksSort } from '@tracing/tracing-blocks/tracing-blocks.actions';
 import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
 import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
 import { TableHeadSorting } from '@shared/types/shared/table-head-sorting.type';

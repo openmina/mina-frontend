@@ -1,11 +1,11 @@
-<div class="flex-row flex-between p-12" fxFlex="42px">
+<div class="flex-row flex-between p-12 h-xl">
   <span class="secondary f-600">Distributions</span>
   <button class="toggle h-sm w-sm fx-row-full-cent btn-selected p-0"
           (click)="toggleSidePanel()">
     <span class="mina-icon f-20">view_sidebar</span>
   </button>
 </div>
-<div class="flex-column flex-grow">
+<div class="flex-column flex-1 overflow-auto">
   <mina-network-blocks-graph [style.height.%]="30" class="pr-12"></mina-network-blocks-graph>
   <div class="flex-column mt-16 p-12 border-top">
     <div class="fx-row-vert-cent flex-between mt-8">

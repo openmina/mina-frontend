@@ -22,7 +22,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
   templateUrl: './network-messages-side-panel.component.html',
   styleUrls: ['./network-messages-side-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'h-100 w-100' },
+  host: { class: 'flex-column h-100 w-100' },
 })
 export class NetworkMessagesSidePanelComponent extends ManualDetection implements AfterViewInit {
 

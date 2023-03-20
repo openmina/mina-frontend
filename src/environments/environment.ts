@@ -32,7 +32,7 @@ export const environment: Readonly<MinaEnv> = {
     //   name: 'trace',
     // },
     // {
-    //   backend: 'https://webrtc.webnode.openmina.com',
+    //   backend: 'https://webrtc2.webnode.openmina.com:4432',
     //   minaExplorer: 'https://berkeley.api.minaexplorer.com',
     //   features: ['web-node', 'tracing', 'explorer', 'benchmarks'],
     //   name: 'webrtc',

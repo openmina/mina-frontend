@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { ClickOutsideDirective } from '@shared/directives/click-outside.directive';
@@ -10,7 +9,6 @@ import { NgModule } from '@angular/core';
 const EAGER_MODULES = [
   CommonModule,
   MatSidenavModule,
-  FlexLayoutModule,
   MatButtonToggleModule,
   OverlayModule,
 ];

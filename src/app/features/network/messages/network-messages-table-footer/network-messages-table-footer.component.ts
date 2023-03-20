@@ -34,7 +34,7 @@ import { IntervalSelectComponent } from '@shared/components/interval-select/inte
   templateUrl: './network-messages-table-footer.component.html',
   styleUrls: ['./network-messages-table-footer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'flex-row align-center border-top' },
+  host: { class: 'fx-row-vert-cent border-top h-lg' },
 })
 export class NetworkMessagesTableFooterComponent extends ManualDetection implements OnInit {
 

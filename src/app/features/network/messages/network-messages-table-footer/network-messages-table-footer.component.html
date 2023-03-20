@@ -7,7 +7,7 @@
           class="ml-8 pause-button"
           [class.active]="!state.stream">Pause
   </button>
-  <span class="ml-10 tertiary" fxHide.lt-sm>Active page: {{ state.messages.length }} records</span>
+  <span class="ml-10 tertiary d-none-sm">Active page: {{ state.messages.length }} records</span>
   <button class="icon-button ml-5"
           tooltip="Go to top"
           (click)="scrollToTop()">

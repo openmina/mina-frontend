@@ -13,6 +13,7 @@ import { skip } from 'rxjs';
 import { TimestampInterval } from '@shared/types/shared/timestamp-interval.type';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 
 export const networkAvailableFilters: NetworkMessagesFilterCategory[][] = [
@@ -321,6 +322,13 @@ export const networkAvailableFilters: NetworkMessagesFilterCategory[][] = [
   templateUrl: './network-messages-filters.component.html',
   styleUrls: ['./network-messages-filters.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('panelHeight', [
+      state('collapsed', style({ height: '36px', overflow: 'hidden' })),
+      state('expanded', style({ height: '*' })),
+      transition('collapsed <=> expanded', animate('250ms ease-out')),
+    ]),
+  ],
 })
 export class NetworkMessagesFiltersComponent extends ManualDetection implements OnInit {
 

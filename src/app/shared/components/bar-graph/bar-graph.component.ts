@@ -20,7 +20,6 @@ import { TemplatePortal } from '@angular/cdk/portal';
 import { getXTicks, niceYScale } from '@shared/helpers/graph.helper';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { CommonModule } from '@angular/common';
 
 class ChartColumn {
@@ -34,7 +33,7 @@ class ChartColumn {
 @Component({
   standalone: true,
   selector: 'mina-bar-graph',
-  imports: [CommonModule, FlexLayoutModule],
+  imports: [CommonModule],
   templateUrl: './bar-graph.component.html',
   styleUrls: ['./bar-graph.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

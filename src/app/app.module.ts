@@ -29,8 +29,10 @@ import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAnalyticsModule } from '@angular/fire/compat/analytics';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
+import localeEn from '@angular/common/locales/en';
 
 registerLocaleData(localeFr, 'fr');
+registerLocaleData(localeEn, 'en');
 
 export const SENTRY_PROVIDER: Provider = {
   provide: ErrorHandler,
@@ -96,7 +98,7 @@ export class AppGlobalErrorhandler implements ErrorHandler {
     INTERCEPTOR_PROVIDER,
     THEME_PROVIDER,
     { provide: ErrorHandler, useClass: AppGlobalErrorhandler, deps: [GlobalErrorHandlerService] },
-    { provide: LOCALE_ID, useValue: 'fr'},
+    { provide: LOCALE_ID, useValue: 'en' },
   ],
   bootstrap: [AppComponent],
 })
