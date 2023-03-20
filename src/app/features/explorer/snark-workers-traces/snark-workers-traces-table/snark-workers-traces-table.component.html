@@ -11,8 +11,7 @@
       </span>
     </span>
   </div>
-  <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-auto"
-                               fxFlex="calc(100% - 36px)"
+  <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-auto h-minus-lg"
                                [itemSize]="itemSize">
     <div *cdkVirtualFor="let job of jobs; let i=index"
          (click)="onRowClick(job)"

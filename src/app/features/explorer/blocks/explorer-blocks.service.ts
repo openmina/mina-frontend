@@ -41,7 +41,7 @@ export class ExplorerBlocksService {
         }
       }`)
       .pipe(
-        map((response: any) => response.bestChain.map((chain: any) => ({
+        map((response: any) => (response.bestChain || []).map((chain: any) => ({
           height: Number(chain.protocolState.consensusState.blockHeight),
           globalSlot: Number(chain.protocolState.consensusState.slotSinceGenesis),
           hash: chain.stateHash,

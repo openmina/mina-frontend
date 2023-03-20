@@ -7,10 +7,12 @@ import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { DashboardNodesTableComponent } from '@dashboard/nodes/dashboard-nodes-table/dashboard-nodes-table.component';
 import {
   DASHBOARD_NODES_CLOSE,
-  DASHBOARD_NODES_GET_EARLIEST_BLOCK, DASHBOARD_NODES_GET_NODES, DASHBOARD_NODES_INIT,
+  DASHBOARD_NODES_GET_EARLIEST_BLOCK,
+  DASHBOARD_NODES_INIT,
   DASHBOARD_NODES_SET_ACTIVE_BLOCK,
   DashboardNodesClose,
-  DashboardNodesGetEarliestBlock, DashboardNodesGetNodes, DashboardNodesInit,
+  DashboardNodesGetEarliestBlock,
+  DashboardNodesInit,
   DashboardNodesSetActiveBlock,
 } from '@dashboard/nodes/dashboard-nodes.actions';
 import { selectDashboardNodesActiveNode } from '@dashboard/nodes/dashboard-nodes.state';

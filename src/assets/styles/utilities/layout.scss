@@ -151,6 +151,44 @@
 	align-content: flex-start;
 }
 
+.fx-row-vert-cent {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.fx-row-full-cent {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.fx-row-horiz-cent {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.fx-col-horiz-cent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.fx-col-vert-cent {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.fx-col-full-cent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
 @mixin flexRow() {
 	@extend .flex-row;
 }

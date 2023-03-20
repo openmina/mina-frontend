@@ -116,24 +116,109 @@ export const environment: Readonly<MinaEnv> = {
   production: false,
   isVanilla: false,
   identifier: 'My Config',
-  aggregator: 'https://trace.dev.openmina.com:3003',
   configs: [
     {
       backend: 'https://trace.dev.openmina.com:3086',
       debugger: 'https://trace.dev.openmina.com:3087', 
       minaExplorer: 'https://devnet.api.minaexplorer.com',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs'],
+      features: {
+        dashboard: ['nodes'],
+        explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
+        resources: ['system'],
+        network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
+        tracing: ['overview', 'blocks'],
+        benchmarks: ['wallets'],
+        'web-node': ['wallet', 'peers', 'logs', 'state'],
+      },
       name: 'Awesome Node 1 😎',
     },
     {
       backend: 'https://sandbox.dev.openmina.com:3086',
       minaExplorer: 'https://devnet.api.minaexplorer.com',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs'],
+      features: {
+        dashboard: ['nodes'],
+        explorer: ['blocks', 'snark-pool'],
+        resources: ['system'],
+        network: ['messages', 'blocks'],
+        tracing: ['blocks'],
+        benchmarks: ['wallets'],
+      },
       name: 'Awesome Node 2 😎',
     },
   ],
 };
 ```
+
+As you can see, the features object is used to enable/disable the features of the application. Each feature is optional and if it is not present, it will be non-accessible.
+Each feature can contain an array of sub-features (sub-pages) that are also customizable.
+The features and sub-features that are available are:
+- **dashboard**
+  - **nodes**
+- **explorer**
+  - **blocks**
+  - **transactions**
+  - **snark-pool**
+  - **scan-state**
+  - **snark-traces**
+- **resources**
+  - **system**
+- **network**
+  - **messages**
+  - **connections**
+  - **blocks**
+  - **blocks-ipc**
+- **tracing**
+  - **overview**
+  - **blocks**
+- **benchmarks**
+  - **wallets**
+- **web-node**
+  - **wallet**
+  - **peers**
+  - **logs**
+  - **state**
+
+Beside a node-specific configuration, you can also add a global configuration that will be used by all the nodes who don't contain a specific feature configuration.
+The global configuration is optional and if it is not present, the default values will be used.
+> Please note that the global configuration is not merged with the node-specific configuration. If a node-specific configuration is present, it will override the global configuration entirely.
+
+Here is a setup that exemplifies the global configuration:
+```typescript
+import { MinaEnv } from '@shared/types/core/environment/mina-env.type';
+
+export const environment: Readonly<MinaEnv> = {
+  production: false,
+  isVanilla: false,
+  identifier: 'My Config',
+  globalConfig: {
+    features: {
+      dashboard: ['nodes'],
+      explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
+      resources: ['system'],
+      network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
+      tracing: ['overview', 'blocks'],
+      benchmarks: ['wallets'],
+      'web-node': ['wallet', 'peers', 'logs', 'state'],
+    },
+  },
+  configs: [
+    {
+      backend: 'https://trace.dev.openmina.com:3086',
+      debugger: 'https://trace.dev.openmina.com:3087',
+      minaExplorer: 'https://devnet.api.minaexplorer.com',
+      name: 'Awesome Node 1 😎',
+    },
+    {
+      backend: 'https://sandbox.dev.openmina.com:3086',
+      minaExplorer: 'https://devnet.api.minaexplorer.com',
+      name: 'Awesome Node 2 😎',
+    },
+  ],
+};
+```
+
+The following properties of the `MinaEnv` configuration are optional:
+`isVanilla`, `identifier`, `globalConfig`, `globalConfig.features`, `configs.debugger`, `configs.minaExplorer`, `configs.features`
 
 ## Running tests
 The application is tested using the Cypress framework. The tests are located in the _cypress/e2e_ directory. To run the tests, you need to run the following command:

@@ -1,14 +1,14 @@
-<div class="flex-row align-center">
+<div class="fx-row-vert-cent">
   <span class="tertiary mr-10 f-600">Height</span>
-  <button class="btn-secondary h-sm w-sm mr-5 ml-10 flex-row flex-center align-center"
+  <button class="btn-secondary h-sm w-sm mr-5 ml-10 fx-row-full-cent"
           [class.disabled]="firstBlock === activeBlock"
           [tooltip]="'First block'"
           [showDelay]="500"
           (click)="getBlock(firstBlock)">
     <span class="mina-icon f-18">first_page</span>
   </button>
-  <div class="pagination-group flex-row align-center bg-selected-container border-rad-4">
-    <button class="h-sm w-sm flex-row flex-center align-center"
+  <div class="pagination-group fx-row-vert-cent bg-selected-container border-rad-4">
+    <button class="h-sm w-sm fx-row-full-cent"
             [class.disabled]="firstBlock === activeBlock"
             [tooltip]="'Prev block'"
             [showDelay]="500"
@@ -16,7 +16,7 @@
       <span class="mina-icon f-18">navigate_before</span>
     </button>
     <span class="f-600 selected-primary pl-5 pr-5">{{ activeBlock }}</span>
-    <button class="h-sm w-sm flex-row flex-center align-center"
+    <button class="h-sm w-sm fx-row-full-cent"
             [class.disabled]="earliestBlock === activeBlock"
             [tooltip]="'Next block'"
             [showDelay]="500"
@@ -24,7 +24,7 @@
       <span class="mina-icon f-18">navigate_next</span>
     </button>
   </div>
-  <button class="btn-secondary h-sm w-sm mr-10 ml-5 flex-row flex-center align-center"
+  <button class="btn-secondary h-sm w-sm mr-10 ml-5 fx-row-full-cent"
           [class.disabled]="earliestBlock === activeBlock"
           [tooltip]="'Last block'"
           [showDelay]="500"
@@ -39,5 +39,5 @@
   <button class="h-sm btn-primary mr-10"
           (click)="centerTrees()">Center Trees</button>
   <button class="h-sm btn-primary mr-10"
-          (click)="toggleLeafsMarking()">{{ !leafsMarking ? 'Highlight snarks' : 'Hide snarks' }}</button>
+          (click)="toggleLeafsMarking()">{{ !leafsMarking ? 'Highlight' : 'Hide' }} snarks</button>
 </div>

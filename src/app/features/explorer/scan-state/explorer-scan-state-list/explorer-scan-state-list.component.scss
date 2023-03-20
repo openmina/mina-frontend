@@ -5,6 +5,23 @@
 	position: relative;
 }
 
+.legend {
+	right: 16px;
+	top: 5px;
+
+	.leaf.Todo {
+		border-color: $aware-primary;
+	}
+
+	.leaf.Done {
+		border-color: $success-primary;
+	}
+
+	.leaf.empty {
+		border-color: $base-tertiary;
+	}
+}
+
 .stats-done {
 	color: $success-primary;
 	background-color: $success-container;
@@ -18,27 +35,6 @@
 .stats-empty {
 	color: $base-secondary;
 	background-color: $base-container;
-}
-
-.legend {
-	right: 16px;
-	top: 5px;
-
-	.list > * {
-		margin-bottom: 4px;
-	}
-
-	.leaf.Todo {
-		border-color: $aware-primary;
-	}
-
-	.leaf.Done {
-		border-color: $success-primary;
-	}
-
-	.leaf.empty {
-		border-color: $base-tertiary;
-	}
 }
 
 .leaf-row {

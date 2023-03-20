@@ -11,8 +11,7 @@
       </span>
     </span>
   </div>
-  <cdk-virtual-scroll-viewport class="border-bottom border-top h-100 overflow-y-scroll"
-                               fxFlex="calc(100% - 36px)"
+  <cdk-virtual-scroll-viewport class="border-bottom border-top h-100 overflow-y-scroll h-minus-lg"
                                [itemSize]="itemSize">
     <div *cdkVirtualFor="let node of nodes; let i=index"
          (click)="onRowClick(node)"
@@ -34,8 +33,8 @@
       <span>{{ node.source || '-' }}</span>
       <span [tooltip]="node.addedTx + ' added, ' + node.broadcastedTx + ' broadcasted, ' + node.receivedTx + ' received'">{{ node.txPool || '-' }}</span>
       <span [tooltip]="node.snarkDiffBroadcasted + ' broadcasted, ' + node.snarkDiffReceived + ' received, ' + node.pendingSnarkWork + ' pending snark work'">{{ node.snarkPool || '-' }}</span>
-      <span class="flex-row align-center">
-        <button class="btn-primary flex-row align-center flex-center primary-hover"
+      <span class="fx-row-vert-cent">
+        <button class="btn-primary fx-row-full-cent primary-hover"
                 [disabled]="downloadingNodes.includes(i)"
                 (click)="downloadLogs(node, i, $event)">
           <span class="mina-icon icon-200 f-20">{{ downloadingNodes.includes(i) ? 'more_horiz' : 'download' }}</span>
@@ -45,13 +44,13 @@
   </cdk-virtual-scroll-viewport>
 </div>
 <ng-template #mismatch>
-  <div class="no-results p-absolute w-100 h-100 z-1 flex-column align-center flex-center">
+  <div class="no-results p-absolute w-100 h-100 z-1 fx-row-full-cent">
     <span class="mina-icon mb-16 icon-100 f-40">error</span>
     <span class="f-600 f-big">No results</span>
     <span class="tertiary mt-8 text-center">
       The current selected height is bigger than the biggest height in the network.
     </span>
-    <button class="btn-selected flex-row align-center pl-12 pr-12 mt-16 h-lg"
+    <button class="btn-selected fx-row-vert-cent pl-12 pr-12 mt-16 h-lg"
             (click)="setActiveBlock()">
       <span class="mr-5 mina-icon icon-200 f-20">arrow_right_alt</span>
       See latest height ({{ latestHeight }})

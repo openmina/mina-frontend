@@ -27,7 +27,7 @@ import {
   templateUrl: './explorer-scan-state-toolbar.component.html',
   styleUrls: ['./explorer-scan-state-toolbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'border-bottom h-xl flex-row align-center pl-12 flex-between' },
+  host: { class: 'border-bottom h-xl fx-row-vert-cent pl-12 flex-between' },
 })
 export class ExplorerScanStateToolbarComponent extends ManualDetection implements OnInit {
 

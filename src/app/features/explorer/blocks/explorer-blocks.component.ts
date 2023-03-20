@@ -23,6 +23,7 @@ export class ExplorerBlocksComponent extends StoreDispatcher implements OnInit, 
     this.select(selectActiveNode, () => {
       this.getBlocks();
     }, filter(Boolean), skip(1));
+
     this.select(selectAppNodeStatus, (status: NodeStatus) => {
       this.blockLevel = status.blockLevel;
       this.getBlocks();
