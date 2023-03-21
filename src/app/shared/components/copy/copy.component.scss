@@ -1,0 +1,25 @@
+@import 'flex';
+@import 'variables';
+
+.cpy {
+	@include flexRowVertCenter();
+	cursor: pointer;
+	background-color: $base-surface;
+	height: 26px;
+	width: 26px;
+	top: 5px;
+	right: 0;
+	box-shadow: -10px 0px 8px 0px $base-tertiary;
+
+	.mina-icon {
+		color: $base-tertiary;
+	}
+
+	&:hover {
+		background-color: $base-surface-top;
+
+		.mina-icon {
+			color: $base-primary;
+		}
+	}
+}

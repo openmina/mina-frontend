@@ -1,21 +1,21 @@
 import { Injectable } from '@angular/core';
-import { GraphQLService } from '@core/services/graph-ql.service';
 import { map, Observable } from 'rxjs';
 import { TracingBlockTrace } from '@shared/types/tracing/blocks/tracing-block-trace.type';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 import { TracingTraceCheckpoint } from '@shared/types/tracing/blocks/tracing-trace-checkpoint.type';
+import { TracingGraphQlService } from '@core/services/tracing-graph-ql.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TracingBlocksService {
 
-  constructor(private graphQL: GraphQLService) { }
+  constructor(private tracingGQL: TracingGraphQlService) { }
 
   getTraces(): Observable<TracingBlockTrace[]> {
-    return this.graphQL.query<any>('getTraces', `{ blockTraces }`)
+    return this.tracingGQL.query<any>('getTraces', `{ blockTraces }`)
       .pipe(
         map((response: any) =>
           response.blockTraces.traces.reverse().map((trace: any, id: number) => ({
@@ -33,7 +33,7 @@ export class TracingBlocksService {
   }
 
   getBlockTraceGroups(hash: string): Observable<TracingTraceGroup[]> {
-    return this.graphQL.query<any>('blockStructuredTrace', `{ blockStructuredTrace(block_identifier: "${hash}") }`)
+    return this.tracingGQL.query<any>('blockStructuredTrace', `{ blockStructuredTrace(block_identifier: "${hash}") }`)
       .pipe(
         map((response: any) =>
           response.blockStructuredTrace.sections.map((group: any) => ({

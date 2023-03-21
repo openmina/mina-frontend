@@ -35,6 +35,7 @@ import { withLatestFrom } from 'rxjs/operators';
 import { removeParamsFromURL } from '@shared/helpers/router.helper';
 import { AppService } from './app.service';
 import { getFirstFeature, isFeatureEnabled } from '@shared/constants/config';
+import { TracingGraphQlService } from '@core/services/tracing-graph-ql.service';
 
 const INIT_EFFECTS = '@ngrx/effects/init';
 
@@ -60,6 +61,7 @@ export class AppEffects extends MinaBaseEffect<AppActions> {
   constructor(private actions$: Actions,
               private appService: AppService,
               private graphQL: GraphQLService,
+              private tracingGQL: TracingGraphQlService,
               private blockService: BlockService,
               private router: Router,
               store: Store<MinaState>) {
@@ -80,7 +82,10 @@ export class AppEffects extends MinaBaseEffect<AppActions> {
     this.initSuccess$ = createEffect(() => this.actions$.pipe(
       ofType(APP_INIT_SUCCESS),
       this.latestActionState<AppInitSuccess>(),
-      tap(({ state }) => this.graphQL.changeGraphQlProvider(state.app.activeNode)),
+      tap(({ state }) => {
+        this.graphQL.changeGraphQlProvider(state.app.activeNode);
+        this.tracingGQL.changeGraphQlProvider(state.app.activeNode);
+      }),
       map(() => ({ type: APP_START_BACKGROUND_CHECKS })),
     ));
 

@@ -4,6 +4,7 @@ import { TracingBlockTraceStatus } from '@shared/types/tracing/blocks/tracing-bl
 export interface DashboardNode {
   index: number;
   url: string;
+  tracingUrl: string;
   name: string;
   status: AppNodeStatusTypes;
   blockchainLength: number;

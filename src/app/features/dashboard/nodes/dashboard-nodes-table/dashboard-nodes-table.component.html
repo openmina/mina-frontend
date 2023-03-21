@@ -24,7 +24,9 @@
       <span>
         <span class="status f-600" [ngClass]="node.status.toLowerCase()">{{ node.status }}</span>
       </span>
-      <span>{{ node.hash || '-' | truncateMid }}</span>
+      <span>{{ node.hash || '-' | truncateMid }}
+<!--        <mina-copy [value]="node.hash" [display]="node.hash || '-' | truncateMid"></mina-copy>-->
+      </span>
       <span>{{ node.blockchainLength || '-' }}</span>
       <span>{{ node.addr || '-' }}</span>
       <span>{{ node.date || '-' }}</span>

@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
-import { catchError, concatAll, EMPTY, filter, finalize, from, map, Observable, of, take } from 'rxjs';
+import { catchError, concatAll, EMPTY, filter, finalize, from, map, Observable, of, switchMap, take } from 'rxjs';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
 import { TracingBlocksService } from '@tracing/tracing-blocks/tracing-blocks.service';
-import { ConfigService } from '@core/services/config.service';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { lastItem } from '@shared/helpers/array.helper';
 import { isNotVanilla } from '@shared/constants/config';
@@ -21,46 +20,7 @@ export class DashboardNodesService {
   readonly options = { headers: { 'Content-Type': 'application/json' } };
 
   constructor(private http: HttpClient,
-              private loadingService: LoadingService,
-              private config: ConfigService) { }
-
-  /*
-    // ------ THIS USES AGGREGATOR APPROACH ------
-
-    getLatestHeight(): Observable<number> {
-      return this.http.get<number>(this.API + '/traces/latest/height');
-    }
-
-    getNodes2(height?: number | string): Observable<DashboardNode[]> {
-      height = height || 'latest';
-      return this.http.get<any[]>(this.API + '/traces/' + height)
-        .pipe(map((response: any[]) =>
-          response.map((node: any, index: number) => {
-            return ({
-              index,
-              url: node.node,
-              name: node.node.replace(origin, ''),
-              hash: node.block_hash,
-              blockchainLength: node.height,
-              date: node.date_time ? toReadableDate(node.date_time * ONE_THOUSAND) : undefined,
-              timestamp: node.date_time ? node.date_time * ONE_THOUSAND : undefined,
-              source: node.source,
-              latency: node.receive_latency,
-              status: node.sync_status,
-              blockApplication: node.block_application,
-              addr: node.node_address,
-              txPool: node.transaction_pool_size,
-              addedTx: node.metrics.transactionsAddedToPool || 0,
-              broadcastedTx: node.metrics.transactionPoolDiffBroadcasted || 0,
-              receivedTx: node.metrics.transactionPoolDiffReceived || 0,
-              snarkPool: node.snark_pool_size,
-              snarkDiffReceived: node.metrics.snarkPoolDiffReceived || 0,
-              snarkDiffBroadcasted: node.metrics.snarkPoolDiffBroadcasted || 0,
-              pendingSnarkWork: node.metrics.pendingSnarkWork || 0,
-            });
-          }),
-        ));
-    }*/
+              private loadingService: LoadingService) { }
 
   getLatestHeight(nodes: DashboardNode[]): Observable<number> {
     return from(
@@ -69,7 +29,7 @@ export class DashboardNodesService {
           .post(node.url, { query: latestBlockHeight }, this.options)
           .pipe(
             map((response: any) => Number(lastItem(response.data.bestChain).protocolState.consensusState.blockchainLength)),
-            catchError(() => EMPTY)
+            catchError(() => EMPTY),
           ),
       ),
     ).pipe(
@@ -81,12 +41,17 @@ export class DashboardNodesService {
 
   getNode(node: DashboardNode, height: number): Observable<DashboardNode[]> {
     if (isNotVanilla()) {
-      const body = { query: syncQuery(height) };
+      const body = { query: syncQuery };
       return this.http.post(node.url, body, this.options).pipe(
-        map((response: any) => {
-          const daemon = response.data.daemonStatus;
-          const metrics = response.data.daemonStatus.metrics;
-          const blockTraces = response.data.blockTraces.traces;
+        switchMap((syncResponse: any) =>
+          this.http.post(node.tracingUrl, { query: tracingQuery(height) }, this.options).pipe(
+            map((tracingResponse: any) => ({ syncResponse, tracingResponse })),
+          ),
+        ),
+        map(({ syncResponse, tracingResponse }: { syncResponse: any, tracingResponse: any }) => {
+          const daemon = syncResponse.data.daemonStatus;
+          const metrics = syncResponse.data.daemonStatus.metrics;
+          const blockTraces = tracingResponse.data.blockTraces.traces;
           return blockTraces.map((trace: any) => ({
             ...node,
             status: daemon.syncStatus,
@@ -184,7 +149,7 @@ export class DashboardNodesService {
 
   getBlockTraceGroups(node: DashboardNode): Observable<TracingTraceGroup[]> {
     return this.http.post(
-      node.url,
+      node.tracingUrl,
       { query: `query blockStructuredTrace { blockStructuredTrace(block_identifier: "${node.hash}") }` },
       { headers: { 'Content-Type': 'application/json' } },
     )
@@ -197,11 +162,48 @@ export class DashboardNodesService {
         }),
       );
   }
+
+  /*
+    // ------ THIS USES AGGREGATOR APPROACH ------
+
+    getLatestHeight(): Observable<number> {
+      return this.http.get<number>(this.API + '/traces/latest/height');
+    }
+
+    getNodes2(height?: number | string): Observable<DashboardNode[]> {
+      height = height || 'latest';
+      return this.http.get<any[]>(this.API + '/traces/' + height)
+        .pipe(map((response: any[]) =>
+          response.map((node: any, index: number) => {
+            return ({
+              index,
+              url: node.node,
+              name: node.node.replace(origin, ''),
+              hash: node.block_hash,
+              blockchainLength: node.height,
+              date: node.date_time ? toReadableDate(node.date_time * ONE_THOUSAND) : undefined,
+              timestamp: node.date_time ? node.date_time * ONE_THOUSAND : undefined,
+              source: node.source,
+              latency: node.receive_latency,
+              status: node.sync_status,
+              blockApplication: node.block_application,
+              addr: node.node_address,
+              txPool: node.transaction_pool_size,
+              addedTx: node.metrics.transactionsAddedToPool || 0,
+              broadcastedTx: node.metrics.transactionPoolDiffBroadcasted || 0,
+              receivedTx: node.metrics.transactionPoolDiffReceived || 0,
+              snarkPool: node.snark_pool_size,
+              snarkDiffReceived: node.metrics.snarkPoolDiffReceived || 0,
+              snarkDiffBroadcasted: node.metrics.snarkPoolDiffBroadcasted || 0,
+              pendingSnarkWork: node.metrics.pendingSnarkWork || 0,
+            });
+          }),
+        ));
+    }*/
 }
 
-const syncQuery = (height: number) => `
+const syncQuery = `
   query status {
-    blockTraces(height: ${height}),
     daemonStatus {
       blockchainLength
       addrsAndPorts {
@@ -223,6 +225,10 @@ const syncQuery = (height: number) => `
       }
     }
   }
+`;
+
+const tracingQuery = (height: number) => `
+  query traces { blockTraces(height: ${height}) }
 `;
 
 const syncQueryVanilla = `

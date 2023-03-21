@@ -61,6 +61,7 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
         return ({
           ...{} as any,
           url: node.graphql + '/graphql',
+          tracingUrl: node['tracing-graphql'] + '/graphql',
           name: name(node.graphql),
           status: AppNodeStatusTypes.OFFLINE,
         });
