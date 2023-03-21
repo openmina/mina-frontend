@@ -26,9 +26,9 @@ export class ExplorerBlocksTableComponent extends StoreDispatcher implements OnI
     { name: 'height' },
     { name: 'global slot', sort: 'globalSlot' },
     { name: 'user commands', sort: 'txCount' },
+    { name: 'zk apps', sort: 'zkAppsCount' },
     { name: 'total transactions', sort: 'totalTxCount', tooltip: 'User commands + Fee transfers + Zkapp commands + 1 coinbase' },
     { name: 'snark jobs', sort: 'snarkCount' },
-    { name: 'zk apps', sort: 'zkAppsCount' },
     { name: 'staged ledger hash', sort: 'stagedLedgerHash' },
     { name: 'snarked ledger hash', sort: 'snarkedLedgerHash' },
   ];
