@@ -8,7 +8,7 @@ export const environment: Readonly<MinaEnv> = {
   },
   configs: [
     {
-      backend: 'https://webrtc.webnode.openmina.com',
+      graphql: 'https://webrtc.webnode.openmina.com',
       features: [],
       name: 'Web Node Demo',
     },

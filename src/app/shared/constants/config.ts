@@ -8,7 +8,8 @@ export const CONFIG: Readonly<MinaEnv> = {
   configs: environment.configs.map((node: MinaNode) => ({
     ...node,
     debugger: getURL(node.debugger),
-    backend: getURL(node.backend),
+    graphql: getURL(node.graphql),
+    'tracing-graphql': getURL(node['tracing-graphql']),
   })),
 };
 

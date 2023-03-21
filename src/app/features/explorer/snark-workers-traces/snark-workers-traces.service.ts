@@ -18,7 +18,7 @@ export class SnarkWorkersTracesService {
               private config: ConfigService) { }
 
   getWorkers(): Observable<string[]> {
-    return this.http.get<string[]>(removeLast(this.config.API.split('/')).join('/') + '/snarker-http-coordinator/workers');
+    return this.http.get<string[]>(removeLast(this.config.GQL.split('/')).join('/') + '/snarker-http-coordinator/workers');
   }
 
   getTraces(filter: SnarkWorkerTraceFilter): Observable<SnarkWorkerTraceJob[]> {
@@ -30,7 +30,7 @@ export class SnarkWorkersTracesService {
       build.push(f[0] === 'to' ? `to_t=${f[1]}` : null);
     });
     const queryParams = filters.length ? '?' + build.filter(Boolean).join('&') : '';
-    return this.http.get(removeLast(this.config.API.split('/')).join('/') + '/snarker-http-coordinator/worker-stats' + queryParams).pipe(
+    return this.http.get(removeLast(this.config.GQL.split('/')).join('/') + '/snarker-http-coordinator/worker-stats' + queryParams).pipe(
       map(response => this.mapTraces(response)),
     );
   }

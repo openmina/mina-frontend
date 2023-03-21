@@ -1,23 +1,17 @@
 import { Injectable } from '@angular/core';
-import { catchError, finalize, map, Observable, throwError } from 'rxjs';
-import { getURL } from '@shared/constants/config';
-import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 import { LoadingService } from '@core/services/loading.service';
 import { HttpClient } from '@angular/common/http';
-
+import { MinaNode } from '@shared/types/core/environment/mina-env.type';
+import { getURL } from '@shared/constants/config';
+import { catchError, finalize, map, Observable, throwError } from 'rxjs';
 
 const SKIPPED_GRAPHQL_NAMES: string[] = [
-  'blockStatus',
-  'pooledUserCommands',
-  'transactionStatus',
-  'getAccount',
-  'getTransactions',
 ];
 
 @Injectable({
   providedIn: 'root',
 })
-export class GraphQLService {
+export class TracingGraphQlService {
 
   private url: string;
 
@@ -25,7 +19,7 @@ export class GraphQLService {
               private http: HttpClient) { }
 
   changeGraphQlProvider(node: MinaNode): void {
-    this.url = getURL(node.graphql + '/graphql');
+    this.url = getURL(node['tracing-graphql'] + '/graphql');
   }
 
   query<T>(queryName: string, query: string, variables?: { [key: string]: any }): Observable<T> {
@@ -64,8 +58,7 @@ export class GraphQLService {
           if (!skipLoadingIndication) {
             this.loadingService.removeURL();
           }
-        })
+        }),
       );
   }
 }
-

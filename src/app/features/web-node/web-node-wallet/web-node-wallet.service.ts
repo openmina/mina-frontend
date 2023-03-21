@@ -294,7 +294,7 @@ export class WebNodeWalletService {
   }
 
   addTokensToWallet(publicKey: string, network: string = 'devnet'): Observable<any> {
-    return this.http.post(this.config.API + '/faucet', {
+    return this.http.post(this.config.GQL + '/faucet', {
       network,
       address: publicKey,
     }, { headers: { 'Content-Type': 'application/json' } });

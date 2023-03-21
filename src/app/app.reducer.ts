@@ -117,7 +117,7 @@ export function reducer(state: AppState = initialState, action: any): AppState {
 
     case APP_ADD_NODE: {
       const newNode: MinaNode = {
-        backend: action.payload,
+        graphql: action.payload,
         features: {
           dashboard: ['nodes'],
           explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],

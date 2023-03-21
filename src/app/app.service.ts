@@ -27,7 +27,7 @@ export class AppService {
     return from(
       configs.map(node =>
         this.http
-          .post(node.backend + '/graphql', { query: latestBlockHeight }, { headers: { 'Content-Type': 'application/json' } })
+          .post(node.graphql + '/graphql', { query: latestBlockHeight }, { headers: { 'Content-Type': 'application/json' } })
           .pipe(
             map(() => node),
             switchMap(() => {

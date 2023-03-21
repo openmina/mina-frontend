@@ -21,7 +21,7 @@ export class SystemResourcesService {
 
   getResources(): Observable<SystemResourcesChartData> {
     this.loadingService.addURL();
-    return this.http.get<any>(this.config.API + '/resources?limit=1500').pipe(
+    return this.http.get<any>(this.config.GQL + '/resources?limit=1500').pipe(
       map(response => SystemResourcesService.mapSystemResourcesResponse(response)),
       finalize(() => this.loadingService.removeURL()),
     );

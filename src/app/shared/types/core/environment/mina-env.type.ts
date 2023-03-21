@@ -15,7 +15,8 @@ export interface MinaEnv {
 
 export interface MinaNode {
   name: string;
-  backend: string;
+  graphql: string;
+  'tracing-graphql'?: string;
   debugger?: string;
   minaExplorer?: string;
   features?: FeaturesConfig | string[];

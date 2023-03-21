@@ -53,7 +53,7 @@ export class NodePickerComponent extends ManualDetection implements AfterViewIni
         map(() => this.searchInput.nativeElement.value.toLowerCase()),
       )
       .subscribe((value: string) => {
-        this.filteredNodes = this.nodes.filter(n => n.name.toLowerCase().includes(value) || n.backend.toLowerCase().includes(value));
+        this.filteredNodes = this.nodes.filter(n => n.name.toLowerCase().includes(value) || n.graphql.toLowerCase().includes(value));
         this.detect();
       });
   }

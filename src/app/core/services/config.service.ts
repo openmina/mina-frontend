@@ -21,8 +21,12 @@ export class ConfigService {
       .subscribe((node: MinaNode) => this.node = node);
   }
 
-  get API(): string {
-    return this.node.backend;
+  get GQL(): string {
+    return this.node.graphql;
+  }
+
+  get TRACING_GQL(): string {
+    return this.node['tracing-graphql'];
   }
 
   get DEBUGGER(): string {

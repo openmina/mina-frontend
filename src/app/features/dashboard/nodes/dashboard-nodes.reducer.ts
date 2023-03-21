@@ -60,8 +60,8 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
       const nodes = sortNodes(CONFIG.configs.map((node: MinaNode) => {
         return ({
           ...{} as any,
-          url: node.backend + '/graphql',
-          name: name(node.backend),
+          url: node.graphql + '/graphql',
+          name: name(node.graphql),
           status: AppNodeStatusTypes.OFFLINE,
         });
       }), state.sort);

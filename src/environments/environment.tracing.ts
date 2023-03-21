@@ -8,7 +8,7 @@ export const environment: Readonly<MinaEnv> = {
   },
   configs: [
     {
-      backend: 'https://trace.dev.openmina.com:3086',
+      graphql: 'https://trace.dev.openmina.com:3086',
       minaExplorer: 'https://devnet.api.minaexplorer.com',
       features: {
         tracing: ['overview', 'blocks'],
@@ -17,7 +17,7 @@ export const environment: Readonly<MinaEnv> = {
       name: 'initial-trace',
     },
     {
-      backend: 'https://sandbox.dev.openmina.com:3086',
+      graphql: 'https://sandbox.dev.openmina.com:3086',
       minaExplorer: 'https://devnet.api.minaexplorer.com',
       features: {
         tracing: ['overview', 'blocks'],
