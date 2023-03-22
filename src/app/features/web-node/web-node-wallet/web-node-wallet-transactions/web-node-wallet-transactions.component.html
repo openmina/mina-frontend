@@ -51,13 +51,21 @@
 </div>
 
 <ng-template #rowTemplate let-item="item">
-  <span class="secondary">{{ item.id | truncateMid }}</span>
-  <span class="secondary">{{ item.from | truncateMid }}</span>
-  <span class="secondary">{{ item.to | truncateMid }}</span>
+  <span class="secondary">
+    <mina-copy [value]="item.id" [display]="item.id | truncateMid"></mina-copy>
+  </span>
+  <span class="secondary">
+    <mina-copy [value]="item.from" [display]="item.from | truncateMid"></mina-copy>
+  </span>
+  <span class="secondary">
+    <mina-copy [value]="item.to" [display]="item.to | truncateMid"></mina-copy>
+  </span>
   <span class="tertiary">{{ item.amount }}</span>
   <span class="tertiary">{{ item.fee }}</span>
   <span class="tertiary">{{ item.nonce }}</span>
-  <span class="tertiary">{{ item.memo || '-' | truncateMid }}</span>
+  <span class="tertiary">
+    <mina-copy [value]="item.memo" [display]="item.memo || '-' | truncateMid"></mina-copy>
+  </span>
   <span>
     <span class="status border-rad-4 pl-5 pr-5 text-capitalize" [ngClass]="item.status">{{ item.status }}</span>
   </span>

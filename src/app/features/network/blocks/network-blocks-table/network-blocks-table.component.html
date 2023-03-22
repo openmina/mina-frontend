@@ -30,17 +30,19 @@
       </span>
       <span class="tertiary">{{ block.date }}</span>
       <span [tooltip]="'Producer ID: ' + block.producerId | truncateMid: 19"
-            [showDelay]="500">{{ block.hash | truncateMid }}</span>
+            [showDelay]="500">
+        <mina-copy [value]="block.hash" [display]="block.hash | truncateMid"></mina-copy>
+      </span>
       <span class="tertiary"
             [tooltip]="'Global slot: ' + block.globalSlot"
             [showDelay]="500">{{ block.height }}</span>
-      <span class="secondary">
+      <span>
         <span (click)="seeMessagesForAddress(block.sender)"
               class="underline"
               [tooltip]="'See messages for this address'"
               [showDelay]="1000">{{ block.sender }}</span>
       </span>
-      <span class="secondary">
+      <span>
         <span (click)="seeMessagesForAddress(block.receiver)"
               class="underline"
               [tooltip]="'See messages for this address'"

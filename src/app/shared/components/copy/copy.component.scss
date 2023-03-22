@@ -1,25 +1,41 @@
 @import 'flex';
 @import 'variables';
 
-.cpy {
-	@include flexRowVertCenter();
-	cursor: pointer;
-	background-color: $base-surface;
-	height: 26px;
-	width: 26px;
-	top: 5px;
-	right: 0;
-	box-shadow: -10px 0px 8px 0px $base-tertiary;
+:host {
+	.p-relative {
+		display: inline-flex;
+		align-items: center;
 
-	.mina-icon {
-		color: $base-tertiary;
-	}
+		.cpy {
+			@include flexRowFullCenter();
+			cursor: pointer;
+			background-color: $base-surface;
+			height: 26px;
+			width: 26px;
+			top: 5px;
+			right: -10px;
+			border: 1px solid $base-divider;
 
-	&:hover {
-		background-color: $base-surface-top;
+			&.p-absolute {
+				box-shadow: -11px 0px 8px 0px $special-table-hover;
+			}
 
-		.mina-icon {
-			color: $base-primary;
+			.mina-icon {
+				color: $base-secondary !important;
+			}
+
+			&:hover {
+				background-color: $base-surface-top;
+				border-width: 2px;
+
+				.mina-icon {
+					color: $base-primary !important;
+				}
+			}
+		}
+
+		&.d-flex .cpy {
+			right: 0;
 		}
 	}
 }

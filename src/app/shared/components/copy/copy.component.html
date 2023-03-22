@@ -1,5 +1,7 @@
-<span>{{ display || value }}</span>
-<span [copyToClipboard]="value"
-      class="cpy p-absolute border-rad-4">
-  <span class="mina-icon icon-200">content_copy</span>
+<span class="p-relative" [class.d-flex]="fullWidth">{{ display }}
+  <span [copyToClipboard]="value"
+        [ngClass]="hidden ? 'p-absolute' : 'ml-5'"
+        class="cpy border-rad-4">
+    <span class="mina-icon icon-200">content_copy</span>
+  </span>
 </span>

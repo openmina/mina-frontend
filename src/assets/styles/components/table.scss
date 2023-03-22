@@ -90,6 +90,14 @@
 				}
 			}
 		}
+
+		span mina-copy .cpy {
+			opacity: 0;
+		}
+
+		&:hover span mina-copy .cpy {
+			opacity: 1;
+		}
 	}
 
 	&.active {

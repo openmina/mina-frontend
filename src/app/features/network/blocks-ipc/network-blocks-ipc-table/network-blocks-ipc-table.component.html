@@ -24,15 +24,17 @@
          [class.row-even]="i % 2 === 0"
          class="row">
       <span class="tertiary">{{ block.date }}</span>
-      <span class="secondary">{{ block.hash | truncateMid }}</span>
+      <span>
+        <mina-copy [value]="block.hash" [display]="block.hash | truncateMid"></mina-copy>
+      </span>
       <span class="tertiary">{{ block.height }}</span>
-      <span class="secondary">
+      <span>
         <span (click)="seeMessagesForAddress(block.nodeAddress)"
               class="underline"
               [tooltip]="'See messages for this address'"
               [showDelay]="1000">{{ block.nodeAddress }}</span>
       </span>
-      <span class="secondary">
+      <span>
         <span (click)="seeMessagesForAddress(block.peerAddress)"
               class="underline"
               [tooltip]="'Peer ID: ' + block.peerId | truncateMid: 17"

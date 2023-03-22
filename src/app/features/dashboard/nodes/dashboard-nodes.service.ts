@@ -55,7 +55,7 @@ export class DashboardNodesService {
           return blockTraces.map((trace: any) => ({
             ...node,
             status: daemon.syncStatus,
-            blockchainLength: trace.blockchain_length_int,
+            blockchainLength: trace.blockchain_length,
             hash: trace.state_hash,
             addr: daemon.addrsAndPorts.externalIp + ':' + daemon.addrsAndPorts.clientPort,
             date: toReadableDate(trace.started_at * ONE_THOUSAND),

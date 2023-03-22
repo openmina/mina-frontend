@@ -61,6 +61,7 @@ const DARK_THEME: Theme = {
       [`${SPECIAL_CSS_PREFIX}selected-alt-2-container`]: 'rgba(123,204,196,0.1)',
       [`${SPECIAL_CSS_PREFIX}selected-alt-3-primary`]: '#acdea0',
       [`${SPECIAL_CSS_PREFIX}selected-alt-3-container`]: 'rgba(204,235,197,0.1)',
+      [`${SPECIAL_CSS_PREFIX}table-hover`]: '#252525',
     },
     chart: {
       [`${CHART_CSS_PREFIX}yellow-red-5`]: '#b10026',
@@ -147,6 +148,7 @@ const LIGHT_THEME: Theme = {
       [`${SPECIAL_CSS_PREFIX}selected-alt-2-container`]: 'rgba(89,191,181,0.1)',
       [`${SPECIAL_CSS_PREFIX}selected-alt-3-primary`]: '#acdea0',
       [`${SPECIAL_CSS_PREFIX}selected-alt-3-container`]: 'rgba(172,222,160,0.1)',
+      [`${SPECIAL_CSS_PREFIX}table-hover`]: '#ededed',
     },
     chart: {
       [`${CHART_CSS_PREFIX}yellow-red-5`]: '#b10026',

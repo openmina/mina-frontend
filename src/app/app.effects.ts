@@ -82,10 +82,7 @@ export class AppEffects extends MinaBaseEffect<AppActions> {
     this.initSuccess$ = createEffect(() => this.actions$.pipe(
       ofType(APP_INIT_SUCCESS),
       this.latestActionState<AppInitSuccess>(),
-      tap(({ state }) => {
-        this.graphQL.changeGraphQlProvider(state.app.activeNode);
-        this.tracingGQL.changeGraphQlProvider(state.app.activeNode);
-      }),
+      tap(({ state }) => this.changeGqlProvider(state.app.activeNode)),
       map(() => ({ type: APP_START_BACKGROUND_CHECKS })),
     ));
 
@@ -113,7 +110,7 @@ export class AppEffects extends MinaBaseEffect<AppActions> {
       ofType(APP_CHANGE_ACTIVE_NODE),
       this.latestActionState<AppChangeActiveNode>(),
       tap(({ state }) => {
-        this.graphQL.changeGraphQlProvider(state.app.activeNode);
+        this.changeGqlProvider(state.app.activeNode)
         this.nodeCheckInterval$.next(10000);
         const activePage = removeParamsFromURL(this.router.url.split('/')[1]) as FeatureType;
         this.router.navigate([], {
@@ -169,5 +166,10 @@ export class AppEffects extends MinaBaseEffect<AppActions> {
         }),
       ),
     );
+  }
+
+  private changeGqlProvider(node: MinaNode): void {
+    this.graphQL.changeGraphQlProvider(node);
+    this.tracingGQL.changeGraphQlProvider(node);
   }
 }

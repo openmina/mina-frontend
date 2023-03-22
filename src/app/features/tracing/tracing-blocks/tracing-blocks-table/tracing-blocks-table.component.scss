@@ -3,7 +3,7 @@
 .mina-table {
 	$col0: 96px;
 	$col1: 96px;
-	$col2: 220px;
+	$col2: 205px;
 	$col3: 220px;
 	$col4: 120px;
 	$col5: 120px;
@@ -16,8 +16,8 @@
 			cursor: pointer;
 		}
 
-		> span:nth-child(2) {
-			min-width: $col1;
+		> span:nth-child(4) {
+			min-width: $col3;
 		}
 
 		.Success {

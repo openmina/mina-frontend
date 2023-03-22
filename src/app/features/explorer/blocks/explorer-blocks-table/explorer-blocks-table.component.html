@@ -20,7 +20,9 @@
          [class.row-even]="i % 2 === 0"
          class="row">
       <span class="tertiary">{{ node.date }}</span>
-      <span>{{ node.hash | truncateMid }}</span>
+      <span>
+        <mina-copy [value]="node.hash" [display]="node.hash | truncateMid"></mina-copy>
+      </span>
       <span>
         <span (click)="goToScanState(node.height)"
               [tooltip]="'See scan state for this block'"
@@ -32,8 +34,12 @@
       <span>{{ node.zkAppsCount }}</span>
       <span>{{ node.totalTxCount }}</span>
       <span>{{ node.snarkCount }}</span>
-      <span class="tertiary">{{ node.stagedLedgerHash | truncateMid }}</span>
-      <span class="tertiary">{{ node.snarkedLedgerHash | truncateMid }}</span>
+      <span class="tertiary">
+        <mina-copy [value]="node.stagedLedgerHash" [display]="node.stagedLedgerHash | truncateMid" [fullWidth]="false"></mina-copy>
+      </span>
+      <span class="tertiary">
+        <mina-copy [value]="node.snarkedLedgerHash" [display]="node.snarkedLedgerHash | truncateMid" [fullWidth]="false"></mina-copy>
+      </span>
     </div>
   </cdk-virtual-scroll-viewport>
 </div>

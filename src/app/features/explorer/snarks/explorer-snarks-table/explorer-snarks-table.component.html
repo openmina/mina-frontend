@@ -19,7 +19,9 @@
     <div *cdkVirtualFor="let tx of snarks; let i=index"
          [class.row-even]="i % 2 === 0"
          class="row">
-      <span class="secondary">{{ tx.prover }}</span>
+      <span class="secondary">
+        <mina-copy [value]="tx.prover" [fullWidth]="false"></mina-copy>
+      </span>
       <span class="secondary">{{ tx.fee }}</span>
       <span class="tertiary truncate">{{ tx.workIds }}</span>
     </div>

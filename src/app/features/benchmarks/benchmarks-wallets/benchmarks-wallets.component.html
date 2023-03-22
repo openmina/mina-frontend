@@ -14,7 +14,9 @@
     <div *cdkVirtualFor="let wallet of wallets; let i=index; trackBy: trackWallets"
          [class.row-even]="i % 2 === 0"
          class="row">
-      <span>{{ wallet.publicKey }}</span>
+      <span>
+        <mina-copy [value]="wallet.publicKey" [display]="wallet.publicKey | truncateMid: 15"></mina-copy>
+      </span>
       <span>{{ wallet.minaTokens | number:'1.0-3':'fr' }}</span>
       <span class="secondary">{{ wallet.nonce }}</span>
       <span class="secondary">{{ wallet.mempoolNonce || '-' }}</span>

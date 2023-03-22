@@ -27,8 +27,12 @@
            (click)="seeBlockInNetwork(trace.height)">{{ trace.height }}</a>
       </span>
       <span class="tertiary">{{ trace.globalSlot || '-' }}</span>
-      <span class="truncate">{{ trace.hash | truncateMid: 15 }}</span>
-      <span class="tertiary truncate">{{ trace.creator || '-' | truncateMid: 15 }}</span>
+      <span class="truncate">
+        <mina-copy [value]="trace.hash" [display]="trace.hash | truncateMid: 15"></mina-copy>
+      </span>
+      <span class="tertiary truncate">
+        <mina-copy [value]="trace.creator" [display]="trace.creator | truncateMid: 15" [fullWidth]="false"></mina-copy>
+      </span>
       <span [innerHTML]="trace.totalTime | secDuration: secDurationConfig"></span>
       <span>{{ trace.source }}</span>
       <span [ngClass]="trace.status">{{ trace.status }}</span>

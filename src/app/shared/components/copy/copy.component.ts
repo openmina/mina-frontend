@@ -5,16 +5,18 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
   templateUrl: './copy.component.html',
   styleUrls: ['./copy.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'fx-row-vert-cent p-relative' },
 })
 export class CopyComponent implements OnInit {
 
   @Input() value: string;
   @Input() display: string;
-
-  constructor() { }
+  @Input() hidden: boolean = true;
+  @Input() fullWidth: boolean = true;
 
   ngOnInit(): void {
+    if (this.display === undefined) {
+      this.display = this.value;
+    }
   }
 
 }

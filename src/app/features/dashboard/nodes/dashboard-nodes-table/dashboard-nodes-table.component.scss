@@ -59,14 +59,3 @@
 		max-width: 80%;
 	}
 }
-
-::ng-deep {
-	.mina-table .row {
-		.cpy {
-			opacity: 0;
-		}
-		&:hover .cpy {
-			opacity: 1;
-		}
-	}
-}

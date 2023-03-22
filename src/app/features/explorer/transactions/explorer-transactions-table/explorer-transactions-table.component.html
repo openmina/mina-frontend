@@ -19,9 +19,15 @@
     <div *cdkVirtualFor="let tx of txs; let i=index"
          [class.row-even]="i % 2 === 0"
          class="row">
-      <span class="tertiary">{{ tx.id | truncateMid }}</span>
-      <span class="secondary">{{ tx.from | truncateMid }}</span>
-      <span class="secondary">{{ tx.to | truncateMid }}</span>
+      <span class="tertiary">
+        <mina-copy [value]="tx.id" [display]="tx.id | truncateMid"></mina-copy>
+      </span>
+      <span class="secondary">
+        <mina-copy [value]="tx.from" [display]="tx.from | truncateMid"></mina-copy>
+      </span>
+      <span class="secondary">
+        <mina-copy [value]="tx.to" [display]="tx.to | truncateMid"></mina-copy>
+      </span>
       <span class="secondary">{{ tx.amount }}</span>
       <span class="secondary">{{ tx.fee }}</span>
       <span class="tertiary">{{ tx.nonce }}</span>

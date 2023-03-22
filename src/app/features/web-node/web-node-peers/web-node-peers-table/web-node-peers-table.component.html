@@ -20,7 +20,9 @@
              class="row">
           <span>{{ peer.id }}</span>
           <span>{{ peer.date }}</span>
-          <span>{{ peer.peerId | truncateMid: 17 }}</span>
+          <span>
+            <mina-copy [value]="peer.peerId" [display]="peer.peerId | truncateMid: 17"></mina-copy>
+          </span>
           <span class="secondary truncate">{{ peer.kind }}</span>
           <span class="truncate">{{ peer.summary || '-' }}</span>
           <span class="secondary truncate">{{ peer.level }}</span>
