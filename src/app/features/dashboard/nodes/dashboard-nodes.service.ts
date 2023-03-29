@@ -60,7 +60,7 @@ export class DashboardNodesService {
             addr: daemon.addrsAndPorts.externalIp + ':' + daemon.addrsAndPorts.clientPort,
             date: toReadableDate(trace.started_at * ONE_THOUSAND),
             timestamp: trace.started_at * ONE_THOUSAND,
-            blockApplication: blockTraces[0].total_time,
+            blockApplication: trace.total_time,
             txPool: metrics.transactionPoolSize || 0,
             addedTx: metrics.transactionsAddedToPool || 0,
             broadcastedTx: metrics.transactionPoolDiffBroadcasted || 0,

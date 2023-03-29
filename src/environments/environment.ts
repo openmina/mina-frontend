@@ -66,26 +66,31 @@ export const environment: Readonly<MinaEnv> = {
       name: 'node3',
       features: ['dashboard', 'resources', 'network', 'tracing', 'web-node', 'benchmarks', 'explorer'],
     },
-    // {
-    //   graphql: 'http://1.k8.openmina.com:31355/node4',
-    //   name: 'node4',
-    // },
-    // {
-    //   graphql: 'http://1.k8.openmina.com:31355/node5',
-    //   name: 'node5',
-    // },
-    // {
-    //   graphql: 'http://1.k8.openmina.com:31355/node6',
-    //   name: 'node6',
-    // },
-    // {
-    //   graphql: 'http://1.k8.openmina.com:31355/node7',
-    //   name: 'node7',
-    // },
-    // {
-    //   graphql: 'http://1.k8.openmina.com:31355/node8',
-    //   name: 'node8',
-    // },
+    {
+      graphql: 'http://1.k8.openmina.com:31355/node4',
+      'tracing-graphql': 'http://1.k8.openmina.com:31355/node4/internal-trace',
+      name: 'node4',
+    },
+    {
+      graphql: 'http://1.k8.openmina.com:31355/node5',
+      'tracing-graphql': 'http://1.k8.openmina.com:31355/node5/internal-trace',
+      name: 'node5',
+    },
+    {
+      graphql: 'http://1.k8.openmina.com:31355/node6',
+      'tracing-graphql': 'http://1.k8.openmina.com:31355/node6/internal-trace',
+      name: 'node6',
+    },
+    {
+      graphql: 'http://1.k8.openmina.com:31355/node7',
+      'tracing-graphql': 'http://1.k8.openmina.com:31355/node7/internal-trace',
+      name: 'node7',
+    },
+    {
+      graphql: 'http://1.k8.openmina.com:31355/node8',
+      'tracing-graphql': 'http://1.k8.openmina.com:31355/node8/internal-trace',
+      name: 'node8',
+    },
     // {
     //   graphql: 'http://1.k8.openmina.com:31355/node9',
     //   name: 'node9',

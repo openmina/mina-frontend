@@ -178,7 +178,7 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
   private listenToClickOnRect(): void {
     this.clickableRect
       .datum(this.data)
-      .on('click', (evt: any, points: SystemResourcesPoint[]) => {
+      .on('click', (evt: PointerEvent, points: SystemResourcesPoint[]) => {
         const mouseX = d3.pointer(evt)[0];
         const point = this.getPointFromMousePosition(evt, points);
         this.dispatch(SystemResourcesSetActivePoint, this.createActivePoint(point));
@@ -219,8 +219,8 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
         .attr('fill', 'transparent')
         .attr('width', this.width)
         .attr('height', this.height)
-        .on('mousemove', (evt: any, points: SystemResourcesPoint[]) => this.onMouseMove(evt, points))
-        .on('mouseleave', (evt: any, points: SystemResourcesPoint[]) => this.onMouseMove(evt, points))
+        .on('mousemove', (evt: PointerEvent, points: SystemResourcesPoint[]) => this.onMouseMove(evt, points))
+        .on('mouseleave', (evt: PointerEvent, points: SystemResourcesPoint[]) => this.onMouseMove(evt, points))
         .on('mouseleave', () => this.onMouseLeave());
 
       this.tooltip = d3.select(this.tooltipLocation.nativeElement);
@@ -232,7 +232,7 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
     this.xAxisTooltipLine.style('opacity', 0);
   }
 
-  private onMouseMove(evt: any, points: SystemResourcesPoint[]): void {
+  private onMouseMove(evt: PointerEvent, points: SystemResourcesPoint[]): void {
     if (!points) {
       return;
     }
@@ -258,7 +258,7 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
     this.xAxisTooltipLine.style('opacity', 1);
   }
 
-  private getPointFromMousePosition(evt: any, points: SystemResourcesPoint[]): SystemResourcesPoint {
+  private getPointFromMousePosition(evt: PointerEvent, points: SystemResourcesPoint[]): SystemResourcesPoint {
     const mouseX = d3.pointer(evt)[0];
     const x0 = this.xScale.invert(mouseX);
     const i = d3.bisector((d: SystemResourcesPoint) => d.timestamp).left(points, x0, 1);
