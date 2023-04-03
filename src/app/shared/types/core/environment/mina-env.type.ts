@@ -35,6 +35,7 @@ export type FeatureType =
   | 'benchmarks'
   | 'explorer'
   | 'logs'
+  | 'fuzzing'
   ;
 
 interface SentryConfig {

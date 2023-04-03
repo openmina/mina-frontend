@@ -1,0 +1,30 @@
+<div class="mina-table flex-grow overflow-x-auto">
+  <div class="row head sorting pr-12" *ngIf="currentSort">
+    <span *ngFor="let th of tableHeads; let i=index"
+          (click)="sortTable(th.sort ?? th.name)"
+          [class.active]="currentSort.sortBy === (th.sort ?? th.name)"
+          class="pointer">
+      {{ th.name }}
+      <span [class.flip]="currentSort.sortDirection === 'descending'"
+            [class.show]="currentSort.sortBy === (th.sort ?? th.name)"
+            class="mina-icon f-18 icon-200">arrow_upward
+      </span>
+    </span>
+  </div>
+  <cdk-virtual-scroll-viewport class="border-bottom border-top overflow-y-scroll h-minus-lg"
+                               [itemSize]="itemSize">
+    <div *cdkVirtualFor="let file of files; let i=index"
+         (click)="onRowClick(file)"
+         [class.active]="activeFile === file"
+         [class.row-even]="i % 2 === 0"
+         class="row">
+      <span class="fx-row-vert-cent f-600">
+        <span class="border-rad-4 mr-5">
+          <span [style.width.%]="file.coverage"></span>
+        </span>
+        {{ file.coverage }} %
+      </span>
+      <span >{{ file.path }}</span>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>

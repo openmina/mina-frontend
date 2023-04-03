@@ -1,0 +1,5794 @@
+{
+  "filename": "src/scan_state/pending_coinbase.rs",
+  "lines": [
+    {
+      "line": "///",
+      "counters": []
+    },
+    {
+      "line": "/// Pending_coinbase is to keep track of all the coinbase transactions that have been",
+      "counters": []
+    },
+    {
+      "line": "/// applied to the ledger but for which there is no ledger proof yet. Every ledger",
+      "counters": []
+    },
+    {
+      "line": "/// proof corresponds to a sequence of coinbase transactions which is part of all the",
+      "counters": []
+    },
+    {
+      "line": "/// transactions it proves. Each of these sequences[Stack] are stored using the merkle",
+      "counters": []
+    },
+    {
+      "line": "/// tree representation. The stacks are operated in a FIFO manner by keeping track of",
+      "counters": []
+    },
+    {
+      "line": "/// its positions in the merkle tree. Whenever a ledger proof is emitted, the oldest",
+      "counters": []
+    },
+    {
+      "line": "/// stack is removed from the tree and when a new coinbase is applied, the latest stack",
+      "counters": []
+    },
+    {
+      "line": "/// is updated with the new coinbase.",
+      "counters": []
+    },
+    {
+      "line": "///",
+      "counters": []
+    },
+    {
+      "line": "/// The operations on the merkle tree of coinbase stacks include:",
+      "counters": []
+    },
+    {
+      "line": "/// 1) adding a new singleton stack",
+      "counters": []
+    },
+    {
+      "line": "/// 2) updating the latest stack when a new coinbase is added to it",
+      "counters": []
+    },
+    {
+      "line": "/// 2) deleting the oldest stack",
+      "counters": []
+    },
+    {
+      "line": "///",
+      "counters": []
+    },
+    {
+      "line": "/// A stack can be either be created or modified by pushing a coinbase on to it.",
+      "counters": []
+    },
+    {
+      "line": "///",
+      "counters": []
+    },
+    {
+      "line": "/// This module also provides an interface for the checked computations required required to prove it in snark",
+      "counters": []
+    },
+    {
+      "line": "///",
+      "counters": []
+    },
+    {
+      "line": "/// Stack operations are done for transaction snarks and tree operations are done for the blockchain snark*)",
+      "counters": []
+    },
+    {
+      "line": "use std::{collections::HashMap, fmt::Write, marker::PhantomData};",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "use ark_ff::Zero;",
+      "counters": []
+    },
+    {
+      "line": "use mina_hasher::Fp;",
+      "counters": []
+    },
+    {
+      "line": "use mina_signer::CompressedPubKey;",
+      "counters": []
+    },
+    {
+      "line": "use sha2::{Digest, Sha256};",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "use crate::{",
+      "counters": []
+    },
+    {
+      "line": "    hash_noinputs, hash_with_kimchi, staged_ledger::hash::PendingCoinbaseAux, Address, Inputs,",
+      "counters": []
+    },
+    {
+      "line": "    MerklePath, ToInputs,",
+      "counters": []
+    },
+    {
+      "line": "};",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "use self::merkle_tree::MiniMerkleTree;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "use super::{",
+      "counters": []
+    },
+    {
+      "line": "    currency::{Amount, Magnitude},",
+      "counters": []
+    },
+    {
+      "line": "    transaction_logic::Coinbase,",
+      "counters": []
+    },
+    {
+      "line": "};",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]",
+      "counters": [
+        {
+          "col_start": 9,
+          "col_end": 14,
+          "count": 0
+        },
+        {
+          "col_start": 22,
+          "col_end": 31,
+          "count": 0
+        },
+        {
+          "col_start": 37,
+          "col_end": 47,
+          "count": 0
+        },
+        {
+          "col_start": 54,
+          "col_end": 58,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "pub struct StackId(u64);",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl std::fmt::Debug for StackId {",
+      "counters": []
+    },
+    {
+      "line": "    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 72,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        f.write_fmt(format_args!(\"StackId({})\", self.0))",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 56,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl StackId {",
+      "counters": []
+    },
+    {
+      "line": "    pub fn incr_by_one(&self) -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 39,
+          "count": 23636
+        }
+      ]
+    },
+    {
+      "line": "        self.0",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 23636
+        }
+      ]
+    },
+    {
+      "line": "            .checked_add(1)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 23636
+        }
+      ]
+    },
+    {
+      "line": "            .map(Self)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 23636
+        }
+      ]
+    },
+    {
+      "line": "            .ok_or_else(|| \"Stack_id overflow\".to_string())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": 23636
+        },
+        {
+          "col_start": 27,
+          "col_end": 58,
+          "count": 2966204
+        },
+        {
+          "col_start": 58,
+          "col_end": 59,
+          "count": 23636
+        }
+      ]
+    },
+    {
+      "line": "            .unwrap()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 23636
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 23636
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub fn zero() -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 27,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Self(0)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 15,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "struct CoinbaseData {",
+      "counters": []
+    },
+    {
+      "line": "    receiver: CompressedPubKey,",
+      "counters": []
+    },
+    {
+      "line": "    amount: Amount,",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl ToInputs for CoinbaseData {",
+      "counters": []
+    },
+    {
+      "line": "    fn to_inputs(&self, inputs: &mut Inputs) {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let Self { receiver, amount } = self;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        inputs.append(receiver);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        inputs.append(amount);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 30,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl CoinbaseData {",
+      "counters": []
+    },
+    {
+      "line": "    pub fn empty() -> Self {",
+      "counters": []
+    },
+    {
+      "line": "        Self {",
+      "counters": []
+    },
+    {
+      "line": "            receiver: CompressedPubKey::empty(),",
+      "counters": []
+    },
+    {
+      "line": "            amount: Amount::zero(),",
+      "counters": []
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub fn of_coinbase(cb: Coinbase) -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 46,
+          "count": 11837
+        }
+      ]
+    },
+    {
+      "line": "        let Coinbase {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 11837
+        }
+      ]
+    },
+    {
+      "line": "            receiver,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 11837
+        }
+      ]
+    },
+    {
+      "line": "            amount,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 19,
+          "count": 11837
+        }
+      ]
+    },
+    {
+      "line": "            fee_transfer: _,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 11837
+        }
+      ]
+    },
+    {
+      "line": "        } = cb;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 15,
+          "count": 11837
+        }
+      ]
+    },
+    {
+      "line": "        Self { receiver, amount }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 11837
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 11837
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub fn genesis() -> Self {",
+      "counters": []
+    },
+    {
+      "line": "        Self::empty()",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone, Debug)]",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "pub struct StackState {",
+      "counters": []
+    },
+    {
+      "line": "    pub source: Stack,",
+      "counters": []
+    },
+    {
+      "line": "    pub target: Stack,",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone, PartialEq, Eq)]",
+      "counters": [
+        {
+          "col_start": 9,
+          "col_end": 14,
+          "count": 0
+        },
+        {
+          "col_start": 16,
+          "col_end": 25,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "pub(super) struct CoinbaseStack(pub(super) Fp);",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl std::fmt::Debug for CoinbaseStack {",
+      "counters": []
+    },
+    {
+      "line": "    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 72,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        if self.is_empty() {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 26,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            f.write_fmt(format_args!(\"CoinbaseStack(Empty)\"))",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 61,
+          "count": 11837
+        }
+      ]
+    },
+    {
+      "line": "        } else {",
+      "counters": []
+    },
+    {
+      "line": "            f.debug_tuple(\"CoinbaseStack\").field(&self.0).finish()",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 66,
+          "count": -11837
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl CoinbaseStack {",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/2ee6e004ba8c6a0541056076aab22ea162f7eb3a/src/lib/mina_base/pending_coinbase.ml#L180",
+      "counters": []
+    },
+    {
+      "line": "    pub fn push(&self, cb: Coinbase) -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let mut inputs = Inputs::new();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        inputs.append(&CoinbaseData::of_coinbase(cb));",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 54,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        inputs.append_field(self.0);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let hash = hash_with_kimchi(\"CoinbaseStack\", &inputs.to_fields());",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 74,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Self(hash)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/2ee6e004ba8c6a0541056076aab22ea162f7eb3a/src/lib/mina_base/pending_coinbase.ml#L188",
+      "counters": []
+    },
+    {
+      "line": "    pub fn empty() -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Self(hash_noinputs(\"CoinbaseStack\"))",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 44,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// Used for tests/debug only",
+      "counters": []
+    },
+    {
+      "line": "    fn is_empty(&self) -> bool {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self == &Self::empty()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 30,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "type StackHash = Fp;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone, PartialEq, Eq)]",
+      "counters": [
+        {
+          "col_start": 9,
+          "col_end": 14,
+          "count": 0
+        },
+        {
+          "col_start": 16,
+          "col_end": 17,
+          "count": 0
+        },
+        {
+          "col_start": 24,
+          "col_end": 25,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "pub(super) struct StateStack {",
+      "counters": []
+    },
+    {
+      "line": "    pub(super) init: StackHash,",
+      "counters": []
+    },
+    {
+      "line": "    pub(super) curr: StackHash,",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl std::fmt::Debug for StateStack {",
+      "counters": []
+    },
+    {
+      "line": "    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 72,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        if self.is_empty() {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 26,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            f.write_fmt(format_args!(\"StateStack(Empty)\"))",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 58,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        } else {",
+      "counters": []
+    },
+    {
+      "line": "            f.debug_struct(\"StateStack\")",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 40,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .field(\"init\", &self.init)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .field(\"curr\", &self.curr)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .finish()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl StateStack {",
+      "counters": []
+    },
+    {
+      "line": "    fn push(&self, state_body_hash: Fp) -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 49,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let mut inputs = Inputs::new();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        inputs.append_field(self.curr);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        inputs.append_field(state_body_hash);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let hash = hash_with_kimchi(\"MinaProtoState\", &inputs.to_fields());",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 75,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            init: self.init,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            curr: hash,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 23,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn empty() -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 24,
+          "count": 2036
+        }
+      ]
+    },
+    {
+      "line": "        Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 2036
+        }
+      ]
+    },
+    {
+      "line": "            init: Fp::zero(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 29,
+          "count": 2036
+        }
+      ]
+    },
+    {
+      "line": "            curr: Fp::zero(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 29,
+          "count": 2036
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 2036
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 2036
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// Used for tests/debug only",
+      "counters": []
+    },
+    {
+      "line": "    fn is_empty(&self) -> bool {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.curr.is_zero() && self.init.is_zero()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 0
+        },
+        {
+          "col_start": 31,
+          "col_end": 50,
+          "count": 216
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn create(init: StackHash) -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 40,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Self { init, curr: init }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "pub mod update {",
+      "counters": []
+    },
+    {
+      "line": "    use crate::scan_state::currency::{Amount, Magnitude};",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    #[derive(Debug)]",
+      "counters": [
+        {
+          "col_start": 13,
+          "col_end": 14,
+          "count": 0
+        },
+        {
+          "col_start": 17,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    pub enum Action {",
+      "counters": []
+    },
+    {
+      "line": "        None,",
+      "counters": []
+    },
+    {
+      "line": "        One,",
+      "counters": []
+    },
+    {
+      "line": "        TwoCoinbaseInFirst,",
+      "counters": []
+    },
+    {
+      "line": "        TwoCoinbaseInSecond,",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    #[derive(Debug)]",
+      "counters": [
+        {
+          "col_start": 13,
+          "col_end": 14,
+          "count": 0
+        },
+        {
+          "col_start": 17,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    pub enum StackUpdate {",
+      "counters": []
+    },
+    {
+      "line": "        None,",
+      "counters": []
+    },
+    {
+      "line": "        One(super::Stack),",
+      "counters": []
+    },
+    {
+      "line": "        Two((super::Stack, super::Stack)),",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    #[derive(Debug)]",
+      "counters": [
+        {
+          "col_start": 13,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    pub struct Update {",
+      "counters": []
+    },
+    {
+      "line": "        pub action: Action,",
+      "counters": []
+    },
+    {
+      "line": "        pub coinbase_amount: Amount,",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    impl Update {",
+      "counters": []
+    },
+    {
+      "line": "        fn genesis() -> Self {",
+      "counters": []
+    },
+    {
+      "line": "            Self {",
+      "counters": []
+    },
+    {
+      "line": "                action: Action::None,",
+      "counters": []
+    },
+    {
+      "line": "                coinbase_amount: Amount::zero(),",
+      "counters": []
+    },
+    {
+      "line": "            }",
+      "counters": []
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone, PartialEq, Eq)]",
+      "counters": [
+        {
+          "col_start": 9,
+          "col_end": 14,
+          "count": 0
+        },
+        {
+          "col_start": 16,
+          "col_end": 17,
+          "count": 0
+        },
+        {
+          "col_start": 24,
+          "col_end": 25,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "pub struct Stack {",
+      "counters": []
+    },
+    {
+      "line": "    pub(super) data: CoinbaseStack,",
+      "counters": []
+    },
+    {
+      "line": "    pub(super) state: StateStack,",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl std::fmt::Debug for Stack {",
+      "counters": []
+    },
+    {
+      "line": "    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 72,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        if self.data.is_empty() && self.state.is_empty() {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 31,
+          "count": 0
+        },
+        {
+          "col_start": 35,
+          "col_end": 56,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            f.write_fmt(format_args!(\"Stack(Empty)\"))",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        } else {",
+      "counters": []
+    },
+    {
+      "line": "            f.debug_struct(\"Stack\")",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 35,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .field(\"data\", &self.data)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .field(\"state\", &self.state)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 44,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .finish()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl Stack {",
+      "counters": []
+    },
+    {
+      "line": "    pub fn empty() -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            data: CoinbaseStack::empty(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            state: StateStack::empty(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub fn push_coinbase(&self, cb: Coinbase) -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 55,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            data: self.data.push(cb),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            state: self.state.clone(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 38,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub fn push_state(&self, state_body_hash: Fp) -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 59,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            data: self.data.clone(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            state: self.state.push(state_body_hash),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 52,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/mina_base/pending_coinbase.ml#L651",
+      "counters": []
+    },
+    {
+      "line": "    pub fn create_with(other: &Self) -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            state: StateStack::create(other.state.curr),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 56,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            ..Self::empty()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/2ee6e004ba8c6a0541056076aab22ea162f7eb3a/src/lib/mina_base/pending_coinbase.ml#L658",
+      "counters": []
+    },
+    {
+      "line": "    pub fn connected(first: &Self, second: &Self, prev: Option<&Self>) -> bool {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 79,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        // same as old stack or second could be a new stack with empty data",
+      "counters": []
+    },
+    {
+      "line": "        let coinbase_stack_connected =",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            (first.data == second.data) || { second.data == CoinbaseStack::empty() };",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 39,
+          "count": 0
+        },
+        {
+          "col_start": 45,
+          "col_end": 82,
+          "count": -1801
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        // 1. same as old stack or",
+      "counters": []
+    },
+    {
+      "line": "        // 2. new stack initialized with the stack state of last block. Not possible to know this unless we track",
+      "counters": []
+    },
+    {
+      "line": "        //    all the stack states because they are updated once per block (init=curr)",
+      "counters": []
+    },
+    {
+      "line": "        // 3. [second] could be a new stack initialized with the latest state of [first] or",
+      "counters": []
+    },
+    {
+      "line": "        // 4. [second] starts from the previous state of [first]. This is not available in either [first] or [second] *)",
+      "counters": []
+    },
+    {
+      "line": "        let state_stack_connected = first.state == second.state",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 33,
+          "count": 0
+        },
+        {
+          "col_start": 36,
+          "col_end": 63,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            || second.state.init == second.state.curr",
+      "counters": [
+        {
+          "col_start": 15,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            || first.state.curr == second.state.curr",
+      "counters": [
+        {
+          "col_start": 15,
+          "col_end": 52,
+          "count": 19
+        }
+      ]
+    },
+    {
+      "line": "            || prev",
+      "counters": [
+        {
+          "col_start": 15,
+          "col_end": 19,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .map(|prev| prev.state.curr == second.state.curr)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        },
+        {
+          "col_start": 28,
+          "col_end": 64,
+          "count": 0
+        },
+        {
+          "col_start": 64,
+          "col_end": 65,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .unwrap_or(true);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        coinbase_stack_connected && state_stack_connected",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 32,
+          "count": 0
+        },
+        {
+          "col_start": 36,
+          "col_end": 57,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone, Debug)]",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "pub struct PendingCoinbase {",
+      "counters": []
+    },
+    {
+      "line": "    tree: merkle_tree::MiniMerkleTree<StackId, Stack, StackHasher>,",
+      "counters": []
+    },
+    {
+      "line": "    pos_list: Vec<StackId>,",
+      "counters": []
+    },
+    {
+      "line": "    new_pos: StackId,",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone, Debug)]",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "struct StackHasher;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl merkle_tree::TreeHasher<Stack> for StackHasher {",
+      "counters": []
+    },
+    {
+      "line": "    fn hash_value(value: &Stack) -> Fp {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 40,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let mut inputs = Inputs::new();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        inputs.append_field(value.data.0);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        inputs.append_field(value.state.init);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        inputs.append_field(value.state.curr);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        hash_with_kimchi(\"CoinbaseStack\", &inputs.to_fields())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 62,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn merge_hash(depth: usize, left: Fp, right: Fp) -> Fp {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 60,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let param = format!(\"MinaCbMklTree{:03}\", depth);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 57,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        crate::hash::hash_with_kimchi(param.as_str(), &[left, right])",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 69,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn empty_value() -> Stack {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 31,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Stack::empty()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl PendingCoinbase {",
+      "counters": []
+    },
+    {
+      "line": "    pub fn create(depth: usize) -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let mut tree = MiniMerkleTree::create(depth);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let nstacks = 2u64.pow(depth as u32);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let mut stack_id = StackId::zero();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 43,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        assert_eq!(depth, 5);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        tree.fill_with((0..nstacks).map(|_| {",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 40,
+          "count": -28
+        },
+        {
+          "col_start": 44,
+          "col_end": 45,
+          "count": 28
+        }
+      ]
+    },
+    {
+      "line": "            let this_id = stack_id;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 35,
+          "count": 28
+        }
+      ]
+    },
+    {
+      "line": "            stack_id = stack_id.incr_by_one();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": 28
+        }
+      ]
+    },
+    {
+      "line": "            (this_id, Stack::empty())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": 28
+        }
+      ]
+    },
+    {
+      "line": "        }));",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 28
+        },
+        {
+          "col_start": 9,
+          "col_end": 12,
+          "count": -28
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": -28
+        }
+      ]
+    },
+    {
+      "line": "            tree,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": -28
+        }
+      ]
+    },
+    {
+      "line": "            pos_list: Vec::with_capacity(128),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": -28
+        }
+      ]
+    },
+    {
+      "line": "            new_pos: StackId::zero(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": -28
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": -28
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": -28
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub fn merkle_root(&mut self) -> Fp {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.tree.merkle_root()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 31,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn get_stack(&self, addr: Address) -> &Stack {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 50,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.tree.get_exn(addr)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 31,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn path(&mut self, addr: Address) -> Vec<MerklePath> {",
+      "counters": []
+    },
+    {
+      "line": "        self.tree.path_exn(addr)",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn find_index(&self, key: StackId) -> Address {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.tree.find_index_exn(key)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn next_index(&self, depth: usize) -> StackId {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        if self.new_pos.0 == (2u64.pow(depth as u32) - 1) {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 57,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            StackId::zero()",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 27,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        } else {",
+      "counters": []
+    },
+    {
+      "line": "            self.new_pos.incr_by_one()",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 38,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn next_stack_id(&self, depth: usize, is_new_stack: bool) -> StackId {",
+      "counters": []
+    },
+    {
+      "line": "        if is_new_stack {",
+      "counters": []
+    },
+    {
+      "line": "            self.next_index(depth)",
+      "counters": []
+    },
+    {
+      "line": "        } else {",
+      "counters": []
+    },
+    {
+      "line": "            self.new_pos",
+      "counters": []
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn incr_index(&mut self, depth: usize, is_new_stack: bool) {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 64,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        if is_new_stack {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 23,
+          "count": 0
+        },
+        {
+          "col_start": 24,
+          "col_end": 25,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            let new_pos = self.next_index(depth);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 49,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            self.pos_list.push(self.new_pos);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            self.new_pos = new_pos;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 35,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        },
+        {
+          "col_start": 9,
+          "col_end": 10,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn set_stack(&mut self, depth: usize, addr: Address, stack: Stack, is_new_stack: bool) {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 92,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.tree.set_exn(addr, stack);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.incr_index(depth, is_new_stack);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn latest_stack_id(&self, is_new_stack: bool) -> StackId {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 62,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "line": "        if is_new_stack {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 23,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "line": "            self.new_pos",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 24,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        } else {",
+      "counters": []
+    },
+    {
+      "line": "            self.pos_list.last().cloned().unwrap_or_else(StackId::zero)",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 71,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn current_stack_id(&self) -> Option<StackId> {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.pos_list.last().cloned()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn current_stack(&self) -> &Stack {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let prev_stack_id = self.current_stack_id().unwrap_or_else(StackId::zero);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 82,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let addr = self.tree.find_index_exn(prev_stack_id);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 59,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.tree.get_exn(addr)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 31,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub fn latest_stack(&self, is_new_stack: bool) -> Stack {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 61,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let key = self.latest_stack_id(is_new_stack);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let addr = self.tree.find_index_exn(key);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 49,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let mut res = self.tree.get_exn(addr).clone();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 54,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        if is_new_stack {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 23,
+          "count": 0
+        },
+        {
+          "col_start": 24,
+          "col_end": 25,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            let prev_stack = self.current_stack();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            res.state = StateStack::create(prev_stack.state.curr);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 66,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        },
+        {
+          "col_start": 9,
+          "col_end": 10,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        res",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 11,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn oldest_stack_id(&self) -> Option<StackId> {",
+      "counters": []
+    },
+    {
+      "line": "        self.pos_list.first().cloned()",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn remove_oldest_stack_id(&mut self) {",
+      "counters": []
+    },
+    {
+      "line": "        todo!()",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn oldest_stack(&self) -> &Stack {",
+      "counters": []
+    },
+    {
+      "line": "        let key = self.oldest_stack_id().unwrap_or_else(StackId::zero);",
+      "counters": []
+    },
+    {
+      "line": "        let addr = self.find_index(key);",
+      "counters": []
+    },
+    {
+      "line": "        self.get_stack(addr)",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn update_stack<F>(&mut self, depth: usize, is_new_stack: bool, fun: F)",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 75,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    where",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        F: FnOnce(&Stack) -> Stack,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 35,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let key = self.latest_stack_id(is_new_stack);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let stack_addr = self.find_index(key);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let stack_before = self.get_stack(stack_addr.clone());",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 62,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let stack_after = fun(stack_before);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 44,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        // state hash in \"after\" stack becomes previous state hash at top level",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 79,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.set_stack(depth, stack_addr, stack_after, is_new_stack);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 69,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn add_coinbase(&mut self, depth: usize, coinbase: Coinbase, is_new_stack: bool) {",
+      "counters": []
+    },
+    {
+      "line": "        self.update_stack(depth, is_new_stack, |stack| stack.push_coinbase(coinbase))",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn add_state(&mut self, depth: usize, state_body_hash: Fp, is_new_stack: bool) {",
+      "counters": []
+    },
+    {
+      "line": "        self.update_stack(depth, is_new_stack, |stack| {",
+      "counters": []
+    },
+    {
+      "line": "            stack.push_state(state_body_hash)",
+      "counters": []
+    },
+    {
+      "line": "        })",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub fn update_coinbase_stack(",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 33,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        &mut self,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        depth: usize,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        stack: Stack,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        is_new_stack: bool,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    ) -> Result<(), String> {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 29,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.update_stack(depth, is_new_stack, |_| stack);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 47,
+          "count": 0
+        },
+        {
+          "col_start": 51,
+          "col_end": 56,
+          "count": 0
+        },
+        {
+          "col_start": 56,
+          "col_end": 58,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Ok(())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub fn remove_coinbase_stack(&mut self, depth: usize) -> Result<Stack, String> {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 83,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let oldest_stack_id = if !self.pos_list.is_empty() {",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 27,
+          "count": 0
+        },
+        {
+          "col_start": 33,
+          "col_end": 58,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            self.pos_list.remove(0) // TODO: Use `VecDeque`",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 35,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        } else {",
+      "counters": []
+    },
+    {
+      "line": "            return Err(\"No coinbase stack-with-state-hash to pop\".to_string());",
+      "counters": [
+        {
+          "col_start": 19,
+          "col_end": 78,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        };",
+      "counters": []
+    },
+    {
+      "line": "        let stack_addr = self.find_index(oldest_stack_id);",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 58,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let stack = self.get_stack(stack_addr.clone()).clone();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 63,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.set_stack(depth, stack_addr, Stack::empty(), false);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 65,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Ok(stack)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub fn hash_extra(&self) -> PendingCoinbaseAux {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 52,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let mut s = String::with_capacity(64 * 1024);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 52,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        for pos in self.pos_list.iter().rev() {",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 15,
+          "count": 2
+        },
+        {
+          "col_start": 19,
+          "col_end": 45,
+          "count": 0
+        },
+        {
+          "col_start": 46,
+          "col_end": 47,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "line": "            write!(&mut s, \"{}\", pos.0).unwrap();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 49,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let mut sha = Sha256::new();",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        sha.update(s.as_bytes());",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        s.clear();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        write!(&mut s, \"{}\", self.new_pos.0).unwrap();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 54,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        sha.update(s);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let digest = sha.finalize();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        PendingCoinbaseAux(digest.into())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "/// Keep it a bit generic, in case we need a merkle tree somewhere else",
+      "counters": []
+    },
+    {
+      "line": "pub mod merkle_tree {",
+      "counters": []
+    },
+    {
+      "line": "    use crate::{AccountIndex, Address, AddressIterator, Direction, HashesMatrix, MerklePath};",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    use super::*;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub trait TreeHasher<V> {",
+      "counters": []
+    },
+    {
+      "line": "        fn hash_value(value: &V) -> Fp;",
+      "counters": []
+    },
+    {
+      "line": "        fn empty_value() -> V;",
+      "counters": []
+    },
+    {
+      "line": "        fn merge_hash(depth: usize, left: Fp, right: Fp) -> Fp;",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    #[derive(Clone)]",
+      "counters": []
+    },
+    {
+      "line": "    pub struct MiniMerkleTree<K, V, H> {",
+      "counters": []
+    },
+    {
+      "line": "        values: Vec<V>,",
+      "counters": []
+    },
+    {
+      "line": "        indexes: HashMap<K, Address>,",
+      "counters": []
+    },
+    {
+      "line": "        hashes_matrix: HashesMatrix,",
+      "counters": []
+    },
+    {
+      "line": "        depth: usize,",
+      "counters": []
+    },
+    {
+      "line": "        _hasher: PhantomData<H>,",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    impl<K, V, H> std::fmt::Debug for MiniMerkleTree<K, V, H>",
+      "counters": []
+    },
+    {
+      "line": "    where",
+      "counters": []
+    },
+    {
+      "line": "        K: std::fmt::Debug + Ord,",
+      "counters": []
+    },
+    {
+      "line": "        V: std::fmt::Debug,",
+      "counters": []
+    },
+    {
+      "line": "    {",
+      "counters": []
+    },
+    {
+      "line": "        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 76,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            let mut indexes = self.indexes.iter().collect::<Vec<_>>();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 70,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            indexes.sort_by_key(|(key, _addr)| *key);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 0
+        },
+        {
+          "col_start": 47,
+          "col_end": 51,
+          "count": 0
+        },
+        {
+          "col_start": 51,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            // indexes.sort_by_key(|(_key, addr)| addr.to_index());",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 67,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            f.debug_struct(\"MiniMerkleTree\")",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 44,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .field(\"values\", &self.values)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .field(\"indexes_len\", &indexes.len())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .field(\"indexes\", &indexes)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 43,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                // .field(\"hashes_matrix\", &self.hashes_matrix)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 63,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .field(\"depth\", &self.depth)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 44,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .finish()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    impl<K, V, H> MiniMerkleTree<K, V, H>",
+      "counters": []
+    },
+    {
+      "line": "    where",
+      "counters": []
+    },
+    {
+      "line": "        K: Eq + std::hash::Hash,",
+      "counters": []
+    },
+    {
+      "line": "        H: TreeHasher<V>,",
+      "counters": []
+    },
+    {
+      "line": "        V: PartialEq,",
+      "counters": []
+    },
+    {
+      "line": "    {",
+      "counters": []
+    },
+    {
+      "line": "        pub fn create(depth: usize) -> Self {",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            let max_values = 2u64.pow(depth as u32) as usize;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 61,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                values: Vec::with_capacity(max_values),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 55,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                indexes: HashMap::new(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 40,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                depth,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                hashes_matrix: HashesMatrix::new(depth),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 56,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                _hasher: PhantomData,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 13,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        pub fn fill_with<I>(&mut self, data: I)",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 47,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        where",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 13,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            I: Iterator<Item = (K, V)>,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            assert!(self.values.is_empty());",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 43,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            assert_eq!(self.depth, 5);",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 37,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            // OCaml uses those indexes",
+      "counters": []
+    },
+    {
+      "line": "            let indexes: HashMap<usize, usize> = [",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 50,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (31, 31),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (30, 15),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (29, 23),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (28, 7),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (27, 27),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (26, 11),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (25, 19),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (24, 3),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (23, 29),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (22, 13),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (21, 21),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (20, 5),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (19, 25),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (18, 9),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (17, 17),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (16, 1),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (15, 30),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (14, 14),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (13, 22),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (12, 6),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (11, 26),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (10, 10),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (9, 18),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (8, 2),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 23,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (7, 28),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (6, 12),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (5, 20),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (4, 4),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 23,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (3, 24),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (2, 8),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 23,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (1, 16),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "                (0, 0),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 23,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "            ]",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 13,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "            .iter()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 19,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "            .copied()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "            .collect();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": -109
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            for (index, (key, value)) in data.enumerate() {",
+      "counters": [
+        {
+          "col_start": 17,
+          "col_end": 35,
+          "count": 0
+        },
+        {
+          "col_start": 41,
+          "col_end": 57,
+          "count": -109
+        },
+        {
+          "col_start": 58,
+          "col_end": 59,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                self.values.push(value);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 40,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "                let index = indexes",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 35,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    .get(&index)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    .copied()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 29,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    .map(AccountIndex::from)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 44,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    .unwrap();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 30,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                self.indexes",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    .insert(key, Address::from_index(index, self.depth));",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 73,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 13,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        fn get(&self, addr: Address) -> Option<&V> {",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 52,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            assert_eq!(addr.length(), self.depth);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 49,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let index = addr.to_index().0 as usize;",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            self.values.get(index)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 34,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        pub fn get_exn(&self, addr: Address) -> &V {",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 52,
+          "count": 307153
+        }
+      ]
+    },
+    {
+      "line": "            self.get(addr).unwrap()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 35,
+          "count": 307153
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 307153
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        pub fn set_exn(&mut self, addr: Address, value: V) {",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 60,
+          "count": 4590
+        }
+      ]
+    },
+    {
+      "line": "            use std::cmp::Ordering::*;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 38,
+          "count": 4590
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            assert_eq!(addr.length(), self.depth);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 49,
+          "count": 4590
+        }
+      ]
+    },
+    {
+      "line": "            let index = addr.to_index().0 as usize;",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 51,
+          "count": -258419
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let mut invalidate = true;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 38,
+          "count": -258419
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            match index.cmp(&self.values.len()) {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 47,
+          "count": -258419
+        }
+      ]
+    },
+    {
+      "line": "                Less => {",
+      "counters": []
+    },
+    {
+      "line": "                    invalidate = self.values[index] != value;",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 61,
+          "count": -263033
+        }
+      ]
+    },
+    {
+      "line": "                    self.values[index] = value",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": -263033
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "                Equal => self.values.push(value),",
+      "counters": [
+        {
+          "col_start": 25,
+          "col_end": 48,
+          "count": 4614
+        }
+      ]
+    },
+    {
+      "line": "                Greater => panic!(\"wrong use of `set_exn`\"),",
+      "counters": [
+        {
+          "col_start": 27,
+          "col_end": 59,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            if invalidate {",
+      "counters": [
+        {
+          "col_start": 15,
+          "col_end": 25,
+          "count": -258419
+        },
+        {
+          "col_start": 26,
+          "col_end": 27,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                self.hashes_matrix.invalidate_hashes(addr.to_index());",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 70,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 13,
+          "count": 0
+        },
+        {
+          "col_start": 13,
+          "col_end": 14,
+          "count": -258419
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 9,
+          "count": -258419
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        pub fn find_index_exn(&self, key: K) -> Address {",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 57,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            self.indexes.get(&key).cloned().unwrap()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 52,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        pub fn path_exn(&mut self, addr: Address) -> Vec<MerklePath> {",
+      "counters": []
+    },
+    {
+      "line": "            let mut merkle_path = Vec::with_capacity(addr.length());",
+      "counters": []
+    },
+    {
+      "line": "            let mut path_to_addr = addr.into_iter();",
+      "counters": []
+    },
+    {
+      "line": "            let root = Address::root();",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            self.emulate_tree_to_get_path(root, &mut path_to_addr, &mut merkle_path);",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            merkle_path",
+      "counters": []
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        fn get_value_hash(&mut self, addr: Address) -> Fp {",
+      "counters": []
+    },
+    {
+      "line": "            if let Some(hash) = self.hashes_matrix.get(&addr) {",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 28,
+          "count": 0
+        },
+        {
+          "col_start": 32,
+          "col_end": 61,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                return *hash;",
+      "counters": [
+        {
+          "col_start": 23,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            }",
+      "counters": [
+        {
+          "col_start": 13,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let hash = match self.get(addr.clone()) {",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 20,
+          "count": 0
+        },
+        {
+          "col_start": 29,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                Some(value) => H::hash_value(value),",
+      "counters": [
+        {
+          "col_start": 21,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                None => H::hash_value(&H::empty_value()),",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 56,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            self.hashes_matrix.set(&addr, hash);",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 48,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            hash",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 16,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        fn get_node_hash(&mut self, addr: &Address, left: Fp, right: Fp) -> Fp {",
+      "counters": []
+    },
+    {
+      "line": "            if let Some(hash) = self.hashes_matrix.get(addr) {",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 28,
+          "count": 0
+        },
+        {
+          "col_start": 32,
+          "col_end": 60,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                return *hash;",
+      "counters": [
+        {
+          "col_start": 23,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            };",
+      "counters": [
+        {
+          "col_start": 13,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let depth_in_tree = self.depth - addr.length();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 59,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let hash = H::merge_hash(depth_in_tree - 1, left, right);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 69,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            self.hashes_matrix.set(addr, hash);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 47,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            hash",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 16,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        fn emulate_tree_to_get_path(",
+      "counters": []
+    },
+    {
+      "line": "            &mut self,",
+      "counters": []
+    },
+    {
+      "line": "            addr: Address,",
+      "counters": []
+    },
+    {
+      "line": "            path: &mut AddressIterator,",
+      "counters": []
+    },
+    {
+      "line": "            merkle_path: &mut Vec<MerklePath>,",
+      "counters": []
+    },
+    {
+      "line": "        ) -> Fp {",
+      "counters": []
+    },
+    {
+      "line": "            if addr.length() == self.depth {",
+      "counters": []
+    },
+    {
+      "line": "                return self.get_value_hash(addr);",
+      "counters": []
+    },
+    {
+      "line": "            }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let next_direction = path.next();",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            // We go until the end of the path",
+      "counters": []
+    },
+    {
+      "line": "            if let Some(direction) = next_direction.as_ref() {",
+      "counters": []
+    },
+    {
+      "line": "                let child = match direction {",
+      "counters": []
+    },
+    {
+      "line": "                    Direction::Left => addr.child_left(),",
+      "counters": []
+    },
+    {
+      "line": "                    Direction::Right => addr.child_right(),",
+      "counters": []
+    },
+    {
+      "line": "                };",
+      "counters": []
+    },
+    {
+      "line": "                self.emulate_tree_to_get_path(child, path, merkle_path);",
+      "counters": []
+    },
+    {
+      "line": "            };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let mut get_child_hash = |addr: Address| match self.hashes_matrix.get(&addr) {",
+      "counters": []
+    },
+    {
+      "line": "                Some(hash) => *hash,",
+      "counters": []
+    },
+    {
+      "line": "                None => {",
+      "counters": []
+    },
+    {
+      "line": "                    if let Some(hash) = self.hashes_matrix.get(&addr) {",
+      "counters": []
+    },
+    {
+      "line": "                        *hash",
+      "counters": []
+    },
+    {
+      "line": "                    } else {",
+      "counters": []
+    },
+    {
+      "line": "                        self.emulate_tree_to_get_path(addr, path, merkle_path)",
+      "counters": []
+    },
+    {
+      "line": "                    }",
+      "counters": []
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "            };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let left = get_child_hash(addr.child_left());",
+      "counters": []
+    },
+    {
+      "line": "            let right = get_child_hash(addr.child_right());",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            if let Some(direction) = next_direction {",
+      "counters": []
+    },
+    {
+      "line": "                let hash = match direction {",
+      "counters": []
+    },
+    {
+      "line": "                    Direction::Left => MerklePath::Left(right),",
+      "counters": []
+    },
+    {
+      "line": "                    Direction::Right => MerklePath::Right(left),",
+      "counters": []
+    },
+    {
+      "line": "                };",
+      "counters": []
+    },
+    {
+      "line": "                merkle_path.push(hash);",
+      "counters": []
+    },
+    {
+      "line": "            };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            self.get_node_hash(&addr, left, right)",
+      "counters": []
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        pub fn merkle_root(&mut self) -> Fp {",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            let root = Address::root();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 38,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            if let Some(hash) = self.hashes_matrix.get(&root) {",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 28,
+          "count": 0
+        },
+        {
+          "col_start": 32,
+          "col_end": 61,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                return *hash;",
+      "counters": [
+        {
+          "col_start": 23,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            };",
+      "counters": [
+        {
+          "col_start": 13,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            self.emulate_tree_merkle_root(root)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 47,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        pub fn emulate_tree_merkle_root(&mut self, addr: Address) -> Fp {",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 73,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            let current_depth = self.depth - addr.length();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 59,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            if current_depth == 0 {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                return self.get_value_hash(addr);",
+      "counters": [
+        {
+          "col_start": 23,
+          "col_end": 48,
+          "count": 307153
+        }
+      ]
+    },
+    {
+      "line": "            }",
+      "counters": [
+        {
+          "col_start": 13,
+          "col_end": 13,
+          "count": -307153
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let mut get_child_hash = |addr: Address| {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": -307153
+        }
+      ]
+    },
+    {
+      "line": "                if let Some(hash) = self.hashes_matrix.get(&addr) {",
+      "counters": [
+        {
+          "col_start": 28,
+          "col_end": 32,
+          "count": 2513
+        },
+        {
+          "col_start": 36,
+          "col_end": 65,
+          "count": 2532
+        }
+      ]
+    },
+    {
+      "line": "                    *hash",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 25,
+          "count": 2513
+        }
+      ]
+    },
+    {
+      "line": "                } else {",
+      "counters": []
+    },
+    {
+      "line": "                    self.emulate_tree_merkle_root(addr)",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 55,
+          "count": 19
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "            };",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 13,
+          "count": 2532
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let left_hash = get_child_hash(addr.child_left());",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 62,
+          "count": -307153
+        }
+      ]
+    },
+    {
+      "line": "            let right_hash = get_child_hash(addr.child_right());",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 64,
+          "count": -307153
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            self.get_node_hash(&addr, left_hash, right_hash)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 60,
+          "count": -307153
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    //   [%%define_locally",
+      "counters": []
+    },
+    {
+      "line": "    //   M.",
+      "counters": []
+    },
+    {
+      "line": "    //     ( of_hash",
+      "counters": []
+    },
+    {
+      "line": "    //     , get_exn",
+      "counters": []
+    },
+    {
+      "line": "    //     , path_exn",
+      "counters": []
+    },
+    {
+      "line": "    //     , set_exn",
+      "counters": []
+    },
+    {
+      "line": "    //     , find_index_exn",
+      "counters": []
+    },
+    {
+      "line": "    //     , add_path",
+      "counters": []
+    },
+    {
+      "line": "    //     , merkle_root )]",
+      "counters": []
+    },
+    {
+      "line": "    // end",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "#[cfg(test)]",
+      "counters": []
+    },
+    {
+      "line": "mod tests {",
+      "counters": []
+    },
+    {
+      "line": "    use crate::FpExt;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    use super::{merkle_tree::MiniMerkleTree, *};",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    #[cfg(target_family = \"wasm\")]",
+      "counters": []
+    },
+    {
+      "line": "    use wasm_bindgen_test::wasm_bindgen_test as test;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    #[test]",
+      "counters": []
+    },
+    {
+      "line": "    fn test_merkle_tree() {",
+      "counters": []
+    },
+    {
+      "line": "        {",
+      "counters": []
+    },
+    {
+      "line": "            const DEPTH: usize = 3;",
+      "counters": []
+    },
+    {
+      "line": "            let mut tree = MiniMerkleTree::<StackId, Stack, StackHasher>::create(DEPTH);",
+      "counters": []
+    },
+    {
+      "line": "            let merkle_root = tree.merkle_root();",
+      "counters": []
+    },
+    {
+      "line": "            assert_eq!(",
+      "counters": []
+    },
+    {
+      "line": "                merkle_root.to_decimal(),",
+      "counters": []
+    },
+    {
+      "line": "                \"9939061863620980199451530646711695641079091335264396436068661296746064363179\"",
+      "counters": []
+    },
+    {
+      "line": "            );",
+      "counters": []
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        {",
+      "counters": []
+    },
+    {
+      "line": "            const DEPTH: usize = 5;",
+      "counters": []
+    },
+    {
+      "line": "            let mut tree = MiniMerkleTree::<StackId, Stack, StackHasher>::create(DEPTH);",
+      "counters": []
+    },
+    {
+      "line": "            let merkle_root = tree.merkle_root();",
+      "counters": []
+    },
+    {
+      "line": "            assert_eq!(",
+      "counters": []
+    },
+    {
+      "line": "                merkle_root.to_decimal(),",
+      "counters": []
+    },
+    {
+      "line": "                \"25504365445533103805898245102289650498571312278321176071043666991586378788150\"",
+      "counters": []
+    },
+    {
+      "line": "            );",
+      "counters": []
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    }
+  ]
+}

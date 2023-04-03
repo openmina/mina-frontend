@@ -1,0 +1,1 @@
+{"filename":"src/lib/genesis_ledger/fuzz_ledger.ml","lines":[{"line":"let name = \"fuzz\"","counters":[]},{"line":"","counters":[]},{"line":"let balances =","counters":[]},{"line":"  lazy [ 1_000_000; 2_000_000; 750_000; 1_500_000; 100_000; 500_000 ]","counters":[{"col_start":7,"col_end":7,"count":0}]}]}

@@ -1,0 +1,1819 @@
+{
+  "filename": "src/staged_ledger/transaction_validator.rs",
+  "lines": [
+    {
+      "line": "use std::collections::{HashMap, HashSet};",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "use ark_ff::Zero;",
+      "counters": []
+    },
+    {
+      "line": "use mina_hasher::Fp;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "use crate::{",
+      "counters": []
+    },
+    {
+      "line": "    scan_state::{",
+      "counters": []
+    },
+    {
+      "line": "        currency::Slot,",
+      "counters": []
+    },
+    {
+      "line": "        scan_state::ConstraintConstants,",
+      "counters": []
+    },
+    {
+      "line": "        transaction_logic::{",
+      "counters": []
+    },
+    {
+      "line": "            self, protocol_state::ProtocolStateView, signed_command::SignedCommand,",
+      "counters": []
+    },
+    {
+      "line": "            transaction_applied::SignedCommandApplied, AccountState, Transaction,",
+      "counters": []
+    },
+    {
+      "line": "            TransactionStatus,",
+      "counters": []
+    },
+    {
+      "line": "        },",
+      "counters": []
+    },
+    {
+      "line": "    },",
+      "counters": []
+    },
+    {
+      "line": "    Account, AccountId, Address, Mask,",
+      "counters": []
+    },
+    {
+      "line": "};",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "use super::sparse_ledger::LedgerIntf;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone, Debug)]",
+      "counters": [
+        {
+          "col_start": 9,
+          "col_end": 10,
+          "count": 0
+        },
+        {
+          "col_start": 13,
+          "col_end": 14,
+          "count": 0
+        },
+        {
+          "col_start": 16,
+          "col_end": 17,
+          "count": 0
+        },
+        {
+          "col_start": 20,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "pub enum Location {",
+      "counters": []
+    },
+    {
+      "line": "    Ours(AccountId),",
+      "counters": []
+    },
+    {
+      "line": "    Theirs(Address),",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone)]",
+      "counters": [
+        {
+          "col_start": 9,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "pub struct HashlessLedger {",
+      "counters": []
+    },
+    {
+      "line": "    base: Mask,",
+      "counters": []
+    },
+    {
+      "line": "    overlay: HashMap<AccountId, Account>,",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "fn err(s: &str) -> ! {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    panic!(",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 11,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        \"{}: somehow we got a location that isn't present in the underlying ledger\",",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 84,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        s",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    )",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl HashlessLedger {",
+      "counters": []
+    },
+    {
+      "line": "    pub fn create(ledger: Mask) -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            base: ledger,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            overlay: HashMap::with_capacity(128),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 49,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn get_or_create_account(",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 29,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        &mut self,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        account_id: AccountId,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 30,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        account: Account,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    ) -> (AccountState, Location) {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 35,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        match self.location_of_account(&account_id) {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            None => {",
+      "counters": []
+    },
+    {
+      "line": "                self.set(&Location::Ours(account_id.clone()), account);",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 71,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                (AccountState::Added, Location::Ours(account_id))",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 65,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            }",
+      "counters": []
+    },
+    {
+      "line": "            Some(loc) => (AccountState::Existed, loc),",
+      "counters": [
+        {
+          "col_start": 17,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub fn apply_transaction(",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 29,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        &mut self,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        constraint_constants: &ConstraintConstants,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        txn_state_view: &ProtocolStateView,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 43,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        transaction: &Transaction,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 34,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    ) -> Result<TransactionStatus, String> {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 44,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        transaction_logic::apply_transaction(",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            constraint_constants,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            txn_state_view,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            self,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            transaction,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        )",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        .map(|res| res.transaction_status().clone())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 13,
+          "count": 0
+        },
+        {
+          "col_start": 19,
+          "col_end": 51,
+          "count": 0
+        },
+        {
+          "col_start": 51,
+          "col_end": 52,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub fn apply_user_command(",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 30,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        &mut self,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        constraint_constants: &ConstraintConstants,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        txn_state_view: &ProtocolStateView,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 43,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        txn_global_slot: &Slot,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 31,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        user_command: SignedCommand,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    ) -> Result<SignedCommandApplied, String> {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 47,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        transaction_logic::apply_user_command(",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            constraint_constants,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            txn_state_view,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            txn_global_slot,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            self,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            &user_command,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 26,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        )",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl LedgerIntf for HashlessLedger {",
+      "counters": []
+    },
+    {
+      "line": "    type Location = Location;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn get(&self, addr: &Location) -> Option<crate::Account> {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 62,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        match addr {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Location::Ours(account_id) => self.overlay.get(account_id).cloned(),",
+      "counters": [
+        {
+          "col_start": 27,
+          "col_end": 79,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Location::Theirs(addr) => match self.base.get(addr) {",
+      "counters": [
+        {
+          "col_start": 29,
+          "col_end": 63,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                Some(account) => match self.overlay.get(&account.id()) {",
+      "counters": [
+        {
+          "col_start": 21,
+          "col_end": 70,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    None => Some(account),",
+      "counters": [
+        {
+          "col_start": 28,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    s => s.cloned(),",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 35,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                },",
+      "counters": []
+    },
+    {
+      "line": "                None => err(\"get\"),",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 34,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            },",
+      "counters": []
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn location_of_account(&self, account_id: &crate::AccountId) -> Option<Location> {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 86,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        match self.overlay.get(account_id) {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Some(_) => Some(Location::Ours(account_id.clone())),",
+      "counters": [
+        {
+          "col_start": 23,
+          "col_end": 63,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            None => self",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 24,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .base",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .location_of_account(account_id)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 48,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .map(Location::Theirs),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 38,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn set(&mut self, addr: &Location, account: crate::Account) {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 65,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        match addr {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Location::Ours(key) => {",
+      "counters": [
+        {
+          "col_start": 27,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                self.overlay.insert(key.clone(), account);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 58,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 13,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Location::Theirs(addr) => match self.base.get(addr) {",
+      "counters": [
+        {
+          "col_start": 29,
+          "col_end": 63,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                Some(a) => {",
+      "counters": [
+        {
+          "col_start": 21,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    self.overlay.insert(a.id(), account);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 57,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                None => err(\"set\"),",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 34,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            },",
+      "counters": []
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn get_or_create(",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        &mut self,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        account_id: &crate::AccountId,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 38,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    ) -> Result<(AccountState, Account, Location), String> {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 60,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let (action, loc) =",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            self.get_or_create_account(account_id.clone(), Account::initialize(account_id));",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 91,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let account = self.get(&loc).ok_or_else(|| \"get failed\".to_string())?;",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 19,
+          "count": 0
+        },
+        {
+          "col_start": 22,
+          "col_end": 48,
+          "count": 0
+        },
+        {
+          "col_start": 51,
+          "col_end": 75,
+          "count": 0
+        },
+        {
+          "col_start": 75,
+          "col_end": 76,
+          "count": 0
+        },
+        {
+          "col_start": 76,
+          "col_end": 77,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        Ok((action, account, loc))",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 34,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn create_new_account(&mut self, account_id: AccountId, account: Account) -> Result<(), ()> {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 97,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let (action, _) = self.get_or_create_account(account_id.clone(), account);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 81,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        if matches!(action, AccountState::Existed) {",
+      "counters": [
+        {
+          "col_start": 11,
+          "col_end": 19,
+          "count": 0
+        },
+        {
+          "col_start": 20,
+          "col_end": 26,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            eprintln!(",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 22,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                \"Could not create a new account with pk {:?}: Account already exists\",",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 86,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                account_id.public_key",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            );",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Err(())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 19,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        } else {",
+      "counters": []
+    },
+    {
+      "line": "            Ok(())",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn remove_accounts_exn(&mut self, _account_ids: &[crate::AccountId]) {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 74,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        panic!(\"hashless_ledger: bug in transaction_logic\")",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 59,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// Without any validation that the hashes match, Mina_transaction_logic doesn't really care what this is.",
+      "counters": []
+    },
+    {
+      "line": "    fn merkle_root(&mut self) -> Fp {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Fp::zero()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn empty(depth: usize) -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Self::create(Mask::new_unattached(depth))",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 49,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn create_masked(&self) -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            base: self.base.clone(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            overlay: self.overlay.clone(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn apply_mask(&mut self, mask: Self) {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.overlay.extend(mask.overlay);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn account_locations(&self) -> Vec<Self::Location> {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 56,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let account_ids: HashSet<AccountId> = {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 47,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            use crate::BaseLedger;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 34,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            self.base",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .accounts()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .into_iter()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .chain(self.overlay.keys().cloned())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 52,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .collect()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 26,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        };",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 10,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let (mut ours, mut theirs) = account_ids",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 48,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .iter()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 19,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .map(|id| self.location_of_account(id).unwrap())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        },
+        {
+          "col_start": 22,
+          "col_end": 59,
+          "count": 48368
+        },
+        {
+          "col_start": 59,
+          "col_end": 60,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .partition::<Vec<_>, _>(|location| match location {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 36,
+          "count": 0
+        },
+        {
+          "col_start": 47,
+          "col_end": 61,
+          "count": 48368
+        }
+      ]
+    },
+    {
+      "line": "                Location::Ours(_) => true,",
+      "counters": [
+        {
+          "col_start": 37,
+          "col_end": 41,
+          "count": 48368
+        }
+      ]
+    },
+    {
+      "line": "                Location::Theirs(_) => false,",
+      "counters": [
+        {
+          "col_start": 39,
+          "col_end": 44,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            });",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 13,
+          "count": 48368
+        },
+        {
+          "col_start": 13,
+          "col_end": 15,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        ours.sort_by_key(|location| match location {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 0
+        },
+        {
+          "col_start": 36,
+          "col_end": 50,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Location::Ours(id) => id.clone(),",
+      "counters": [
+        {
+          "col_start": 27,
+          "col_end": 44,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Location::Theirs(_) => unreachable!(),",
+      "counters": [
+        {
+          "col_start": 35,
+          "col_end": 49,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        });",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 9,
+          "count": 0
+        },
+        {
+          "col_start": 9,
+          "col_end": 11,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        theirs.sort_by_key(|location| match location {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 0
+        },
+        {
+          "col_start": 38,
+          "col_end": 52,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Location::Ours(_) => unreachable!(),",
+      "counters": [
+        {
+          "col_start": 33,
+          "col_end": 47,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Location::Theirs(addr) => addr.to_index(),",
+      "counters": [
+        {
+          "col_start": 29,
+          "col_end": 54,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        });",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        },
+        {
+          "col_start": 9,
+          "col_end": 11,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        // Our accounts are sorted first",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 40,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        ours.append(&mut theirs);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        ours",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 12,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    }
+  ]
+}

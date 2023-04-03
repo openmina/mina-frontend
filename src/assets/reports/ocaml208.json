@@ -1,0 +1,1 @@
+{"filename":"src/lib/graphql_wrapper/json.ml","lines":[{"line":"let json_of_option (f : 'a -> Yojson.Basic.t) (x : 'a option) : Yojson.Basic.t =","counters":[]},{"line":"  match x with None -> `Null | Some x -> f x","counters":[{"col_start":2,"col_end":2,"count":0},{"col_start":15,"col_end":15,"count":0},{"col_start":31,"col_end":31,"count":0}]}]}

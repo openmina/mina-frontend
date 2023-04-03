@@ -1,0 +1,20 @@
+<div class="h-xl f-600 secondary pl-12 fx-row-vert-cent">Source Code</div>
+<div class="h-minus-xl flex-column">
+  <div class="h-xl f-600 tertiary pl-12 fx-row-vert-cent border-bottom">
+    <span>Total lines</span>
+    <span class="secondary ml-5 mr-10">{{ fileDetails?.lines.length }}</span>
+    <span>Executed lines</span>
+    <span class="secondary ml-5">{{ fileDetails?.executedLines }}</span>
+  </div>
+
+  <cdk-virtual-scroll-viewport itemSize="24"
+                               maxBufferPx="300"
+                               class="h-minus-xl monospace secondary overflow-y-auto">
+    <div class="code-row" *cdkVirtualFor="let line of fileDetails?.lines; let i=index">
+      <span>{{ i + 1 }}</span>
+      <span [style.border-color]="'var(--' + line.lineColor + '-primary)'"
+            [ngClass]="line.lineColor + '-primary'">{{ line.lineHits || '' }}</span>
+      <span [innerHtml]="line.html | safeHtml" [ngClass]="'bg-' + line.lineColor + '-container'"></span>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>

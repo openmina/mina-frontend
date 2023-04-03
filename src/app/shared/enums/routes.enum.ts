@@ -24,4 +24,7 @@ export enum Routes {
   SYSTEM = 'system',
   SNARK_TRACES = 'snark-traces',
   RESOURCES = 'resources',
+  FUZZING = 'fuzzing',
+  OCAML = 'ocaml',
+  RUST = 'rust',
 }

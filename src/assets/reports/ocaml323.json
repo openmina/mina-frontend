@@ -1,0 +1,1 @@
+{"filename":"src/lib/merkle_ledger/merkle_ledger_intf.ml","lines":[{"line":"module type S = sig","counters":[]},{"line":"  type t [@@deriving bin_io, sexp]","counters":[]},{"line":"","counters":[]},{"line":"  include Base_ledger_intf.S with type t := t","counters":[]},{"line":"end","counters":[{"col_start":2,"col_end":2,"count":2}]}]}

@@ -1,0 +1,1 @@
+{"filename":"src/lib/genesis_ledger/testnet_postake_ledger.ml","lines":[{"line":"let name = \"testnet_postake\"","counters":[]},{"line":"","counters":[]},{"line":"let balances = Test_ledger.balances","counters":[]}]}

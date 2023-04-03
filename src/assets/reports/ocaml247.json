@@ -1,0 +1,1 @@
+{"filename":"src/lib/consensus/sub_window.ml","lines":[{"line":"include Mina_numbers.Nat.Make32 ()","counters":[{"col_start":32,"col_end":32,"count":1}]}]}

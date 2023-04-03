@@ -17,6 +17,7 @@ import { IntervalSelectComponent } from '@shared/components/interval-select/inte
 import { EagerSharedModule } from '@shared/eager-shared.module';
 import { ReadableDatePipe } from '@shared/pipes/readable-date.pipe';
 import { PluralPipe } from '@shared/pipes/plural.pipe';
+import { SafeHtmlPipe } from '@shared/pipes/safe-html.pipe';
 
 
 const COMPONENTS = [
@@ -37,6 +38,7 @@ const PIPES = [
   ThousandPipe,
   ReadableDatePipe,
   PluralPipe,
+  SafeHtmlPipe,
 ];
 
 const MODULES = [

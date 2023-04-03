@@ -1,0 +1,1 @@
+{"filename":"src/lib/rosetta_lib/monad_fail.ml","lines":[{"line":"open Core_kernel","counters":[]},{"line":"","counters":[]},{"line":"module type S = sig","counters":[]},{"line":"  include Monad.S2","counters":[]},{"line":"","counters":[]},{"line":"  val fail : 'e -> ('a, 'e) t","counters":[]},{"line":"end","counters":[{"col_start":2,"col_end":2,"count":1}]}]}

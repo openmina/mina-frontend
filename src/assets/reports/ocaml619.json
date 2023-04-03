@@ -1,0 +1,827 @@
+{
+  "filename": "src/lib/pickles/requests.ml",
+  "lines": [
+    {
+      "line": "open Core_kernel",
+      "counters": []
+    },
+    {
+      "line": "open Import",
+      "counters": []
+    },
+    {
+      "line": "open Types",
+      "counters": []
+    },
+    {
+      "line": "open Pickles_types",
+      "counters": []
+    },
+    {
+      "line": "open Hlist",
+      "counters": []
+    },
+    {
+      "line": "open Snarky_backendless.Request",
+      "counters": []
+    },
+    {
+      "line": "open Common",
+      "counters": []
+    },
+    {
+      "line": "open Backend",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "module Wrap = struct",
+      "counters": []
+    },
+    {
+      "line": "  module type S = sig",
+      "counters": []
+    },
+    {
+      "line": "    type max_proofs_verified",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    type max_local_max_proofs_verifieds",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    open Impls.Wrap",
+      "counters": []
+    },
+    {
+      "line": "    open Wrap_main_inputs",
+      "counters": []
+    },
+    {
+      "line": "    open Snarky_backendless.Request",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    type _ t +=",
+      "counters": []
+    },
+    {
+      "line": "      | Evals :",
+      "counters": []
+    },
+    {
+      "line": "          ( (Field.Constant.t, Field.Constant.t array) Plonk_types.All_evals.t",
+      "counters": []
+    },
+    {
+      "line": "          , max_proofs_verified )",
+      "counters": []
+    },
+    {
+      "line": "          Vector.t",
+      "counters": []
+    },
+    {
+      "line": "          t",
+      "counters": []
+    },
+    {
+      "line": "      | Which_branch : int t",
+      "counters": []
+    },
+    {
+      "line": "      | Step_accs : (Tock.Inner_curve.Affine.t, max_proofs_verified) Vector.t t",
+      "counters": []
+    },
+    {
+      "line": "      | Old_bulletproof_challenges :",
+      "counters": []
+    },
+    {
+      "line": "          max_local_max_proofs_verifieds H1.T(Challenges_vector.Constant).t t",
+      "counters": []
+    },
+    {
+      "line": "      | Proof_state :",
+      "counters": []
+    },
+    {
+      "line": "          ( ( ( Challenge.Constant.t",
+      "counters": []
+    },
+    {
+      "line": "              , Challenge.Constant.t Scalar_challenge.t",
+      "counters": []
+    },
+    {
+      "line": "              , Field.Constant.t Shifted_value.Type2.t",
+      "counters": []
+    },
+    {
+      "line": "              , ( Challenge.Constant.t Scalar_challenge.t",
+      "counters": []
+    },
+    {
+      "line": "                , Field.Constant.t Shifted_value.Type2.t )",
+      "counters": []
+    },
+    {
+      "line": "                Types.Step.Proof_state.Deferred_values.Plonk.In_circuit.Lookup.t",
+      "counters": []
+    },
+    {
+      "line": "                option",
+      "counters": []
+    },
+    {
+      "line": "              , ( Challenge.Constant.t Scalar_challenge.t Bulletproof_challenge.t",
+      "counters": []
+    },
+    {
+      "line": "                , Tock.Rounds.n )",
+      "counters": []
+    },
+    {
+      "line": "                Vector.t",
+      "counters": []
+    },
+    {
+      "line": "              , Digest.Constant.t",
+      "counters": []
+    },
+    {
+      "line": "              , bool )",
+      "counters": []
+    },
+    {
+      "line": "              Types.Step.Proof_state.Per_proof.In_circuit.t",
+      "counters": []
+    },
+    {
+      "line": "            , max_proofs_verified )",
+      "counters": []
+    },
+    {
+      "line": "            Vector.t",
+      "counters": []
+    },
+    {
+      "line": "          , Digest.Constant.t )",
+      "counters": []
+    },
+    {
+      "line": "          Types.Step.Proof_state.t",
+      "counters": []
+    },
+    {
+      "line": "          t",
+      "counters": []
+    },
+    {
+      "line": "      | Messages : Tock.Inner_curve.Affine.t Plonk_types.Messages.t t",
+      "counters": []
+    },
+    {
+      "line": "      | Openings_proof :",
+      "counters": []
+    },
+    {
+      "line": "          ( Tock.Inner_curve.Affine.t",
+      "counters": []
+    },
+    {
+      "line": "          , Tick.Field.t )",
+      "counters": []
+    },
+    {
+      "line": "          Plonk_types.Openings.Bulletproof.t",
+      "counters": []
+    },
+    {
+      "line": "          t",
+      "counters": []
+    },
+    {
+      "line": "      | Wrap_domain_indices : (Field.Constant.t, max_proofs_verified) Vector.t t",
+      "counters": []
+    },
+    {
+      "line": "  end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  type ('mb, 'ml) t =",
+      "counters": []
+    },
+    {
+      "line": "    (module S",
+      "counters": []
+    },
+    {
+      "line": "       with type max_proofs_verified = 'mb",
+      "counters": []
+    },
+    {
+      "line": "        and type max_local_max_proofs_verifieds = 'ml )",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  let create : type mb ml. unit -> (mb, ml) t =",
+      "counters": []
+    },
+    {
+      "line": "   fun () ->",
+      "counters": []
+    },
+    {
+      "line": "    let module R = struct",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 4,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "      type nonrec max_proofs_verified = mb",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "      type nonrec max_local_max_proofs_verifieds = ml",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "      open Snarky_backendless.Request",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "      type 'a vec = ('a, max_proofs_verified) Vector.t",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "      type _ t +=",
+      "counters": []
+    },
+    {
+      "line": "        | Evals :",
+      "counters": []
+    },
+    {
+      "line": "            (Tock.Field.t, Tock.Field.t array) Plonk_types.All_evals.t vec t",
+      "counters": []
+    },
+    {
+      "line": "        | Which_branch : int t",
+      "counters": []
+    },
+    {
+      "line": "        | Step_accs : Tock.Inner_curve.Affine.t vec t",
+      "counters": []
+    },
+    {
+      "line": "        | Old_bulletproof_challenges :",
+      "counters": []
+    },
+    {
+      "line": "            max_local_max_proofs_verifieds H1.T(Challenges_vector.Constant).t t",
+      "counters": []
+    },
+    {
+      "line": "        | Proof_state :",
+      "counters": []
+    },
+    {
+      "line": "            ( ( ( Challenge.Constant.t",
+      "counters": []
+    },
+    {
+      "line": "                , Challenge.Constant.t Scalar_challenge.t",
+      "counters": []
+    },
+    {
+      "line": "                , Tock.Field.t Shifted_value.Type2.t",
+      "counters": []
+    },
+    {
+      "line": "                , ( Challenge.Constant.t Scalar_challenge.t",
+      "counters": []
+    },
+    {
+      "line": "                  , Tock.Field.t Shifted_value.Type2.t )",
+      "counters": []
+    },
+    {
+      "line": "                  Types.Step.Proof_state.Deferred_values.Plonk.In_circuit.Lookup",
+      "counters": []
+    },
+    {
+      "line": "                  .t",
+      "counters": []
+    },
+    {
+      "line": "                  option",
+      "counters": []
+    },
+    {
+      "line": "                , ( Challenge.Constant.t Scalar_challenge.t",
+      "counters": []
+    },
+    {
+      "line": "                    Bulletproof_challenge.t",
+      "counters": []
+    },
+    {
+      "line": "                  , Tock.Rounds.n )",
+      "counters": []
+    },
+    {
+      "line": "                  Vector.t",
+      "counters": []
+    },
+    {
+      "line": "                , Digest.Constant.t",
+      "counters": []
+    },
+    {
+      "line": "                , bool )",
+      "counters": []
+    },
+    {
+      "line": "                Types.Step.Proof_state.Per_proof.In_circuit.t",
+      "counters": []
+    },
+    {
+      "line": "              , max_proofs_verified )",
+      "counters": []
+    },
+    {
+      "line": "              Vector.t",
+      "counters": []
+    },
+    {
+      "line": "            , Digest.Constant.t )",
+      "counters": []
+    },
+    {
+      "line": "            Types.Step.Proof_state.t",
+      "counters": []
+    },
+    {
+      "line": "            t",
+      "counters": []
+    },
+    {
+      "line": "        | Messages : Tock.Inner_curve.Affine.t Plonk_types.Messages.t t",
+      "counters": []
+    },
+    {
+      "line": "        | Openings_proof :",
+      "counters": []
+    },
+    {
+      "line": "            ( Tock.Inner_curve.Affine.t",
+      "counters": []
+    },
+    {
+      "line": "            , Tick.Field.t )",
+      "counters": []
+    },
+    {
+      "line": "            Plonk_types.Openings.Bulletproof.t",
+      "counters": []
+    },
+    {
+      "line": "            t",
+      "counters": []
+    },
+    {
+      "line": "        | Wrap_domain_indices : (Tock.Field.t, max_proofs_verified) Vector.t t",
+      "counters": []
+    },
+    {
+      "line": "    end in",
+      "counters": []
+    },
+    {
+      "line": "    (module R)",
+      "counters": []
+    },
+    {
+      "line": "end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "module Step = struct",
+      "counters": []
+    },
+    {
+      "line": "  module type S = sig",
+      "counters": []
+    },
+    {
+      "line": "    type statement",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    type return_value",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    type prev_values",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    (* TODO: As an optimization this can be the local proofs-verified size *)",
+      "counters": []
+    },
+    {
+      "line": "    type max_proofs_verified",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    type local_signature",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    type local_branches",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    type auxiliary_value",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    type _ t +=",
+      "counters": []
+    },
+    {
+      "line": "      | Compute_prev_proof_parts :",
+      "counters": []
+    },
+    {
+      "line": "          ( prev_values",
+      "counters": []
+    },
+    {
+      "line": "          , local_signature )",
+      "counters": []
+    },
+    {
+      "line": "          H2.T(Inductive_rule.Previous_proof_statement.Constant).t",
+      "counters": []
+    },
+    {
+      "line": "          -> unit t",
+      "counters": []
+    },
+    {
+      "line": "      | Proof_with_datas :",
+      "counters": []
+    },
+    {
+      "line": "          ( prev_values",
+      "counters": []
+    },
+    {
+      "line": "          , local_signature",
+      "counters": []
+    },
+    {
+      "line": "          , local_branches )",
+      "counters": []
+    },
+    {
+      "line": "          H3.T(Per_proof_witness.Constant.No_app_state).t",
+      "counters": []
+    },
+    {
+      "line": "          t",
+      "counters": []
+    },
+    {
+      "line": "      | Wrap_index : Tock.Curve.Affine.t Plonk_verification_key_evals.t t",
+      "counters": []
+    },
+    {
+      "line": "      | App_state : statement t",
+      "counters": []
+    },
+    {
+      "line": "      | Return_value : return_value -> unit t",
+      "counters": []
+    },
+    {
+      "line": "      | Auxiliary_value : auxiliary_value -> unit t",
+      "counters": []
+    },
+    {
+      "line": "      | Unfinalized_proofs :",
+      "counters": []
+    },
+    {
+      "line": "          (Unfinalized.Constant.t, max_proofs_verified) Vector.t t",
+      "counters": []
+    },
+    {
+      "line": "      | Messages_for_next_wrap_proof :",
+      "counters": []
+    },
+    {
+      "line": "          (Digest.Constant.t, max_proofs_verified) Vector.t t",
+      "counters": []
+    },
+    {
+      "line": "  end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  let create :",
+      "counters": []
+    },
+    {
+      "line": "      type local_signature local_branches statement return_value auxiliary_value prev_values prev_ret_values max_proofs_verified.",
+      "counters": []
+    },
+    {
+      "line": "         unit",
+      "counters": []
+    },
+    {
+      "line": "      -> (module S",
+      "counters": []
+    },
+    {
+      "line": "            with type local_signature = local_signature",
+      "counters": []
+    },
+    {
+      "line": "             and type local_branches = local_branches",
+      "counters": []
+    },
+    {
+      "line": "             and type statement = statement",
+      "counters": []
+    },
+    {
+      "line": "             and type return_value = return_value",
+      "counters": []
+    },
+    {
+      "line": "             and type auxiliary_value = auxiliary_value",
+      "counters": []
+    },
+    {
+      "line": "             and type prev_values = prev_values",
+      "counters": []
+    },
+    {
+      "line": "             and type max_proofs_verified = max_proofs_verified ) =",
+      "counters": []
+    },
+    {
+      "line": "   fun () ->",
+      "counters": []
+    },
+    {
+      "line": "    let module R = struct",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 4,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "      type nonrec max_proofs_verified = max_proofs_verified",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "      type nonrec statement = statement",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "      type nonrec return_value = return_value",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "      type nonrec auxiliary_value = auxiliary_value",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "      type nonrec prev_values = prev_values",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "      type nonrec local_signature = local_signature",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "      type nonrec local_branches = local_branches",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "      type _ t +=",
+      "counters": []
+    },
+    {
+      "line": "        | Compute_prev_proof_parts :",
+      "counters": []
+    },
+    {
+      "line": "            ( prev_values",
+      "counters": []
+    },
+    {
+      "line": "            , local_signature )",
+      "counters": []
+    },
+    {
+      "line": "            H2.T(Inductive_rule.Previous_proof_statement.Constant).t",
+      "counters": []
+    },
+    {
+      "line": "            -> unit t",
+      "counters": []
+    },
+    {
+      "line": "        | Proof_with_datas :",
+      "counters": []
+    },
+    {
+      "line": "            ( prev_values",
+      "counters": []
+    },
+    {
+      "line": "            , local_signature",
+      "counters": []
+    },
+    {
+      "line": "            , local_branches )",
+      "counters": []
+    },
+    {
+      "line": "            H3.T(Per_proof_witness.Constant.No_app_state).t",
+      "counters": []
+    },
+    {
+      "line": "            t",
+      "counters": []
+    },
+    {
+      "line": "        | Wrap_index : Tock.Curve.Affine.t Plonk_verification_key_evals.t t",
+      "counters": []
+    },
+    {
+      "line": "        | App_state : statement t",
+      "counters": []
+    },
+    {
+      "line": "        | Return_value : return_value -> unit t",
+      "counters": []
+    },
+    {
+      "line": "        | Auxiliary_value : auxiliary_value -> unit t",
+      "counters": []
+    },
+    {
+      "line": "        | Unfinalized_proofs :",
+      "counters": []
+    },
+    {
+      "line": "            (Unfinalized.Constant.t, max_proofs_verified) Vector.t t",
+      "counters": []
+    },
+    {
+      "line": "        | Messages_for_next_wrap_proof :",
+      "counters": []
+    },
+    {
+      "line": "            (Digest.Constant.t, max_proofs_verified) Vector.t t",
+      "counters": []
+    },
+    {
+      "line": "    end in",
+      "counters": []
+    },
+    {
+      "line": "    (module R)",
+      "counters": []
+    },
+    {
+      "line": "end",
+      "counters": [
+        {
+          "col_start": 2,
+          "col_end": 2,
+          "count": 2
+        }
+      ]
+    }
+  ]
+}

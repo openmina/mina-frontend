@@ -1,0 +1,1 @@
+{"filename":"src/lib/debug_assert/debug_assert.ml","lines":[{"line":"let debug_assert thunk = thunk ()","counters":[{"col_start":24,"col_end":24,"count":0}]},{"line":"","counters":[]},{"line":"let debug_assert_deferred thunk = thunk ()","counters":[{"col_start":34,"col_end":34,"count":0}]}]}

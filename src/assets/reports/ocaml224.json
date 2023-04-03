@@ -1,0 +1,1 @@
+{"filename":"src/lib/mina_base/frozen_ledger_hash0.ml","lines":[{"line":"include Ledger_hash0","counters":[{"col_start":18,"col_end":18,"count":1}]}]}

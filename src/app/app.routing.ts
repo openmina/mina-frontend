@@ -13,6 +13,7 @@ export const BENCHMARKS_TITLE: string = APP_TITLE + ' - Benchmarks';
 export const DASHBOARD_TITLE: string = APP_TITLE + ' - Dashboard';
 export const EXPLORER_TITLE: string = APP_TITLE + ' - Explorer';
 export const LOGS_TITLE: string = APP_TITLE + ' - Logs';
+export const FUZZING_TITLE: string = APP_TITLE + ' - Fuzzing';
 
 
 export const routes: Routes = [
@@ -63,6 +64,12 @@ export const routes: Routes = [
     loadChildren: () => import('@logs/logs.module').then(m => m.LogsModule),
     title: LOGS_TITLE,
     canActivate: [FeatureGuard],
+  },
+  {
+    path: 'fuzzing',
+    loadChildren: () => import('@fuzzing/fuzzing.module').then(m => m.FuzzingModule),
+    title: FUZZING_TITLE,
+    // canActivate: [FeatureGuard],
   },
   {
     path: '**',

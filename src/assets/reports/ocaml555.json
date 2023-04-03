@@ -1,0 +1,1 @@
+{"filename":"src/lib/mina_numbers/hd_index.ml","lines":[{"line":"module T = Nat.Make32 ()","counters":[]},{"line":"","counters":[]},{"line":"include T","counters":[]},{"line":"include Codable.Make_of_string (T)","counters":[{"col_start":33,"col_end":33,"count":1}]}]}

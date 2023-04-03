@@ -1,0 +1,2501 @@
+{
+  "filename": "src/staged_ledger/diff.rs",
+  "lines": [
+    {
+      "line": "use crate::{",
+      "counters": []
+    },
+    {
+      "line": "    scan_state::{",
+      "counters": []
+    },
+    {
+      "line": "        currency::{Amount, Magnitude},",
+      "counters": []
+    },
+    {
+      "line": "        scan_state::{transaction_snark::work, ConstraintConstants},",
+      "counters": []
+    },
+    {
+      "line": "        transaction_logic::{",
+      "counters": []
+    },
+    {
+      "line": "            valid, CoinbaseFeeTransfer, TransactionStatus, UserCommand, WithStatus,",
+      "counters": []
+    },
+    {
+      "line": "        },",
+      "counters": []
+    },
+    {
+      "line": "    },",
+      "counters": []
+    },
+    {
+      "line": "    split_at_vec,",
+      "counters": []
+    },
+    {
+      "line": "    verifier::VerifierError,",
+      "counters": []
+    },
+    {
+      "line": "};",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "use super::{pre_diff_info::PreDiffError, staged_ledger::StagedLedger};",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "/// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff_intf.ml#L5",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone)]",
+      "counters": [
+        {
+          "col_start": 9,
+          "col_end": 10,
+          "count": 0
+        },
+        {
+          "col_start": 13,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "pub enum AtMostTwo<T> {",
+      "counters": []
+    },
+    {
+      "line": "    Zero,",
+      "counters": []
+    },
+    {
+      "line": "    One(Option<T>),",
+      "counters": []
+    },
+    {
+      "line": "    Two(Option<(T, Option<T>)>),",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl<T> std::fmt::Debug for AtMostTwo<T> {",
+      "counters": []
+    },
+    {
+      "line": "    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 72,
+          "count": 15530
+        }
+      ]
+    },
+    {
+      "line": "        match self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 15530
+        }
+      ]
+    },
+    {
+      "line": "            Self::Zero => write!(f, \"Zero\"),",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 43,
+          "count": 15530
+        }
+      ]
+    },
+    {
+      "line": "            Self::One(_) => f.debug_tuple(\"One(_)\").finish(),",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 60,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Self::Two(_) => f.debug_tuple(\"Two(_, _)\").finish(),",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 63,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 15530
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "/// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff_intf.ml#L20",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone)]",
+      "counters": []
+    },
+    {
+      "line": "pub enum AtMostOne<T> {",
+      "counters": []
+    },
+    {
+      "line": "    Zero,",
+      "counters": []
+    },
+    {
+      "line": "    One(Option<T>),",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl<T> std::fmt::Debug for AtMostOne<T> {",
+      "counters": []
+    },
+    {
+      "line": "    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 72,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "line": "        match self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "line": "            Self::Zero => write!(f, \"Zero\"),",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 43,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "line": "            Self::One(_) => f.debug_tuple(\"One(_)\").finish(),",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 60,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "/// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff_intf.ml#L37",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone)]",
+      "counters": []
+    },
+    {
+      "line": "pub struct PreDiffTwo<A, B> {",
+      "counters": []
+    },
+    {
+      "line": "    pub completed_works: Vec<A>,",
+      "counters": []
+    },
+    {
+      "line": "    pub commands: Vec<B>,",
+      "counters": []
+    },
+    {
+      "line": "    pub coinbase: AtMostTwo<CoinbaseFeeTransfer>,",
+      "counters": []
+    },
+    {
+      "line": "    pub internal_command_statuses: Vec<TransactionStatus>,",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl<A, B> std::fmt::Debug for PreDiffTwo<A, B> {",
+      "counters": []
+    },
+    {
+      "line": "    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 72,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            completed_works,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            commands,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            internal_command_statuses,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 38,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        } = self;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        f.debug_struct(\"PreDiffTwo\")",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"completed_works\", &completed_works.len())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 61,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"commands\", &commands.len())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 47,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"coinbase\", coinbase)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 40,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"internal_command_statuses\", internal_command_statuses)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 74,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .finish()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "/// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff_intf.ml#L54",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone)]",
+      "counters": []
+    },
+    {
+      "line": "pub struct PreDiffOne<A, B> {",
+      "counters": []
+    },
+    {
+      "line": "    pub completed_works: Vec<A>,",
+      "counters": []
+    },
+    {
+      "line": "    pub commands: Vec<B>,",
+      "counters": []
+    },
+    {
+      "line": "    pub coinbase: AtMostOne<CoinbaseFeeTransfer>,",
+      "counters": []
+    },
+    {
+      "line": "    pub internal_command_statuses: Vec<TransactionStatus>,",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl<A, B> std::fmt::Debug for PreDiffOne<A, B> {",
+      "counters": []
+    },
+    {
+      "line": "    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 72,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            completed_works,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            commands,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            internal_command_statuses,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 38,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        } = self;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        f.debug_struct(\"PreDiffOne\")",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"completed_works\", &completed_works.len())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 61,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"commands\", &commands.len())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 47,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"coinbase\", coinbase)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 40,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"internal_command_statuses\", internal_command_statuses)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 74,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .finish()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "/// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff_intf.ml#L68",
+      "counters": []
+    },
+    {
+      "line": "pub type PreDiffWithAtMostTwoCoinbase = PreDiffTwo<work::Work, WithStatus<UserCommand>>;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "/// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff_intf.ml#L82",
+      "counters": []
+    },
+    {
+      "line": "pub type PreDiffWithAtMostOneCoinbase = PreDiffOne<work::Work, WithStatus<UserCommand>>;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "/// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff_intf.ml#L107",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Debug, Clone)]",
+      "counters": [
+        {
+          "col_start": 9,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "pub struct Diff {",
+      "counters": []
+    },
+    {
+      "line": "    pub diff: (",
+      "counters": []
+    },
+    {
+      "line": "        PreDiffWithAtMostTwoCoinbase,",
+      "counters": []
+    },
+    {
+      "line": "        Option<PreDiffWithAtMostOneCoinbase>,",
+      "counters": []
+    },
+    {
+      "line": "    ),",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl Diff {",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff.ml#L429",
+      "counters": []
+    },
+    {
+      "line": "    pub fn completed_works(&self) -> Vec<work::Work> {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 54,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let first = self.diff.0.completed_works.as_slice();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 58,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let second = match self.diff.1.as_ref() {",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 18,
+          "count": 0
+        },
+        {
+          "col_start": 27,
+          "col_end": 47,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Some(second) => second.completed_works.as_slice(),",
+      "counters": [
+        {
+          "col_start": 17,
+          "col_end": 61,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            None => &[],",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 23,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        first.iter().chain(second).cloned().collect()",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff.ml#L425",
+      "counters": []
+    },
+    {
+      "line": "    pub fn commands(&self) -> Vec<WithStatus<UserCommand>> {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 60,
+          "count": 74045
+        }
+      ]
+    },
+    {
+      "line": "        let first = self.diff.0.commands.as_slice();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 51,
+          "count": 74045
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let second = match self.diff.1.as_ref() {",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 18,
+          "count": 74045
+        },
+        {
+          "col_start": 27,
+          "col_end": 47,
+          "count": 74045
+        }
+      ]
+    },
+    {
+      "line": "            Some(second) => second.commands.as_slice(),",
+      "counters": [
+        {
+          "col_start": 17,
+          "col_end": 54,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            None => &[],",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 23,
+          "count": 74045
+        }
+      ]
+    },
+    {
+      "line": "        };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        first.iter().chain(second).cloned().collect()",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 53,
+          "count": 74045
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 74045
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff.ml#L333",
+      "counters": []
+    },
+    {
+      "line": "    pub fn validate_commands<F>(self, check: F) -> Result<with_valid_signatures::Diff, PreDiffError>",
+      "counters": []
+    },
+    {
+      "line": "    where",
+      "counters": []
+    },
+    {
+      "line": "        F: Fn(Vec<&UserCommand>) -> Result<Vec<valid::UserCommand>, VerifierError>,",
+      "counters": []
+    },
+    {
+      "line": "    {",
+      "counters": []
+    },
+    {
+      "line": "        let validate = |cmds: Vec<WithStatus<UserCommand>>| -> Result<Vec<WithStatus<valid::UserCommand>>, VerifierError> {",
+      "counters": []
+    },
+    {
+      "line": "            let valids = check(cmds.iter().map(|c| &c.data).collect())?;",
+      "counters": []
+    },
+    {
+      "line": "            Ok(valids.into_iter().zip(cmds).map(|(data, c)| {",
+      "counters": []
+    },
+    {
+      "line": "                WithStatus { data, status: c.status  }",
+      "counters": []
+    },
+    {
+      "line": "            }).collect())",
+      "counters": []
+    },
+    {
+      "line": "        };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let commands = self.commands();",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let (d1, d2) = self.diff;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let commands_all = validate(commands)?;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let (commands1, commands2) = split_at_vec(commands_all, d1.commands.len());",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let p1 = with_valid_signatures::PreDiffWithAtMostTwoCoinbase {",
+      "counters": []
+    },
+    {
+      "line": "            completed_works: d1.completed_works,",
+      "counters": []
+    },
+    {
+      "line": "            commands: commands1,",
+      "counters": []
+    },
+    {
+      "line": "            coinbase: d1.coinbase,",
+      "counters": []
+    },
+    {
+      "line": "            internal_command_statuses: d1.internal_command_statuses,",
+      "counters": []
+    },
+    {
+      "line": "        };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let p2 = d2.map(|d2| with_valid_signatures::PreDiffWithAtMostOneCoinbase {",
+      "counters": []
+    },
+    {
+      "line": "            completed_works: d2.completed_works,",
+      "counters": []
+    },
+    {
+      "line": "            commands: commands2,",
+      "counters": []
+    },
+    {
+      "line": "            coinbase: d2.coinbase,",
+      "counters": []
+    },
+    {
+      "line": "            internal_command_statuses: d2.internal_command_statuses,",
+      "counters": []
+    },
+    {
+      "line": "        });",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        Ok(with_valid_signatures::Diff { diff: (p1, p2) })",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub fn empty() -> Self {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            diff: (",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 19,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                PreDiffWithAtMostTwoCoinbase {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    completed_works: Vec::new(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 48,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    commands: Vec::new(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    coinbase: AtMostTwo::Zero,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    internal_command_statuses: Vec::new(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 58,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                },",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                None,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            ),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "pub mod with_valid_signatures_and_proofs {",
+      "counters": []
+    },
+    {
+      "line": "    use crate::scan_state::transaction_logic::valid;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    use super::*;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff_intf.ml#L123",
+      "counters": []
+    },
+    {
+      "line": "    pub type PreDiffWithAtMostTwoCoinbase =",
+      "counters": []
+    },
+    {
+      "line": "        PreDiffTwo<work::Checked, WithStatus<valid::UserCommand>>;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff_intf.ml#L129",
+      "counters": []
+    },
+    {
+      "line": "    pub type PreDiffWithAtMostOneCoinbase =",
+      "counters": []
+    },
+    {
+      "line": "        PreDiffOne<work::Checked, WithStatus<valid::UserCommand>>;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff_intf.ml#L140",
+      "counters": []
+    },
+    {
+      "line": "    #[derive(Debug)]",
+      "counters": [
+        {
+          "col_start": 13,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    pub struct Diff {",
+      "counters": []
+    },
+    {
+      "line": "        pub diff: (",
+      "counters": []
+    },
+    {
+      "line": "            PreDiffWithAtMostTwoCoinbase,",
+      "counters": []
+    },
+    {
+      "line": "            Option<PreDiffWithAtMostOneCoinbase>,",
+      "counters": []
+    },
+    {
+      "line": "        ),",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff.ml#L268",
+      "counters": []
+    },
+    {
+      "line": "    fn forget_cw(list: Vec<work::Checked>) -> Vec<work::Unchecked> {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 68,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        list.into_iter().map(work::Checked::forget).collect()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 61,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    impl Diff {",
+      "counters": []
+    },
+    {
+      "line": "        pub fn commands(&self) -> Vec<WithStatus<valid::UserCommand>> {",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 71,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            let first = self.diff.0.commands.as_slice();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 55,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let second = match self.diff.1.as_ref() {",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 22,
+          "count": 0
+        },
+        {
+          "col_start": 31,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                Some(second) => second.commands.as_slice(),",
+      "counters": [
+        {
+          "col_start": 21,
+          "col_end": 58,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "                None => &[],",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 27,
+          "count": -38
+        }
+      ]
+    },
+    {
+      "line": "            };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            first.iter().chain(second).cloned().collect()",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 57,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff.ml#L373",
+      "counters": []
+    },
+    {
+      "line": "        pub fn forget_proof_checks(self) -> super::with_valid_signatures::Diff {",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 80,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "            let d1 = self.diff.0;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let p1 = with_valid_signatures::PreDiffWithAtMostTwoCoinbase {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 74,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "                completed_works: forget_cw(d1.completed_works),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 63,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "                commands: d1.commands,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 38,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "                coinbase: d1.coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 38,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "                internal_command_statuses: d1.internal_command_statuses,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 72,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "            };",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let p2 = self",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "                .diff",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "                .1",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "                .map(|d2| with_valid_signatures::PreDiffWithAtMostOneCoinbase {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 38
+        },
+        {
+          "col_start": 26,
+          "col_end": 79,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    completed_works: forget_cw(d2.completed_works),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 67,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    commands: d2.commands,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    coinbase: d2.coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    internal_command_statuses: d2.internal_command_statuses,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 76,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                });",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        },
+        {
+          "col_start": 17,
+          "col_end": 19,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            super::with_valid_signatures::Diff { diff: (p1, p2) }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 65,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 38
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff.ml#L419",
+      "counters": []
+    },
+    {
+      "line": "        pub fn forget(self) -> super::Diff {",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 44,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "            let d1 = self.diff.0;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "            let p1 = super::PreDiffWithAtMostTwoCoinbase {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 58,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                completed_works: forget_cw(d1.completed_works),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 63,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                commands: d1",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                    .commands",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 29,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                    .into_iter()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                    .map(|c| c.map(|c| c.forget_check()))",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 24999
+        },
+        {
+          "col_start": 29,
+          "col_end": 35,
+          "count": 407923
+        },
+        {
+          "col_start": 39,
+          "col_end": 55,
+          "count": 0
+        },
+        {
+          "col_start": 55,
+          "col_end": 56,
+          "count": 407923
+        },
+        {
+          "col_start": 56,
+          "col_end": 57,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                    .collect(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 31,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                coinbase: d1.coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 38,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                internal_command_statuses: d1.internal_command_statuses,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 72,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "            };",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let d2 = self.diff.1;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "            let p2 = d2.map(|d2| super::PreDiffWithAtMostOneCoinbase {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 24999
+        },
+        {
+          "col_start": 33,
+          "col_end": 70,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                completed_works: forget_cw(d2.completed_works),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 63,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                commands: d2",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                    .commands",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 29,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                    .into_iter()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                    .map(|c| c.map(|c| c.forget_check()))",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 24999
+        },
+        {
+          "col_start": 29,
+          "col_end": 35,
+          "count": 353532
+        },
+        {
+          "col_start": 39,
+          "col_end": 55,
+          "count": 0
+        },
+        {
+          "col_start": 55,
+          "col_end": 56,
+          "count": 353532
+        },
+        {
+          "col_start": 56,
+          "col_end": 57,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                    .collect(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 31,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                coinbase: d2.coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 38,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "                internal_command_statuses: d2.internal_command_statuses,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 72,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "            });",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 13,
+          "count": 24999
+        },
+        {
+          "col_start": 13,
+          "col_end": 15,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            super::Diff { diff: (p1, p2) }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 24999
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        pub fn empty() -> Self {",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 32,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "            Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                diff: (",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 23,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                    PreDiffWithAtMostTwoCoinbase {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                        completed_works: Vec::new(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 52,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                        commands: Vec::new(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                        coinbase: AtMostTwo::Zero,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                        internal_command_statuses: Vec::new(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 62,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                    },",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                    None,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                ),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "            }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 13,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "pub mod with_valid_signatures {",
+      "counters": []
+    },
+    {
+      "line": "    use super::*;",
+      "counters": []
+    },
+    {
+      "line": "    use crate::scan_state::transaction_logic::valid;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub type PreDiffWithAtMostTwoCoinbase = PreDiffTwo<work::Work, WithStatus<valid::UserCommand>>;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub type PreDiffWithAtMostOneCoinbase = PreDiffOne<work::Work, WithStatus<valid::UserCommand>>;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub struct Diff {",
+      "counters": []
+    },
+    {
+      "line": "        pub diff: (",
+      "counters": []
+    },
+    {
+      "line": "            PreDiffWithAtMostTwoCoinbase,",
+      "counters": []
+    },
+    {
+      "line": "            Option<PreDiffWithAtMostOneCoinbase>,",
+      "counters": []
+    },
+    {
+      "line": "        ),",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    impl Diff {",
+      "counters": []
+    },
+    {
+      "line": "        pub fn empty() -> Self {",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 32,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "            Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                diff: (",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 23,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                    PreDiffWithAtMostTwoCoinbase {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                        completed_works: Vec::new(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 52,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                        commands: Vec::new(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                        coinbase: AtMostTwo::Zero,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                        internal_command_statuses: Vec::new(),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 62,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                    },",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                    None,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "                ),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "            }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 13,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 3901
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "/// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger_diff/diff.ml#L278",
+      "counters": []
+    },
+    {
+      "line": "pub fn coinbase<A, B>(",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    diff: &(PreDiffTwo<A, B>, Option<PreDiffOne<A, B>>),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 56,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    constraint_constants: &ConstraintConstants,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 47,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    supercharge_coinbase: bool,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 31,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": ") -> Option<Amount> {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    let (first_pre_diff, second_pre_diff_opt) = &diff;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 54,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    let coinbase_amount = StagedLedger::coinbase_amount(supercharge_coinbase, constraint_constants);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 100,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    match (",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 11,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        &first_pre_diff.coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        second_pre_diff_opt",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .as_ref()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .map(|s| &s.coinbase)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        },
+        {
+          "col_start": 21,
+          "col_end": 32,
+          "count": 100371
+        },
+        {
+          "col_start": 32,
+          "col_end": 33,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .unwrap_or(&AtMostOne::Zero),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 40,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    ) {",
+      "counters": []
+    },
+    {
+      "line": "        (AtMostTwo::Zero, AtMostOne::Zero) => Some(Amount::zero()),",
+      "counters": [
+        {
+          "col_start": 46,
+          "col_end": 66,
+          "count": 100371
+        }
+      ]
+    },
+    {
+      "line": "        _ => coinbase_amount,",
+      "counters": [
+        {
+          "col_start": 13,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 1,
+          "count": 100371
+        }
+      ]
+    }
+  ]
+}

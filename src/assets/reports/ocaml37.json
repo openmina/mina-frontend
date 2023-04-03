@@ -1,0 +1,1 @@
+{"filename":"src/lib/key_cache/native/key_cache_native.ml","lines":[{"line":"let linkme : unit =","counters":[]},{"line":"  Key_cache.set_sync_implementation (module Key_cache_sync) ;","counters":[]},{"line":"  Key_cache.set_async_implementation (module Key_cache_async)","counters":[{"col_start":2,"col_end":2,"count":1},{"col_start":35,"col_end":35,"count":1}]}]}

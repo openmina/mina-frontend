@@ -1,0 +1,48 @@
+@import 'variables';
+
+.mina-table {
+	.row {
+		grid-template-columns: 175px 430px;
+		color: $base-secondary;
+
+		&:not(.head) {
+			cursor: pointer;
+
+			span.border-rad-4 {
+				width: 80px;
+				height: 16px;
+				background-color: $warn-tertiary;
+				position: relative;
+				overflow: hidden;
+
+				span {
+					position: absolute;
+					left: 0;
+					height: 100%;
+					background-color: $base-surface;
+
+					&::after {
+						content: '';
+						position: absolute;
+						width: 100%;
+						height: 100%;
+						background-color: $success-secondary;
+					}
+				}
+			}
+
+			&.active span.border-rad-4 {
+				background-color: $warn-secondary;
+
+				span::after {
+					background-color: $success-primary;
+				}
+			}
+		}
+	}
+
+	.cdk-virtual-scroll-viewport {
+		min-width: 175px + 430px;
+		overflow-x: hidden;
+	}
+}

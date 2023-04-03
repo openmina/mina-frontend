@@ -1,0 +1,36 @@
+@import 'variables';
+
+.code-row {
+	height: 24px;
+	line-height: 24px;
+	display: flex;
+	padding-left: 12px;
+
+	> span:first-child {
+		color: $base-tertiary;
+		width: 50px;
+	}
+
+	> span:nth-child(2) {
+		width: 60px;
+		border-right: 4px solid $base-container;
+	}
+
+	> span:nth-child(3) {
+		padding-left: 5px;
+		width: calc(100% - 110px);
+	}
+
+	::ng-deep > span {
+		white-space: pre;
+		line-height: inherit;
+		height: inherit;
+		display: flex;
+
+		span {
+			line-height: inherit;
+			height: inherit;
+			display: flex;
+		}
+	}
+}

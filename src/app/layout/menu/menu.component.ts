@@ -27,6 +27,7 @@ const MENU_ITEMS: MenuItem[] = [
   { name: 'Network', icon: 'account_tree' },
   { name: 'Tracing', icon: 'grid_view' },
   { name: 'Web Node', icon: 'blur_circular' },
+  { name: 'Fuzzing', icon: 'shuffle' },
   { name: 'Benchmarks', icon: 'dynamic_form' },
 ];
 
@@ -106,7 +107,11 @@ export class MenuComponent extends ManualDetection implements OnInit {
 
   private get allowedMenuItems(): MenuItem[] {
     const features = getAvailableFeatures(this.activeNode);
-    return MENU_ITEMS.filter((opt: MenuItem) => features.find(f => f === opt.name.toLowerCase().split(' ').join('-')));
+    return MENU_ITEMS.filter((opt: MenuItem) => features.find(f => f === opt.name.toLowerCase().split(' ').join('-')))
+      .concat([{
+      name: 'Fuzzing',
+      icon: 'shuffle',
+    }]);
   }
 
   toggleMenu(): void {

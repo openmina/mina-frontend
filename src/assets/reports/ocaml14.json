@@ -1,0 +1,1 @@
+{"filename":"src/lib/run_in_thread/native/run_in_thread.ml","lines":[{"line":"let run_in_thread f = Async.In_thread.run f","counters":[{"col_start":21,"col_end":21,"count":0}]},{"line":"","counters":[]},{"line":"let block_on_async_exn f = Async.Thread_safe.block_on_async_exn f","counters":[{"col_start":27,"col_end":27,"count":0}]}]}

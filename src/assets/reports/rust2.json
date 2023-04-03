@@ -1,0 +1,6119 @@
+{
+  "filename": "src/staged_ledger/resources.rs",
+  "lines": [
+    {
+      "line": "use std::collections::HashMap;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "use mina_signer::CompressedPubKey;",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "use crate::{",
+      "counters": []
+    },
+    {
+      "line": "    scan_state::{",
+      "counters": []
+    },
+    {
+      "line": "        currency::{Amount, Fee, Magnitude},",
+      "counters": []
+    },
+    {
+      "line": "        scan_state::{transaction_snark::work, ConstraintConstants},",
+      "counters": []
+    },
+    {
+      "line": "        transaction_logic::{valid, CoinbaseFeeTransfer, GenericCommand, WithStatus},",
+      "counters": []
+    },
+    {
+      "line": "    },",
+      "counters": []
+    },
+    {
+      "line": "    MyCow,",
+      "counters": []
+    },
+    {
+      "line": "};",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "use super::{",
+      "counters": []
+    },
+    {
+      "line": "    diff::AtMostTwo,",
+      "counters": []
+    },
+    {
+      "line": "    pre_diff_info::{fee_transfers_map, sum_fees, HashableCompressedPubKey},",
+      "counters": []
+    },
+    {
+      "line": "    staged_ledger::StagedLedger,",
+      "counters": []
+    },
+    {
+      "line": "};",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone)]",
+      "counters": [
+        {
+          "col_start": 9,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "pub struct Discarded {",
+      "counters": []
+    },
+    {
+      "line": "    pub commands_rev: Vec<WithStatus<valid::UserCommand>>,",
+      "counters": []
+    },
+    {
+      "line": "    pub completed_work: Vec<work::Checked>,",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl std::fmt::Debug for Discarded {",
+      "counters": []
+    },
+    {
+      "line": "    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 72,
+          "count": 689
+        }
+      ]
+    },
+    {
+      "line": "        let Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 689
+        }
+      ]
+    },
+    {
+      "line": "            commands_rev,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 689
+        }
+      ]
+    },
+    {
+      "line": "            completed_work,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 689
+        }
+      ]
+    },
+    {
+      "line": "        } = self;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 689
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        f.debug_struct(\"Discarded\")",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 35,
+          "count": 689
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"commands_rev\", &commands_rev.len())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 55,
+          "count": 689
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"completed_work\", &completed_work.len())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 59,
+          "count": 689
+        }
+      ]
+    },
+    {
+      "line": "            .finish()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 689
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 689
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl Discarded {",
+      "counters": []
+    },
+    {
+      "line": "    fn add_user_command(&mut self, cmd: WithStatus<valid::UserCommand>) {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 73,
+          "count": 101985
+        }
+      ]
+    },
+    {
+      "line": "        self.commands_rev.push(cmd);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 36,
+          "count": 101985
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 101985
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    fn add_completed_work(&mut self, work: work::Checked) {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 59,
+          "count": 40794
+        }
+      ]
+    },
+    {
+      "line": "        self.completed_work.push(work);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 40794
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 40794
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "pub enum IncreaseBy {",
+      "counters": []
+    },
+    {
+      "line": "    One,",
+      "counters": []
+    },
+    {
+      "line": "    Two,",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "#[derive(Clone)]",
+      "counters": [
+        {
+          "col_start": 9,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "pub struct Resources {",
+      "counters": []
+    },
+    {
+      "line": "    max_space: u64,",
+      "counters": []
+    },
+    {
+      "line": "    max_jobs: u64,",
+      "counters": []
+    },
+    {
+      "line": "    pub commands_rev: Vec<WithStatus<valid::UserCommand>>,",
+      "counters": []
+    },
+    {
+      "line": "    pub completed_work_rev: Vec<work::Checked>, // TODO: Use another container (VecDeque ?)",
+      "counters": []
+    },
+    {
+      "line": "    fee_transfers: HashMap<HashableCompressedPubKey, Fee>,",
+      "counters": []
+    },
+    {
+      "line": "    add_coinbase: bool,",
+      "counters": []
+    },
+    {
+      "line": "    pub coinbase: AtMostTwo<CoinbaseFeeTransfer>,",
+      "counters": []
+    },
+    {
+      "line": "    supercharge_coinbase: bool,",
+      "counters": []
+    },
+    {
+      "line": "    receiver_pk: CompressedPubKey,",
+      "counters": []
+    },
+    {
+      "line": "    budget: Result<Fee, String>,",
+      "counters": []
+    },
+    {
+      "line": "    pub discarded: Discarded,",
+      "counters": []
+    },
+    {
+      "line": "    is_coinbase_receiver_new: bool,",
+      "counters": []
+    },
+    {
+      "line": "    _logger: (),",
+      "counters": []
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl std::fmt::Debug for Resources {",
+      "counters": []
+    },
+    {
+      "line": "    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 72,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "        let Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            max_space,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            max_jobs,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            commands_rev,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            completed_work_rev,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 31,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            fee_transfers,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 26,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            add_coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            supercharge_coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            receiver_pk,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            budget,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 19,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            discarded,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            is_coinbase_receiver_new,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            _logger,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 20,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "        } = self;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        f.debug_struct(\"Resources\")",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 35,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"max_space\", max_space)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"max_jobs\", max_jobs)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 40,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"commands_rev\", &commands_rev.len())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 55,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"completed_work_rev\", &completed_work_rev.len())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 67,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"fee_transfers\", fee_transfers)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"add_coinbase\", add_coinbase)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 48,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"coinbase\", coinbase)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 40,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"supercharge_coinbase\", supercharge_coinbase)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 64,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"receiver_pk\", receiver_pk)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"budget\", budget)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 36,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"discarded\", discarded)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"is_coinbase_receiver_new\", is_coinbase_receiver_new)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 72,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            .field(\"_logger\", _logger)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 38,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            .finish()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "impl Resources {",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1149",
+      "counters": []
+    },
+    {
+      "line": "    fn coinbase_ft(work: work::Unchecked) -> Option<CoinbaseFeeTransfer> {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 74,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "        // Here we could not add the fee transfer if the prover=receiver_pk but",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 79,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "        // retaining it to preserve that information in the",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 59,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "        // staged_ledger_diff. It will be checked in apply_diff before adding*)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 79,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        if !work.fee.is_zero() {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 30,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "            Some(CoinbaseFeeTransfer::create(work.prover, work.fee))",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 68,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        } else {",
+      "counters": []
+    },
+    {
+      "line": "            None",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 16,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 674
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1157",
+      "counters": []
+    },
+    {
+      "line": "    fn cheapest_two_work(works: &[work::Checked]) -> (Option<work::Work>, Option<work::Work>) {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 95,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let (w1, w2) = works",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .iter()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 19,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .fold((None, None), |(w1, w2), w| match (w1, w2) {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 0
+        },
+        {
+          "col_start": 53,
+          "col_end": 59,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                (None, _) => (Some(w), None),",
+      "counters": [
+        {
+          "col_start": 29,
+          "col_end": 44,
+          "count": -6799
+        }
+      ]
+    },
+    {
+      "line": "                (Some(x), None) => {",
+      "counters": [
+        {
+          "col_start": 22,
+          "col_end": 36,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                    if w.fee < x.fee {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 36,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                        (Some(w), w1)",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 37,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                    } else {",
+      "counters": []
+    },
+    {
+      "line": "                        (w1, Some(w))",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    }",
+      "counters": []
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "                (Some(x), Some(y)) => {",
+      "counters": [
+        {
+          "col_start": 22,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    if w.fee < x.fee {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        (Some(w), w1)",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    } else if w.fee < y.fee {",
+      "counters": [
+        {
+          "col_start": 30,
+          "col_end": 43,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        (w1, Some(w))",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 37,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                    } else {",
+      "counters": []
+    },
+    {
+      "line": "                        (w1, w2)",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    }",
+      "counters": []
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "            });",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 13,
+          "count": 6799
+        },
+        {
+          "col_start": 13,
+          "col_end": 15,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        (w1.cloned(), w2.cloned())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 34,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1171",
+      "counters": []
+    },
+    {
+      "line": "    fn coinbase_work(",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        constraint_constants: &ConstraintConstants,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        is_two: Option<bool>,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 29,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        works: &[work::Checked],",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        is_coinbase_receiver_new: bool,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        supercharge_coinbase: bool,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 35,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    ) -> Option<(AtMostTwo<CoinbaseFeeTransfer>, Vec<work::Work>)> {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 68,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let is_two = is_two.unwrap_or(false);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let (min1, min2) = Self::cheapest_two_work(works);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 58,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let diff = |ws: &[work::Unchecked], ws2: &[work::Statement]| -> Vec<work::Unchecked> {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 16,
+          "count": 0
+        },
+        {
+          "col_start": 93,
+          "col_end": 94,
+          "count": 68
+        }
+      ]
+    },
+    {
+      "line": "            ws.iter()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 68
+        }
+      ]
+    },
+    {
+      "line": "                .filter(|w| {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": 68
+        },
+        {
+          "col_start": 28,
+          "col_end": 29,
+          "count": 689
+        }
+      ]
+    },
+    {
+      "line": "                    let wstatement = w.statement();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 51,
+          "count": 689
+        }
+      ]
+    },
+    {
+      "line": "                    !ws2.iter().any(|w2| &wstatement == w2)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 36,
+          "count": 689
+        },
+        {
+          "col_start": 41,
+          "col_end": 58,
+          "count": 82
+        },
+        {
+          "col_start": 58,
+          "col_end": 59,
+          "count": 689
+        }
+      ]
+    },
+    {
+      "line": "                })",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 689
+        },
+        {
+          "col_start": 17,
+          "col_end": 18,
+          "count": 68
+        }
+      ]
+    },
+    {
+      "line": "                .cloned()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 68
+        }
+      ]
+    },
+    {
+      "line": "                .collect()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 26,
+          "count": 68
+        }
+      ]
+    },
+    {
+      "line": "        };",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 68
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let coinbase_amount =",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 27,
+          "count": -6799
+        }
+      ]
+    },
+    {
+      "line": "            StagedLedger::coinbase_amount(supercharge_coinbase, constraint_constants)?;",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 85,
+          "count": 0
+        },
+        {
+          "col_start": 85,
+          "col_end": 86,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        // if the coinbase receiver is new then the account creation fee will",
+      "counters": []
+    },
+    {
+      "line": "        // be deducted from the reward",
+      "counters": []
+    },
+    {
+      "line": "        let budget = if is_coinbase_receiver_new {",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 18,
+          "count": -6799
+        },
+        {
+          "col_start": 24,
+          "col_end": 48,
+          "count": -6799
+        }
+      ]
+    },
+    {
+      "line": "            coinbase_amount",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 27,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                .checked_sub(&Amount::of_fee(&constraint_constants.account_creation_fee))?",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 89,
+          "count": 6799
+        },
+        {
+          "col_start": 89,
+          "col_end": 90,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        } else {",
+      "counters": []
+    },
+    {
+      "line": "            coinbase_amount",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 27,
+          "count": -13598
+        }
+      ]
+    },
+    {
+      "line": "        };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        if is_two {",
+      "counters": [
+        {
+          "col_start": 11,
+          "col_end": 17,
+          "count": -6799
+        }
+      ]
+    },
+    {
+      "line": "            match (min1, min2) {",
+      "counters": [
+        {
+          "col_start": 19,
+          "col_end": 29,
+          "count": -6799
+        }
+      ]
+    },
+    {
+      "line": "                (None, _) => None,",
+      "counters": [
+        {
+          "col_start": 29,
+          "col_end": 33,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                (Some(w), None) => {",
+      "counters": [
+        {
+          "col_start": 22,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    if Amount::of_fee(&w.fee) <= budget {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 55,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        let stmt = w.statement();",
+      "counters": [
+        {
+          "col_start": 28,
+          "col_end": 49,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                        let cb = AtMostTwo::Two(Self::coinbase_ft(w).map(|ft| (ft, None)));",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 73,
+          "count": 6799
+        },
+        {
+          "col_start": 78,
+          "col_end": 88,
+          "count": 674
+        },
+        {
+          "col_start": 88,
+          "col_end": 91,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                        Some((cb, diff(works, &[stmt])))",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 56,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                    } else {",
+      "counters": []
+    },
+    {
+      "line": "                        let cb = AtMostTwo::Two(None);",
+      "counters": [
+        {
+          "col_start": 28,
+          "col_end": 54,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        Some((cb, works.to_vec()))",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    }",
+      "counters": []
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "                (Some(w1), Some(w2)) => {",
+      "counters": [
+        {
+          "col_start": 22,
+          "col_end": 34,
+          "count": 672
+        }
+      ]
+    },
+    {
+      "line": "                    let sum = w1.fee.checked_add(&w2.fee)?;",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 27,
+          "count": -6127
+        },
+        {
+          "col_start": 30,
+          "col_end": 57,
+          "count": 672
+        },
+        {
+          "col_start": 57,
+          "col_end": 58,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "                    if Amount::of_fee(&sum) < budget {",
+      "counters": [
+        {
+          "col_start": 23,
+          "col_end": 52,
+          "count": -6127
+        }
+      ]
+    },
+    {
+      "line": "                        let stmt1 = w1.statement();",
+      "counters": [
+        {
+          "col_start": 28,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        let stmt2 = w2.statement();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        let cb = AtMostTwo::Two(",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 48,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                            Self::coinbase_ft(w1).map(|ft| (ft, Self::coinbase_ft(w2))),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 54,
+          "count": 0
+        },
+        {
+          "col_start": 59,
+          "col_end": 86,
+          "count": 64
+        },
+        {
+          "col_start": 86,
+          "col_end": 88,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        );",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 26,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "                        // Why add work without checking if work constraints are",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 80,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        // satisfied? If we reach here then it means that we are trying to",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 90,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        // fill the last two slots of the tree with coinbase trnasactions",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 89,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        // and if there's any work in [works] then that has to be included,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 91,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        // either in the coinbase or as fee transfers that gets paid by",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 87,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        // the transaction fees. So having it as coinbase ft will at least",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 90,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        // reduce the slots occupied by fee transfers*)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 71,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "                        Some((cb, diff(works, &[stmt1, stmt2])))",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 64,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    } else if Amount::of_fee(&w1.fee) <= coinbase_amount {",
+      "counters": [
+        {
+          "col_start": 30,
+          "col_end": 72,
+          "count": -6127
+        }
+      ]
+    },
+    {
+      "line": "                        let stmt = w1.statement();",
+      "counters": [
+        {
+          "col_start": 28,
+          "col_end": 50,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                        let cb = AtMostTwo::Two(Self::coinbase_ft(w1).map(|ft| (ft, None)));",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 74,
+          "count": 6799
+        },
+        {
+          "col_start": 79,
+          "col_end": 89,
+          "count": 20584
+        },
+        {
+          "col_start": 89,
+          "col_end": 92,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                        Some((cb, diff(works, &[stmt])))",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 56,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                    } else {",
+      "counters": []
+    },
+    {
+      "line": "                        let cb = AtMostTwo::Two(None);",
+      "counters": [
+        {
+          "col_start": 28,
+          "col_end": 54,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        Some((cb, works.to_vec()))",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    }",
+      "counters": []
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "            }",
+      "counters": []
+    },
+    {
+      "line": "        } else {",
+      "counters": []
+    },
+    {
+      "line": "            min1.map(|w| {",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 21,
+          "count": 0
+        },
+        {
+          "col_start": 25,
+          "col_end": 26,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                if Amount::of_fee(&w.fee) <= budget {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 51,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                    let stmt = w.statement();",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    let cb = AtMostTwo::One(Self::coinbase_ft(w));",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 66,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    (cb, diff(works, &[stmt]))",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                } else {",
+      "counters": []
+    },
+    {
+      "line": "                    let cb = AtMostTwo::One(None);",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 50,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                    (cb, works.to_vec())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 40,
+          "count": 6799
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "            })",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 13,
+          "count": 6799
+        },
+        {
+          "col_start": 13,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 33995
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1244",
+      "counters": []
+    },
+    {
+      "line": "    fn init_coinbase_and_fee_transfers(",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        constraint_constants: &ConstraintConstants,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        cw_seq: &[work::Unchecked],",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 35,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        add_coinbase: bool,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        job_count: u64,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 23,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        slots: u64,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 19,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        is_coinbase_receiver_new: bool,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        supercharge_coinbase: bool,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 35,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    ) -> (AtMostTwo<CoinbaseFeeTransfer>, Vec<(CompressedPubKey, Fee)>) {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 73,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let cw_unchecked =",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            |works: Vec<work::Unchecked>| works.into_iter().map(|w| w.forget()).collect::<Vec<_>>();",
+      "counters": [
+        {
+          "col_start": 42,
+          "col_end": 64,
+          "count": 0
+        },
+        {
+          "col_start": 68,
+          "col_end": 78,
+          "count": 48368
+        },
+        {
+          "col_start": 78,
+          "col_end": 99,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let (coinbase, rem_cw) = match (",
+      "counters": [
+        {
+          "col_start": 13,
+          "col_end": 29,
+          "count": 11876
+        }
+      ]
+    },
+    {
+      "line": "            add_coinbase,",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 25,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Self::coinbase_work(",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                constraint_constants,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                None,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                cw_seq,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 23,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                is_coinbase_receiver_new,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                supercharge_coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            ),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 13,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        ) {",
+      "counters": []
+    },
+    {
+      "line": "            (true, Some((ft, rem_cw))) => (ft, rem_cw),",
+      "counters": [
+        {
+          "col_start": 25,
+          "col_end": 54,
+          "count": 5938
+        }
+      ]
+    },
+    {
+      "line": "            (true, None) => {",
+      "counters": []
+    },
+    {
+      "line": "                // Coinbase could not be added because work-fees > coinbase-amount",
+      "counters": []
+    },
+    {
+      "line": "                if job_count == 0 || slots - job_count >= 1 {",
+      "counters": [
+        {
+          "col_start": 19,
+          "col_end": 33,
+          "count": 16446
+        },
+        {
+          "col_start": 37,
+          "col_end": 59,
+          "count": 16446
+        }
+      ]
+    },
+    {
+      "line": "                    // Either no jobs are required or there is a free slot that can be filled",
+      "counters": []
+    },
+    {
+      "line": "                    // without having to include any work",
+      "counters": []
+    },
+    {
+      "line": "                    (AtMostTwo::One(None), cw_seq.to_vec())",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 59,
+          "count": 5938
+        }
+      ]
+    },
+    {
+      "line": "                } else {",
+      "counters": []
+    },
+    {
+      "line": "                    (AtMostTwo::Zero, cw_seq.to_vec())",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 54,
+          "count": 20584
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "            }",
+      "counters": []
+    },
+    {
+      "line": "            _ => (AtMostTwo::Zero, cw_seq.to_vec()),",
+      "counters": [
+        {
+          "col_start": 17,
+          "col_end": 51,
+          "count": -20584
+        }
+      ]
+    },
+    {
+      "line": "        };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let rem_cw = cw_unchecked(rem_cw);",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 42,
+          "count": 11876
+        }
+      ]
+    },
+    {
+      "line": "        let singles = rem_cw",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 11876
+        }
+      ]
+    },
+    {
+      "line": "            .into_iter()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": 11876
+        }
+      ]
+    },
+    {
+      "line": "            .filter_map(|work::Unchecked { fee, prover, .. }| {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": 11876
+        },
+        {
+          "col_start": 62,
+          "col_end": 63,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                if fee.is_zero() {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    None",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 24,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                } else {",
+      "counters": []
+    },
+    {
+      "line": "                    Some((prover, fee))",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "            })",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 13,
+          "count": 0
+        },
+        {
+          "col_start": 13,
+          "col_end": 14,
+          "count": 11876
+        }
+      ]
+    },
+    {
+      "line": "            .rev()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 11876
+        }
+      ]
+    },
+    {
+      "line": "            .collect();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 23,
+          "count": 11876
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        (coinbase, singles)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 11876
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 11876
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1276",
+      "counters": []
+    },
+    {
+      "line": "    pub fn init(",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 16,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        constraint_constants: &ConstraintConstants,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        uc_seq: Vec<WithStatus<valid::UserCommand>>,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 52,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        mut cw_seq: Vec<work::Checked>,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        (slots, job_count): (u64, u64),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        receiver_pk: CompressedPubKey,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 38,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        add_coinbase: bool,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        supercharge_coinbase: bool,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 35,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        _logger: (),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 20,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        is_coinbase_receiver_new: bool,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    ) -> Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 15,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let (coinbase, singles) = Self::init_coinbase_and_fee_transfers(",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 72,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            constraint_constants,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            &cw_seq,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 20,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            add_coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            job_count,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            slots,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            is_coinbase_receiver_new,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            supercharge_coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        );",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 10,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let fee_transfers = fee_transfers_map(singles.clone()).expect(\"OCaml throw here\");",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 90,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let budget1 = sum_fees(&uc_seq, |c| c.data.fee());",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 40,
+          "count": 0
+        },
+        {
+          "col_start": 44,
+          "col_end": 56,
+          "count": 0
+        },
+        {
+          "col_start": 56,
+          "col_end": 58,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let budget2 = sum_fees(singles.iter().filter(|(k, _)| k != &receiver_pk), |c| c.1);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 53,
+          "count": 0
+        },
+        {
+          "col_start": 62,
+          "col_end": 79,
+          "count": 0
+        },
+        {
+          "col_start": 79,
+          "col_end": 82,
+          "count": 0
+        },
+        {
+          "col_start": 86,
+          "col_end": 89,
+          "count": 0
+        },
+        {
+          "col_start": 89,
+          "col_end": 90,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let budget = match (budget1, budget2) {",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 18,
+          "count": 1801
+        },
+        {
+          "col_start": 28,
+          "col_end": 44,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            (Ok(r), Ok(c)) => r",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 31,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .checked_sub(&c)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .ok_or_else(|| \"budget did not suffice\".to_string()),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        },
+        {
+          "col_start": 31,
+          "col_end": 67,
+          "count": 0
+        },
+        {
+          "col_start": 67,
+          "col_end": 68,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            (_, Err(e)) | (Err(e), _) => Err(e),",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 21,
+          "count": 0
+        },
+        {
+          "col_start": 31,
+          "col_end": 32,
+          "count": 1801
+        },
+        {
+          "col_start": 41,
+          "col_end": 47,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "        };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let discarded = Discarded {",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 35,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            commands_rev: Vec::with_capacity(256),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            completed_work: Vec::with_capacity(256),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 52,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "        };",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 10,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        Self {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            max_space: slots,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 29,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            max_jobs: job_count,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            commands_rev: uc_seq,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            completed_work_rev: {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "                // Completed work in reverse order for faster removal of proofs if budget doesn't suffice",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 105,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "                cw_seq.reverse();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "                cw_seq",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            },",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 14,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            fee_transfers,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 26,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            add_coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            supercharge_coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 33,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            receiver_pk,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            budget,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 19,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            discarded,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            is_coinbase_receiver_new,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "            _logger,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 20,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 1801
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1335",
+      "counters": []
+    },
+    {
+      "line": "    fn reselect_coinbase_work(&mut self, constraint_constants: &ConstraintConstants) {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 86,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let cw_unchecked = |works: &[work::Unchecked]| {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": 0
+        },
+        {
+          "col_start": 55,
+          "col_end": 56,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            works.iter().map(|w| w.clone().forget()).collect::<Vec<_>>()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 29,
+          "count": 0
+        },
+        {
+          "col_start": 33,
+          "col_end": 51,
+          "count": 24184
+        },
+        {
+          "col_start": 51,
+          "col_end": 72,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        };",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let (coinbase, rem_cw) = match &self.coinbase {",
+      "counters": [
+        {
+          "col_start": 13,
+          "col_end": 29,
+          "count": 0
+        },
+        {
+          "col_start": 39,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            AtMostTwo::Zero => (None, MyCow::Borrow(&self.completed_work_rev)),",
+      "counters": [
+        {
+          "col_start": 31,
+          "col_end": 78,
+          "count": -44748
+        }
+      ]
+    },
+    {
+      "line": "            AtMostTwo::One(_) => {",
+      "counters": []
+    },
+    {
+      "line": "                match Self::coinbase_work(",
+      "counters": [
+        {
+          "col_start": 22,
+          "col_end": 42,
+          "count": 44748
+        }
+      ]
+    },
+    {
+      "line": "                    constraint_constants,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 41,
+          "count": 44748
+        }
+      ]
+    },
+    {
+      "line": "                    None,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 25,
+          "count": 44748
+        }
+      ]
+    },
+    {
+      "line": "                    &self.completed_work_rev,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 44748
+        }
+      ]
+    },
+    {
+      "line": "                    self.is_coinbase_receiver_new,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 44748
+        }
+      ]
+    },
+    {
+      "line": "                    self.supercharge_coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": 44748
+        }
+      ]
+    },
+    {
+      "line": "                ) {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 44748
+        }
+      ]
+    },
+    {
+      "line": "                    None => (",
+      "counters": [
+        {
+          "col_start": 28,
+          "col_end": 29,
+          "count": 44748
+        }
+      ]
+    },
+    {
+      "line": "                        Some(AtMostTwo::One(None)),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 51,
+          "count": 44748
+        }
+      ]
+    },
+    {
+      "line": "                        MyCow::Borrow(&self.completed_work_rev),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 64,
+          "count": 44748
+        }
+      ]
+    },
+    {
+      "line": "                    ),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 44748
+        }
+      ]
+    },
+    {
+      "line": "                    Some((ft, rem_cw)) => (Some(ft), MyCow::Own(rem_cw)),",
+      "counters": [
+        {
+          "col_start": 26,
+          "col_end": 72,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "            }",
+      "counters": []
+    },
+    {
+      "line": "            AtMostTwo::Two(_) => {",
+      "counters": []
+    },
+    {
+      "line": "                match Self::coinbase_work(",
+      "counters": [
+        {
+          "col_start": 22,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    constraint_constants,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    Some(true),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 31,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    &self.completed_work_rev,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    self.is_coinbase_receiver_new,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    self.supercharge_coinbase,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                ) {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    None => (",
+      "counters": [
+        {
+          "col_start": 28,
+          "col_end": 29,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        Some(AtMostTwo::Two(None)),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        MyCow::Borrow(&self.completed_work_rev),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 64,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    ),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    Some((fts, rem_cw)) => (Some(fts), MyCow::Own(rem_cw)),",
+      "counters": [
+        {
+          "col_start": 26,
+          "col_end": 74,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "            }",
+      "counters": []
+    },
+    {
+      "line": "        };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let rem_cw = cw_unchecked(rem_cw.as_ref());",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let singles = rem_cw",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .into_iter()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .filter_map(|work::Unchecked { fee, prover, .. }| {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 24,
+          "count": 0
+        },
+        {
+          "col_start": 62,
+          "col_end": 63,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                if fee.is_zero() {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    None",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 24,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                } else {",
+      "counters": []
+    },
+    {
+      "line": "                    Some((prover, fee))",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "            })",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 13,
+          "count": 0
+        },
+        {
+          "col_start": 13,
+          "col_end": 14,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .rev();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 19,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let fee_transfers = fee_transfers_map(singles).expect(\"OCaml throw here\");",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 81,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        if let Some(coinbase) = coinbase {",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 28,
+          "count": 0
+        },
+        {
+          "col_start": 32,
+          "col_end": 40,
+          "count": 0
+        },
+        {
+          "col_start": 41,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            self.coinbase = coinbase;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        };",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        },
+        {
+          "col_start": 9,
+          "col_end": 10,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.fee_transfers = fee_transfers;",
+      "counters": [
+        {
+          "col_start": 29,
+          "col_end": 43,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1379",
+      "counters": []
+    },
+    {
+      "line": "    fn rebudget(&self) -> Result<Fee, String> {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 47,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        // get the correct coinbase and calculate the fee transfers",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 67,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let payment_fees = sum_fees(&self.commands_rev, |c| c.data.fee());",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 56,
+          "count": 0
+        },
+        {
+          "col_start": 60,
+          "col_end": 72,
+          "count": 0
+        },
+        {
+          "col_start": 72,
+          "col_end": 74,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let prover_fee_others =",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 31,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            self.fee_transfers",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 30,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .iter()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 23,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .fold(Ok(Fee::zero()), |accum, (key, fee)| {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    let others = accum?;",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 30,
+          "count": 0
+        },
+        {
+          "col_start": 33,
+          "col_end": 38,
+          "count": 0
+        },
+        {
+          "col_start": 38,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    if self.receiver_pk == key.0 {",
+      "counters": [
+        {
+          "col_start": 23,
+          "col_end": 48,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        Ok(others)",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 34,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    } else {",
+      "counters": []
+    },
+    {
+      "line": "                        others",
+      "counters": [
+        {
+          "col_start": 24,
+          "col_end": 30,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                            .checked_add(fee)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                            .ok_or_else(|| \"Fee overflow\".to_string())",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 40,
+          "count": 0
+        },
+        {
+          "col_start": 43,
+          "col_end": 69,
+          "count": 0
+        },
+        {
+          "col_start": 69,
+          "col_end": 70,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    }",
+      "counters": []
+    },
+    {
+      "line": "                });",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 17,
+          "count": 0
+        },
+        {
+          "col_start": 17,
+          "col_end": 19,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let revenue = payment_fees;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 35,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let cost = prover_fee_others;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        match (revenue, cost) {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            (Ok(r), Ok(c)) => r",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 31,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .checked_sub(&c)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .ok_or_else(|| \"budget did not suffice\".to_string()),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        },
+        {
+          "col_start": 31,
+          "col_end": 67,
+          "count": 0
+        },
+        {
+          "col_start": 67,
+          "col_end": 68,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            (Err(e), _) | (_, Err(e)) => Err(e),",
+      "counters": [
+        {
+          "col_start": 17,
+          "col_end": 18,
+          "count": 0
+        },
+        {
+          "col_start": 34,
+          "col_end": 35,
+          "count": 0
+        },
+        {
+          "col_start": 41,
+          "col_end": 47,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1399",
+      "counters": []
+    },
+    {
+      "line": "    pub fn budget_sufficient(&self) -> bool {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.budget.is_ok()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 27,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1402",
+      "counters": []
+    },
+    {
+      "line": "    pub fn coinbase_added(&self) -> u64 {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        match &self.coinbase {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            AtMostTwo::Zero => 0,",
+      "counters": [
+        {
+          "col_start": 31,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            AtMostTwo::One(_) => 1,",
+      "counters": [
+        {
+          "col_start": 33,
+          "col_end": 34,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            AtMostTwo::Two(_) => 2,",
+      "counters": [
+        {
+          "col_start": 33,
+          "col_end": 34,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1411",
+      "counters": []
+    },
+    {
+      "line": "    #[allow(clippy::bool_to_int_with_if)]",
+      "counters": []
+    },
+    {
+      "line": "    pub fn slots_occupied(&self) -> u64 {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 40,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let fee_for_self = match &self.budget {",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 24,
+          "count": 0
+        },
+        {
+          "col_start": 33,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Err(_) => 0,",
+      "counters": [
+        {
+          "col_start": 22,
+          "col_end": 23,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Ok(b) => {",
+      "counters": [
+        {
+          "col_start": 15,
+          "col_end": 22,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                if b.is_zero() {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 30,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    0",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                } else {",
+      "counters": []
+    },
+    {
+      "line": "                    1",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "            }",
+      "counters": []
+    },
+    {
+      "line": "        };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let other_provers = self",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .fee_transfers",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 26,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .iter()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 19,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .filter(|(pk, _)| pk.0 != self.receiver_pk)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 20,
+          "count": 0
+        },
+        {
+          "col_start": 30,
+          "col_end": 54,
+          "count": 24184
+        },
+        {
+          "col_start": 54,
+          "col_end": 55,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .count() as u64;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let total_fee_transfer_pks = other_provers + fee_for_self;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 66,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        self.commands_rev.len() as u64 + ((total_fee_transfer_pks + 1) / 2) + self.coinbase_added()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 99,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    #[allow(clippy::bool_to_int_with_if)]",
+      "counters": []
+    },
+    {
+      "line": "    pub fn slots_occupied_dbg(&self) -> u64 {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 44,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let fee_for_self = match &self.budget {",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 24,
+          "count": 0
+        },
+        {
+          "col_start": 33,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Err(_) => 0,",
+      "counters": [
+        {
+          "col_start": 22,
+          "col_end": 23,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Ok(b) => {",
+      "counters": [
+        {
+          "col_start": 15,
+          "col_end": 22,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                if b.is_zero() {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 30,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    0",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                } else {",
+      "counters": []
+    },
+    {
+      "line": "                    1",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 21,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "            }",
+      "counters": []
+    },
+    {
+      "line": "        };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        dbg!(&self.fee_transfers);",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 34,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let other_provers = self",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .fee_transfers",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 26,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .iter()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 19,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .filter(|(pk, _)| pk.0 != self.receiver_pk)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 20,
+          "count": 0
+        },
+        {
+          "col_start": 30,
+          "col_end": 54,
+          "count": 24184
+        },
+        {
+          "col_start": 54,
+          "col_end": 55,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            .count() as u64;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let total_fee_transfer_pks = other_provers + fee_for_self;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 66,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        dbg!(fee_for_self, other_provers, total_fee_transfer_pks);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 66,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        self.commands_rev.len() as u64 + ((total_fee_transfer_pks + 1) / 2) + self.coinbase_added()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 99,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1430",
+      "counters": []
+    },
+    {
+      "line": "    pub fn space_available(&self) -> bool {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 43,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let slots = self.slots_occupied();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.max_space > slots",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 30,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1434",
+      "counters": []
+    },
+    {
+      "line": "    fn work_done(&self) -> bool {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 33,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let no_of_proof_bundles = self.completed_work_rev.len() as u64;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 71,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let slots = self.slots_occupied();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        // If more jobs were added in the previous diff then ( t.max_space-t.max_jobs)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 86,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        // slots can go for free in this diff",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        no_of_proof_bundles == self.max_jobs || slots <= self.max_space - self.max_jobs",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 44,
+          "count": 0
+        },
+        {
+          "col_start": 48,
+          "col_end": 87,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1440",
+      "counters": []
+    },
+    {
+      "line": "    pub fn space_constraint_satisfied(&self) -> bool {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 54,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let occupied = self.slots_occupied();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        occupied <= self.max_space",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 34,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1444",
+      "counters": []
+    },
+    {
+      "line": "    pub fn work_constraint_satisfied(&self) -> bool {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        // Are we doing all the work available",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let all_proofs = self.work_done();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        // enough work",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 22,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let slots = self.slots_occupied();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let cw_count = self.completed_work_rev.len() as u64;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 60,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let enough_work = cw_count >= slots;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 44,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        // if there are no transactions then don't need any proofs",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 66,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        all_proofs || slots == 0 || enough_work",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        },
+        {
+          "col_start": 22,
+          "col_end": 32,
+          "count": 0
+        },
+        {
+          "col_start": 36,
+          "col_end": 47,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1454",
+      "counters": []
+    },
+    {
+      "line": "    pub fn available_space(&self) -> u64 {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.max_space - self.slots_occupied()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    pub fn available_space_dbg(&self) -> u64 {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 46,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.max_space - self.slots_occupied_dbg()",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1456",
+      "counters": []
+    },
+    {
+      "line": "    pub fn discard_last_work(",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 29,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        &mut self,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        constraint_constants: &ConstraintConstants,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    ) -> Option<work::Work> {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 29,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        if self.completed_work_rev.is_empty() {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            return None;",
+      "counters": [
+        {
+          "col_start": 19,
+          "col_end": 23,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": [
+        {
+          "col_start": 9,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let w = self.completed_work_rev.remove(0);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let to_be_discarded_fee = w.fee;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 40,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        self.discarded.add_completed_work(w.clone());",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let current_budget = self.budget.clone();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 49,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        self.reselect_coinbase_work(constraint_constants);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 57,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let budget = match current_budget {",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 18,
+          "count": 0
+        },
+        {
+          "col_start": 27,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Ok(b) => b",
+      "counters": [
+        {
+          "col_start": 15,
+          "col_end": 22,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .checked_add(&to_be_discarded_fee)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                .ok_or_else(|| \"Currency overflow\".to_string()),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        },
+        {
+          "col_start": 31,
+          "col_end": 62,
+          "count": 0
+        },
+        {
+          "col_start": 62,
+          "col_end": 63,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Err(_) => self.rebudget(),",
+      "counters": [
+        {
+          "col_start": 22,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        self.budget = budget;",
+      "counters": [
+        {
+          "col_start": 22,
+          "col_end": 29,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        Some(w)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 15,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1476",
+      "counters": []
+    },
+    {
+      "line": "    pub fn discard_user_command(&mut self) -> Option<WithStatus<valid::UserCommand>> {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 86,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        if self.commands_rev.is_empty() {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 39,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            let update_fee_transfers =",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                |this: &mut Self,",
+      "counters": []
+    },
+    {
+      "line": "                 ft: CoinbaseFeeTransfer,",
+      "counters": []
+    },
+    {
+      "line": "                 coinbase: AtMostTwo<CoinbaseFeeTransfer>| {",
+      "counters": [
+        {
+          "col_start": 59,
+          "col_end": 60,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    this.fee_transfers.insert(ft.receiver_pk.into(), ft.fee);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 77,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    this.coinbase = coinbase;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    this.budget = this.rebudget();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 50,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                };",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            match &self.coinbase {",
+      "counters": [
+        {
+          "col_start": 18,
+          "col_end": 32,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                AtMostTwo::Zero => {}",
+      "counters": [
+        {
+          "col_start": 35,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                AtMostTwo::One(None) => {",
+      "counters": [
+        {
+          "col_start": 40,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    self.coinbase = AtMostTwo::Zero;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 52,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                AtMostTwo::Two(None) => {",
+      "counters": [
+        {
+          "col_start": 40,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    self.coinbase = AtMostTwo::One(None);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 57,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                AtMostTwo::Two(Some((ft, None))) => {",
+      "counters": [
+        {
+          "col_start": 37,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    self.coinbase = AtMostTwo::One(Some(ft.clone()));",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 69,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                AtMostTwo::One(Some(ft)) => {",
+      "counters": [
+        {
+          "col_start": 36,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    update_fee_transfers(self, ft.clone(), AtMostTwo::Zero);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 76,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                AtMostTwo::Two(Some((ft1, Some(ft2)))) => {",
+      "counters": [
+        {
+          "col_start": 37,
+          "col_end": 59,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    update_fee_transfers(self, ft2.clone(), AtMostTwo::One(Some(ft1.clone())));",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 95,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 17,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            None",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 16,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        } else {",
+      "counters": []
+    },
+    {
+      "line": "            let uc = self.commands_rev.remove(0);",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 49,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let current_budget = self.budget.clone();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let to_be_discarded_fee = uc.data.fee();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 52,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            self.discarded.add_user_command(uc.clone());",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 55,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            let budget = match current_budget {",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 22,
+          "count": 0
+        },
+        {
+          "col_start": 31,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                Ok(b) => b",
+      "counters": [
+        {
+          "col_start": 19,
+          "col_end": 26,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    .checked_sub(&to_be_discarded_fee)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 54,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    .ok_or_else(|| \"Fee insufficient\".to_string()),",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 32,
+          "count": 0
+        },
+        {
+          "col_start": 35,
+          "col_end": 65,
+          "count": 0
+        },
+        {
+          "col_start": 65,
+          "col_end": 66,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                Err(_) => self.rebudget(),",
+      "counters": [
+        {
+          "col_start": 26,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            };",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            self.budget = budget;",
+      "counters": [
+        {
+          "col_start": 26,
+          "col_end": 33,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            Some(uc)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 20,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        }",
+      "counters": []
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1521",
+      "counters": []
+    },
+    {
+      "line": "    pub fn worked_more(&self, constraint_constants: &ConstraintConstants) -> bool {",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 83,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        // Is the work constraint satisfied even after discarding a work bundle?",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 80,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        // We reach here after having more than enough work",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 59,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let mut this = self.clone(); // TODO: Do this without cloning",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 69,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        this.discard_last_work(constraint_constants);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let slots = this.slots_occupied();",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 42,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let cw_count = this.completed_work_rev.len() as u64;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 60,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        cw_count > 0 && cw_count >= slots",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 20,
+          "count": 0
+        },
+        {
+          "col_start": 24,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    /// https://github.com/MinaProtocol/mina/blob/05c2f73d0f6e4f1341286843814ce02dcb3919e0/src/lib/staged_ledger/staged_ledger.ml#L1532",
+      "counters": []
+    },
+    {
+      "line": "    pub fn incr_coinbase_part_by(",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 33,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        &mut self,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        constraint_constants: &ConstraintConstants,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 51,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        count: IncreaseBy,",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 26,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    ) {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 7,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        let incr = |cb: &AtMostTwo<CoinbaseFeeTransfer>| {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 16,
+          "count": 0
+        },
+        {
+          "col_start": 57,
+          "col_end": 58,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            Ok(match cb {",
+      "counters": [
+        {
+          "col_start": 21,
+          "col_end": 23,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                AtMostTwo::Zero => AtMostTwo::One(None),",
+      "counters": [
+        {
+          "col_start": 35,
+          "col_end": 55,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                AtMostTwo::One(None) => {",
+      "counters": []
+    },
+    {
+      "line": "                    eprintln!(\"Coinbase one(none) to two\");",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 59,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    AtMostTwo::Two(None)",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 40,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "                AtMostTwo::One(Some(ft)) => {",
+      "counters": [
+        {
+          "col_start": 36,
+          "col_end": 45,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    eprintln!(\"Coinbase one(some) to two {:?}\", ft);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 68,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    AtMostTwo::Two(Some((ft.clone(), None)))",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 60,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "                AtMostTwo::Two(_) => {",
+      "counters": []
+    },
+    {
+      "line": "                    return Err(\"Coinbase count cannot be more than two\".to_string())",
+      "counters": [
+        {
+          "col_start": 27,
+          "col_end": 84,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": []
+    },
+    {
+      "line": "            })",
+      "counters": []
+    },
+    {
+      "line": "        };",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let by_one = |this: &mut Self| -> Result<(), String> {",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 21,
+          "count": 0
+        },
+        {
+          "col_start": 61,
+          "col_end": 62,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            if !this.discarded.completed_work.is_empty() {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 56,
+          "count": 0
+        },
+        {
+          "col_start": 57,
+          "col_end": 58,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                let coinbase = incr(&this.coinbase)?;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 28,
+          "count": 0
+        },
+        {
+          "col_start": 31,
+          "col_end": 51,
+          "count": 0
+        },
+        {
+          "col_start": 51,
+          "col_end": 52,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                let w = this.discarded.completed_work.remove(0);",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 64,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "                // TODO: Not sure if it should push at the end here",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 67,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                this.completed_work_rev.insert(0, w);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 53,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                this.coinbase = coinbase;",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "                this.reselect_coinbase_work(constraint_constants);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 65,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            } else {",
+      "counters": []
+    },
+    {
+      "line": "                let coinbase = incr(&this.coinbase)?;",
+      "counters": [
+        {
+          "col_start": 20,
+          "col_end": 28,
+          "count": 0
+        },
+        {
+          "col_start": 31,
+          "col_end": 51,
+          "count": 0
+        },
+        {
+          "col_start": 51,
+          "col_end": 52,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                this.coinbase = coinbase;",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 41,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "                if !this.work_done() {",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 36,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                    return Err(\"Could not increment coinbase transaction count because of \\",
+      "counters": [
+        {
+          "col_start": 27,
+          "col_end": 91,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                         insufficient work\"",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 43,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                        .to_string());",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                }",
+      "counters": [
+        {
+          "col_start": 17,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            }",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "            Ok(())",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 18,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        };",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        let apply = |this: &mut Self| match count {",
+      "counters": [
+        {
+          "col_start": 12,
+          "col_end": 17,
+          "count": 0
+        },
+        {
+          "col_start": 38,
+          "col_end": 49,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            IncreaseBy::One => by_one(this),",
+      "counters": [
+        {
+          "col_start": 31,
+          "col_end": 43,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            IncreaseBy::Two => {",
+      "counters": []
+    },
+    {
+      "line": "                by_one(this)?;",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 28,
+          "count": 0
+        },
+        {
+          "col_start": 28,
+          "col_end": 29,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "                by_one(this)",
+      "counters": [
+        {
+          "col_start": 16,
+          "col_end": 28,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            }",
+      "counters": []
+    },
+    {
+      "line": "        };",
+      "counters": [
+        {
+          "col_start": 8,
+          "col_end": 9,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "        if let Err(e) = apply(self) {",
+      "counters": [
+        {
+          "col_start": 19,
+          "col_end": 20,
+          "count": 0
+        },
+        {
+          "col_start": 24,
+          "col_end": 35,
+          "count": 0
+        },
+        {
+          "col_start": 36,
+          "col_end": 37,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "            eprintln!(\"Error when increasing coinbase: {:?}\", e);",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 65,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "        };",
+      "counters": [
+        {
+          "col_start": 0,
+          "col_end": 9,
+          "count": 0
+        },
+        {
+          "col_start": 9,
+          "col_end": 10,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "    }",
+      "counters": [
+        {
+          "col_start": 4,
+          "col_end": 5,
+          "count": 0
+        }
+      ]
+    },
+    {
+      "line": "}",
+      "counters": []
+    }
+  ]
+}

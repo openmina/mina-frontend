@@ -76,6 +76,9 @@
       "@logs/*": [
         "src/app/features/logs/*"
       ],
+      "@fuzzing/*": [
+        "src/app/features/fuzzing/*"
+      ],
     }
   },
   "angularCompilerOptions": {
