@@ -26,7 +26,7 @@
     "tests:headless": "npx cypress run --headless --config baseUrl=http://localhost:4200",
     "build:stats": "ng build --stats-json",
     "analyze": "webpack-bundle-analyzer dist/mina-frontend/stats.json",
-    "docker-build": "docker build -t directcuteo/mina-frontend:e1df2c4 . && docker push directcuteo/mina-frontend:e1df2c4"
+    "docker-build": "docker build -t directcuteo/mina-frontend:2f4b6f7 . && docker push directcuteo/mina-frontend:2f4b6f7"
   },
   "private": true,
   "dependencies": {

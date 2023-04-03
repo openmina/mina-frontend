@@ -2,7 +2,7 @@
 
 .mina-table {
 	.row {
-		grid-template-columns: 200px 105px 125px 90px 135px 160px 90px 140px 100px 100px 100px 100px;
+		grid-template-columns: 200px 105px 125px 90px 135px 160px 90px 140px 100px 110px 90px 100px 100px;
 		color: $base-secondary;
 
 		&:not(.head) {
@@ -11,11 +11,25 @@
 			span.addr:hover > span:last-child {
 				text-decoration: underline;
 			}
+
+			span {
+				&.Success {
+					color: $success-secondary;
+				}
+
+				&.Pending {
+					color: $selected-secondary;
+				}
+
+				&.Failure {
+					color: $warn-primary;
+				}
+			}
 		}
 	}
 
 	.cdk-virtual-scroll-viewport {
-		min-width: 200px + 105px + 125px + 90px + 135px + 160px + 90px + 140px + 100px + 100px + 100px + 100px;
+		min-width: 200px + 105px + 125px + 90px + 135px + 160px + 90px + 140px + 100px + 110px + 90px + 100px + 100px;
 		overflow-x: hidden;
 	}
 }

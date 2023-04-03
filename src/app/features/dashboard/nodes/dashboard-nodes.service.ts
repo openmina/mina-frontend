@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
-import { catchError, concatAll, EMPTY, filter, finalize, from, map, Observable, of, switchMap, take } from 'rxjs';
+import { catchError, concatAll, EMPTY, filter, finalize, from, map, Observable, of, switchMap, take, throwError } from 'rxjs';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
@@ -10,6 +10,8 @@ import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum
 import { lastItem } from '@shared/helpers/array.helper';
 import { isNotVanilla } from '@shared/constants/config';
 import { LoadingService } from '@core/services/loading.service';
+
+const dash = '-';
 
 @Injectable({
   providedIn: 'root',
@@ -46,6 +48,11 @@ export class DashboardNodesService {
         switchMap((syncResponse: any) =>
           this.http.post(node.tracingUrl, { query: tracingQuery(height) }, this.options).pipe(
             map((tracingResponse: any) => ({ syncResponse, tracingResponse })),
+            catchError(() => {
+              const error: any = new Error();
+              error.data = syncResponse;
+              return throwError(() => error);
+            }),
           ),
         ),
         map(({ syncResponse, tracingResponse }: { syncResponse: any, tracingResponse: any }) => {
@@ -75,23 +82,7 @@ export class DashboardNodesService {
             traceStatus: trace.status,
           } as DashboardNode));
         }),
-        catchError(() => {
-          const dash = '-';
-          return of([{
-            ...node,
-            status: AppNodeStatusTypes.OFFLINE,
-            blockchainLength: undefined,
-            addr: dash,
-            date: dash,
-            timestamp: undefined,
-            blockApplication: undefined,
-            latency: null,
-            txPool: undefined,
-            snarkPool: undefined,
-            source: dash,
-            loaded: true,
-          } as DashboardNode]);
-        }),
+        catchError((error) => this.buildNodeFromErrorResponse(error, node)),
         finalize(() => this.loadingService.removeURL()),
       );
     } else {
@@ -107,7 +98,7 @@ export class DashboardNodesService {
             status: daemon.syncStatus,
             blockchainLength: chain.protocolState.consensusState.blockHeight,
             addr: daemon.addrsAndPorts.externalIp + ':' + daemon.addrsAndPorts.clientPort,
-            date: '-',
+            date: dash,
             timestamp: 0,
             blockApplication: null,
             txPool: metrics.transactionPoolSize || 0,
@@ -119,32 +110,45 @@ export class DashboardNodesService {
             snarkDiffBroadcasted: metrics.snarkPoolDiffBroadcasted || 0,
             pendingSnarkWork: metrics.pendingSnarkWork || 0,
             latency: 0,
-            source: '-',
+            source: dash,
             hash: chain.stateHash,
             loaded: true,
             traceStatus: chain.status,
           } as DashboardNode));
         }),
-        catchError(() => {
-          const dash = '-';
-          return of([{
-            ...node,
-            status: AppNodeStatusTypes.OFFLINE,
-            blockchainLength: undefined,
-            addr: dash,
-            date: dash,
-            timestamp: undefined,
-            blockApplication: undefined,
-            latency: null,
-            txPool: undefined,
-            snarkPool: undefined,
-            source: dash,
-            loaded: true,
-          } as DashboardNode]);
-        }),
+        catchError((error) => this.buildNodeFromErrorResponse(error, node)),
         finalize(() => this.loadingService.removeURL()),
       );
     }
+  }
+
+  private buildNodeFromErrorResponse(error: { data?: any }, node: DashboardNode) {
+    const daemon = error.data?.data.daemonStatus;
+    const status = daemon?.syncStatus ?? AppNodeStatusTypes.OFFLINE;
+    const addr = daemon ? (daemon.addrsAndPorts.externalIp + ':' + daemon.addrsAndPorts.clientPort) : undefined;
+    const metrics = daemon?.metrics;
+    return of([{
+      ...node,
+      status,
+      addr,
+      blockchainLength: undefined,
+      date: undefined,
+      timestamp: undefined,
+      blockApplication: undefined,
+      latency: null,
+      source: undefined,
+      loaded: true,
+      hash: undefined,
+      txPool: metrics?.transactionPoolSize ?? undefined,
+      addedTx: metrics?.transactionsAddedToPool ?? undefined,
+      broadcastedTx: metrics?.transactionPoolDiffBroadcasted ?? undefined,
+      receivedTx: metrics?.transactionPoolDiffReceived ?? undefined,
+      snarkPool: metrics?.snarkPoolSize ?? undefined,
+      snarkDiffReceived: metrics?.snarkPoolDiffReceived ?? undefined,
+      snarkDiffBroadcasted: metrics?.snarkPoolDiffBroadcasted ?? undefined,
+      pendingSnarkWork: metrics?.pendingSnarkWork ?? undefined,
+      traceStatus: undefined,
+    } as DashboardNode]);
   }
 
   getBlockTraceGroups(node: DashboardNode): Observable<TracingTraceGroup[]> {

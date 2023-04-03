@@ -13,7 +13,6 @@ export const environment: Readonly<MinaEnv> = {
       network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
       tracing: ['overview', 'blocks'],
       benchmarks: ['wallets'],
-      logs: [],
       'web-node': ['wallet', 'peers', 'logs', 'state'],
     },
   },
@@ -38,11 +37,11 @@ export const environment: Readonly<MinaEnv> = {
     //   name: 'webrtc',
     // },
     // {
-    //   debugger: 'https://debug.dev.openmina.com',
-    //   graphql: 'https://debug.dev.openmina.com:3086',
+    //   graphql: 'http://1.k8.openmina.com:31400/snark-coordinator',
+    //   'tracing-graphql': 'http://1.k8.openmina.com:31400/snark-coordinator/internal-trace',
     //   minaExplorer: 'https://berkeley.api.minaexplorer.com',
     //   features: ['dashboard', 'resources', 'network', 'tracing', 'web-node', 'benchmarks', 'explorer'],
-    //   name: 'debug',
+    //   name: 'snark-coordinator',
     // },
     {
       graphql: 'http://1.k8.openmina.com:31355/node1',
@@ -50,21 +49,18 @@ export const environment: Readonly<MinaEnv> = {
       debugger: 'http://1.k8.openmina.com:31355/node1/bpf-debugger',
       minaExplorer: 'https://berkeley.api.minaexplorer.com',
       name: 'node1',
-      features: ['dashboard', 'resources', 'network', 'tracing', 'web-node', 'benchmarks', 'explorer'],
     },
     {
       graphql: 'http://1.k8.openmina.com:31355/node2',
       'tracing-graphql': 'http://1.k8.openmina.com:31355/node2/internal-trace',
       debugger: 'http://1.k8.openmina.com:31355/node2/bpf-debugger',
       name: 'node2',
-      features: ['dashboard', 'resources', 'network', 'tracing', 'web-node', 'benchmarks', 'explorer'],
     },
     {
       graphql: 'http://1.k8.openmina.com:31355/node3',
       'tracing-graphql': 'http://1.k8.openmina.com:31355/node3/internal-trace',
       debugger: 'http://1.k8.openmina.com:31355/node3/bpf-debugger',
       name: 'node3',
-      features: ['dashboard', 'resources', 'network', 'tracing', 'web-node', 'benchmarks', 'explorer'],
     },
     {
       graphql: 'http://1.k8.openmina.com:31355/node4',
@@ -90,6 +86,16 @@ export const environment: Readonly<MinaEnv> = {
       graphql: 'http://1.k8.openmina.com:31355/node8',
       'tracing-graphql': 'http://1.k8.openmina.com:31355/node8/internal-trace',
       name: 'node8',
+    },
+    {
+      graphql: 'http://1.k8.openmina.com:31355/snarker008',
+      'tracing-graphql': 'http://1.k8.openmina.com:31355/snarker008/internal-trace',
+      name: 'snarker008',
+    },
+    {
+      graphql: 'http://1.k8.openmina.com:31355/snarker023',
+      'tracing-graphql': 'http://1.k8.openmina.com:31355/snarker023c/internal-trace',
+      name: 'snarker023',
     },
     // {
     //   graphql: 'http://1.k8.openmina.com:31355/node9',

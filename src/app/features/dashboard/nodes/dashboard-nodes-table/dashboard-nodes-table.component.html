@@ -33,6 +33,7 @@
       <span [innerHTML]="node.latency | secDuration: secConfig"></span>
       <span [innerHTML]="node.blockApplication | secDuration: secConfig"></span>
       <span>{{ node.source || '-' }}</span>
+      <span [ngClass]="node.traceStatus">{{ node.traceStatus || '-' }}</span>
       <span [tooltip]="node.addedTx + ' added, ' + node.broadcastedTx + ' broadcasted, ' + node.receivedTx + ' received'">{{ node.txPool ?? '-' }}</span>
       <span [tooltip]="node.snarkDiffBroadcasted + ' broadcasted, ' + node.snarkDiffReceived + ' received, ' + node.pendingSnarkWork + ' pending snark work'">{{ node.snarkPool ?? '-' }}</span>
       <span class="fx-row-vert-cent">

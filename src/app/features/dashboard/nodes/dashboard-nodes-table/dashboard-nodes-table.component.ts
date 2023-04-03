@@ -48,6 +48,7 @@ export class DashboardNodesTableComponent extends ManualDetection implements OnI
     { name: 'latency' },
     { name: 'block application', sort: 'blockApplication' },
     { name: 'source' },
+    { name: 'trace status', sort: 'traceStatus' },
     { name: 'tx. pool', sort: 'txPool' },
     { name: 'snark pool', sort: 'snarkPool' },
     { name: 'logs', sort: 'name' },

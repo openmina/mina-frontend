@@ -2,8 +2,6 @@ import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { stateSliceAsPromise } from '../../../support/commands';
 import { ExplorerBlocksState } from '@explorer/blocks/explorer-blocks.state';
-import { DashboardNodesState } from '@dashboard/nodes/dashboard-nodes.state';
-import { get } from '@angular/fire/database';
 
 const condition = (state: ExplorerBlocksState) => state && state.blocks.length > 1;
 const getBlocks = (store: Store<MinaState>) => stateSliceAsPromise<ExplorerBlocksState>(store, condition, 'explorer', 'blocks');

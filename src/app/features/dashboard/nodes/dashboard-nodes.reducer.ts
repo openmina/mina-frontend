@@ -192,7 +192,7 @@ function getActiveNodes(nodes: DashboardNode[]): DashboardNode[] {
 }
 
 function sortNodes(messages: DashboardNode[], tableSort: TableSort<DashboardNode>): DashboardNode[] {
-  return sort<DashboardNode>(messages, tableSort, ['addr', 'source', 'status', 'name', 'hash'], true);
+  return sort<DashboardNode>(messages, tableSort, ['addr', 'source', 'status', 'name', 'hash', 'traceStatus'], true);
 }
 
 function filterNodes(nodes: DashboardNode[], activeFilters: string[]): DashboardNode[] {
