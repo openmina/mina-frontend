@@ -78,7 +78,7 @@ export class FuzzingService {
   colorLineCounters(line: string, counters: FuzzingLineCounter[]): string {
     let result = '';
     if (counters.length === 0) {
-      return line;
+      return line.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     for (let i = 0; i < line.length; i++) {
@@ -93,7 +93,7 @@ export class FuzzingService {
         }
       }
 
-      result += c === ' ' ? '&nbsp;' : c;
+      result += c === ' ' ? '&nbsp;' : (c === '<' ? '&lt;' : c === '>' ? '&gt;' : c);
 
       if (counter) {
         if (column === counter.colEnd) {
