@@ -94,7 +94,7 @@ export const environment: Readonly<MinaEnv> = {
     },
     {
       graphql: 'http://1.k8.openmina.com:31355/snarker023',
-      'tracing-graphql': 'http://1.k8.openmina.com:31355/snarker023c/internal-trace',
+      'tracing-graphql': 'http://1.k8.openmina.com:31355/snarker023/internal-trace',
       name: 'snarker023',
     },
     // {

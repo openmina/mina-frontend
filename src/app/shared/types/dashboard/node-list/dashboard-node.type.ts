@@ -25,4 +25,6 @@ export interface DashboardNode {
   pendingSnarkWork: number;
   loaded: boolean;
   traceStatus: TracingBlockTraceStatus;
+  branch: string;
+  bestTip: string;
 }

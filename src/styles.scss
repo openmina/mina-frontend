@@ -33,6 +33,10 @@ body {
 	font-weight: 400;
 	color: $base-primary;
 	background-color: $base-background;
+
+	&.light {
+		font-weight: 600;
+	}
 }
 
 .theme-transition {

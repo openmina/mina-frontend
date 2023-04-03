@@ -27,6 +27,7 @@
       <span>
         <mina-copy [value]="node.hash" [display]="node.hash || '-' | truncateMid"></mina-copy>
       </span>
+<!--      <span>{{ node.branch }} {{ node.bestTip | truncateMid: 0: 4 }}</span>-->
       <span>{{ node.blockchainLength || '-' }}</span>
       <span>{{ node.addr || '-' }}</span>
       <span>{{ node.date || '-' }}</span>

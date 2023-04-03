@@ -10,13 +10,15 @@ import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import {
   selectDashboardNodes,
   selectDashboardNodesActiveBlockLevel,
-  selectDashboardNodesActiveNode, selectDashboardNodesEarliestBlockLevel,
+  selectDashboardNodesActiveNode,
+  selectDashboardNodesEarliestBlockLevel,
   selectDashboardNodesSorting,
 } from '@dashboard/nodes/dashboard-nodes.state';
 import {
   DASHBOARD_NODES_SET_ACTIVE_BLOCK,
   DASHBOARD_NODES_SET_ACTIVE_NODE,
-  DASHBOARD_NODES_SORT, DashboardNodesSetActiveBlock,
+  DASHBOARD_NODES_SORT,
+  DashboardNodesSetActiveBlock,
   DashboardNodesSetActiveNode,
   DashboardNodesSort,
 } from '@dashboard/nodes/dashboard-nodes.actions';
@@ -42,6 +44,7 @@ export class DashboardNodesTableComponent extends ManualDetection implements OnI
     { name: 'name' },
     { name: 'status' },
     { name: 'state hash', sort: 'hash' },
+    // { name: 'branch' },
     { name: 'height', sort: 'blockchainLength' },
     { name: 'address', sort: 'addr' },
     { name: 'datetime', sort: 'timestamp' },

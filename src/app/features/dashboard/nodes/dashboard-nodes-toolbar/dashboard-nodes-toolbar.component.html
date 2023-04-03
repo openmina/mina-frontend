@@ -35,18 +35,18 @@
     </div>
     <div class="flex-row">
       <button class="h-sm btn-primary mr-5"
-              [class.disabled]="loadingNodes"
+              [class.disabled]="isLoading"
               (click)="toggleShowLatencyFromFastest()">Show latency from {{ latencyFromFastest ? 'second' : '' }} fastest</button>
       <button class="h-sm btn-primary mr-5"
-              [class.disabled]="loadingNodes"
+              [class.disabled]="isLoading"
               (click)="toggleNodesShowing()">Show {{ showOffline ? 'active' : 'all' }} nodes</button>
     </div>
   </div>
 </div>
 
 <div class="row2 fx-row-vert-cent flex-wrap h-100 pl-12 h-50">
-  <span class="tertiary mr-10 f-600">{{ hideFilters ? 'Loading' : 'Block' }} candidates</span>
-  <ng-container *ngIf="!hideFilters">
+  <span class="tertiary mr-10 f-600">{{ isLoading ? 'Loading' : 'Block' }} candidates</span>
+  <ng-container *ngIf="!isLoading">
     <button *ngFor="let filter of allFilters"
             (click)="toggleFilter(filter)"
             class="mr-5 border-rad-6 f-600 fx-row-vert-cent"

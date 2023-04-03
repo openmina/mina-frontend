@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
-import { catchError, concatAll, EMPTY, filter, finalize, from, map, Observable, of, switchMap, take, throwError } from 'rxjs';
+import { catchError, concatAll, EMPTY, filter, finalize, from, map, Observable, of, switchMap, take, throwError, toArray } from 'rxjs';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
@@ -38,6 +38,71 @@ export class DashboardNodesService {
       concatAll(),
       filter(Boolean),
       take(1),
+    );
+  }
+
+  getForks(nodes: DashboardNode[]): Observable<Pick<DashboardNode, 'name' | 'branch' | 'bestTip'>[]> {
+    console.log(nodes[0].blockchainLength);
+    return from(
+      nodes.filter(n => n.status === AppNodeStatusTypes.SYNCED).map(node =>
+        this.http
+          .post<{ data: BestChainResponse }>(node.url, { query: bestChain }, this.options)
+          .pipe(
+            map(({ data }: { data: BestChainResponse }) => ({
+              chains: data.bestChain.filter(c => Number(c.protocolState.consensusState.blockHeight) <= node.blockchainLength),
+              node,
+            })),
+            catchError(() => EMPTY),
+          ),
+      ),
+    ).pipe(
+      concatAll(),
+      toArray(),
+      map((pairs: { chains: BestChain[], node: DashboardNode }[]) => {
+        console.log(pairs);
+        // const representations = pairs.filter((obj, index: number, arr) => {
+        //   return arr.findIndex(o => lastItem(o.chains).consensusState.blockHeight ===  lastItem(obj.chains).consensusState.blockHeight) === index;
+        // });
+
+        const branches: { name: string, candidates: string[] }[] = [];
+        const candidates: string[] = [];
+        const checkedPairs: { chains: BestChain[], node: DashboardNode }[] = [];
+        const response: Pick<DashboardNode, 'name' | 'branch' | 'bestTip'>[] = [];
+
+        pairs.forEach(({ chains, node }) => {
+          const newItem: any = { bestTip: undefined, branch: undefined, name: node.name };
+          const candidate = lastItem(chains)?.stateHash;
+          if (candidate) {
+            if (!candidates.includes(candidate)) {
+              candidates.push(candidate);
+              newItem.bestTip = candidate;
+
+              const relatedPair = checkedPairs.find((checked: { chains: BestChain[], node: DashboardNode }) => {
+                chains.some(c => checked.chains.map(c => c.stateHash).includes(c.stateHash));
+              })?.chains;
+              const relatedCandidate = relatedPair ? lastItem(relatedPair).stateHash : undefined;
+
+              const foundBranch = branches.find(b => b.candidates.includes(relatedCandidate));
+
+              if (foundBranch) {
+                newItem.branch = foundBranch.name;
+              } else {
+                const name = 'Branch ' + (branches.length + 1);
+                branches.push({ name, candidates: [candidate] });
+                newItem.branch = name;
+              }
+            } else {
+              const branch = branches.find(b => b.candidates.includes(candidate));
+              branch.candidates.push(candidate);
+              newItem.bestTip = candidate;
+              newItem.branch = branch.name;
+            }
+            checkedPairs.push({ chains, node });
+            response.push(newItem);
+          }
+        });
+        return response;
+      }),
     );
   }
 
@@ -274,3 +339,30 @@ const latestBlockHeight = `
     }
   }
 `;
+
+
+const bestChain = `
+  query BestChain {
+    bestChain(maxLength: 10) {
+      stateHash
+      protocolState {
+        consensusState {
+          blockHeight
+        }
+        previousStateHash
+      }
+    }
+  }
+`;
+
+interface BestChainResponse {
+  bestChain: BestChain[];
+}
+
+interface BestChain {
+  stateHash: string;
+  protocolState: {
+    consensusState: { blockHeight: number; };
+    previousStateHash: string;
+  };
+}

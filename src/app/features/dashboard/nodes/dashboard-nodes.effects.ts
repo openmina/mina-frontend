@@ -8,6 +8,7 @@ import { catchError, EMPTY, filter, finalize, map, mergeMap, repeat, Subject, sw
 import { addErrorObservable } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import {
+  DASHBOARD_NODES_GET_FORKS, DASHBOARD_NODES_GET_FORKS_SUCCESS,
   DASHBOARD_NODES_CLOSE,
   DASHBOARD_NODES_GET_EARLIEST_BLOCK,
   DASHBOARD_NODES_GET_NODE,
@@ -37,12 +38,12 @@ import { Routes } from '@shared/enums/routes.enum';
 })
 export class DashboardNodesEffects extends MinaBaseEffect<DashboardNodesActions> {
 
-  readonly init$: Effect;
   readonly earliestBlock$: Effect;
   readonly setActiveBlock$: Effect;
   readonly getNodes$: Effect;
   readonly getNode$: Effect;
   readonly getTraceDetails$: Effect;
+  readonly getForks$: Effect;
 
   constructor(private router: Router,
               private actions$: Actions,
@@ -111,6 +112,13 @@ export class DashboardNodesEffects extends MinaBaseEffect<DashboardNodesActions>
       map((payload: TracingTraceGroup[]) => ({ type: DASHBOARD_NODES_GET_TRACES_SUCCESS, payload })),
       catchError((error: Error) => addErrorObservable(error, MinaErrorType.GRAPH_QL)),
       repeat(),
+    ));
+
+    this.getForks$ = createEffect(() => this.actions$.pipe(
+      ofType(DASHBOARD_NODES_GET_FORKS),
+      this.latestActionState<DashboardNodesGetNodes>(),
+      switchMap(({ state }) => this.nodesService.getForks(state.dashboard.nodes.nodes)),
+      map((payload: Pick<DashboardNode, 'name' | 'branch' | 'bestTip'>[]) => ({ type: DASHBOARD_NODES_GET_FORKS_SUCCESS, payload })),
     ));
   }
 }

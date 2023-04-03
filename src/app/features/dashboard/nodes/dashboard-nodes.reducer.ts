@@ -4,6 +4,7 @@ import { DashboardNodesState } from '@dashboard/nodes/dashboard-nodes.state';
 import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
 import {
   DASHBOARD_NODES_CLOSE,
+  DASHBOARD_NODES_GET_FORKS_SUCCESS,
   DASHBOARD_NODES_GET_NODE_SUCCESS,
   DASHBOARD_NODES_GET_TRACES_SUCCESS,
   DASHBOARD_NODES_INIT,
@@ -64,6 +65,7 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
           tracingUrl: node['tracing-graphql'] + '/graphql',
           name: name(node.graphql),
           status: AppNodeStatusTypes.OFFLINE,
+          forks: [],
         });
       }), state.sort);
       const nodeCount: DashboardNodeCount = getNodeCount(nodes);
@@ -87,6 +89,19 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
         filteredNodes: !state.showOfflineNodes ? getActiveNodes(nodes) : nodes,
         allFilters: Array.from(new Set(nodes.map(n => n.hash).filter(Boolean))),
         remainingOngoingRequests: (state.remainingOngoingRequests - 1) > 0 ? (state.remainingOngoingRequests - 1) : 0,
+      };
+    }
+
+    case DASHBOARD_NODES_GET_FORKS_SUCCESS: {
+      const nodes = state.nodes.map(n => ({
+        ...n,
+        branch: action.payload.find(f => f.name === n.name)?.branch,
+        bestTip: action.payload.find(f => f.name === n.name)?.bestTip,
+      }));
+      return {
+        ...state,
+        nodes,
+        filteredNodes: !state.showOfflineNodes ? getActiveNodes(nodes) : nodes,
       };
     }
 
