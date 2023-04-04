@@ -7,6 +7,7 @@ import { FuzzingRouting } from '@fuzzing/fuzzing.routing';
 import { SharedModule } from '@shared/shared.module';
 import { EffectsModule } from '@ngrx/effects';
 import { FuzzingEffects } from '@fuzzing/fuzzing.effects';
+import { FuzzingToolbarComponent } from './fuzzing-toolbar/fuzzing-toolbar.component';
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import { FuzzingEffects } from '@fuzzing/fuzzing.effects';
     FuzzingComponent,
     FuzzingTableComponent,
     FuzzingCodeComponent,
+    FuzzingToolbarComponent,
   ],
   imports: [
     SharedModule,

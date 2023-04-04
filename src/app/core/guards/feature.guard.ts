@@ -20,8 +20,8 @@ export class FeatureGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot): CanActivateReturnType {
     return this.store.select(selectActiveNode)
       .pipe(
-        filter(Boolean),
-        switchMap((node: MinaNode) => {
+        switchMap((n: MinaNode | null) => {
+          const node = n || {} as any;
           const hasThisFeature = getAvailableFeatures(node).some((f: FeatureType | string) => f === route.routeConfig.path);
           return hasThisFeature ? of(hasThisFeature) : this.router.navigateByUrl(getFirstFeature(node));
         }),

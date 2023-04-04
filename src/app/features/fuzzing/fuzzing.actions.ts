@@ -11,6 +11,7 @@ enum FuzzingActionTypes {
   FUZZING_GET_FILE_DETAILS = 'FUZZING_GET_FILE_DETAILS',
   FUZZING_GET_FILE_DETAILS_SUCCESS = 'FUZZING_GET_FILE_DETAILS_SUCCESS',
   FUZZING_SORT = 'FUZZING_SORT',
+  FUZZING_FILTER = 'FUZZING_FILTER',
 }
 
 export const FUZZING_INIT = FuzzingActionTypes.FUZZING_INIT;
@@ -20,6 +21,7 @@ export const FUZZING_GET_FILES_SUCCESS = FuzzingActionTypes.FUZZING_GET_FILES_SU
 export const FUZZING_GET_FILE_DETAILS = FuzzingActionTypes.FUZZING_GET_FILE_DETAILS;
 export const FUZZING_GET_FILE_DETAILS_SUCCESS = FuzzingActionTypes.FUZZING_GET_FILE_DETAILS_SUCCESS;
 export const FUZZING_SORT = FuzzingActionTypes.FUZZING_SORT;
+export const FUZZING_FILTER = FuzzingActionTypes.FUZZING_FILTER;
 
 export interface FuzzingAction extends FeatureAction<FuzzingActionTypes> {
   readonly type: FuzzingActionTypes;
@@ -35,6 +37,8 @@ export class FuzzingClose implements FuzzingAction {
 
 export class FuzzingGetFiles implements FuzzingAction {
   readonly type = FUZZING_GET_FILES;
+
+  constructor(public payload: { urlType: 'ocaml' | 'rust' }) { }
 }
 
 export class FuzzingGetFilesSuccess implements FuzzingAction {
@@ -61,6 +65,11 @@ export class FuzzingSort implements FuzzingAction {
   constructor(public payload: TableSort<FuzzingFile>) { }
 }
 
+export class FuzzingFilterFiles implements FuzzingAction {
+  readonly type = FUZZING_FILTER;
+
+  constructor(public payload: string) { }
+}
 
 export type FuzzingActions = FuzzingInit
   | FuzzingClose
@@ -69,4 +78,5 @@ export type FuzzingActions = FuzzingInit
   | FuzzingGetFileDetails
   | FuzzingGetFileDetailsSuccess
   | FuzzingSort
+  | FuzzingFilterFiles
   ;

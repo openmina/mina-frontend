@@ -18,13 +18,13 @@
          [class.active]="activeFile === file"
          [class.row-even]="i % 2 === 0"
          class="row">
-      <span class="fx-row-vert-cent f-600">
+      <span class="fx-row-vert-cent f-600 flex-between pr-10">
         <span class="border-rad-4 mr-5">
           <span [style.width.%]="file.coverage"></span>
         </span>
-        {{ file.coverage }} %
+        <span style="align-self: flex-end">{{ file.coverage }} %</span>
       </span>
-      <span >{{ file.path }}</span>
+      <span>{{ file.path }}</span>
     </div>
   </cdk-virtual-scroll-viewport>
 </div>

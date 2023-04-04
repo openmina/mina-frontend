@@ -1,22 +1,23 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { TableHeadSorting } from '@shared/types/shared/table-head-sorting.type';
 import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
 import { Router } from '@angular/router';
 import { FuzzingFile } from '@shared/types/fuzzing/fuzzing-file.type';
-import { selectFuzzingActiveFile, selectFuzzingFiles, selectFuzzingFilesSorting } from '@fuzzing/fuzzing.state';
+import { selectFuzzingActiveFile, selectFuzzingFiles, selectFuzzingFilesSorting, selectFuzzingUrlType } from '@fuzzing/fuzzing.state';
 import { FuzzingGetFileDetails, FuzzingSort } from '@fuzzing/fuzzing.actions';
 import { filter, take } from 'rxjs';
 import { Routes } from '@shared/enums/routes.enum';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'mina-fuzzing-table',
   templateUrl: './fuzzing-table.component.html',
   styleUrls: ['./fuzzing-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'flex-column h-100 w-50' },
+  host: { class: 'flex-column h-100' },
 })
 export class FuzzingTableComponent extends StoreDispatcher implements OnInit {
 
@@ -31,7 +32,9 @@ export class FuzzingTableComponent extends StoreDispatcher implements OnInit {
   activeFile: FuzzingFile;
   currentSort: TableSort<FuzzingFile>;
 
+  @ViewChild(CdkVirtualScrollViewport, {static: true}) private scrollViewport: CdkVirtualScrollViewport;
   private pathFromRoute: string;
+  private urlType: string;
 
   constructor(private router: Router) { super(); }
 
@@ -40,6 +43,7 @@ export class FuzzingTableComponent extends StoreDispatcher implements OnInit {
     this.listenToSortingChanges();
     this.listenToFiles();
     this.listenToActiveFile();
+    this.listenToRouteType();
   }
 
   private listenToRouteChange(): void {
@@ -50,6 +54,11 @@ export class FuzzingTableComponent extends StoreDispatcher implements OnInit {
     }, take(1));
   }
 
+  private listenToRouteType(): void {
+    this.select(selectFuzzingUrlType, (type: 'ocaml' | 'rust') => {
+      this.urlType = type;
+    });
+  }
 
   private listenToFiles(): void {
     this.select(selectFuzzingFiles, (files: FuzzingFile[]) => {
@@ -58,7 +67,10 @@ export class FuzzingTableComponent extends StoreDispatcher implements OnInit {
         const payload = files.find(file => file.path === this.pathFromRoute);
         if (payload) {
           this.dispatch(FuzzingGetFileDetails, payload);
+          this.detect();
+          this.scrollToElement();
           delete this.pathFromRoute;
+          return;
         }
       }
       this.detect();
@@ -79,6 +91,15 @@ export class FuzzingTableComponent extends StoreDispatcher implements OnInit {
     });
   }
 
+  private scrollToElement(): void {
+    if (!this.pathFromRoute) {
+      return;
+    }
+    const topElements = Math.floor(this.scrollViewport.elementRef.nativeElement.offsetHeight / 2 / this.itemSize);
+    const index = this.files.findIndex(file => file.path === this.pathFromRoute) - topElements;
+    this.scrollViewport.scrollToIndex(index);
+  }
+
   sortTable(sortBy: string): void {
     const sortDirection = sortBy !== this.currentSort.sortBy
       ? this.currentSort.sortDirection
@@ -91,6 +112,6 @@ export class FuzzingTableComponent extends StoreDispatcher implements OnInit {
       this.activeFile = file;
       this.dispatch(FuzzingGetFileDetails, file);
     }
-    this.router.navigate([Routes.FUZZING, file.path]);
+    this.router.navigate([Routes.FUZZING, this.urlType, file.path]);
   }
 }

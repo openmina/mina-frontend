@@ -1,8 +1,10 @@
 import { FuzzingState } from '@fuzzing/fuzzing.state';
 import {
   FUZZING_CLOSE,
+  FUZZING_FILTER,
   FUZZING_GET_FILE_DETAILS,
   FUZZING_GET_FILE_DETAILS_SUCCESS,
+  FUZZING_GET_FILES,
   FUZZING_GET_FILES_SUCCESS,
   FUZZING_SORT,
   FuzzingActions,
@@ -13,21 +15,32 @@ import { FuzzingFile } from '@shared/types/fuzzing/fuzzing-file.type';
 
 const initialState: FuzzingState = {
   files: [],
+  filteredFiles: [],
   activeFile: undefined,
   activeFileDetails: undefined,
   sort: {
     sortDirection: SortDirection.DSC,
     sortBy: 'path',
-  }
+  },
+  urlType: undefined,
 };
 
 export function reducer(state: FuzzingState = initialState, action: FuzzingActions): FuzzingState {
   switch (action.type) {
 
-    case FUZZING_GET_FILES_SUCCESS: {
+    case FUZZING_GET_FILES: {
       return {
         ...state,
-        files: sortFiles(action.payload, state.sort),
+        urlType: action.payload.urlType,
+      };
+    }
+
+    case FUZZING_GET_FILES_SUCCESS: {
+      const files = sortFiles(action.payload, state.sort);
+      return {
+        ...state,
+        files,
+        filteredFiles: files,
       };
     }
 
@@ -48,9 +61,17 @@ export function reducer(state: FuzzingState = initialState, action: FuzzingActio
     case FUZZING_SORT: {
       return {
         ...state,
-        files: sortFiles(state.files, action.payload),
+        filteredFiles: sortFiles(state.filteredFiles, action.payload),
         sort: action.payload,
-      }
+      };
+    }
+
+    case FUZZING_FILTER: {
+      const filteredFiles = !action.payload ? sortFiles(state.files, state.sort) : state.files.filter(file => file.path.includes(action.payload));
+      return {
+        ...state,
+        filteredFiles,
+      };
     }
 
     case FUZZING_CLOSE:

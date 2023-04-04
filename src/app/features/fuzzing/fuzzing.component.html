@@ -1,2 +1,16 @@
-<mina-fuzzing-table></mina-fuzzing-table>
-<mina-fuzzing-code></mina-fuzzing-code>
+<div class="flex-column h-100 w-100">
+  <mina-fuzzing-toolbar></mina-fuzzing-toolbar>
+  <div #parent class="h-minus-xl w-100 flex-row p-relative">
+    <mina-fuzzing-table [class.shrink]="isActiveRow"></mina-fuzzing-table>
+    <mina-horizontal-resizable-container (endResizing)="toggleResizing()"
+                                         (startResizing)="toggleResizing()"
+                                         (widthChange)="onWidthChange($event)"
+                                         [class.show]="isActiveRow"
+                                         [maxWidthElement]="parent"
+                                         [minWidth]="600"
+                                         class="no-transition"
+                                         localStorageKey="fuzzing-side-panel-width">
+      <mina-fuzzing-code></mina-fuzzing-code>
+    </mina-horizontal-resizable-container>
+  </div>
+</div>

@@ -76,6 +76,7 @@ export class AppEffects extends MinaBaseEffect<AppActions> {
     this.init$ = createEffect(() => this.actions$.pipe(
       ofType(APP_INIT),
       switchMap(() => this.appService.getActiveNode()),
+      filter(Boolean),
       map((node: MinaNode) => ({ type: APP_INIT_SUCCESS, payload: { node } })),
     ));
 

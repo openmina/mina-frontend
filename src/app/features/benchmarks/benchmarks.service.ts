@@ -7,7 +7,7 @@ import { ConfigService } from '@core/services/config.service';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { BenchmarksMempoolTx } from '@shared/types/benchmarks/benchmarks-mempool-tx.type';
 import { BenchmarksTransaction } from '@shared/types/benchmarks/benchmarks-transaction.type';
-import Client from 'mina-signer';
+// import Client from 'mina-signer';
 
 const WALLETS: any[] = [
   {
@@ -622,8 +622,8 @@ const WALLETS: any[] = [
 export class BenchmarksService {
 
   private wallets = WALLETS;
-  private client: Client = new Client({ network: 'testnet' });
-  // client: any = null;
+  // private client: Client = new Client({ network: 'testnet' });
+  client: any = null;
   constructor(private http: HttpClient,
               private config: ConfigService,
               private graphQL: GraphQLService) {

@@ -9,7 +9,7 @@ import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { removeParamsFromURL } from '@shared/helpers/router.helper';
 import { combineLatest, debounceTime, filter } from 'rxjs';
-import { getAvailableFeatures, getFeaturesConfig } from '@shared/constants/config';
+import { CONFIG, getAvailableFeatures, getFeaturesConfig } from '@shared/constants/config';
 import { FeatureType, MinaNode } from '@shared/types/core/environment/mina-env.type';
 
 @UntilDestroy()
@@ -37,8 +37,7 @@ export class SubmenuTabsComponent extends ManualDetection implements OnInit {
 
   private listenToRouteChange(): void {
     combineLatest([
-      this.store.select(selectActiveNode)
-        .pipe(filter(Boolean)),
+      this.store.select(selectActiveNode),
       this.store.select(getMergedRoute)
         .pipe(filter(Boolean)),
     ])
@@ -58,8 +57,10 @@ export class SubmenuTabsComponent extends ManualDetection implements OnInit {
   }
 
   private setSubMenusOfActiveNodeForNewPage(node: MinaNode): void {
-    const feature = getAvailableFeatures(node).find((f: FeatureType | string) => f === this.baseRoute) as FeatureType;
+    const feature = getAvailableFeatures(node || {} as any).find((f: FeatureType | string) => f === this.baseRoute) as FeatureType;
     // this.subMenus = getFeaturesConfig(node)[feature] || [];
+
+    //this should be removed after the backend guys confirm that the new config is implemented in k8s
     this.subMenus = this.features()[feature] || [];
   }
 
@@ -72,6 +73,7 @@ export class SubmenuTabsComponent extends ManualDetection implements OnInit {
       tracing: ['overview', 'blocks'],
       benchmarks: ['wallets'],
       'web-node': ['wallet', 'peers', 'logs', 'state'],
+      fuzzing: ['ocaml', 'rust'],
     };
   }
 

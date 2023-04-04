@@ -1,1 +1,779 @@
-{"filename":"src/lib/work_selector/intf.ml","lines":[{"line":"open Core","counters":[]},{"line":"open Currency","counters":[]},{"line":"","counters":[]},{"line":"module type Inputs_intf = sig","counters":[]},{"line":"  module Ledger_hash : sig","counters":[]},{"line":"    type t","counters":[]},{"line":"  end","counters":[]},{"line":"","counters":[]},{"line":"  module Sparse_ledger : sig","counters":[]},{"line":"    type t","counters":[]},{"line":"  end","counters":[]},{"line":"","counters":[]},{"line":"  module Transaction : sig","counters":[]},{"line":"    type t","counters":[]},{"line":"  end","counters":[]},{"line":"","counters":[]},{"line":"  module Transaction_witness : sig","counters":[]},{"line":"    type t","counters":[]},{"line":"  end","counters":[]},{"line":"","counters":[]},{"line":"  module Ledger_proof : sig","counters":[]},{"line":"    type t","counters":[]},{"line":"  end","counters":[]},{"line":"","counters":[]},{"line":"  module Transaction_snark_work : sig","counters":[]},{"line":"    type t","counters":[]},{"line":"","counters":[]},{"line":"    val fee : t -> Fee.t","counters":[]},{"line":"","counters":[]},{"line":"    module Statement : sig","counters":[]},{"line":"      type t = Transaction_snark.Statement.t One_or_two.t","counters":[]},{"line":"    end","counters":[]},{"line":"  end","counters":[]},{"line":"","counters":[]},{"line":"  module Snark_pool : sig","counters":[]},{"line":"    type t","counters":[]},{"line":"","counters":[]},{"line":"    val get_completed_work :","counters":[]},{"line":"         t","counters":[]},{"line":"      -> Transaction_snark.Statement.t One_or_two.t","counters":[]},{"line":"      -> Transaction_snark_work.t option","counters":[]},{"line":"  end","counters":[]},{"line":"","counters":[]},{"line":"  module Transaction_protocol_state : sig","counters":[]},{"line":"    type 'a t","counters":[]},{"line":"  end","counters":[]},{"line":"","counters":[]},{"line":"  module Staged_ledger : sig","counters":[]},{"line":"    type t","counters":[]},{"line":"","counters":[]},{"line":"    val all_work_pairs :","counters":[]},{"line":"         t","counters":[]},{"line":"      -> get_state:","counters":[]},{"line":"           (Mina_base.State_hash.t -> Mina_state.Protocol_state.value Or_error.t)","counters":[]},{"line":"      -> ( Transaction_witness.t","counters":[]},{"line":"         , Ledger_proof.t )","counters":[]},{"line":"         Snark_work_lib.Work.Single.Spec.t","counters":[]},{"line":"         One_or_two.t","counters":[]},{"line":"         list","counters":[]},{"line":"         Or_error.t","counters":[]},{"line":"  end","counters":[]},{"line":"","counters":[]},{"line":"  module Transition_frontier : sig","counters":[]},{"line":"    type t","counters":[]},{"line":"","counters":[]},{"line":"    type best_tip_view","counters":[]},{"line":"","counters":[]},{"line":"    val best_tip_pipe : t -> best_tip_view Pipe_lib.Broadcast_pipe.Reader.t","counters":[]},{"line":"","counters":[]},{"line":"    val best_tip_staged_ledger : t -> Staged_ledger.t","counters":[]},{"line":"","counters":[]},{"line":"    val get_protocol_state :","counters":[]},{"line":"      t -> Mina_base.State_hash.t -> Mina_state.Protocol_state.value Or_error.t","counters":[]},{"line":"  end","counters":[]},{"line":"end","counters":[]},{"line":"","counters":[]},{"line":"module type State_intf = sig","counters":[]},{"line":"  type t","counters":[]},{"line":"","counters":[]},{"line":"  type transition_frontier","counters":[]},{"line":"","counters":[]},{"line":"  val init :","counters":[]},{"line":"       reassignment_wait:int","counters":[]},{"line":"    -> frontier_broadcast_pipe:","counters":[]},{"line":"         transition_frontier option Pipe_lib.Broadcast_pipe.Reader.t","counters":[]},{"line":"    -> logger:Logger.t","counters":[]},{"line":"    -> t","counters":[]},{"line":"end","counters":[]},{"line":"","counters":[]},{"line":"module type Lib_intf = sig","counters":[]},{"line":"  module Inputs : Inputs_intf","counters":[]},{"line":"","counters":[]},{"line":"  open Inputs","counters":[]},{"line":"","counters":[]},{"line":"  module State : sig","counters":[]},{"line":"    include","counters":[]},{"line":"      State_intf with type transition_frontier := Inputs.Transition_frontier.t","counters":[]},{"line":"","counters":[]},{"line":"    val remove_old_assignments : t -> logger:Logger.t -> unit","counters":[]},{"line":"","counters":[]},{"line":"    (**Jobs that have not been assigned yet*)","counters":[]},{"line":"    val all_unseen_works :","counters":[]},{"line":"         t","counters":[]},{"line":"      -> ( Transaction_witness.t","counters":[]},{"line":"         , Ledger_proof.t )","counters":[]},{"line":"         Snark_work_lib.Work.Single.Spec.t","counters":[]},{"line":"         One_or_two.t","counters":[]},{"line":"         list","counters":[]},{"line":"","counters":[]},{"line":"    val remove :","counters":[]},{"line":"         t","counters":[]},{"line":"      -> ( Transaction_witness.t","counters":[]},{"line":"         , Ledger_proof.t )","counters":[]},{"line":"         Snark_work_lib.Work.Single.Spec.t","counters":[]},{"line":"         One_or_two.t","counters":[]},{"line":"      -> unit","counters":[]},{"line":"","counters":[]},{"line":"    val set :","counters":[]},{"line":"         t","counters":[]},{"line":"      -> ( Transaction_witness.t","counters":[]},{"line":"         , Ledger_proof.t )","counters":[]},{"line":"         Snark_work_lib.Work.Single.Spec.t","counters":[]},{"line":"         One_or_two.t","counters":[]},{"line":"      -> unit","counters":[]},{"line":"  end","counters":[]},{"line":"","counters":[]},{"line":"  val get_expensive_work :","counters":[]},{"line":"       snark_pool:Snark_pool.t","counters":[]},{"line":"    -> fee:Fee.t","counters":[]},{"line":"    -> (Transaction_witness.t, Ledger_proof.t) Snark_work_lib.Work.Single.Spec.t","counters":[]},{"line":"       One_or_two.t","counters":[]},{"line":"       list","counters":[]},{"line":"    -> (Transaction_witness.t, Ledger_proof.t) Snark_work_lib.Work.Single.Spec.t","counters":[]},{"line":"       One_or_two.t","counters":[]},{"line":"       list","counters":[]},{"line":"","counters":[]},{"line":"  (**jobs that are not in the snark pool yet*)","counters":[]},{"line":"  val pending_work_statements :","counters":[]},{"line":"       snark_pool:Snark_pool.t","counters":[]},{"line":"    -> fee_opt:Fee.t option","counters":[]},{"line":"    -> State.t","counters":[]},{"line":"    -> Transaction_snark.Statement.t One_or_two.t list","counters":[]},{"line":"","counters":[]},{"line":"  module For_tests : sig","counters":[]},{"line":"    val does_not_have_better_fee :","counters":[]},{"line":"         snark_pool:Snark_pool.t","counters":[]},{"line":"      -> fee:Fee.t","counters":[]},{"line":"      -> Transaction_snark_work.Statement.t","counters":[]},{"line":"      -> bool","counters":[]},{"line":"  end","counters":[]},{"line":"end","counters":[]},{"line":"","counters":[]},{"line":"module type Selection_method_intf = sig","counters":[]},{"line":"  type snark_pool","counters":[]},{"line":"","counters":[]},{"line":"  type staged_ledger","counters":[]},{"line":"","counters":[]},{"line":"  type work","counters":[]},{"line":"","counters":[]},{"line":"  type transition_frontier","counters":[]},{"line":"","counters":[]},{"line":"  module State : State_intf with type transition_frontier := transition_frontier","counters":[]},{"line":"","counters":[]},{"line":"  val remove : State.t -> work One_or_two.t -> unit","counters":[]},{"line":"","counters":[]},{"line":"  val work :","counters":[]},{"line":"       snark_pool:snark_pool","counters":[]},{"line":"    -> fee:Currency.Fee.t","counters":[]},{"line":"    -> logger:Logger.t","counters":[]},{"line":"    -> State.t","counters":[]},{"line":"    -> work One_or_two.t option","counters":[]},{"line":"","counters":[]},{"line":"  val pending_work_statements :","counters":[]},{"line":"       snark_pool:snark_pool","counters":[]},{"line":"    -> fee_opt:Currency.Fee.t option","counters":[]},{"line":"    -> State.t","counters":[]},{"line":"    -> Transaction_snark.Statement.t One_or_two.t list","counters":[]},{"line":"end","counters":[]},{"line":"","counters":[]},{"line":"module type Make_selection_method_intf = functor","counters":[]},{"line":"  (Inputs : Inputs_intf)","counters":[]},{"line":"  (Lib : Lib_intf with module Inputs := Inputs)","counters":[]},{"line":"  ->","counters":[]},{"line":"  Selection_method_intf","counters":[]},{"line":"    with type staged_ledger := Inputs.Staged_ledger.t","counters":[]},{"line":"     and type work :=","counters":[]},{"line":"      ( Inputs.Transaction_witness.t","counters":[]},{"line":"      , Inputs.Ledger_proof.t )","counters":[]},{"line":"      Snark_work_lib.Work.Single.Spec.t","counters":[]},{"line":"     and type snark_pool := Inputs.Snark_pool.t","counters":[]},{"line":"     and type transition_frontier := Inputs.Transition_frontier.t","counters":[]},{"line":"     and module State := Lib.State","counters":[{"col_start":33,"col_end":33,"count":1}]}]}
+{
+  "filename": "src/lib/work_selector/intf.ml",
+  "lines": [
+    {
+      "line": "open Core",
+      "counters": []
+    },
+    {
+      "line": "open Currency",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "module type Inputs_intf = sig",
+      "counters": []
+    },
+    {
+      "line": "  module Ledger_hash : sig",
+      "counters": []
+    },
+    {
+      "line": "    type t",
+      "counters": []
+    },
+    {
+      "line": "  end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  module Sparse_ledger : sig",
+      "counters": []
+    },
+    {
+      "line": "    type t",
+      "counters": []
+    },
+    {
+      "line": "  end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  module Transaction : sig",
+      "counters": []
+    },
+    {
+      "line": "    type t",
+      "counters": []
+    },
+    {
+      "line": "  end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  module Transaction_witness : sig",
+      "counters": []
+    },
+    {
+      "line": "    type t",
+      "counters": []
+    },
+    {
+      "line": "  end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  module Ledger_proof : sig",
+      "counters": []
+    },
+    {
+      "line": "    type t",
+      "counters": []
+    },
+    {
+      "line": "  end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  module Transaction_snark_work : sig",
+      "counters": []
+    },
+    {
+      "line": "    type t",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    val fee : t -> Fee.t",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    module Statement : sig",
+      "counters": []
+    },
+    {
+      "line": "      type t = Transaction_snark.Statement.t One_or_two.t",
+      "counters": []
+    },
+    {
+      "line": "    end",
+      "counters": []
+    },
+    {
+      "line": "  end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  module Snark_pool : sig",
+      "counters": []
+    },
+    {
+      "line": "    type t",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    val get_completed_work :",
+      "counters": []
+    },
+    {
+      "line": "         t",
+      "counters": []
+    },
+    {
+      "line": "      -> Transaction_snark.Statement.t One_or_two.t",
+      "counters": []
+    },
+    {
+      "line": "      -> Transaction_snark_work.t option",
+      "counters": []
+    },
+    {
+      "line": "  end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  module Transaction_protocol_state : sig",
+      "counters": []
+    },
+    {
+      "line": "    type 'a t",
+      "counters": []
+    },
+    {
+      "line": "  end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  module Staged_ledger : sig",
+      "counters": []
+    },
+    {
+      "line": "    type t",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    val all_work_pairs :",
+      "counters": []
+    },
+    {
+      "line": "         t",
+      "counters": []
+    },
+    {
+      "line": "      -> get_state:",
+      "counters": []
+    },
+    {
+      "line": "           (Mina_base.State_hash.t -> Mina_state.Protocol_state.value Or_error.t)",
+      "counters": []
+    },
+    {
+      "line": "      -> ( Transaction_witness.t",
+      "counters": []
+    },
+    {
+      "line": "         , Ledger_proof.t )",
+      "counters": []
+    },
+    {
+      "line": "         Snark_work_lib.Work.Single.Spec.t",
+      "counters": []
+    },
+    {
+      "line": "         One_or_two.t",
+      "counters": []
+    },
+    {
+      "line": "         list",
+      "counters": []
+    },
+    {
+      "line": "         Or_error.t",
+      "counters": []
+    },
+    {
+      "line": "  end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  module Transition_frontier : sig",
+      "counters": []
+    },
+    {
+      "line": "    type t",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    type best_tip_view",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    val best_tip_pipe : t -> best_tip_view Pipe_lib.Broadcast_pipe.Reader.t",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    val best_tip_staged_ledger : t -> Staged_ledger.t",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    val get_protocol_state :",
+      "counters": []
+    },
+    {
+      "line": "      t -> Mina_base.State_hash.t -> Mina_state.Protocol_state.value Or_error.t",
+      "counters": []
+    },
+    {
+      "line": "  end",
+      "counters": []
+    },
+    {
+      "line": "end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "module type State_intf = sig",
+      "counters": []
+    },
+    {
+      "line": "  type t",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  type transition_frontier",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  val init :",
+      "counters": []
+    },
+    {
+      "line": "       reassignment_wait:int",
+      "counters": []
+    },
+    {
+      "line": "    -> frontier_broadcast_pipe:",
+      "counters": []
+    },
+    {
+      "line": "         transition_frontier option Pipe_lib.Broadcast_pipe.Reader.t",
+      "counters": []
+    },
+    {
+      "line": "    -> logger:Logger.t",
+      "counters": []
+    },
+    {
+      "line": "    -> t",
+      "counters": []
+    },
+    {
+      "line": "end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "module type Lib_intf = sig",
+      "counters": []
+    },
+    {
+      "line": "  module Inputs : Inputs_intf",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  open Inputs",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  module State : sig",
+      "counters": []
+    },
+    {
+      "line": "    include",
+      "counters": []
+    },
+    {
+      "line": "      State_intf with type transition_frontier := Inputs.Transition_frontier.t",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    val remove_old_assignments : t -> logger:Logger.t -> unit",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    (**Jobs that have not been assigned yet*)",
+      "counters": []
+    },
+    {
+      "line": "    val all_unseen_works :",
+      "counters": []
+    },
+    {
+      "line": "         t",
+      "counters": []
+    },
+    {
+      "line": "      -> ( Transaction_witness.t",
+      "counters": []
+    },
+    {
+      "line": "         , Ledger_proof.t )",
+      "counters": []
+    },
+    {
+      "line": "         Snark_work_lib.Work.Single.Spec.t",
+      "counters": []
+    },
+    {
+      "line": "         One_or_two.t",
+      "counters": []
+    },
+    {
+      "line": "         list",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    val remove :",
+      "counters": []
+    },
+    {
+      "line": "         t",
+      "counters": []
+    },
+    {
+      "line": "      -> ( Transaction_witness.t",
+      "counters": []
+    },
+    {
+      "line": "         , Ledger_proof.t )",
+      "counters": []
+    },
+    {
+      "line": "         Snark_work_lib.Work.Single.Spec.t",
+      "counters": []
+    },
+    {
+      "line": "         One_or_two.t",
+      "counters": []
+    },
+    {
+      "line": "      -> unit",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "    val set :",
+      "counters": []
+    },
+    {
+      "line": "         t",
+      "counters": []
+    },
+    {
+      "line": "      -> ( Transaction_witness.t",
+      "counters": []
+    },
+    {
+      "line": "         , Ledger_proof.t )",
+      "counters": []
+    },
+    {
+      "line": "         Snark_work_lib.Work.Single.Spec.t",
+      "counters": []
+    },
+    {
+      "line": "         One_or_two.t",
+      "counters": []
+    },
+    {
+      "line": "      -> unit",
+      "counters": []
+    },
+    {
+      "line": "  end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  val get_expensive_work :",
+      "counters": []
+    },
+    {
+      "line": "       snark_pool:Snark_pool.t",
+      "counters": []
+    },
+    {
+      "line": "    -> fee:Fee.t",
+      "counters": []
+    },
+    {
+      "line": "    -> (Transaction_witness.t, Ledger_proof.t) Snark_work_lib.Work.Single.Spec.t",
+      "counters": []
+    },
+    {
+      "line": "       One_or_two.t",
+      "counters": []
+    },
+    {
+      "line": "       list",
+      "counters": []
+    },
+    {
+      "line": "    -> (Transaction_witness.t, Ledger_proof.t) Snark_work_lib.Work.Single.Spec.t",
+      "counters": []
+    },
+    {
+      "line": "       One_or_two.t",
+      "counters": []
+    },
+    {
+      "line": "       list",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  (**jobs that are not in the snark pool yet*)",
+      "counters": []
+    },
+    {
+      "line": "  val pending_work_statements :",
+      "counters": []
+    },
+    {
+      "line": "       snark_pool:Snark_pool.t",
+      "counters": []
+    },
+    {
+      "line": "    -> fee_opt:Fee.t option",
+      "counters": []
+    },
+    {
+      "line": "    -> State.t",
+      "counters": []
+    },
+    {
+      "line": "    -> Transaction_snark.Statement.t One_or_two.t list",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  module For_tests : sig",
+      "counters": []
+    },
+    {
+      "line": "    val does_not_have_better_fee :",
+      "counters": []
+    },
+    {
+      "line": "         snark_pool:Snark_pool.t",
+      "counters": []
+    },
+    {
+      "line": "      -> fee:Fee.t",
+      "counters": []
+    },
+    {
+      "line": "      -> Transaction_snark_work.Statement.t",
+      "counters": []
+    },
+    {
+      "line": "      -> bool",
+      "counters": []
+    },
+    {
+      "line": "  end",
+      "counters": []
+    },
+    {
+      "line": "end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "module type Selection_method_intf = sig",
+      "counters": []
+    },
+    {
+      "line": "  type snark_pool",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  type staged_ledger",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  type work",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  type transition_frontier",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  module State : State_intf with type transition_frontier := transition_frontier",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  val remove : State.t -> work One_or_two.t -> unit",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  val work :",
+      "counters": []
+    },
+    {
+      "line": "       snark_pool:snark_pool",
+      "counters": []
+    },
+    {
+      "line": "    -> fee:Currency.Fee.t",
+      "counters": []
+    },
+    {
+      "line": "    -> logger:Logger.t",
+      "counters": []
+    },
+    {
+      "line": "    -> State.t",
+      "counters": []
+    },
+    {
+      "line": "    -> work One_or_two.t option",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "  val pending_work_statements :",
+      "counters": []
+    },
+    {
+      "line": "       snark_pool:snark_pool",
+      "counters": []
+    },
+    {
+      "line": "    -> fee_opt:Currency.Fee.t option",
+      "counters": []
+    },
+    {
+      "line": "    -> State.t",
+      "counters": []
+    },
+    {
+      "line": "    -> Transaction_snark.Statement.t One_or_two.t list",
+      "counters": []
+    },
+    {
+      "line": "end",
+      "counters": []
+    },
+    {
+      "line": "",
+      "counters": []
+    },
+    {
+      "line": "module type Make_selection_method_intf = functor",
+      "counters": []
+    },
+    {
+      "line": "  (Inputs : Inputs_intf)",
+      "counters": []
+    },
+    {
+      "line": "  (Lib : Lib_intf with module Inputs := Inputs)",
+      "counters": []
+    },
+    {
+      "line": "  ->",
+      "counters": []
+    },
+    {
+      "line": "  Selection_method_intf",
+      "counters": []
+    },
+    {
+      "line": "    with type staged_ledger := Inputs.Staged_ledger.t",
+      "counters": []
+    },
+    {
+      "line": "     and type work :=",
+      "counters": []
+    },
+    {
+      "line": "      ( Inputs.Transaction_witness.t",
+      "counters": []
+    },
+    {
+      "line": "      , Inputs.Ledger_proof.t )",
+      "counters": []
+    },
+    {
+      "line": "      Snark_work_lib.Work.Single.Spec.t",
+      "counters": []
+    },
+    {
+      "line": "     and type snark_pool := Inputs.Snark_pool.t",
+      "counters": []
+    },
+    {
+      "line": "     and type transition_frontier := Inputs.Transition_frontier.t",
+      "counters": []
+    },
+    {
+      "line": "     and module State := Lib.State",
+      "counters": [
+        {
+          "col_start": 33,
+          "col_end": 33,
+          "count": 1
+        }
+      ]
+    }
+  ]
+}

@@ -27,7 +27,7 @@ import { GlobalErrorHandlerService } from '@core/services/global-error-handler.s
 import { Router } from '@angular/router';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAnalyticsModule } from '@angular/fire/compat/analytics';
-import { registerLocaleData } from '@angular/common';
+import { HashLocationStrategy, LocationStrategy, registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import localeEn from '@angular/common/locales/en';
 
@@ -84,6 +84,7 @@ export class AppGlobalErrorhandler implements ErrorHandler {
     EagerSharedModule,
   ],
   providers: [
+    ...[origin.includes('65.109.105.40') ? { provide: LocationStrategy, useClass: HashLocationStrategy } : []],
     SENTRY_PROVIDER,
     {
       provide: Sentry.TraceService,

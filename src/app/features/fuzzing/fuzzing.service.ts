@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { delay, forkJoin, map, Observable } from 'rxjs';
+import { delay, map, Observable } from 'rxjs';
 import { FuzzingFile } from '@shared/types/fuzzing/fuzzing-file.type';
 import { HttpClient } from '@angular/common/http';
 import { FuzzingFileDetails } from '@shared/types/fuzzing/fuzzing-file-details.type';
@@ -12,18 +12,15 @@ export class FuzzingService {
 
   constructor(private http: HttpClient) { }
 
-  getFiles(): Observable<FuzzingFile[]> {
-    const ocaml = this.http.get<any[]>('assets/reports/rustindex.json').pipe(delay(100));
-    const rust = this.http.get<any[]>('assets/reports/ocamlindex.json').pipe(delay(100));
-
-    return forkJoin([ocaml, rust]).pipe(
-      map((results: any[][]) => [...results[0], ...results[1]]),
-      map((files: any[]) => files.map((file: any) => ({
-        name: file[0],
-        coverage: file[1],
-        path: file[2],
-      }))),
-    );
+  getFiles(type: 'ocaml' | 'rust'): Observable<FuzzingFile[]> {
+    return this.http.get<any[]>('assets/reports/' + type + 'index.json').pipe(delay(100))
+      .pipe(
+        map((files: any[]) => files.map((file: any) => ({
+          name: file[0],
+          coverage: file[1],
+          path: file[2],
+        }))),
+      );
   }
 
   getFileDetails(name: string): Observable<FuzzingFileDetails> {
@@ -75,7 +72,7 @@ export class FuzzingService {
     return lineColor;
   }
 
-  colorLineCounters(line: string, counters: FuzzingLineCounter[]): string {
+  private colorLineCounters(line: string, counters: FuzzingLineCounter[]): string {
     let result = '';
     if (counters.length === 0) {
       return line.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -86,19 +83,15 @@ export class FuzzingService {
       const c = line.charAt(i);
       const counter = counters.find((counter: FuzzingLineCounter) => counter.colStart <= column && counter.colEnd >= column);
 
-      if (counter) {
-        if (column === counter.colStart) {
-          const colorCode: string = `var(--${counter.count === 0 ? 'warn' : 'success'}-secondary)`;
-          result += `<span style="color:var(--base-primary);background:${colorCode}">`;
-        }
+      if (counter && column === counter.colStart) {
+        const colorCode: string = `var(--${counter.count === 0 ? 'warn' : 'success'}-secondary)`;
+        result += `<span style="color:var(--base-primary);background:${colorCode}" c="${counter.count}">`;
       }
 
       result += c === ' ' ? '&nbsp;' : (c === '<' ? '&lt;' : c === '>' ? '&gt;' : c);
 
-      if (counter) {
-        if (column === counter.colEnd) {
-          result += '</span>';
-        }
+      if (counter && column === counter.colEnd) {
+        result += '</span>';
       }
     }
 

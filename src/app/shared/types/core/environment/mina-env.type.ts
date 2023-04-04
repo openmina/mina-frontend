@@ -10,6 +10,7 @@ export interface MinaEnv {
   firebase?: FirebaseOptions;
   globalConfig?: {
     features?: FeaturesConfig;
+    forceStart?: boolean;
   }
 }
 

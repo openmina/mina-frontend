@@ -8,12 +8,19 @@
 
 	> span:first-child {
 		color: $base-tertiary;
-		width: 50px;
+		width: 30px;
+		cursor: pointer;
+
+		&:hover {
+			color: $base-primary;
+		}
 	}
 
 	> span:nth-child(2) {
-		width: 60px;
+		width: 80px;
 		border-right: 4px solid $base-container;
+		justify-content: flex-end;
+		padding-right: 5px;
 	}
 
 	> span:nth-child(3) {
@@ -32,5 +39,32 @@
 			height: inherit;
 			display: flex;
 		}
+
+		span[style] {
+			cursor: pointer;
+			box-sizing: border-box;
+			border: 1px solid transparent;
+			border-radius: 2px;
+
+			&:hover {
+				border-color: $base-tertiary;
+			}
+		}
+	}
+}
+
+:host .no-fuzzing-highlight ::ng-deep .code-row {
+	span:nth-child(2) {
+		color: $base-secondary !important;
+	}
+
+	span:nth-child(3),
+	span:nth-child(3) > * {
+		background-color: unset !important;
+		color: $base-secondary !important;
+	}
+
+	> span:nth-child(2) {
+		border-right-color: $base-container !important;
 	}
 }

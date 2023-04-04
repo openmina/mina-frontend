@@ -41,8 +41,7 @@ export function getAvailableFeatures(config: MinaNode): FeatureType[] | string[]
 }
 
 export function getFirstFeature(config: MinaNode = CONFIG.configs[0]): FeatureType | string {
-
-  if (Array.isArray(config.features)) {
+  if (Array.isArray(config?.features)) {
     return config.features[0];
   }
 
@@ -60,8 +59,8 @@ export function isFeatureEnabled(config: MinaNode, feature: FeatureType): boolea
 
 export function getFeaturesConfig(config: MinaNode): FeaturesConfig | string[] {
 
-  if (Array.isArray(config.features)) {
+  if (Array.isArray(config?.features)) {
     return config.features;
   }
-  return config.features || CONFIG.globalConfig?.features;
+  return config?.features || CONFIG.globalConfig?.features;
 }

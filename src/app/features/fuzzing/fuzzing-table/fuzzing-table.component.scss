@@ -2,7 +2,7 @@
 
 .mina-table {
 	.row {
-		grid-template-columns: 175px 430px;
+		grid-template-columns: 150px 430px;
 		color: $base-secondary;
 
 		&:not(.head) {
@@ -42,7 +42,7 @@
 	}
 
 	.cdk-virtual-scroll-viewport {
-		min-width: 175px + 430px;
+		min-width: 150px + 430px;
 		overflow-x: hidden;
 	}
 }

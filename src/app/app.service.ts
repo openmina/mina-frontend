@@ -13,7 +13,10 @@ export class AppService {
   constructor(private graphQL: GraphQLService,
               private http: HttpClient) { }
 
-  getActiveNode(): Observable<MinaNode> {
+  getActiveNode(): Observable<MinaNode | null> {
+    if (CONFIG.globalConfig?.forceStart) {
+      return of(null);
+    }
     const nodeName = new URL(location.href).searchParams.get('node');
     const configs = [...CONFIG.configs];
     const nodeFromURL = configs.find(c => c.name === nodeName) || configs[0];

@@ -126,6 +126,7 @@ export function reducer(state: AppState = initialState, action: any): AppState {
           tracing: ['overview', 'blocks'],
           benchmarks: ['wallets'],
           'web-node': ['wallet', 'peers', 'logs', 'state'],
+          fuzzing: [],
         },
         name: action.payload.split('/')[action.payload.split('/').length - 1] || ('custom-node' + ++state.nodes.filter(n => n.name.includes('custom-node')).length),
       };
