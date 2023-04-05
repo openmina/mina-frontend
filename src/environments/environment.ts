@@ -7,17 +7,18 @@ export const environment: Readonly<MinaEnv> = {
   isVanilla: false,
   globalConfig: {
     features: {
-      // dashboard: ['nodes'],
-      // explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
-      // resources: ['system'],
-      // network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
-      // tracing: ['overview', 'blocks'],
-      // benchmarks: ['wallets'],
-      // 'web-node': ['wallet', 'peers', 'logs', 'state'],
+      dashboard: ['nodes'],
+      explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
+      resources: ['system'],
+      network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
+      tracing: ['overview', 'blocks'],
+      benchmarks: ['wallets'],
+      'web-node': ['wallet', 'peers', 'logs', 'state'],
       fuzzing: ['ocaml', 'rust'],
     },
     forceStart: true,
   },
+
   configs: [
     // {
     //   graphql: 'http://1.k8.openmina.com:31355/node1',
@@ -45,25 +46,25 @@ export const environment: Readonly<MinaEnv> = {
     //   features: ['dashboard', 'resources', 'network', 'tracing', 'web-node', 'benchmarks', 'explorer'],
     //   name: 'snark-coordinator',
     // },
-    // {
-    //   graphql: 'http://1.k8.openmina.com:31355/node1',
-    //   'tracing-graphql': 'http://1.k8.openmina.com:31355/node1/internal-trace',
-    //   debugger: 'http://1.k8.openmina.com:31355/node1/bpf-debugger',
-    //   minaExplorer: 'https://berkeley.api.minaexplorer.com',
-    //   name: 'node1',
-    // },
-    // {
-    //   graphql: 'http://1.k8.openmina.com:31355/node2',
-    //   'tracing-graphql': 'http://1.k8.openmina.com:31355/node2/internal-trace',
-    //   debugger: 'http://1.k8.openmina.com:31355/node2/bpf-debugger',
-    //   name: 'node2',
-    // },
-    // {
-    //   graphql: 'http://1.k8.openmina.com:31355/node3',
-    //   'tracing-graphql': 'http://1.k8.openmina.com:31355/node3/internal-trace',
-    //   debugger: 'http://1.k8.openmina.com:31355/node3/bpf-debugger',
-    //   name: 'node3',
-    // },
+    {
+      graphql: 'http://1.k8.openmina.com:31355/node1',
+      'tracing-graphql': 'http://1.k8.openmina.com:31355/node1/internal-trace',
+      debugger: 'http://1.k8.openmina.com:31355/node1/bpf-debugger',
+      minaExplorer: 'https://berkeley.api.minaexplorer.com',
+      name: 'node1',
+    },
+    {
+      graphql: 'http://1.k8.openmina.com:31355/node2',
+      'tracing-graphql': 'http://1.k8.openmina.com:31355/node2/internal-trace',
+      debugger: 'http://1.k8.openmina.com:31355/node2/bpf-debugger',
+      name: 'node2',
+    },
+    {
+      graphql: 'http://1.k8.openmina.com:31355/node3',
+      'tracing-graphql': 'http://1.k8.openmina.com:31355/node3/internal-trace',
+      debugger: 'http://1.k8.openmina.com:31355/node3/bpf-debugger',
+      name: 'node3',
+    },
     // {
     //   graphql: 'http://1.k8.openmina.com:31355/node4',
     //   'tracing-graphql': 'http://1.k8.openmina.com:31355/node4/internal-trace',
