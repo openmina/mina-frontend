@@ -10,6 +10,7 @@ import { Routes } from '@shared/enums/routes.enum';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
 import { take } from 'rxjs';
+import { removeParamsFromURL } from '@shared/helpers/router.helper';
 
 @Component({
   selector: 'mina-fuzzing',
@@ -28,7 +29,7 @@ export class FuzzingComponent extends StoreDispatcher implements OnInit {
 
   private listenToRouteChange(): void {
     this.select(getMergedRoute, (route: MergedRoute) => {
-      const urlType = route.url.split('/')[2] as 'ocaml' | 'rust';
+      const urlType = removeParamsFromURL(route.url).split('/')[2] as 'ocaml' | 'rust';
       this.dispatch(FuzzingGetFiles, { urlType });
     }, take(1));
   }

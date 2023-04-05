@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { FeatureType, MinaNode } from '@shared/types/core/environment/mina-env.type';
 import { selectActiveNode } from '@app/app.state';
-import { getAvailableFeatures, getFirstFeature } from '@shared/constants/config';
+import { CONFIG, getAvailableFeatures, getFirstFeature } from '@shared/constants/config';
 
 type CanActivateReturnType = Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree;
 
@@ -20,6 +20,7 @@ export class FeatureGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot): CanActivateReturnType {
     return this.store.select(selectActiveNode)
       .pipe(
+        filter((n: MinaNode | null) => CONFIG.globalConfig?.forceStart || !!n),
         switchMap((n: MinaNode | null) => {
           const node = n || {} as any;
           const hasThisFeature = getAvailableFeatures(node).some((f: FeatureType | string) => f === route.routeConfig.path);

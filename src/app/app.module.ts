@@ -84,7 +84,7 @@ export class AppGlobalErrorhandler implements ErrorHandler {
     EagerSharedModule,
   ],
   providers: [
-    ...[origin.includes('65.109.105.40') ? { provide: LocationStrategy, useClass: HashLocationStrategy } : []],
+    ...[origin.includes('fuzz.ci.openmina.com') ? { provide: LocationStrategy, useClass: HashLocationStrategy } : []],
     SENTRY_PROVIDER,
     {
       provide: Sentry.TraceService,

@@ -94,7 +94,10 @@ export class MenuComponent extends ManualDetection implements OnInit {
 
   private listenToActiveNodeChange(): void {
     this.store.select(selectActiveNode)
-      .pipe(untilDestroyed(this))
+      .pipe(
+        untilDestroyed(this),
+        filter(node => CONFIG.globalConfig?.forceStart || !!node),
+      )
       .subscribe((node: MinaNode) => {
         this.activeNode = node;
         this.menuItems = this.allowedMenuItems;
