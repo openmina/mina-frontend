@@ -77,7 +77,7 @@ export class FuzzingCodeComponent extends StoreDispatcher implements OnInit, Aft
           this.codeHolder.nativeElement.scrollTo(0, (Number(this.lineToScroll) - 1) * 24);
           delete this.lineToScroll;
         }
-        this.link = `${window.location.origin}${window.location.pathname}?line=`;
+        this.link = `${window.location.origin}${window.location.pathname}${window.location.hash}?line=`;
         this.detect();
       });
   }
