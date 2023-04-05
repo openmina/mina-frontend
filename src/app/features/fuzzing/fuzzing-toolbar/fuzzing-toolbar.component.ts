@@ -37,7 +37,7 @@ export class FuzzingToolbarComponent extends StoreDispatcher implements OnInit {
       distinctUntilChanged(),
       debounceTime(50),
     ).subscribe((value: string) => {
-      this.dispatch(FuzzingFilterFiles, value);
+      this.dispatch(FuzzingFilterFiles, value.trim());
     });
   }
 

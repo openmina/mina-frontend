@@ -3,13 +3,12 @@ import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { FuzzingFile } from '@shared/types/fuzzing/fuzzing-file.type';
 import { FuzzingFileDetails } from '@shared/types/fuzzing/fuzzing-file-details.type';
 import { selectFuzzingActiveFile, selectFuzzingActiveFileDetails, selectFuzzingUrlType } from '@fuzzing/fuzzing.state';
-import { debounceTime, filter, fromEvent, take, tap, zip } from 'rxjs';
+import { debounceTime, filter, fromEvent, tap, zip } from 'rxjs';
 import { Routes } from '@shared/enums/routes.enum';
 import { Router } from '@angular/router';
 import { FuzzingGetFileDetails } from '@fuzzing/fuzzing.actions';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { MinaTooltipDirective } from '@shared/directives/mina-tooltip.directive';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
 
@@ -22,31 +21,20 @@ import { MergedRoute } from '@shared/router/merged-route';
 })
 export class FuzzingCodeComponent extends StoreDispatcher implements OnInit, AfterViewInit {
 
-  /*
-  * TODO
-  *  X reset scroll position on file change
-  *  X auto scroll table to active file
-  *  - scroll to active line of code
-  *  X add ocaml/rust switch with state keeping
-  *  X add code highlight toggling
-  *  X add countings to the highlights in the code
-  *  - add search for code
-  * */
-
-
   file: FuzzingFile;
   fileDetails: FuzzingFileDetails;
   codeHighlighted: boolean = true;
   urlTypeStr: 'OCaml' | 'Rust';
-  readonly link: string = `${window.location.origin}${window.location.pathname}?line=`;
+  link: string;
+  activeLineFromUrl: number;
 
   private urlType: 'ocaml' | 'rust';
   private popup: HTMLDivElement = document.getElementById('mina-tooltip') as HTMLDivElement;
   private lineToScroll: number;
   @ViewChild('codeHolder') private codeHolder: ElementRef<HTMLDivElement>;
+  @ViewChild('codeContainer') private codeContainer: ElementRef<HTMLDivElement>;
 
-  constructor(private router: Router,
-              private clipboard: Clipboard) { super(); }
+  constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
     this.listenToFileChanges();
@@ -59,7 +47,7 @@ export class FuzzingCodeComponent extends StoreDispatcher implements OnInit, Aft
   }
 
   closeSidePanel(): void {
-    this.router.navigate([Routes.FUZZING, this.urlType], { queryParamsHandling: 'merge' });
+    this.router.navigate([Routes.FUZZING, this.urlType]);
     this.dispatch(FuzzingGetFileDetails, undefined);
   }
 
@@ -78,7 +66,8 @@ export class FuzzingCodeComponent extends StoreDispatcher implements OnInit, Aft
       this.store.select(selectFuzzingActiveFileDetails).pipe(
         filter(file => this.fileDetails !== file),
       ),
-    ).pipe(untilDestroyed(this))
+    )
+      .pipe(untilDestroyed(this))
       .subscribe(([file, details]) => {
         this.file = file;
         this.fileDetails = details;
@@ -88,6 +77,7 @@ export class FuzzingCodeComponent extends StoreDispatcher implements OnInit, Aft
           this.codeHolder.nativeElement.scrollTo(0, (Number(this.lineToScroll) - 1) * 24);
           delete this.lineToScroll;
         }
+        this.link = `${window.location.origin}${window.location.pathname}?line=`;
         this.detect();
       });
   }
@@ -97,29 +87,25 @@ export class FuzzingCodeComponent extends StoreDispatcher implements OnInit, Aft
   }
 
   private listenToMouseMove(): void {
-    fromEvent(this.codeHolder.nativeElement, 'mousemove').pipe(
+    fromEvent(this.codeContainer.nativeElement, 'mousemove').pipe(
       untilDestroyed(this),
       tap(() => MinaTooltipDirective.hideTooltip(this.popup)),
       debounceTime(400),
     ).subscribe((ev: Event) => {
       const target = ev.target as HTMLSpanElement;
-      if (target.hasAttribute('c')) {
-        MinaTooltipDirective.showTooltip(this.popup, target, 'Hits: ' + target.getAttribute('c'), 500);
+      if (target.hasAttribute('h')) {
+        MinaTooltipDirective.showTooltip(this.popup, target, 'Hits: ' + target.getAttribute('h'), 500);
       }
     });
-  }
-
-  copyLineLink(lineIndex: number): void {
-    const link = `${window.location.origin}${window.location.pathname}?line=${lineIndex}`;
-    this.clipboard.copy(link);
   }
 
   private listenToRouteChange(): void {
     this.select(getMergedRoute, (route: MergedRoute) => {
       const line = route.queryParams['line'];
-      if (line) {
-        this.lineToScroll = line;
+      if (!this.activeLineFromUrl && line) {
+        this.lineToScroll = Number(line);
       }
-    }, take(1));
+      this.activeLineFromUrl = Number(line);
+    });
   }
 }

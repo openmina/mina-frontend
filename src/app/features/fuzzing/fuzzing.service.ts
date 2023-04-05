@@ -33,7 +33,7 @@ export class FuzzingService {
             const counters = line.counters.map((counter: any) => ({
               colStart: counter.col_start,
               colEnd: counter.col_end,
-              count: counter.count,
+              count: Math.abs(counter.count),
             }));
             return {
               line: line.line,
@@ -85,7 +85,7 @@ export class FuzzingService {
 
       if (counter && column === counter.colStart) {
         const colorCode: string = `var(--${counter.count === 0 ? 'warn' : 'success'}-secondary)`;
-        result += `<span style="color:var(--base-primary);background:${colorCode}" c="${counter.count}">`;
+        result += `<span style="color:var(--base-primary);background:${colorCode}" h="${counter.count}">`;
       }
 
       result += c === ' ' ? '&nbsp;' : (c === '<' ? '&lt;' : c === '>' ? '&gt;' : c);

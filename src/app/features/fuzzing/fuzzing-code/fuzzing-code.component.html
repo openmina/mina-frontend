@@ -9,7 +9,7 @@
     <div class="fx-row-vert-cent">
       <span>Total lines</span>
       <span class="secondary ml-5 mr-10">{{ fileDetails?.lines.length }}</span>
-      <span>Executed lines</span>
+      <span>Hit lines</span>
       <span class="secondary ml-5">{{ fileDetails?.executedLines }}</span>
     </div>
     <button class="h-sm w-sm fx-row-full-cent"
@@ -20,19 +20,18 @@
     </button>
   </div>
 
-  <div class="flex-column h-minus-xl">
+  <div #codeContainer class="flex-column h-minus-xl">
     <div class="h-sm code-row tertiary">
       <span>Line</span>
-      <span>Hits</span>
       <span>{{ urlTypeStr }} Code</span>
     </div>
     <div #codeHolder class="h-minus-sm monospace secondary overflow-y-auto"
          [class.no-fuzzing-highlight]="!codeHighlighted">
       <div class="code-row" *ngFor="let line of fileDetails?.lines; let i=index">
         <span [tooltip]="'Copy permalink'" [showDelay]="200"
+              [class.primary]="activeLineFromUrl === i+1"
+              [style.border-color]="'var(--' + line.lineColor + '-primary)'"
               [copyToClipboard]="link + (i+1)">{{ i + 1 }}</span>
-        <span [style.border-color]="'var(--' + line.lineColor + '-primary)'"
-              [ngClass]="line.lineColor + '-primary'">{{ line.lineHits || '' }}</span>
         <span [innerHtml]="line.html | safeHtml" [ngClass]="'bg-' + line.lineColor + '-container'"></span>
       </div>
     </div>
