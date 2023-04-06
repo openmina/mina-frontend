@@ -12,7 +12,7 @@ export const CONFIG: Readonly<MinaEnv> = {
     'tracing-graphql': getURL(node['tracing-graphql']),
   })),
 };
-console.log(CONFIG);
+
 export function getURL(pathOrUrl: string): string {
   if (pathOrUrl) {
     let href = new URL(pathOrUrl, origin).href;

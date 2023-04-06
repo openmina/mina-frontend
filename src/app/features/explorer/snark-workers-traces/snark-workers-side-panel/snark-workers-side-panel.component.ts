@@ -21,8 +21,6 @@ export class SnarkWorkersSidePanelComponent extends ManualDetection implements O
 
   readonly secConfig: SecDurationConfig = { color: true, yellow: 0.5, orange: 0.75, red: 1, undefinedAlternative: '-' };
 
-  @Input() workers: string[];
-
   activeRow: SnarkWorkerTraceJob;
   expandTracking: ExpandTracking = {};
 

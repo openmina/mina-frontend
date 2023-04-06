@@ -41,7 +41,7 @@ export class SnarkWorkersTracesService {
         [
           ...acc,
           ...response[key].map((work: any, i2: number) => ({
-            worker: i,
+            worker: key,
             kind: work.kind,
             ids: work.ids,
             id: acc.length + i2,

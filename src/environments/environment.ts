@@ -16,7 +16,7 @@ export const environment: Readonly<MinaEnv> = {
       'web-node': ['wallet', 'peers', 'logs', 'state'],
       fuzzing: ['ocaml', 'rust'],
     },
-    forceStart: true,
+    // forceStart: true,
   },
 
   configs: [

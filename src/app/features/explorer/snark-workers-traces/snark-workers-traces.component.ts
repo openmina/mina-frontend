@@ -152,7 +152,7 @@ export class SnarkWorkersTracesComponent extends ManualDetection implements OnIn
   }
 
   private sortJobs(jobs: SnarkWorkerTraceJob[], tableSort: TableSort<SnarkWorkerTraceJob>): SnarkWorkerTraceJob[] {
-    return sort<SnarkWorkerTraceJob>(jobs, tableSort, ['ids', 'kind']);
+    return sort<SnarkWorkerTraceJob>(jobs, tableSort, ['worker', 'kind']);
   }
 
   ngOnDestroy(): void {

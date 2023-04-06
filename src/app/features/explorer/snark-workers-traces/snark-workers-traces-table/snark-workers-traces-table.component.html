@@ -18,7 +18,7 @@
          [class.active]="activeRow === job"
          [class.row-even]="i % 2 === 0"
          class="row">
-      <span>{{ workers[job.worker] | truncateMid: 0: 12 }}</span>
+      <span>{{ job.worker | truncateMid: 0: 12 }}</span>
       <span>{{ job.ids ?? '-' }}</span>
       <span class="secondary">{{ job.kind ?? '-' }}</span>
       <span>{{ job.jobInit | readableDate }}</span>
