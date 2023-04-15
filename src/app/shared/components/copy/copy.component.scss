@@ -9,33 +9,17 @@
 		.cpy {
 			@include flexRowFullCenter();
 			cursor: pointer;
-			background-color: $base-surface;
 			height: 26px;
 			width: 26px;
-			top: 5px;
-			right: -10px;
-			border: 1px solid $base-divider;
-
-			&.p-absolute {
-				box-shadow: -11px 0px 8px 0px $special-table-hover;
-			}
 
 			.mina-icon {
-				color: $base-secondary !important;
+				color: $base-tertiary !important;
+				font-size: 22px;
 			}
 
-			&:hover {
-				background-color: $base-surface-top;
-				border-width: 2px;
-
-				.mina-icon {
-					color: $base-primary !important;
-				}
+			&:hover .mina-icon {
+				color: $base-primary !important;
 			}
-		}
-
-		&.d-flex .cpy {
-			right: 0;
 		}
 	}
 }

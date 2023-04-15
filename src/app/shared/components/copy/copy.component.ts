@@ -11,7 +11,6 @@ export class CopyComponent implements OnInit {
   @Input() value: string;
   @Input() display: string;
   @Input() hidden: boolean = true;
-  @Input() fullWidth: boolean = true;
 
   ngOnInit(): void {
     if (this.display === undefined) {

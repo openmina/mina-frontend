@@ -6,11 +6,7 @@ import { MinaState } from '@app/app.setup';
 import { selectWebNodeActiveTransaction, selectWebNodeTransactions } from '@web-node/web-node-wallet/web-node-wallet.state';
 import { WebNodeTransaction } from '@shared/types/web-node/wallet/web-node-transaction.type';
 import { WEB_NODE_WALLET_SELECT_TRANSACTION, WebNodeWalletSelectTransaction } from '@web-node/web-node-wallet/web-node-wallet.actions';
-import { selectAppMenu } from '@app/app.state';
-import { filter } from 'rxjs';
-import { AppMenu } from '@shared/types/app/app-menu.type';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { BarGraphComponent } from '@shared/components/bar-graph/bar-graph.component';
 import { MinaTableComponent } from '@shared/components/mina-table/mina-table.component';
 
 @UntilDestroy()
@@ -55,7 +51,6 @@ export class WebNodeWalletTransactionsComponent extends ManualDetection implemen
         this.transactions = transactions;
         this.table.items = this.transactions;
         this.table.detect();
-        // this.detect();
       });
 
     this.store.select(selectWebNodeActiveTransaction)

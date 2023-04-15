@@ -1,12 +1,11 @@
 @import 'variables';
 
+$column-widths: 450px 120px 190px;
+
 .mina-table {
-	$col0: 450px;
-	$col1: 120px;
-	$col2: 190px;
 
 	.row {
-		grid-template-columns: $col0 $col1 1fr;
+		grid-template-columns: 450px 120px 1fr;
 		color: $base-secondary;
 
 		&:not(.head) {
@@ -15,7 +14,7 @@
 	}
 
 	.cdk-virtual-scroll-viewport {
-		min-width: $col0 + $col1 + $col2;
+		min-width: sum($column-widths);
 		overflow-x: hidden;
 	}
 }

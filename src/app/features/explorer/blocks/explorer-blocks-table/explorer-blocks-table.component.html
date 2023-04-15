@@ -1,5 +1,5 @@
 <div class="mina-table flex-grow overflow-x-auto">
-  <div class="row head sorting p-relative pr-12" *ngIf="currentSort">
+  <div class="row head sorting pr-12" *ngIf="currentSort">
     <span *ngFor="let th of tableHeads; let i=index"
           (click)="sortTable(th.sort ?? th.name)"
           [class.active]="currentSort.sortBy === (th.sort ?? th.name)"
@@ -35,10 +35,10 @@
       <span>{{ node.totalTxCount }}</span>
       <span>{{ node.snarkCount }}</span>
       <span class="tertiary">
-        <mina-copy [value]="node.stagedLedgerHash" [display]="node.stagedLedgerHash | truncateMid" [fullWidth]="false"></mina-copy>
+        <mina-copy [value]="node.stagedLedgerHash" [display]="node.stagedLedgerHash | truncateMid"></mina-copy>
       </span>
       <span class="tertiary">
-        <mina-copy [value]="node.snarkedLedgerHash" [display]="node.snarkedLedgerHash | truncateMid" [fullWidth]="false"></mina-copy>
+        <mina-copy [value]="node.snarkedLedgerHash" [display]="node.snarkedLedgerHash | truncateMid"></mina-copy>
       </span>
     </div>
   </cdk-virtual-scroll-viewport>

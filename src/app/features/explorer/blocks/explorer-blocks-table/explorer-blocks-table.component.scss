@@ -1,16 +1,14 @@
 @import 'variables';
 
+$column-widths: 175px 136px 95px 100px 135px 115px 170px 115px 160px 163px;
+
 .mina-table {
 	.row {
-		grid-template-columns: 175px 130px 95px 100px 135px 115px 170px 115px 160px 163px;
+		grid-template-columns: $column-widths;
 		color: $base-secondary;
 
 		&:not(.head) {
 			cursor: pointer;
-
-			span.addr:hover > span:last-child {
-				text-decoration: underline;
-			}
 		}
 
 		&.sorting span.p-relative span.p-absolute {
@@ -20,7 +18,7 @@
 	}
 
 	.cdk-virtual-scroll-viewport {
-		min-width: 175px + 130px + 95px + 100px + 135px + 115px + 170px + 115px + 160px + 163px;
+		min-width: sum($column-widths);
 		overflow-x: hidden;
 	}
 }

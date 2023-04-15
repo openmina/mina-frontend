@@ -1,16 +1,10 @@
 @import 'variables';
 
-.mina-table {
-	$col0: 135px;
-	$col1: 175px;
-	$col2: 175px;
-	$col3: 175px;
-	$col4: 175px;
-	$col5: 180px;
-	$col6: 140px;
+$column-widths: 135px 175px 175px 175px 175px 180px 140px;
 
+.mina-table {
 	.row {
-		grid-template-columns: $col0 $col1 $col2 $col3 $col4 $col5 $col6;
+		grid-template-columns: $column-widths;
 		color: $base-tertiary;
 
 		&:not(.head) {
@@ -19,7 +13,7 @@
 	}
 
 	.cdk-virtual-scroll-viewport {
-		min-width: $col0 + $col1 + $col2 + $col3 + $col4 + $col5 + $col6;
+		min-width: sum($column-widths);
 		overflow-x: hidden;
 	}
 }

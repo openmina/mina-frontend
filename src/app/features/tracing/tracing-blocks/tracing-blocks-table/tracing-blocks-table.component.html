@@ -31,7 +31,7 @@
         <mina-copy [value]="trace.hash" [display]="trace.hash | truncateMid: 15"></mina-copy>
       </span>
       <span class="tertiary truncate">
-        <mina-copy [value]="trace.creator" [display]="trace.creator | truncateMid: 15" [fullWidth]="false"></mina-copy>
+        <mina-copy [value]="trace.creator" [display]="trace.creator | truncateMid: 15"></mina-copy>
       </span>
       <span [innerHTML]="trace.totalTime | secDuration: secDurationConfig"></span>
       <span>{{ trace.source }}</span>
