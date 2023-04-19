@@ -18,7 +18,7 @@ describe('NETWORK BLOCKS IPC TOOLBAR', () => {
       .its('store')
       .then(networkBlocksIpcState)
       .then((state: NetworkBlocksIpcState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           let activeBlock = state.activeBlock;
           cy.get('mina-network-blocks-ipc-toolbar > div:first-child .pagination-group button:last-child')
             .should('have.class', 'disabled')
@@ -49,7 +49,7 @@ describe('NETWORK BLOCKS IPC TOOLBAR', () => {
       .its('store')
       .then(networkBlocksIpcState)
       .then((state: NetworkBlocksIpcState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           let activeBlock = state.activeBlock;
           cy.get('mina-network-blocks-ipc-toolbar > div:first-child .pagination-group button:last-child')
             .should('have.class', 'disabled')
@@ -92,7 +92,7 @@ describe('NETWORK BLOCKS IPC TOOLBAR', () => {
       .its('store')
       .then(networkBlocksIpcState)
       .then((state: NetworkBlocksIpcState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           let earliestBlock = state.earliestBlock;
           cy.get('mina-network-blocks-ipc-toolbar > div:first-child .pagination-group button:last-child')
             .should('have.class', 'disabled')

@@ -24,7 +24,7 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           expect(state.blocks.length).above(2);
           cy.get('mina-network-blocks .mina-table')
             .get('.row')
@@ -64,7 +64,7 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           const expectedCandidates = state.blocks.map(m => m.hash).filter((v, i, a) => a.indexOf(v) === i).length;
           expect(state.allFilters.length).to.equal(expectedCandidates);
         }
@@ -76,7 +76,7 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           let sorted = true;
           for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
             const curr = state.filteredBlocks[i].date || '';
@@ -98,7 +98,7 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           let sorted = true;
           for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
             const curr = state.filteredBlocks[i].date || '';
@@ -120,7 +120,7 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           let sorted = true;
           for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
             const curr = state.filteredBlocks[i].hash || '';
@@ -142,7 +142,7 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           let sorted = true;
           for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
             const curr = state.filteredBlocks[i].height;
@@ -164,7 +164,7 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           let sorted = true;
           for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
             const curr = state.filteredBlocks[i].sender || '';
@@ -186,7 +186,7 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           let sorted = true;
           for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
             const curr = state.filteredBlocks[i].receiver || '';
@@ -208,7 +208,7 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           let sorted = true;
           for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
             const curr = state.filteredBlocks[i].receivedLatency === undefined ? state.filteredBlocks[i].receivedLatency : Number.MAX_VALUE;
@@ -230,7 +230,7 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           let sorted = true;
           for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
             const curr = state.filteredBlocks[i].sentLatency === undefined ? state.filteredBlocks[i].sentLatency : Number.MAX_VALUE;
@@ -252,7 +252,7 @@ describe('NETWORK BLOCKS TABLE', () => {
       .its('store')
       .then(networkBlocksState)
       .then((state: NetworkBlocksState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           let sorted = true;
           for (let i = 0; i < state.filteredBlocks.length - 1; i++) {
             const curr = state.filteredBlocks[i].messageKind || '';

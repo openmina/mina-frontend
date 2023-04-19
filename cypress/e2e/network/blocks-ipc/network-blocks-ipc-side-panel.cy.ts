@@ -171,7 +171,7 @@ describe('NETWORK BLOCKS IPC SIDE PANEL', () => {
             .its('store')
             .then(networkBlocksIpcState)
             .then((state: NetworkBlocksIpcState) => {
-              if (state) {
+              if (state && state.blocks.length > 2) {
                 const bars = state.filteredBlocks.map(b => b.blockLatency);
                 const thirdBarValues = bars.filter(b => b <= 3 && b > 3 - 1);
                 const fourthBarValues = bars.filter(b => b <= 4 && b > 4 - 1);

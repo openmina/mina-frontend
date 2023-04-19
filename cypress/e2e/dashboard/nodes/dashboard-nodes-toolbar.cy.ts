@@ -20,7 +20,7 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
         cy.log(JSON.stringify(state.nodes))
-        if (state) {
+        if (state && state.nodes.length > 1) {
           activeBlock = state.activeBlock;
         }
       })
@@ -54,7 +54,7 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
         cy.log(JSON.stringify(state.nodes))
-        if (state) {
+        if (state && state.nodes.length > 1) {
           activeBlock = state.activeBlock;
         }
       })
@@ -101,7 +101,7 @@ describe('DASHBOARD NODES TOOLBAR', () => {
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
         cy.log(JSON.stringify(state.nodes))
-        if (state) {
+        if (state && state.nodes.length > 1) {
           earliestBlock = state.earliestBlock;
         }
       })

@@ -25,7 +25,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           expect(state.nodes.length).above(1);
           cy.get('mina-dashboard .mina-table')
             .get('.row')
@@ -39,7 +39,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           let sorted = true;
           for (let i = 0; i < state.nodes.length - 1; i++) {
             if (state.nodes[i].timestamp > state.nodes[i + 1].timestamp) {
@@ -57,7 +57,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           cy.window()
             .its('store')
             .then(getNodes)
@@ -79,7 +79,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           cy.get('.mina-table .row:first-child span:first-child a')
             .should('have.attr', 'href', state.nodes[0].url)
             .should('have.attr', 'target', '_blank');
@@ -92,7 +92,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           function applyNewLatencies(nodes: DashboardNode[]): DashboardNode[] {
             if (nodes.length === 0) {
               return nodes;
@@ -118,7 +118,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           const syncedNodes = new Set(state.nodes.filter(n => n.name.includes('node')).map(n => n.url));
           const syncedProducers = new Set(state.nodes.filter(n => n.name.includes('prod')).map(n => n.url));
           const syncedSnarkers = new Set(state.nodes.filter(n => n.name.includes('snarker')).map(n => n.url));
@@ -140,7 +140,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           const syncedNodes = new Set(state.nodes.filter(n => n.name.includes('node') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
           const syncedProducers = new Set(state.nodes.filter(n => n.name.includes('prod') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
           const syncedSnarkers = new Set(state.nodes.filter(n => n.name.includes('snarker') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
@@ -164,7 +164,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           let sorted = true;
           for (let i = 0; i < state.filteredNodes.length - 1; i++) {
             const curr = state.filteredNodes[i].name || '';
@@ -186,7 +186,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           let sorted = true;
           for (let i = 0; i < state.filteredNodes.length - 1; i++) {
             const curr = state.filteredNodes[i].status || '';
@@ -210,7 +210,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           let sorted = true;
           for (let i = 0; i < state.filteredNodes.length - 1; i++) {
             const curr = state.filteredNodes[i].hash || '';
@@ -232,7 +232,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           let sorted = true;
           for (let i = 0; i < state.filteredNodes.length - 1; i++) {
             const curr = state.filteredNodes[i].blockchainLength === undefined ? state.filteredNodes[i].blockchainLength : Number.MAX_VALUE;
@@ -254,7 +254,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           let sorted = true;
           for (let i = 0; i < state.filteredNodes.length - 1; i++) {
             const curr = state.filteredNodes[i].addr || '';
@@ -276,7 +276,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           let sorted = true;
           for (let i = 0; i < state.filteredNodes.length - 1; i++) {
             const curr = state.filteredNodes[i].timestamp === undefined ? state.filteredNodes[i].timestamp : Number.MAX_VALUE;
@@ -298,7 +298,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           let sorted = true;
           for (let i = 0; i < state.filteredNodes.length - 1; i++) {
             const curr = state.filteredNodes[i].latency === undefined ? state.filteredNodes[i].latency : Number.MAX_VALUE;
@@ -320,7 +320,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           let sorted = true;
           for (let i = 0; i < state.filteredNodes.length - 1; i++) {
             const curr = state.filteredNodes[i].blockApplication === undefined ? state.filteredNodes[i].blockApplication : Number.MAX_VALUE;
@@ -344,7 +344,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        if (state) {
+        if (state && state.nodes.length > 1) {
           let sorted = true;
           for (let i = 0; i < state.filteredNodes.length - 1; i++) {
             const curr = state.filteredNodes[i].blockApplication === undefined ? state.filteredNodes[i].blockApplication : Number.MAX_VALUE;

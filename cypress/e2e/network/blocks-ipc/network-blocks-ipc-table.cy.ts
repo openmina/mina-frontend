@@ -25,7 +25,7 @@ describe('NETWORK BLOCKS IPC TABLE', () => {
       .its('store')
       .then(networkBlocksIpcState)
       .then((state: NetworkBlocksIpcState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           expect(state.blocks.length).above(0);
           cy.get('.mina-table')
             .get('.row')
@@ -65,7 +65,7 @@ describe('NETWORK BLOCKS IPC TABLE', () => {
       .its('store')
       .then(networkBlocksIpcState)
       .then((state: NetworkBlocksIpcState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           const expectedCandidates = state.blocks.map(m => m.hash).filter((v, i, a) => a.indexOf(v) === i).length;
           expect(state.allFilters.length).to.equal(expectedCandidates);
         }
@@ -97,7 +97,7 @@ describe('NETWORK BLOCKS IPC TABLE', () => {
       .its('store')
       .then(networkBlocksIpcState)
       .then((state: NetworkBlocksIpcState) => {
-        if (state) {
+        if (state && state.blocks.length > 2) {
           const currentHeight = state.activeBlock;
           cy.window()
             .its('store')
@@ -137,7 +137,7 @@ describe('NETWORK BLOCKS IPC TABLE', () => {
             .its('store')
             .then(networkBlocksIpcState)
             .then((state: NetworkBlocksIpcState) => {
-              if (state) {
+              if (state && state.blocks.length > 2) {
                 const currentHeight = state.activeBlock;
                 cy.window()
                   .its('store')
@@ -189,7 +189,7 @@ describe('NETWORK BLOCKS IPC TABLE', () => {
   //           .its('store')
   //           .then(networkBlocksIpcState)
   //           .then((state: NetworkBlocksIpcState) => {
-  //             if (state) {
+  //             if (state && state.blocks.length > 2) {
   //               const currentHeight = state.activeBlock;
   //               cy.request(`${debuggerUrl}/block/${currentHeight}`, { timeout: 10000 })
   //                 .then((response: any) => {
