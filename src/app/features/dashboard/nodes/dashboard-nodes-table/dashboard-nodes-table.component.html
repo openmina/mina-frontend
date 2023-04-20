@@ -27,7 +27,12 @@
       <span>
         <mina-copy [value]="node.hash" [display]="node.hash || '-' | truncateMid"></mina-copy>
       </span>
-<!--      <span>{{ node.branch }} {{ node.bestTip | truncateMid: 0: 4 }}</span>-->
+      <span>
+        <ng-container *ngIf="!(node.hash && !node.branch); else loading">{{ node.branch || '-' }}</ng-container>
+      </span>
+      <span>
+        <ng-container *ngIf="!(node.hash && !node.bestTip); else loading">{{ node.bestTip || '-' | truncateMid }}</ng-container>
+      </span>
       <span>{{ node.blockchainLength || '-' }}</span>
       <span>{{ node.addr || '-' }}</span>
       <span>{{ node.date || '-' }}</span>
@@ -60,4 +65,12 @@
       See latest height ({{ latestHeight }})
     </button>
   </div>
+</ng-template>
+
+<ng-template #loading>
+  <span class="fx-row-vert-cent h-100">
+    <span class="pulse border-rad-4 w-sm h-xs bg-container fx-row-full-cent">
+      <span class="mina-icon icon-200">more_horiz</span>
+    </span>
+  </span>
 </ng-template>

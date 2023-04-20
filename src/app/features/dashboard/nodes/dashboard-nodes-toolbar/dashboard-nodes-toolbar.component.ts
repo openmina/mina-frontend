@@ -3,6 +3,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import {
   DashboardNodesGetForks,
   DashboardNodesSetActiveBlock,
+  DashboardNodesSplitNodes,
   DashboardNodesToggleFilter,
   DashboardNodesToggleLatency,
   DashboardNodesToggleNodesShowing,
@@ -10,9 +11,11 @@ import {
 import {
   selectDashboardNodesActiveBlockLevel,
   selectDashboardNodesActiveFilters,
+  selectDashboardNodesActiveForkFilter,
   selectDashboardNodesAllFilters,
   selectDashboardNodesEarliestBlockLevel,
-  selectDashboardNodesLatencyFromFastest,
+  selectDashboardNodesForks,
+  selectDashboardNodesLatencyFromFastest, selectDashboardNodesNetworkSplitDetails,
   selectDashboardNodesNodeCount,
   selectDashboardNodesRemainingRequests,
   selectDashboardNodesShowOfflineNodes,
@@ -23,6 +26,7 @@ import { filter } from 'rxjs';
 import { LoadingService } from '@core/services/loading.service';
 import { Routes } from '@shared/enums/routes.enum';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
+import { DashboardForkFilter } from '@shared/types/dashboard/node-list/dashboard-fork-filter.type';
 
 @UntilDestroy()
 @Component({
@@ -42,6 +46,9 @@ export class DashboardNodesToolbarComponent extends StoreDispatcher implements O
   showOffline: boolean = true;
   latencyFromFastest: boolean = true;
   isLoading: boolean = true;
+  forks: DashboardForkFilter[] = [];
+  activeForkFilter: { value: string, type: 'branch' | 'bestTip' };
+  networkSplitDetails: string;
 
   private urlRemoved: boolean;
 
@@ -63,7 +70,7 @@ export class DashboardNodesToolbarComponent extends StoreDispatcher implements O
       this.urlRemoved = remaining === 0;
       if (this.isLoading && remaining === 0) {
         this.isLoading = false;
-        // this.dispatch(DashboardNodesGetForks);
+        this.dispatch(DashboardNodesGetForks);
         this.detect();
       } else if (!this.isLoading && remaining > 0) {
         this.isLoading = true;
@@ -76,6 +83,10 @@ export class DashboardNodesToolbarComponent extends StoreDispatcher implements O
     });
     this.select(selectDashboardNodesNodeCount, (count: DashboardNodeCount) => {
       this.count = count;
+      this.detect();
+    });
+    this.select(selectDashboardNodesForks, (forks: DashboardForkFilter[]) => {
+      this.forks = forks;
       this.detect();
     });
   }
@@ -97,6 +108,14 @@ export class DashboardNodesToolbarComponent extends StoreDispatcher implements O
       this.activeFilters = filters;
       this.detect();
     });
+    this.select(selectDashboardNodesActiveForkFilter, (filter) => {
+      this.activeForkFilter = filter;
+      this.detect();
+    });
+    this.select(selectDashboardNodesNetworkSplitDetails, (details: string) => {
+      this.networkSplitDetails = details;
+      this.detect();
+    });
   }
 
   private listenToActiveBlockChanges(): void {
@@ -111,13 +130,17 @@ export class DashboardNodesToolbarComponent extends StoreDispatcher implements O
     }, filter(Boolean), filter(earliestBlock => this.earliestBlock !== earliestBlock));
   }
 
-  toggleFilter(filter: string): void {
+  toggleFilter(filter: { value: string, type: 'branch' | 'bestTip' }): void {
     this.dispatch(DashboardNodesToggleFilter, filter);
   }
 
   getBlock(height: number): void {
     this.dispatch(DashboardNodesSetActiveBlock, { height, fetchNew: true });
     this.router.navigate([Routes.DASHBOARD, Routes.NODES, height], { queryParamsHandling: 'merge' });
+  }
+
+  splitNodes(): void {
+    this.dispatch(DashboardNodesSplitNodes);
   }
 
   override ngOnDestroy(): void {

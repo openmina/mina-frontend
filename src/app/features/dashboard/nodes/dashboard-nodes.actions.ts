@@ -2,6 +2,7 @@ import { FeatureAction } from '@shared/types/store/feature-action.type';
 import { TableSort } from '@shared/types/shared/table-sort.type';
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
+import { DashboardFork } from '@shared/types/dashboard/node-list/dashboard-fork.type';
 
 enum DashboardNodesActionTypes {
   DASHBOARD_NODES_INIT = 'DASHBOARD_NODES_INIT',
@@ -20,6 +21,7 @@ enum DashboardNodesActionTypes {
   DASHBOARD_NODES_TOGGLE_LATENCY = 'DASHBOARD_NODES_TOGGLE_LATENCY',
   DASHBOARD_NODES_GET_FORKS = 'DASHBOARD_NODES_GET_FORKS',
   DASHBOARD_NODES_GET_FORKS_SUCCESS = 'DASHBOARD_NODES_GET_FORKS_SUCCESS',
+  DASHBOARD_NODES_SPLIT_NODES = 'DASHBOARD_NODES_SPLIT_NODES',
 }
 
 export const DASHBOARD_NODES_INIT = DashboardNodesActionTypes.DASHBOARD_NODES_INIT;
@@ -38,6 +40,7 @@ export const DASHBOARD_NODES_TOGGLE_NODES_SHOWING = DashboardNodesActionTypes.DA
 export const DASHBOARD_NODES_TOGGLE_LATENCY = DashboardNodesActionTypes.DASHBOARD_NODES_TOGGLE_LATENCY;
 export const DASHBOARD_NODES_GET_FORKS = DashboardNodesActionTypes.DASHBOARD_NODES_GET_FORKS;
 export const DASHBOARD_NODES_GET_FORKS_SUCCESS = DashboardNodesActionTypes.DASHBOARD_NODES_GET_FORKS_SUCCESS;
+export const DASHBOARD_NODES_SPLIT_NODES = DashboardNodesActionTypes.DASHBOARD_NODES_SPLIT_NODES;
 
 export interface DashboardNodesAction extends FeatureAction<DashboardNodesActionTypes> {
   readonly type: DashboardNodesActionTypes;
@@ -106,7 +109,7 @@ export class DashboardNodesSetEarliestBlock implements DashboardNodesAction {
 export class DashboardNodesToggleFilter implements DashboardNodesAction {
   readonly type = DASHBOARD_NODES_TOGGLE_FILTER;
 
-  constructor(public payload: string) { }
+  constructor(public payload: { value: string, type: 'branch' | 'bestTip' }) { }
 }
 
 export class DashboardNodesToggleNodesShowing implements DashboardNodesAction {
@@ -124,7 +127,11 @@ export class DashboardNodesGetForks implements DashboardNodesAction {
 export class DashboardNodesGetForksSuccess implements DashboardNodesAction {
   readonly type = DASHBOARD_NODES_GET_FORKS_SUCCESS;
 
-  constructor(public payload: Pick<DashboardNode, 'name' | 'branch' | 'bestTip'>[]) { }
+  constructor(public payload: DashboardFork[]) { }
+}
+
+export class DashboardNodesSplitNodes implements DashboardNodesAction {
+  readonly type = DASHBOARD_NODES_SPLIT_NODES;
 }
 
 
@@ -145,4 +152,5 @@ export type DashboardNodesActions =
   | DashboardNodesToggleLatency
   | DashboardNodesGetForks
   | DashboardNodesGetForksSuccess
+  | DashboardNodesSplitNodes;
   ;

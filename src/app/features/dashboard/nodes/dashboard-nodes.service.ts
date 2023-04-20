@@ -1,15 +1,33 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
-import { catchError, concatAll, EMPTY, filter, finalize, from, map, Observable, of, switchMap, take, throwError, toArray } from 'rxjs';
+import {
+  catchError,
+  concatAll,
+  EMPTY,
+  filter,
+  finalize,
+  forkJoin,
+  from,
+  map,
+  mergeMap,
+  Observable,
+  of,
+  scan,
+  switchMap,
+  take,
+  throwError,
+  toArray,
+} from 'rxjs';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
 import { TracingBlocksService } from '@tracing/tracing-blocks/tracing-blocks.service';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { lastItem } from '@shared/helpers/array.helper';
-import { isNotVanilla } from '@shared/constants/config';
+import { CONFIG, isNotVanilla } from '@shared/constants/config';
 import { LoadingService } from '@core/services/loading.service';
+import { DashboardFork } from '@shared/types/dashboard/node-list/dashboard-fork.type';
 
 const dash = '-';
 
@@ -19,7 +37,7 @@ const dash = '-';
 export class DashboardNodesService {
 
   // readonly API = 'http://116.202.128.230:8000'; // aggregator
-  readonly options = { headers: { 'Content-Type': 'application/json' } };
+  private readonly options = { headers: { 'Content-Type': 'application/json' } };
 
   constructor(private http: HttpClient,
               private loadingService: LoadingService) { }
@@ -30,7 +48,7 @@ export class DashboardNodesService {
         this.http
           .post(node.url, { query: latestBlockHeight }, this.options)
           .pipe(
-            map((response: any) => Number(lastItem(response.data.bestChain).protocolState.consensusState.blockchainLength)),
+            map((response: any) => Number(lastItem(response.data.bestChain).protocolState.consensusState.slotSinceGenesis)),
             catchError(() => EMPTY),
           ),
       ),
@@ -41,17 +59,68 @@ export class DashboardNodesService {
     );
   }
 
-  getForks(nodes: DashboardNode[]): Observable<Pick<DashboardNode, 'name' | 'branch' | 'bestTip'>[]> {
-    console.log(nodes[0].blockchainLength);
-    return from(
-      nodes.filter(n => n.status === AppNodeStatusTypes.SYNCED).map(node =>
+  splitNodes(nodes: DashboardNode[]): Observable<DashboardNode[]> {
+    const nodeName = (node: DashboardNode) => node.name.slice(1).replace('/graphql', '');
+    const lastChar = (str: string) => str[str.length - 1];
+    const leftList = nodes.filter(n => n.status === AppNodeStatusTypes.SYNCED).filter(node => Number(lastChar(nodeName(node))) % 2 === 0);
+    const rightList = nodes.filter(n => n.status === AppNodeStatusTypes.SYNCED).filter(node => Number(lastChar(nodeName(node))) % 2 !== 0);
+
+    const leftObs = from(
+      leftList.map(node =>
         this.http
-          .post<{ data: BestChainResponse }>(node.url, { query: bestChain }, this.options)
+          .post<any>(CONFIG.configs.find(c => c.name === nodeName(node)).debugger + '/firewall/whitelist/enable', {
+            'ips': leftList.map(n => n.addr.split(':')[0]),
+            'ports': [10909, 10001],
+          }, this.options)
+          .pipe(
+            catchError(() => EMPTY),
+          ),
+      ),
+    ).pipe(
+      concatAll(),
+      toArray(),
+    );
+    const rightObs = from(
+      rightList.map(node =>
+        this.http
+          .post<any>(CONFIG.configs.find(c => c.name === nodeName(node)).debugger + '/firewall/whitelist/enable', {
+            'ips': rightList.map(n => n.addr.split(':')[0]),
+            'ports': [10909, 10001],
+          }, this.options)
+          .pipe(
+            catchError(() => EMPTY),
+          ),
+      ),
+    ).pipe(
+      concatAll(),
+      toArray(),
+    );
+
+    return forkJoin([leftObs, rightObs]).pipe(
+      map(([leftResult, rightResult]) => [...leftResult, ...rightResult]),
+    );
+  }
+
+  getForks(nodes: DashboardNode[]): Observable<DashboardFork[]> {
+    const uniqueNodes = Array.from(new Set(nodes.map(node => node.name)))
+      .map(name => nodes.find(node => node.name === name))
+      .filter(n => n.status === AppNodeStatusTypes.SYNCED);
+
+    return from(
+      uniqueNodes.map(node =>
+        this.http
+          .post<{ data: BestChainResponse }>(node.url, { query: bestChain() }, this.options)
           .pipe(
             map(({ data }: { data: BestChainResponse }) => ({
               chains: data.bestChain.filter(c => Number(c.protocolState.consensusState.blockHeight) <= node.blockchainLength),
               node,
             })),
+            scan((acc, { chains, node }) => ({ chains, node }), { chains: [], node }),
+            switchMap(({ chains, node }: { chains: BestChain[], node: DashboardNode }) => {
+              return from([20, 30, 40]).pipe(
+                mergeMap(depth => this.getDeepForks(chains, node, depth)),
+              );
+            }),
             catchError(() => EMPTY),
           ),
       ),
@@ -59,17 +128,11 @@ export class DashboardNodesService {
       concatAll(),
       toArray(),
       map((pairs: { chains: BestChain[], node: DashboardNode }[]) => {
-        console.log(pairs);
-        // const representations = pairs.filter((obj, index: number, arr) => {
-        //   return arr.findIndex(o => lastItem(o.chains).consensusState.blockHeight ===  lastItem(obj.chains).consensusState.blockHeight) === index;
-        // });
-
         const branches: { name: string, candidates: string[] }[] = [];
         const candidates: string[] = [];
         const checkedPairs: { chains: BestChain[], node: DashboardNode }[] = [];
-        const response: Pick<DashboardNode, 'name' | 'branch' | 'bestTip'>[] = [];
-
-        pairs.forEach(({ chains, node }) => {
+        const response: DashboardFork[] = [];
+        pairs.forEach(({ chains, node }: { chains: BestChain[], node: DashboardNode }) => {
           const newItem: any = { bestTip: undefined, branch: undefined, name: node.name };
           const candidate = lastItem(chains)?.stateHash;
           if (candidate) {
@@ -77,13 +140,12 @@ export class DashboardNodesService {
               candidates.push(candidate);
               newItem.bestTip = candidate;
 
-              const relatedPair = checkedPairs.find((checked: { chains: BestChain[], node: DashboardNode }) => {
-                chains.some(c => checked.chains.map(c => c.stateHash).includes(c.stateHash));
+              const relatedPairListOfChains = checkedPairs.find((checked: { chains: BestChain[], node: DashboardNode }) => {
+                chains.some(c => checked.chains.map(ch => ch.stateHash).includes(c.stateHash));
               })?.chains;
-              const relatedCandidate = relatedPair ? lastItem(relatedPair).stateHash : undefined;
+              const relatedCandidate = relatedPairListOfChains ? lastItem(relatedPairListOfChains).stateHash : undefined;
 
               const foundBranch = branches.find(b => b.candidates.includes(relatedCandidate));
-
               if (foundBranch) {
                 newItem.branch = foundBranch.name;
               } else {
@@ -106,6 +168,21 @@ export class DashboardNodesService {
     );
   }
 
+  private getDeepForks(chains: BestChain[], node: DashboardNode, maxLength: number): Observable<{ chains: BestChain[], node: DashboardNode }> {
+    if (chains.length === 0) {
+      return this.http
+        .post<{ data: BestChainResponse }>(node.url, { query: bestChain(maxLength) }, this.options)
+        .pipe(
+          map(({ data }: { data: BestChainResponse }) => ({
+            chains: data.bestChain.filter(c => Number(c.protocolState.consensusState.blockHeight) <= node.blockchainLength),
+            node,
+          })),
+        );
+    } else {
+      return of({ chains, node });
+    }
+  }
+
   getNode(node: DashboardNode, height: number): Observable<DashboardNode[]> {
     if (isNotVanilla()) {
       const body = { query: syncQuery };
@@ -123,8 +200,9 @@ export class DashboardNodesService {
         map(({ syncResponse, tracingResponse }: { syncResponse: any, tracingResponse: any }) => {
           const daemon = syncResponse.data.daemonStatus;
           const metrics = syncResponse.data.daemonStatus.metrics;
-          const blockTraces = tracingResponse.data.blockTraces.traces;
-          return blockTraces.map((trace: any) => ({
+          let blockTraces = tracingResponse.data.blockTraces.traces.filter((t: any) => t.global_slot === height);
+          blockTraces = blockTraces.length ? blockTraces : [{}];
+          const map1 = blockTraces.map((trace: any) => ({
             ...node,
             status: daemon.syncStatus,
             blockchainLength: trace.blockchain_length,
@@ -145,7 +223,10 @@ export class DashboardNodesService {
             source: trace.source,
             loaded: true,
             traceStatus: trace.status,
+            branch: undefined,
+            bestTip: undefined,
           } as DashboardNode));
+          return map1;
         }),
         catchError((error) => this.buildNodeFromErrorResponse(error, node)),
         finalize(() => this.loadingService.removeURL()),
@@ -179,6 +260,8 @@ export class DashboardNodesService {
             hash: chain.stateHash,
             loaded: true,
             traceStatus: chain.status,
+            branch: undefined,
+            bestTip: undefined,
           } as DashboardNode));
         }),
         catchError((error) => this.buildNodeFromErrorResponse(error, node)),
@@ -187,7 +270,7 @@ export class DashboardNodesService {
     }
   }
 
-  private buildNodeFromErrorResponse(error: { data?: any }, node: DashboardNode) {
+  private buildNodeFromErrorResponse(error: { data?: any }, node: DashboardNode): Observable<DashboardNode[]> {
     const daemon = error.data?.data.daemonStatus;
     const status = daemon?.syncStatus ?? AppNodeStatusTypes.OFFLINE;
     const addr = daemon ? (daemon.addrsAndPorts.externalIp + ':' + daemon.addrsAndPorts.clientPort) : undefined;
@@ -213,6 +296,8 @@ export class DashboardNodesService {
       snarkDiffBroadcasted: metrics?.snarkPoolDiffBroadcasted ?? undefined,
       pendingSnarkWork: metrics?.pendingSnarkWork ?? undefined,
       traceStatus: undefined,
+      branch: undefined,
+      bestTip: undefined,
     } as DashboardNode]);
   }
 
@@ -297,7 +382,7 @@ const syncQuery = `
 `;
 
 const tracingQuery = (height: number) => `
-  query traces { blockTraces(height: ${height}) }
+  query traces { blockTraces(chainLength: ${height}) }
 `;
 
 const syncQueryVanilla = `
@@ -333,7 +418,7 @@ const latestBlockHeight = `
     bestChain(maxLength: 1) {
       protocolState {
         consensusState {
-          blockchainLength
+          slotSinceGenesis
         }
       }
     }
@@ -341,9 +426,9 @@ const latestBlockHeight = `
 `;
 
 
-const bestChain = `
+const bestChain = (maxLength: number = 10) => `
   query BestChain {
-    bestChain(maxLength: 10) {
+    bestChain(maxLength: ${maxLength}) {
       stateHash
       protocolState {
         consensusState {

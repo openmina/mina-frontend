@@ -14,3 +14,10 @@
 		}
 	}
 }
+
+.section-active {
+	.btn-primary {
+		background-color: $selected-container !important;
+		color: $selected-secondary !important;
+	}
+}

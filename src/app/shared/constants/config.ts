@@ -13,6 +13,8 @@ export const CONFIG: Readonly<MinaEnv> = {
   })),
 };
 
+(window as any).config = CONFIG;
+
 export function getURL(pathOrUrl: string): string {
   if (pathOrUrl) {
     let href = new URL(pathOrUrl, origin).href;

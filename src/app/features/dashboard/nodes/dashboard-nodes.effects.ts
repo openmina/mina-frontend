@@ -3,14 +3,15 @@ import { MinaState, selectMinaState } from '@app/app.setup';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaBaseEffect } from '@shared/base-classes/mina-base.effect';
-import { Effect } from '@shared/types/store/effect.type';
+import { Effect, NonDispatchableEffect } from '@shared/types/store/effect.type';
 import { catchError, EMPTY, filter, finalize, map, mergeMap, repeat, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { addErrorObservable } from '@shared/constants/store-functions';
+import { addErrorObservable, createNonDispatchableEffect } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import {
-  DASHBOARD_NODES_GET_FORKS, DASHBOARD_NODES_GET_FORKS_SUCCESS,
   DASHBOARD_NODES_CLOSE,
   DASHBOARD_NODES_GET_EARLIEST_BLOCK,
+  DASHBOARD_NODES_GET_FORKS,
+  DASHBOARD_NODES_GET_FORKS_SUCCESS,
   DASHBOARD_NODES_GET_NODE,
   DASHBOARD_NODES_GET_NODE_SUCCESS,
   DASHBOARD_NODES_GET_NODES,
@@ -18,13 +19,16 @@ import {
   DASHBOARD_NODES_SET_ACTIVE_BLOCK,
   DASHBOARD_NODES_SET_ACTIVE_NODE,
   DASHBOARD_NODES_SET_EARLIEST_BLOCK,
+  DASHBOARD_NODES_SPLIT_NODES,
   DashboardNodesActions,
   DashboardNodesClose,
   DashboardNodesGetEarliestBlock,
+  DashboardNodesGetForks,
   DashboardNodesGetNode,
   DashboardNodesGetNodes,
   DashboardNodesSetActiveBlock,
   DashboardNodesSetActiveNode,
+  DashboardNodesSplitNodes,
 } from '@dashboard/nodes/dashboard-nodes.actions';
 import { DashboardNodesService } from '@dashboard/nodes/dashboard-nodes.service';
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
@@ -32,6 +36,7 @@ import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-gr
 import { Router } from '@angular/router';
 import { LoadingService } from '@core/services/loading.service';
 import { Routes } from '@shared/enums/routes.enum';
+import { DashboardFork } from '@shared/types/dashboard/node-list/dashboard-fork.type';
 
 @Injectable({
   providedIn: 'root',
@@ -44,6 +49,7 @@ export class DashboardNodesEffects extends MinaBaseEffect<DashboardNodesActions>
   readonly getNode$: Effect;
   readonly getTraceDetails$: Effect;
   readonly getForks$: Effect;
+  readonly splitNodes$: NonDispatchableEffect;
 
   constructor(private router: Router,
               private actions$: Actions,
@@ -116,9 +122,15 @@ export class DashboardNodesEffects extends MinaBaseEffect<DashboardNodesActions>
 
     this.getForks$ = createEffect(() => this.actions$.pipe(
       ofType(DASHBOARD_NODES_GET_FORKS),
-      this.latestActionState<DashboardNodesGetNodes>(),
+      this.latestActionState<DashboardNodesGetForks>(),
       switchMap(({ state }) => this.nodesService.getForks(state.dashboard.nodes.nodes)),
-      map((payload: Pick<DashboardNode, 'name' | 'branch' | 'bestTip'>[]) => ({ type: DASHBOARD_NODES_GET_FORKS_SUCCESS, payload })),
+      map((payload: DashboardFork[]) => ({ type: DASHBOARD_NODES_GET_FORKS_SUCCESS, payload })),
+    ));
+
+    this.splitNodes$ = createNonDispatchableEffect(() => this.actions$.pipe(
+      ofType(DASHBOARD_NODES_SPLIT_NODES),
+      this.latestActionState<DashboardNodesSplitNodes>(),
+      switchMap(({ state }) => this.nodesService.splitNodes(state.dashboard.nodes.nodes)),
     ));
   }
 }

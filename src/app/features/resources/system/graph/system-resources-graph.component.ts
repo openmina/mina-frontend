@@ -4,7 +4,7 @@ import { AxisDomain, curveLinear } from 'd3';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { SystemResourcesSetActivePoint } from '@resources/system/system-resources.actions';
 import { SystemResourcesActivePoint } from '@shared/types/resources/system/system-resources-active-point.type';
-import { toReadableDate } from '@shared/helpers/date.helper';
+import { noMillisFormat, toReadableDate } from '@shared/helpers/date.helper';
 import { Router } from '@angular/router';
 import { SystemResourcesPoint } from '@shared/types/resources/system/system-resources-point.type';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -238,7 +238,7 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
     }
     const point = this.getPointFromMousePosition(evt, points);
 
-    this.tooltip.select('.date').text(toReadableDate(point.timestamp, 'HH:mm:ss, dd MMM yy'));
+    this.tooltip.select('.date').text(toReadableDate(point.timestamp, noMillisFormat));
     this.tooltip.selectAll('.paths .value').nodes().forEach((bullet: HTMLDivElement, i: number) => {
       bullet.textContent = this.decimalPipe.transform(point.pathPoints[this.paths[i]].value, '1.2-2');
     });
@@ -408,7 +408,7 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
       x = this.clickerConfig.textTranslateX;
     }
     this.clickerText
-      .text(toReadableDate(timestamp, 'HH:mm:ss, dd MMM yy'))
+      .text(toReadableDate(timestamp, noMillisFormat))
       .attr('x', -x);
 
     if (this.width - mouseX < this.clickerConfig.rectTranslateX) {
