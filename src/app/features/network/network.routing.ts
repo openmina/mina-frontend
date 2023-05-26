@@ -29,16 +29,6 @@ const routes: Routes = [
         title: NETWORK_TITLE,
       },
       {
-        path: 'snarks',
-        loadChildren: () => import('./snarks/network-snarks.module').then(m => m.NetworkSnarksModule),
-        title: NETWORK_TITLE,
-      },
-      {
-        path: 'transactions',
-        loadChildren: () => import('./transactions/network-transactions.module').then(m => m.NetworkTransactionsModule),
-        title: NETWORK_TITLE,
-      },
-      {
         path: 'propagation',
         loadChildren: () => import('./propagation/network-propagation.routing').then(m => m.NetworkPropagationRouting),
         title: NETWORK_TITLE,

@@ -1,31 +1,11 @@
-<div class="mina-table flex-grow overflow-x-auto">
-  <div class="row head sorting p-relative pr-12" *ngIf="currentSort">
-    <span *ngFor="let tableHead of tableHeads; let i=index"
-          (click)="sortTable(tableHead.sort ?? tableHead.name)"
-          [class.active]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
-          class="pointer">
-      {{ tableHead.name }}
-      <span [class.flip]="currentSort.sortDirection === 'descending'"
-            [class.show]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
-            class="mina-icon f-18 icon-200">arrow_upward
-      </span>
-    </span>
-  </div>
-  <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-auto"
-                               fxFlex="calc(100% - 36px)"
-                               [itemSize]="itemSize">
-    <div *cdkVirtualFor="let job of jobs; let i=index"
-         (click)="onRowClick(job)"
-         [class.active]="activeRow === job"
-         [class.row-even]="i % 2 === 0"
-         class="row">
-      <span>{{ workers[job.worker] | truncateMid: 0: 12 }}</span>
-      <span>{{ job.ids ?? '-' }}</span>
-      <span class="secondary">{{ job.kind ?? '-' }}</span>
-      <span>{{ job.jobInit | readableDate }}</span>
-      <span class="secondary" [innerHTML]="job.jobReceived | secDuration: config"></span>
-      <span class="secondary" [innerHTML]="job.proofGenerated | secDuration: config"></span>
-      <span class="secondary" [innerHTML]="job.proofSubmitted | secDuration: config"></span>
-    </div>
-  </cdk-virtual-scroll-viewport>
-</div>
+<ng-container #minaTable></ng-container>
+
+<ng-template #rowTemplate let-row="row">
+  <span>{{ row.worker | truncateMid: 0: 12 }}</span>
+  <span>{{ row.ids ?? '-' }}</span>
+  <span class="secondary">{{ row.kind ?? '-' }}</span>
+  <span>{{ row.jobInit | readableDate }}</span>
+  <span class="secondary" [innerHTML]="row.jobReceived | secDuration: config"></span>
+  <span class="secondary" [innerHTML]="row.proofGenerated | secDuration: config"></span>
+  <span class="secondary" [innerHTML]="row.proofSubmitted | secDuration: config"></span>
+</ng-template>

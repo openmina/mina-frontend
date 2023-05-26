@@ -1,4 +1,4 @@
-<div fxFlex="100" class="h-100 d-flex flex-column align-end pl-12">
+<div class="w-100 h-100 flex-column align-end pl-12">
   <div class="p-relative flex-row flex-grow flex-end w-100 h-100" #columnContainer>
     <div class="y-grid-marks p-absolute h-100 w-100 secondary f-small">
       <div *ngFor="let yTick of yAxisValues; let i=index"
@@ -18,7 +18,7 @@
       </div>
     </div>
   </div>
-  <div fxFlex="10" class="flex-row secondary pt-10 f-small" [style.width]="'calc(100% - 40px)'">
+  <div class="h-sm flex-row secondary pt-10 f-small" [style.width]="'calc(100% - 40px)'">
     <div *ngFor="let tick of ticks | async"
          [style.width.%]="100 / xTicksLength">
       {{ tick }}

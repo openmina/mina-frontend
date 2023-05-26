@@ -3,11 +3,13 @@ import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/s
 import { AggregatorState } from '@dashboard/aggregator/aggregator.state';
 import { AggregatorIpcState } from '@dashboard/aggregator-ipc/aggregator-ipc.state';
 import { DashboardNodesState } from '@dashboard/nodes/dashboard-nodes.state';
+import { DashboardSplitsState } from '@dashboard/splits/dashboard-splits.state';
 
 export interface DashboardState {
   aggregator: AggregatorState;
   aggregatorIpc: AggregatorIpcState;
   nodes: DashboardNodesState;
+  splits: DashboardSplitsState;
 }
 
 const select = <T>(selector: (state: DashboardState) => T): MemoizedSelector<MinaState, T> => createSelector(
@@ -19,3 +21,4 @@ export const selectDashboardState = createFeatureSelector<DashboardState>('dashb
 export const selectAggregatorState = select((state: DashboardState): AggregatorState => state.aggregator);
 export const selectAggregatorIpcState = select((state: DashboardState): AggregatorIpcState => state.aggregatorIpc);
 export const selectDashboardNodesState = select((state: DashboardState): DashboardNodesState => state.nodes);
+export const selectDashboardSplitsState = select((state: DashboardState): DashboardSplitsState => state.splits);

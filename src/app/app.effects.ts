@@ -11,13 +11,15 @@ import {
   APP_GET_NODE_STATUS,
   APP_GET_NODE_STATUS_SUCCESS,
   APP_INIT,
+  APP_INIT_SUCCESS,
   APP_START_BACKGROUND_CHECKS,
   APP_UPDATE_DEBUGGER_STATUS,
-  AppAction,
+  AppActions,
   AppChangeActiveNode,
   AppGetDebuggerStatus,
   AppGetNodeStatus,
   AppInit,
+  AppInitSuccess,
   AppUpdateDebuggerStatus,
 } from '@app/app.actions';
 import { BlockService } from '@shared/services/block.service';
@@ -28,19 +30,24 @@ import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum'
 import { NodeStatus } from '@shared/types/app/node-status.type';
 import { GraphQLService } from '@core/services/graph-ql.service';
 import { Router } from '@angular/router';
-import { FeatureType } from '@shared/types/core/environment/mina-env.type';
+import { FeatureType, MinaNode } from '@shared/types/core/environment/mina-env.type';
 import { withLatestFrom } from 'rxjs/operators';
 import { removeParamsFromURL } from '@shared/helpers/router.helper';
+import { AppService } from './app.service';
+import { getFirstFeature, isFeatureEnabled } from '@shared/constants/config';
+import { TracingGraphQlService } from '@core/services/tracing-graph-ql.service';
+import { ApolloService } from '@core/services/apollo.service';
 
 const INIT_EFFECTS = '@ngrx/effects/init';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AppEffects extends MinaBaseEffect<AppAction> {
+export class AppEffects extends MinaBaseEffect<AppActions> {
 
-  readonly ngrxEffectsInit$: Effect;
+  readonly initEffects$: Effect;
   readonly init$: Effect;
+  readonly initSuccess$: Effect;
   readonly backgroundChecks1$: Effect;
   readonly backgroundChecks2$: Effect;
   readonly onNodeChange$: Effect;
@@ -53,22 +60,32 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
   private readonly debuggerCheckInterval$ = new BehaviorSubject<number>(10000);
 
   constructor(private actions$: Actions,
+              private appService: AppService,
               private graphQL: GraphQLService,
+              private tracingGQL: TracingGraphQlService,
+              private apolloService: ApolloService,
               private blockService: BlockService,
               private router: Router,
               store: Store<MinaState>) {
 
     super(store, selectMinaState);
 
-    this.ngrxEffectsInit$ = createEffect(() => this.actions$.pipe(
+    this.initEffects$ = createEffect(() => this.actions$.pipe(
       ofType(INIT_EFFECTS),
-      map(() => ({ type: APP_INIT, payload: { nodeName: new URL(location.href).searchParams.get('node') } })),
+      map(() => ({ type: APP_INIT })),
     ));
 
     this.init$ = createEffect(() => this.actions$.pipe(
       ofType(APP_INIT),
-      this.latestActionState<AppInit>(),
-      tap(({ state }) => this.graphQL.changeGraphQlProvider(state.app.activeNode)),
+      switchMap(() => this.appService.getActiveNode()),
+      filter(Boolean),
+      map((node: MinaNode) => ({ type: APP_INIT_SUCCESS, payload: { node } })),
+    ));
+
+    this.initSuccess$ = createEffect(() => this.actions$.pipe(
+      ofType(APP_INIT_SUCCESS),
+      this.latestActionState<AppInitSuccess>(),
+      tap(({ state }) => this.changeGqlProvider(state.app.activeNode)),
       map(() => ({ type: APP_START_BACKGROUND_CHECKS })),
     ));
 
@@ -96,24 +113,24 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
       ofType(APP_CHANGE_ACTIVE_NODE),
       this.latestActionState<AppChangeActiveNode>(),
       tap(({ state }) => {
-        this.graphQL.changeGraphQlProvider(state.app.activeNode);
+        this.changeGqlProvider(state.app.activeNode)
         this.nodeCheckInterval$.next(10000);
-        const activePage = removeParamsFromURL(this.router.url.split('/')[1]);
+        const activePage = removeParamsFromURL(this.router.url.split('/')[1]) as FeatureType;
         this.router.navigate([], {
           queryParams: { node: state.app.activeNode.name },
           queryParamsHandling: 'merge',
         });
-        const features = state.app.activeNode.features;
-        if (!features.some((feature: FeatureType) => feature === activePage)) {
-          this.router.navigate([features[0]]);
+        if (!isFeatureEnabled(state.app.activeNode, activePage)) {
+          this.router.navigate([getFirstFeature(state.app.activeNode)]);
         }
       }),
       map(() => ({ type: APP_GET_NODE_STATUS })),
     ));
 
     this.getNodeStatus$ = createEffect(() => this.actions$.pipe(
-      ofType(APP_INIT, APP_GET_NODE_STATUS),
+      ofType(APP_INIT_SUCCESS, APP_GET_NODE_STATUS),
       this.latestActionState<AppInit | AppGetNodeStatus>(),
+      filter(({ state }) => !location.pathname.includes('/dashboard/')),
       mergeMap(() => this.blockService.getNodeStatus()),
       map((payload: NodeStatus) => ({ type: APP_GET_NODE_STATUS_SUCCESS, payload })),
       catchError((error: HttpErrorResponse) => {
@@ -127,9 +144,10 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
     ));
 
     this.getDebuggerStatus$ = createEffect(() => this.actions$.pipe(
-      ofType(APP_INIT, APP_GET_DEBUGGER_STATUS),
+      ofType(APP_INIT_SUCCESS, APP_GET_DEBUGGER_STATUS),
       this.latestActionState<AppInit | AppGetDebuggerStatus>(),
       filter(({ state }) => !!state.app.activeNode.debugger),
+      filter(({ state }) => !location.pathname.includes('/dashboard/')),
       mergeMap(() => this.blockService.getDebuggerStatus()),
       map(() => this.updateDebuggerStatus(true)),
       catchError((error: HttpErrorResponse) => {
@@ -155,9 +173,9 @@ export class AppEffects extends MinaBaseEffect<AppAction> {
     );
   }
 
-  setURLSearchParam(key: string, value: string): void {
-    const url = new URL(window.location.href);
-    url.searchParams.set(key, value);
-    window.history.pushState({ path: url.href }, '', url.href);
+  private changeGqlProvider(node: MinaNode): void {
+    this.apolloService.changeGraphQlProvider(node);
+    this.graphQL.changeGraphQlProvider(node);
+    this.tracingGQL.changeGraphQlProvider(node);
   }
 }

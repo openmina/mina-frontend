@@ -2,10 +2,7 @@
 
 .submenus {
 	.a-wrap {
-		max-width: 116px;
-		@media (max-width: 700px) {
-			max-width: unset;
-		}
+		min-width: 116px;
 	}
 
 	a {
@@ -13,6 +10,8 @@
 		color: $base-secondary;
 		border-radius: 6px;
 		position: relative;
+		height: 24px;
+		line-height: 24px;
 
 		&:hover {
 			background-color: $base-container;
@@ -22,15 +21,15 @@
 			color: $selected-primary;
 			background-color: $selected-container;
 		}
+
+		@media (max-width: 700px) {
+			height: 40px;
+			line-height: 40px;
+		}
 	}
 
 	.bar {
 		width: 8px;
 		height: 20px;
 	}
-
-	@media (max-width: 700px) {
-		background-color: $base-surface;
-	}
-
 }

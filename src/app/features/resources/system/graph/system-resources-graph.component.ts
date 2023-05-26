@@ -4,11 +4,11 @@ import { AxisDomain, curveLinear } from 'd3';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { SystemResourcesSetActivePoint } from '@resources/system/system-resources.actions';
 import { SystemResourcesActivePoint } from '@shared/types/resources/system/system-resources-active-point.type';
-import { toReadableDate } from '@shared/helpers/date.helper';
+import { noMillisFormat, toReadableDate } from '@shared/helpers/date.helper';
 import { Router } from '@angular/router';
 import { SystemResourcesPoint } from '@shared/types/resources/system/system-resources-point.type';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { MIN_WIDTH_1200, MIN_WIDTH_1600, MIN_WIDTH_700 } from '@shared/constants/breakpoint-observer';
+import { MIN_WIDTH_1200, MIN_WIDTH_1600, MAX_WIDTH_700 } from '@shared/constants/breakpoint-observer';
 import { debounceTime, delay, distinctUntilChanged, fromEvent, skip } from 'rxjs';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { selectAppMenu } from '@app/app.state';
@@ -178,7 +178,7 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
   private listenToClickOnRect(): void {
     this.clickableRect
       .datum(this.data)
-      .on('click', (evt: any, points: SystemResourcesPoint[]) => {
+      .on('click', (evt: PointerEvent, points: SystemResourcesPoint[]) => {
         const mouseX = d3.pointer(evt)[0];
         const point = this.getPointFromMousePosition(evt, points);
         this.dispatch(SystemResourcesSetActivePoint, this.createActivePoint(point));
@@ -219,8 +219,8 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
         .attr('fill', 'transparent')
         .attr('width', this.width)
         .attr('height', this.height)
-        .on('mousemove', (evt: any, points: SystemResourcesPoint[]) => this.onMouseMove(evt, points))
-        .on('mouseleave', (evt: any, points: SystemResourcesPoint[]) => this.onMouseMove(evt, points))
+        .on('mousemove', (evt: PointerEvent, points: SystemResourcesPoint[]) => this.onMouseMove(evt, points))
+        .on('mouseleave', (evt: PointerEvent, points: SystemResourcesPoint[]) => this.onMouseMove(evt, points))
         .on('mouseleave', () => this.onMouseLeave());
 
       this.tooltip = d3.select(this.tooltipLocation.nativeElement);
@@ -232,13 +232,13 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
     this.xAxisTooltipLine.style('opacity', 0);
   }
 
-  private onMouseMove(evt: any, points: SystemResourcesPoint[]): void {
+  private onMouseMove(evt: PointerEvent, points: SystemResourcesPoint[]): void {
     if (!points) {
       return;
     }
     const point = this.getPointFromMousePosition(evt, points);
 
-    this.tooltip.select('.date').text(toReadableDate(point.timestamp, 'HH:mm:ss, dd MMM yy'));
+    this.tooltip.select('.date').text(toReadableDate(point.timestamp, noMillisFormat));
     this.tooltip.selectAll('.paths .value').nodes().forEach((bullet: HTMLDivElement, i: number) => {
       bullet.textContent = this.decimalPipe.transform(point.pathPoints[this.paths[i]].value, '1.2-2');
     });
@@ -258,7 +258,7 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
     this.xAxisTooltipLine.style('opacity', 1);
   }
 
-  private getPointFromMousePosition(evt: any, points: SystemResourcesPoint[]): SystemResourcesPoint {
+  private getPointFromMousePosition(evt: PointerEvent, points: SystemResourcesPoint[]): SystemResourcesPoint {
     const mouseX = d3.pointer(evt)[0];
     const x0 = this.xScale.invert(mouseX);
     const i = d3.bisector((d: SystemResourcesPoint) => d.timestamp).left(points, x0, 1);
@@ -296,7 +296,7 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
   private addXAxis(): void {
     this.xScale = d3.scaleLinear()
       .domain([0, this.data.length - 1])
-      .domain(d3.extent<SystemResourcesPoint, number>(this.data, (d) => { return d.timestamp; }))
+      .domain(d3.extent<SystemResourcesPoint, number>(this.data, d => d.timestamp))
       .range([0, this.width]);
     this.xAxisElement = this.mainG.append('g')
       .attr('class', 'xAxis inter tertiary f-base user-none')
@@ -408,7 +408,7 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
       x = this.clickerConfig.textTranslateX;
     }
     this.clickerText
-      .text(toReadableDate(timestamp, 'HH:mm:ss, dd MMM yy'))
+      .text(toReadableDate(timestamp, noMillisFormat))
       .attr('x', -x);
 
     if (this.width - mouseX < this.clickerConfig.rectTranslateX) {
@@ -466,7 +466,7 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
       });
     };
 
-    this.breakpointObserver.observe([MIN_WIDTH_1600, MIN_WIDTH_1200, MIN_WIDTH_700])
+    this.breakpointObserver.observe([MIN_WIDTH_1600, MIN_WIDTH_1200, MAX_WIDTH_700])
       .pipe(untilDestroyed(this), skip(1))
       .subscribe(() => {
         redrawChart();

@@ -16,7 +16,7 @@ import { APP_TOGGLE_MENU_OPENING, AppToggleMenuOpening } from '@app/app.actions'
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'flex-row align-center border-bottom' },
+  host: { class: 'h-xl flex-row align-center border-bottom' },
 })
 export class ToolbarComponent extends ManualDetection implements OnInit {
 

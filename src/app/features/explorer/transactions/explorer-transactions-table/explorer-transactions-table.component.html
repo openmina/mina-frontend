@@ -1,39 +1,29 @@
-<div class="flex-column h-100">
-  <div class="h-xl flex-row align-center flex-between pl-12 pr-12 tertiary border-bottom">
-    <div>{{ txs.length }} transactions</div>
-  </div>
-  <div class="mina-table overflow-x-auto flex-column flex-grow">
-    <div class="row head sorting p-relative pr-12" *ngIf="currentSort">
-      <span *ngFor="let tableHead of tableHeads; let i=index"
-            (click)="sortTable(tableHead.sort ?? tableHead.name)"
-            [class.active]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
-            class="pointer">
-        {{ tableHead.name }}
-        <span [class.flip]="currentSort.sortDirection === 'descending'"
-              [class.show]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
-              class="mina-icon f-18 icon-200">arrow_upward
-        </span>
-      </span>
-    </div>
-    <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-auto"
-                                 fxFlex="calc(100% - 36px)"
-                                 [itemSize]="32">
-      <div *cdkVirtualFor="let tx of txs; let i=index"
-           [class.row-even]="i % 2 === 0"
-           class="row">
-        <span class="tertiary">{{ tx.id | truncateMid }}</span>
-        <span class="secondary">{{ tx.from | truncateMid }}</span>
-        <span class="secondary">{{ tx.to | truncateMid }}</span>
-        <span class="secondary">{{ tx.amount }}</span>
-        <span class="secondary">{{ tx.fee }}</span>
-        <span class="tertiary">{{ tx.nonce }}</span>
-        <span class="tertiary">{{ tx.memo || '-' | truncateMid }}</span>
-        <span>
-          <span class="status border-rad-4 pl-5 pr-5 text-capitalize"
-                [ngClass]="tx.status">{{ tx.status }}</span>
-        </span>
-      </div>
-    </cdk-virtual-scroll-viewport>
-  </div>
-
+<div class="h-xl fx-row-vert-cent flex-between pl-12 pr-12 tertiary border-bottom">
+  <button class="btn-primary fx-row-vert-cent pl-12 mr-10"
+          (click)="newTx()">
+    New Transaction
+    <span class="ml-5 mina-icon icon-200 f-20">send</span>
+  </button>
+  {{ txs.length }} transactions
 </div>
+<ng-container #minaTable></ng-container>
+
+<ng-template #rowTemplate let-row="row">
+  <span>
+    <mina-copy [value]="row.id" [display]="row.id | truncateMid"></mina-copy>
+  </span>
+  <span class="secondary">
+    <mina-copy [value]="row.from" [display]="row.from | truncateMid"></mina-copy>
+  </span>
+  <span class="secondary">
+    <mina-copy [value]="row.to" [display]="row.to | truncateMid"></mina-copy>
+  </span>
+  <span class="secondary">{{ row.amount }}</span>
+  <span class="secondary">{{ row.fee }}</span>
+  <span>{{ row.nonce }}</span>
+  <span>{{ row.memo || '-' | truncateMid }}</span>
+  <span>
+    <span class="status border-rad-4 pl-5 pr-5 text-capitalize"
+          [ngClass]="row.status">{{ row.status }}</span>
+  </span>
+</ng-template>

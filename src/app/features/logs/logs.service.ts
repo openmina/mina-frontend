@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
 import { delay, map, Observable, of } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
 import { Log } from '@shared/types/logs/log.type';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LogsService {
-
-  constructor(private http: HttpClient) { }
 
   getLogs(): Observable<Log[]> {
     return of(mock).pipe(delay(400))

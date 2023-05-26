@@ -1,14 +1,14 @@
-<div class="flex-row pl-12 pb-10" fxFlex="34px">
+<div class="fx-row-vert-cent pl-12 h-xl">
   <button (click)="expandAll()" class="btn-primary mr-8">Expand All</button>
   <button (click)="collapseAll()" class="btn-primary mr-8">Collapse All</button>
 </div>
-<div class="row head tertiary f-600" fxFlex="36px">
+<div class="row head tertiary f-600 h-lg">
   <span>Checkpoints</span>
   <span>Started</span>
   <span>Process</span>
 </div>
-<div class="flex-column flex-grow overflow-y-scroll">
-  <div class="group-list">
+<div class="flex-column flex-1 overflow-y-scroll">
+  <div class="p-relative group-list">
     <ng-container *ngFor="let group of checkpoints">
       <ng-container *ngTemplateOutlet="checkpointListTemplate; context: { checkpoint: group }"></ng-container>
     </ng-container>
@@ -19,11 +19,11 @@
   <span class="checkpoint-row row tertiary">
     <span (click)="toggleExpanding(checkpoint)"
           [class.parent]="checkpoint.checkpoints.length"
-          class="title flex-row align-center">
+          class="title fx-row-vert-cent">
       <span [class.rotate]="expandedParents.includes(checkpoint.title)" class="icon-wrap">
         <span class="mina-icon">arrow_right</span>
       </span>
-      <span class="flex-row align-center overflow-hidden" [tooltip]="checkpoint.metadata">
+      <span class="fx-row-vert-cent overflow-hidden" [tooltip]="checkpoint.metadata">
         <span class="truncate">{{ checkpoint.title }}</span>
         <span *ngIf="checkpoint.metadata" class="mina-icon icon-300 f-16 ml-5">info</span>
       </span>

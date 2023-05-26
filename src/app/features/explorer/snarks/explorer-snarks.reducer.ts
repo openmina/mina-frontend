@@ -3,7 +3,7 @@ import { sort } from '@shared/helpers/array.helper';
 import { ExplorerSnarksState } from '@explorer/snarks/explorer-snarks.state';
 import {
   EXPLORER_SNARKS_CLOSE,
-  EXPLORER_SNARKS_GET_SNARKS_SUCCESS,
+  EXPLORER_SNARKS_GET_SNARKS_SUCCESS, EXPLORER_SNARKS_SET_ACTIVE_SNARK,
   EXPLORER_SNARKS_SORT,
   ExplorerSnarksActions,
 } from '@explorer/snarks/explorer-snarks.actions';
@@ -11,6 +11,7 @@ import { ExplorerSnark } from '@shared/types/explorer/snarks/explorer-snarks.typ
 
 const initialState: ExplorerSnarksState = {
   snarks: [],
+  activeSnark: undefined,
   sort: {
     sortBy: 'prover',
     sortDirection: SortDirection.DSC,
@@ -33,6 +34,13 @@ export function reducer(state: ExplorerSnarksState = initialState, action: Explo
         sort: action.payload,
         snarks: sortTxs(state.snarks, action.payload),
       };
+    }
+
+    case EXPLORER_SNARKS_SET_ACTIVE_SNARK: {
+      return {
+        ...state,
+        activeSnark: action.payload,
+      }
     }
 
     case EXPLORER_SNARKS_CLOSE:

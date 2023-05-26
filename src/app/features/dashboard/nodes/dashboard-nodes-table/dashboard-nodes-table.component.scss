@@ -1,22 +1,16 @@
 @import 'variables';
 
-.mina-table {
-	.row {
-		grid-template-columns: 200px 105px 125px 90px 135px 160px 90px 140px 100px 100px 100px 100px;
-		color: $base-secondary;
-
-		&:not(.head) {
-			cursor: pointer;
-
-			span.addr:hover > span:last-child {
-				text-decoration: underline;
-			}
-		}
+span {
+	&.Success {
+		color: $success-secondary;
 	}
 
-	.cdk-virtual-scroll-viewport {
-		min-width: 200px + 105px + 125px + 90px + 135px + 160px + 90px + 140px + 100px + 100px + 100px + 100px;
-		overflow-x: hidden;
+	&.Pending {
+		color: $selected-secondary;
+	}
+
+	&.Failure {
+		color: $warn-primary;
 	}
 }
 
@@ -47,15 +41,27 @@
 	}
 }
 
-.btn-primary {
-	padding-left: 2px;
-	padding-right: 2px;
-}
-
 .no-results {
 	top: 0;
 
 	> * {
 		max-width: 80%;
+	}
+}
+
+.pulse {
+	padding: 3px;
+	animation: fadeIn 3000ms ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+	30% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.1;
+	}
+	70% {
+		opacity: 1;
 	}
 }

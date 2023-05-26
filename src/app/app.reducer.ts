@@ -3,8 +3,8 @@ import {
   APP_CHANGE_ACTIVE_NODE,
   APP_CHANGE_MENU_COLLAPSING,
   APP_CHANGE_SUB_MENUS,
-  APP_GET_NODE_STATUS_SUCCESS,
-  APP_INIT,
+  APP_GET_NODE_STATUS_SUCCESS, APP_INIT,
+  APP_INIT_SUCCESS,
   APP_TOGGLE_MENU_OPENING,
   APP_TOGGLE_MOBILE,
   APP_UPDATE_DEBUGGER_STATUS,
@@ -41,8 +41,14 @@ export function reducer(state: AppState = initialState, action: any): AppState {
     case APP_INIT: {
       return {
         ...state,
+      };
+    }
+
+    case APP_INIT_SUCCESS: {
+      return {
+        ...state,
         nodes: CONFIG.configs,
-        activeNode: CONFIG.configs.find(c => c.name === action.payload.nodeName) || CONFIG.configs[0],
+        activeNode: action.payload.node,
       };
     }
 
@@ -111,8 +117,16 @@ export function reducer(state: AppState = initialState, action: any): AppState {
 
     case APP_ADD_NODE: {
       const newNode: MinaNode = {
-        backend: action.payload,
-        features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'web-node'],
+        graphql: action.payload,
+        features: {
+          dashboard: ['nodes', 'topology'],
+          explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
+          resources: ['system'],
+          network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
+          tracing: ['overview', 'blocks'],
+          benchmarks: ['wallets'],
+          'web-node': ['wallet', 'peers', 'logs', 'state'],
+        },
         name: action.payload.split('/')[action.payload.split('/').length - 1] || ('custom-node' + ++state.nodes.filter(n => n.name.includes('custom-node')).length),
       };
       return {

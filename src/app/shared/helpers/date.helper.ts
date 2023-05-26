@@ -5,3 +5,4 @@ function convertToReadableDate(value: number | string, format: string = 'HH:mm:s
 }
 
 export const toReadableDate = (value: number | string, format?: string): string => convertToReadableDate(value, format);
+export const noMillisFormat = 'HH:mm:ss, dd MMM yy';

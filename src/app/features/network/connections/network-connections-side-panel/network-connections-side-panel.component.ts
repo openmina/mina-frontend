@@ -9,7 +9,7 @@ import { Routes } from '@shared/enums/routes.enum';
 import { Router } from '@angular/router';
 import { NETWORK_CONNECTIONS_SELECT_CONNECTION, NetworkConnectionsSelectConnection } from '@network/connections/network-connections.actions';
 import { downloadJson } from '@app/shared/helpers/user-input.helper';
-import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/custom-components/mina-json-viewer/mina-json-viewer.component';
+import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
 
 @UntilDestroy()
 @Component({

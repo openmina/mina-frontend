@@ -7,6 +7,7 @@ import { ExplorerSnark } from '@shared/types/explorer/snarks/explorer-snarks.typ
 export interface ExplorerSnarksState {
   snarks: ExplorerSnark[];
   sort: TableSort<ExplorerSnark>;
+  activeSnark: ExplorerSnark;
 }
 
 const select = <T>(selector: (state: ExplorerSnarksState) => T): MemoizedSelector<MinaState, T> => createSelector(
@@ -16,3 +17,4 @@ const select = <T>(selector: (state: ExplorerSnarksState) => T): MemoizedSelecto
 
 export const selectExplorerSnarks = select((state: ExplorerSnarksState): ExplorerSnark[] => state.snarks);
 export const selectExplorerSnarksSorting = select((state: ExplorerSnarksState): TableSort<ExplorerSnark> => state.sort);
+export const selectExplorerSnarksActiveSnark = select((state: ExplorerSnarksState): ExplorerSnark => state.activeSnark);

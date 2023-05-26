@@ -9,7 +9,6 @@ import { selectDashboardNodesActiveNode, selectDashboardNodesBlockTraces } from 
 import { DASHBOARD_NODES_SET_ACTIVE_NODE, DashboardNodesSetActiveNode } from '@dashboard/nodes/dashboard-nodes.actions';
 import { filter } from 'rxjs';
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
-import { TruncateMidPipe } from '@shared/pipes/truncate-mid.pipe';
 
 @UntilDestroy()
 @Component({
@@ -17,7 +16,6 @@ import { TruncateMidPipe } from '@shared/pipes/truncate-mid.pipe';
   templateUrl: './dashboard-nodes-side-panel.component.html',
   styleUrls: ['./dashboard-nodes-side-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [TruncateMidPipe],
   host: { class: 'flex-column h-100' },
 })
 export class DashboardNodesSidePanelComponent extends ManualDetection implements OnInit {
@@ -28,8 +26,7 @@ export class DashboardNodesSidePanelComponent extends ManualDetection implements
   private blockStructuredTrace: ViewContainerRef;
   private component: BlockStructuredTraceComponent;
 
-  constructor(private store: Store<MinaState>,
-              private truncateMid: TruncateMidPipe) { super(); }
+  constructor(private store: Store<MinaState>) { super(); }
 
   async ngOnInit(): Promise<void> {
     await import('@shared/components/block-structured-trace/block-structured-trace.component').then(c => {
@@ -45,7 +42,7 @@ export class DashboardNodesSidePanelComponent extends ManualDetection implements
         filter(Boolean),
       )
       .subscribe((activeNode: DashboardNode) => {
-        this.title =`${activeNode.source} Transition ${activeNode.blockchainLength} - ${activeNode.traceStatus}`;
+        this.title = `${activeNode.source} Transition ${activeNode.blockchainLength} - ${activeNode.traceStatus}`;
         this.component.detect();
         this.detect();
       });

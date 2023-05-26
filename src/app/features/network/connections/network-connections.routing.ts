@@ -9,7 +9,7 @@ const routes: Routes = [
     component: NetworkConnectionsComponent,
     children: [
       {
-        path: ':messageId',
+        path: ':id',
         component: NetworkConnectionsComponent,
         title: NETWORK_TITLE,
       },

@@ -1,5 +1,5 @@
 export interface SnarkWorkerTraceJob {
-  worker: number;
+  worker: string;
   id: number;
   ids: string;
   kind: string;

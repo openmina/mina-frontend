@@ -1,36 +1,49 @@
 import { ActionReducerMap, MetaReducer } from '@ngrx/store';
 
-import * as fromErrorPreview from '@app/layout/error-preview/error-preview.reducer';
+import * as fromErrorPreview from '@error-preview/error-preview.reducer';
+import { ErrorPreviewAction } from '@error-preview/error-preview.actions';
+import { ErrorPreviewState } from '@error-preview/error-preview.state';
+
 import * as fromNetwork from '@network/network.reducer';
 import { NetworkAction } from '@network/network.reducer';
+import { NetworkState } from '@network/network.state';
+
 import * as fromApp from '@app/app.reducer';
+import { AppAction } from '@app/app.actions';
+import { AppState } from '@app/app.state';
+
 import * as fromTracing from '@tracing/tracing.reducer';
 import { TracingAction } from '@tracing/tracing.reducer';
+import { TracingState } from '@tracing/tracing.state';
+
 import * as fromWebNode from '@web-node/web-node.reducer';
 import { WebNodeAction } from '@web-node/web-node.reducer';
+import { WebNodeState } from '@web-node/web-node.state';
+
 import * as fromBenchmarks from '@benchmarks/benchmarks.reducer';
+import { BenchmarksAction } from '@benchmarks/benchmarks.reducer';
+import { BenchmarksState } from '@benchmarks/benchmarks.state';
+
 import * as fromDashboard from '@dashboard/dashboard.reducer';
 import { DashboardAction } from '@dashboard/dashboard.reducer';
+import { DashboardState } from '@dashboard/dashboard.state';
+
 import * as fromExplorer from '@explorer/explorer.reducer';
 import { ExplorerAction } from '@explorer/explorer.reducer';
+import { ExplorerState } from '@explorer/explorer.state';
+
 import * as fromResources from '@resources/resources.reducer';
 import { ResourcesAction } from '@resources/resources.reducer';
+import { ResourcesState } from '@resources/resources.state';
+
 import * as fromLogs from '@logs/logs.reducer';
 import { LogsAction } from '@logs/logs.actions';
-
-import { AppState } from '@app/app.state';
-import { ErrorPreviewState } from '@error-preview/error-preview.state';
-import { TracingState } from '@tracing/tracing.state';
-import { WebNodeState } from '@web-node/web-node.state';
-import { NetworkState } from '@network/network.state';
-import { AppAction } from '@app/app.actions';
-import { ErrorPreviewAction } from '@error-preview/error-preview.actions';
-import { BenchmarksState } from '@benchmarks/benchmarks.state';
-import { BenchmarksAction } from '@benchmarks/benchmarks.actions';
-import { DashboardState } from '@dashboard/dashboard.state';
-import { ExplorerState } from '@explorer/explorer.state';
-import { ResourcesState } from '@resources/resources.state';
 import { LogsState } from '@logs/logs.state';
+
+import * as fromStorage from '@storage/storage.reducer';
+import { StorageAction } from '@storage/storage.reducer';
+import { StorageState } from '@storage/storage.state';
+
 
 export interface MinaState {
   app: AppState;
@@ -43,6 +56,7 @@ export interface MinaState {
   explorer: ExplorerState;
   resources: ResourcesState;
   logs: LogsState;
+  storage: StorageState;
 }
 
 type MinaAction =
@@ -56,6 +70,7 @@ type MinaAction =
   & ExplorerAction
   & ResourcesAction
   & LogsAction
+  & StorageAction
   ;
 
 export const reducers: ActionReducerMap<MinaState, MinaAction> = {
@@ -69,6 +84,7 @@ export const reducers: ActionReducerMap<MinaState, MinaAction> = {
   explorer: fromExplorer.reducer,
   resources: fromResources.reducer,
   logs: fromLogs.reducer,
+  storage: fromStorage.reducer,
 };
 
 export const metaReducers: MetaReducer<MinaState, MinaAction>[] = [];

@@ -4,7 +4,7 @@ import { MinaState } from '@app/app.setup';
 import { NETWORK_CHANGE_TAB, NETWORK_SET_ACTIVE_ROW, NetworkMessagesChangeTab, NetworkMessagesSetActiveRow } from '@network/messages/network-messages.actions';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NetworkMessage } from '@shared/types/network/messages/network-message.type';
-import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/custom-components/mina-json-viewer/mina-json-viewer.component';
+import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
 import { NetworkMessageConnection } from '@shared/types/network/messages/network-messages-connection.type';
 import { selectNetworkActiveRow, selectNetworkConnection, selectNetworkFullMessage, selectNetworkMessageHex } from '@network/messages/network-messages.state';
 import { downloadJson, downloadJsonFromURL } from '@shared/helpers/user-input.helper';
@@ -22,7 +22,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
   templateUrl: './network-messages-side-panel.component.html',
   styleUrls: ['./network-messages-side-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'h-100 w-100' },
+  host: { class: 'flex-column h-100 w-100' },
 })
 export class NetworkMessagesSidePanelComponent extends ManualDetection implements AfterViewInit {
 

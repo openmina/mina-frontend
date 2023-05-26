@@ -1,0 +1,71 @@
+@import 'src/assets/styles/utilities/variables';
+
+.mina-input[formcontrolname='batch'] {
+	width: 44px;
+}
+
+.mina-input[formcontrolname='fee'] {
+	width: 60px;
+}
+
+.button-group {
+	button:first-child {
+		margin-right: 2px;
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+
+	button:last-child {
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+	}
+}
+
+.dropdown {
+	box-sizing: border-box;
+	max-height: 200px;
+
+	.dropdown-item {
+		display: grid;
+		grid-template-columns: 30px 210px 1fr;
+		color: $base-tertiary;
+		box-sizing: border-box;
+
+		span:nth-child(2), span:nth-child(4):hover {
+			color: $base-primary;
+		}
+
+		&:hover:not(.active) {
+			background-color: $base-container;
+		}
+
+		&.active {
+			background-color: $selected-container;
+
+			span:nth-child(1), span:nth-child(2), span:nth-child(4):hover {
+				color: $selected-primary;
+			}
+
+			span:nth-child(3), span:nth-child(4) {
+				color: $selected-secondary;
+			}
+		}
+
+		&:not(.active) .mina-icon {
+			color: $base-divider;
+		}
+
+		&:last-child {
+			margin-bottom: 0 !important;
+		}
+	}
+
+	@media (max-width: 700px) {
+		width: 100vw;
+		max-height: 60vh;
+
+		.dropdown-item {
+			height: 48px;
+		}
+	}
+}

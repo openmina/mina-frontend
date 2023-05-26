@@ -1,10 +1,6 @@
 @import 'variables';
 @import 'dimensions';
 
-:host {
-	@include h-xl();
-}
-
 .toolbar {
 	.mobile-toggle {
 		width: 46px;

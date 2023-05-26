@@ -1,0 +1,47 @@
+<mat-expansion-panel class="table-filter"
+                     [disabled]="true"
+                     [expanded]="filtersOpen"
+                     (afterCollapse)="onResize()"
+                     (afterExpand)="onResize()">
+  <mat-expansion-panel-header>
+    <div class="filter-row flex-row border-bottom">
+      <div [style.height.px]="32">
+        <button class="toggle-filters border-rad-4 bg-container p-0 flex-row align-center flex-center mr-8"
+                [class.active]="filtersOpen"
+                (click)="toggleFilerPanel()">
+          <span class="mina-icon f-18">filter_list</span>
+        </button>
+      </div>
+      <div class="flex-row align-center flex-wrap">
+        <button *ngFor="let filter of activeFilters"
+                (click)="toggleFilter(filter)"
+                class="active-filter border-rad-6 f-600 bg-selected-container selected-primary flex-row align-center text-capitalize">
+          <span>{{ filter.display || filter.value }}</span>
+          <span class="mina-icon f-16">close</span>
+        </button>
+      </div>
+    </div>
+  </mat-expansion-panel-header>
+
+  <ng-template matExpansionPanelContent>
+    <div class="filters-container flex-column border-bottom">
+      <div [style.height.px]="36" class="flex-row flex-between align-center pr-10">
+        <div class="f-600 secondary align-center d-flex">Filters</div>
+        <span class="mina-icon pointer tertiary primary-hover f-18" (click)="toggleFilerPanel()">close</span>
+      </div>
+      <div class="flex-column flex-grow overflow-y-auto text-capitalize">
+        <div class="flex-row" *ngFor="let row of availableFilters; let r=index">
+          <div class="f-600 fx-row-vert-cent flex-wrap"
+               *ngFor="let category of row">
+            <div class="category mr-10 pointer primary-hover"
+                 (click)="filterByCategory(category)">{{ category.name }}</div>
+            <div class="filter pointer bg-container pl-8 pr-8 border-rad-6 mr-5 text-nowrap"
+                 *ngFor="let filter of category.filters"
+                 (click)="toggleFilter(filter)"
+                 [class.active]="activeFilters.includes(filter)">{{ filter.display || filter.value }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</mat-expansion-panel>

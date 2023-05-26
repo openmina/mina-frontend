@@ -56,7 +56,12 @@ $code-magenta: var(--code-magenta);
 $code-teal: var(--code-teal);
 
 $special-surface: var(--special-surface);
+$special-selected-alt-1-primary: var(--special-selected-alt-1-primary);
+$special-selected-alt-2-primary: var(--special-selected-alt-2-primary);
 $special-selected-alt-3-primary: var(--special-selected-alt-3-primary);
+$special-table-hover: var(--special-table-hover);
+$special-node: var(--special-node);
+$special-node-selected: var(--special-node-selected);
 
 $cta-primary: var(--cta-primary);
 $cta-secondary: var(--cta-secondary);
@@ -65,3 +70,11 @@ $cta-container: var(--cta-container);
 $inter-font: 'Inter', sans-serif;
 $mono-font: "IBM Plex Mono", monospace;
 $raleway-font: 'Raleway', sans-serif;
+
+@function sum($list) {
+	$result: 0;
+	@each $item in $list {
+		$result: $result + $item;
+	}
+	@return $result;
+}

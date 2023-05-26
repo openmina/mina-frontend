@@ -1,14 +1,14 @@
-<div class="flex-row flex-between p-12" fxFlex="42px">
+<div class="flex-row flex-between p-12 h-xl">
   <span class="secondary f-600">Distributions</span>
-  <button class="toggle h-sm w-sm flex-row align-center flex-center btn-selected p-0"
+  <button class="toggle h-sm w-sm fx-row-full-cent btn-selected p-0"
           (click)="toggleSidePanel()">
     <span class="mina-icon f-20">view_sidebar</span>
   </button>
 </div>
-<div class="flex-column flex-grow">
-  <mina-network-blocks-graph fxFlex="30" class="pr-12"></mina-network-blocks-graph>
+<div class="flex-column flex-1 overflow-auto">
+  <mina-network-blocks-graph [style.height.%]="30" class="pr-12"></mina-network-blocks-graph>
   <div class="flex-column mt-16 p-12 border-top">
-    <div class="flex-row flex-between align-center mt-8">
+    <div class="fx-row-vert-cent flex-between mt-8">
       <span class="tertiary">First sent time</span>
       <span class="f-600" [innerHTML]="firstSentTime | secDuration: secConfig"></span>
     </div>

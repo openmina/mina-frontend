@@ -1,0 +1,34 @@
+@import 'variables';
+
+.row {
+	display: grid;
+	grid-template-columns: 120px 85px 80px 1fr;
+
+	span {
+		line-height: 36px;
+
+		&:last-child {
+			padding-left: 0;
+		}
+	}
+
+	&.head span:last-child {
+		text-align: right;
+	}
+
+	&:not(.head) {
+		cursor: pointer;
+
+		&:hover:not(.active) {
+			background-color: $base-container;
+		}
+	}
+
+	&.active {
+		background-color: $selected-container;
+
+		span {
+			color: $selected-primary !important;
+		}
+	}
+}

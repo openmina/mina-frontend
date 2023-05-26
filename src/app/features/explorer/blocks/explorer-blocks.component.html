@@ -1,1 +1,13 @@
-<mina-explorer-blocks-table></mina-explorer-blocks-table>
+<div #parent class="h-100 w-100 flex-row p-relative">
+  <mina-explorer-blocks-table [class.shrink]="isActiveRow"></mina-explorer-blocks-table>
+  <mina-horizontal-resizable-container (endResizing)="toggleResizing()"
+                                       (startResizing)="toggleResizing()"
+                                       (widthChange)="onWidthChange($event)"
+                                       [class.show]="isActiveRow"
+                                       [maxWidthElement]="parent"
+                                       [minWidth]="420"
+                                       class="no-transition"
+                                       localStorageKey="explorer-blocks-spw">
+    <mina-explorer-blocks-side-panel></mina-explorer-blocks-side-panel>
+  </mina-horizontal-resizable-container>
+</div>

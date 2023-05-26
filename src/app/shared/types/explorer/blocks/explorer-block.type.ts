@@ -5,6 +5,7 @@ export interface ExplorerBlock {
   txCount: number;
   totalTxCount: number;
   snarkCount: number;
+  zkAppsCount: number;
   date: string;
   timestamp: number;
   snarkedLedgerHash: string;

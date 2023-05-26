@@ -4,6 +4,12 @@
 	min-height: 80px;
 }
 
+@media (max-width: 700px) {
+	.row1 > div:last-child {
+		display: none;
+	}
+}
+
 .pagination-group {
 	button {
 		background-color: transparent;
@@ -12,5 +18,12 @@
 		&:hover {
 			background-color: $selected-container;
 		}
+	}
+}
+
+.section-active {
+	.btn-primary {
+		background-color: $selected-container !important;
+		color: $selected-secondary !important;
 	}
 }

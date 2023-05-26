@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
-import { GraphQLService } from '@core/services/graph-ql.service';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { TracingOverviewCheckpoint } from '@shared/types/tracing/overview/tracing-overview-checkpoint.type';
 import { TracingOverviewCheckpointColumn } from '@shared/types/tracing/overview/tracing-overview-checkpoint-column.type';
+import { TracingGraphQlService } from '@core/services/tracing-graph-ql.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TracingOverviewService {
 
-  constructor(private graphQL: GraphQLService) { }
+  constructor(private tracingGQL: TracingGraphQlService) { }
 
   getStatistics(): Observable<TracingOverviewCheckpoint[]> {
-    return this.graphQL.query<any>('blockTracesDistribution', '{ blockTracesDistribution }').pipe(
+    return this.tracingGQL.query<any>('blockTracesDistribution', '{ blockTracesDistribution }').pipe(
       map(response => this.mapStatisticsResponse(response.blockTracesDistribution)),
     );
   }

@@ -1,10 +1,13 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
+import { HorizontalResizeDirective } from '@shared/components/horizontal-resizable-container/horizontal-resize.directive';
 
 @Component({
   selector: 'mina-horizontal-resizable-container',
   templateUrl: './horizontal-resizable-container.component.html',
   styleUrls: ['./horizontal-resizable-container.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [HorizontalResizeDirective],
 })
 export class HorizontalResizableContainerComponent {
 

@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ErrorHandler, Injectable, NgModule, Provider } from '@angular/core';
+import { APP_INITIALIZER, ErrorHandler, Injectable, LOCALE_ID, NgModule, Provider } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRouting } from './app.routing';
@@ -27,7 +27,15 @@ import { GlobalErrorHandlerService } from '@core/services/global-error-handler.s
 import { Router } from '@angular/router';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAnalyticsModule } from '@angular/fire/compat/analytics';
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
+import localeEn from '@angular/common/locales/en';
+import { HorizontalMenuComponent } from '@app/shared/components/horizontal-menu/horizontal-menu.component';
+import { GRAPH_QL_PROVIDER } from '@core/services/apollo.service';
+import { ApolloModule } from 'apollo-angular';
 
+registerLocaleData(localeFr, 'fr');
+registerLocaleData(localeEn, 'en');
 
 export const SENTRY_PROVIDER: Provider = {
   provide: ErrorHandler,
@@ -59,7 +67,9 @@ export class AppGlobalErrorhandler implements ErrorHandler {
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRouting,
+    ApolloModule,
     CONFIG.firebase ? AngularFireModule.initializeApp(CONFIG.firebase) : [],
     CONFIG.firebase ? AngularFireAnalyticsModule : [],
     StoreModule.forRoot(reducers, {
@@ -73,10 +83,10 @@ export class AppGlobalErrorhandler implements ErrorHandler {
     }),
     EffectsModule.forRoot([AppEffects]),
     NgrxRouterStoreModule,
-    !CONFIG.production ? StoreDevtoolsModule.instrument({ maxAge: 150 }) : [],
+    !CONFIG.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : [],
     HttpClientModule,
-    BrowserAnimationsModule,
     EagerSharedModule,
+    HorizontalMenuComponent,
   ],
   providers: [
     SENTRY_PROVIDER,
@@ -92,8 +102,11 @@ export class AppGlobalErrorhandler implements ErrorHandler {
     },
     INTERCEPTOR_PROVIDER,
     THEME_PROVIDER,
+    GRAPH_QL_PROVIDER,
     { provide: ErrorHandler, useClass: AppGlobalErrorhandler, deps: [GlobalErrorHandlerService] },
+    { provide: LOCALE_ID, useValue: 'en' },
   ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
+

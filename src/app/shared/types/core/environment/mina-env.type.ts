@@ -8,15 +8,23 @@ export interface MinaEnv {
   aggregator?: string;
   sentry?: SentryConfig;
   firebase?: FirebaseOptions;
+  globalConfig?: {
+    features?: FeaturesConfig;
+  }
 }
 
 export interface MinaNode {
-  backend: string;
+  name: string;
+  graphql: string;
+  'tracing-graphql'?: string;
   debugger?: string;
   minaExplorer?: string;
-  features: FeatureType[];
-  name: string;
+  features?: FeaturesConfig | string[];
 }
+
+export type FeaturesConfig = {
+  [key in FeatureType]?: string[];
+};
 
 export type FeatureType =
   | 'dashboard'
@@ -24,10 +32,10 @@ export type FeatureType =
   | 'network'
   | 'tracing'
   | 'web-node'
-  | 'web-node-demo'
   | 'benchmarks'
   | 'explorer'
   | 'logs'
+  | 'storage'
   ;
 
 interface SentryConfig {

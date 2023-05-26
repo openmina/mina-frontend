@@ -1,26 +1,22 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import {
-  DASHBOARD_NODES_SET_ACTIVE_BLOCK,
-  DASHBOARD_NODES_TOGGLE_FILTER,
-  DASHBOARD_NODES_TOGGLE_LATENCY,
-  DASHBOARD_NODES_TOGGLE_NODES_SHOWING,
+  DashboardNodesGetForks,
   DashboardNodesSetActiveBlock,
   DashboardNodesToggleFilter,
   DashboardNodesToggleLatency,
   DashboardNodesToggleNodesShowing,
 } from '@dashboard/nodes/dashboard-nodes.actions';
 import {
-  selectDashboardNodes,
   selectDashboardNodesActiveBlockLevel,
   selectDashboardNodesActiveFilters,
+  selectDashboardNodesActiveForkFilter,
   selectDashboardNodesAllFilters,
   selectDashboardNodesEarliestBlockLevel,
+  selectDashboardNodesForks,
   selectDashboardNodesLatencyFromFastest,
   selectDashboardNodesNodeCount,
+  selectDashboardNodesRemainingRequests,
   selectDashboardNodesShowOfflineNodes,
 } from '@dashboard/nodes/dashboard-nodes.state';
 import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
@@ -28,6 +24,8 @@ import { Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { LoadingService } from '@core/services/loading.service';
 import { Routes } from '@shared/enums/routes.enum';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
+import { DashboardForkFilter } from '@shared/types/dashboard/node-list/dashboard-fork-filter.type';
 
 @UntilDestroy()
 @Component({
@@ -37,7 +35,7 @@ import { Routes } from '@shared/enums/routes.enum';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-column border-bottom' },
 })
-export class DashboardNodesToolbarComponent extends ManualDetection implements OnInit, OnDestroy {
+export class DashboardNodesToolbarComponent extends StoreDispatcher implements OnInit, OnDestroy {
 
   count: DashboardNodeCount = {} as DashboardNodeCount;
   activeFilters: string[] = [];
@@ -46,12 +44,13 @@ export class DashboardNodesToolbarComponent extends ManualDetection implements O
   earliestBlock: number;
   showOffline: boolean = true;
   latencyFromFastest: boolean = true;
-  loadingNodes: boolean = true;
+  isLoading: boolean = true;
+  forks: DashboardForkFilter[];
+  activeForkFilter: { value: string, type: 'branch' | 'bestTip' };
 
   private urlRemoved: boolean;
 
-  constructor(private store: Store<MinaState>,
-              private loadingService: LoadingService,
+  constructor(private loadingService: LoadingService,
               private router: Router) { super(); }
 
   ngOnInit(): void {
@@ -61,89 +60,81 @@ export class DashboardNodesToolbarComponent extends ManualDetection implements O
   }
 
   private listenToNode(): void {
-    this.store.select(selectDashboardNodesShowOfflineNodes)
-      .pipe(untilDestroyed(this))
-      .subscribe((show: boolean) => {
-        this.showOffline = show;
+    this.select(selectDashboardNodesShowOfflineNodes, (show: boolean) => {
+      this.showOffline = show;
+      this.detect();
+    });
+    this.select(selectDashboardNodesRemainingRequests, (remaining: number) => {
+      this.urlRemoved = remaining === 0;
+      if (this.isLoading && remaining === 0) {
+        this.isLoading = false;
+        this.dispatch(DashboardNodesGetForks);
         this.detect();
-      });
-    this.store.select(selectDashboardNodesLatencyFromFastest)
-      .pipe(untilDestroyed(this))
-      .subscribe((latencyFromFastest: boolean) => {
-        this.latencyFromFastest = latencyFromFastest;
+      } else if (!this.isLoading && remaining > 0) {
+        this.isLoading = true;
         this.detect();
-      });
-    this.store.select(selectDashboardNodesNodeCount)
-      .pipe(untilDestroyed(this))
-      .subscribe((count: DashboardNodeCount) => {
-        this.count = count;
-        this.detect();
-      });
-    this.store.select(selectDashboardNodes)
-      .pipe(
-        untilDestroyed(this),
-        filter(nodes => nodes.every(node => node.loaded)),
-      )
-      .subscribe(() => {
-        this.loadingNodes = false;
-        this.urlRemoved = true;
-        this.detect();
-      });
+      }
+    });
+    this.select(selectDashboardNodesLatencyFromFastest, (latencyFromFastest: boolean) => {
+      this.latencyFromFastest = latencyFromFastest;
+      this.detect();
+    });
+    this.select(selectDashboardNodesNodeCount, (count: DashboardNodeCount) => {
+      this.count = count;
+      this.detect();
+    });
+    this.select(selectDashboardNodesForks, (forks: DashboardForkFilter[]) => {
+      this.forks = forks;
+      this.detect();
+    });
   }
 
   toggleNodesShowing(): void {
-    this.store.dispatch<DashboardNodesToggleNodesShowing>({ type: DASHBOARD_NODES_TOGGLE_NODES_SHOWING });
+    this.dispatch(DashboardNodesToggleNodesShowing);
   }
 
   toggleShowLatencyFromFastest(): void {
-    this.store.dispatch<DashboardNodesToggleLatency>({ type: DASHBOARD_NODES_TOGGLE_LATENCY });
+    this.dispatch(DashboardNodesToggleLatency);
   }
 
   private listenToFiltersChanges(): void {
-    this.store.select(selectDashboardNodesAllFilters)
-      .pipe(untilDestroyed(this))
-      .subscribe((filters: string[]) => {
-        this.allFilters = filters;
-        this.detect();
-      });
-    this.store.select(selectDashboardNodesActiveFilters)
-      .pipe(untilDestroyed(this))
-      .subscribe((filters: string[]) => {
-        this.activeFilters = filters;
-        this.detect();
-      });
+    this.select(selectDashboardNodesAllFilters, (filters: string[]) => {
+      this.allFilters = filters;
+      this.detect();
+    });
+    this.select(selectDashboardNodesActiveFilters, (filters: string[]) => {
+      this.activeFilters = filters;
+      this.detect();
+    });
+    this.select(selectDashboardNodesActiveForkFilter, (filter) => {
+      this.activeForkFilter = filter;
+      this.detect();
+    });
   }
 
   private listenToActiveBlockChanges(): void {
-    this.store.select(selectDashboardNodesActiveBlockLevel)
-      .pipe(untilDestroyed(this))
-      .subscribe((block: number) => {
-        this.activeBlock = block;
-        this.detect();
-      });
+    this.select(selectDashboardNodesActiveBlockLevel, (block: number) => {
+      this.activeBlock = block;
+      this.detect();
+    });
 
-    this.store.select(selectDashboardNodesEarliestBlockLevel)
-      .pipe(
-        untilDestroyed(this),
-        filter(Boolean),
-        filter(earliestBlock => this.earliestBlock !== earliestBlock),
-      )
-      .subscribe((earliestBlock: number) => {
-        this.earliestBlock = earliestBlock;
-        this.detect();
-      });
+    this.select(selectDashboardNodesEarliestBlockLevel, (earliestBlock: number) => {
+      this.earliestBlock = earliestBlock;
+      this.detect();
+    }, filter(Boolean), filter(earliestBlock => this.earliestBlock !== earliestBlock));
   }
 
-  toggleFilter(filter: string): void {
-    this.store.dispatch<DashboardNodesToggleFilter>({ type: DASHBOARD_NODES_TOGGLE_FILTER, payload: filter });
+  toggleFilter(filter: { value: string, type: 'branch' | 'bestTip' }): void {
+    this.dispatch(DashboardNodesToggleFilter, filter);
   }
 
   getBlock(height: number): void {
-    this.store.dispatch<DashboardNodesSetActiveBlock>({ type: DASHBOARD_NODES_SET_ACTIVE_BLOCK, payload: { height, fetchNew: true } });
+    this.dispatch(DashboardNodesSetActiveBlock, { height, fetchNew: true });
     this.router.navigate([Routes.DASHBOARD, Routes.NODES, height], { queryParamsHandling: 'merge' });
   }
 
-  ngOnDestroy(): void {
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
     if (!this.urlRemoved) {
       this.loadingService.removeURL();
     }

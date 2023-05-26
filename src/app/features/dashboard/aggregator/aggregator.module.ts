@@ -8,6 +8,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { AggregatorEffects } from '@dashboard/aggregator/aggregator.effects';
 import { DashboardToolbarComponent } from './dashboard-toolbar/dashboard-toolbar.component';
 import { DashboardSidePanelComponent } from './dashboard-side-panel/dashboard-side-panel.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 
 
 @NgModule({
@@ -20,7 +21,11 @@ import { DashboardSidePanelComponent } from './dashboard-side-panel/dashboard-si
   imports: [
     SharedModule,
     AggregatorRouting,
+    HorizontalResizableContainerComponent,
     EffectsModule.forFeature([AggregatorEffects]),
+  ],
+  exports: [
+    DashboardSidePanelComponent,
   ],
 })
 export class AggregatorModule {}

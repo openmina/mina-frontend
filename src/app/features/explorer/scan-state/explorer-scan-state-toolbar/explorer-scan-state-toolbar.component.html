@@ -1,43 +1,57 @@
-<div class="flex-row align-center">
-  <span class="tertiary mr-10 f-600">Height</span>
-  <button class="btn-secondary h-sm w-sm mr-5 ml-10 flex-row flex-center align-center"
-          [class.disabled]="firstBlock === activeBlock"
-          [tooltip]="'First block'"
-          [showDelay]="500"
-          (click)="getBlock(firstBlock)">
-    <span class="mina-icon f-18">first_page</span>
-  </button>
-  <div class="pagination-group flex-row align-center bg-selected-container border-rad-4">
-    <button class="h-sm w-sm flex-row flex-center align-center"
-            [class.disabled]="firstBlock === activeBlock"
-            [tooltip]="'Prev block'"
-            [showDelay]="500"
-            (click)="getBlock(activeBlock - 1)">
-      <span class="mina-icon f-18">navigate_before</span>
-    </button>
-    <span class="f-600 selected-primary pl-5 pr-5">{{ activeBlock }}</span>
-    <button class="h-sm w-sm flex-row flex-center align-center"
-            [class.disabled]="earliestBlock === activeBlock"
-            [tooltip]="'Next block'"
-            [showDelay]="500"
-            (click)="getBlock(activeBlock + 1)">
-      <span class="mina-icon f-18">navigate_next</span>
-    </button>
+<mina-horizontal-menu [template]="template" [clz]="'pr-12 pl-12'"></mina-horizontal-menu>
+
+<ng-template #template>
+  <div class="fx-row-vert-cent flex-between w-100">
+    <div class="fx-row-vert-cent shrink-0">
+      <span class="tertiary mr-10 f-600">Height</span>
+      <button class="btn-secondary h-sm w-sm mr-5 ml-10 fx-row-full-cent"
+              [class.disabled]="firstBlock === activeBlock"
+              [tooltip]="'First block'"
+              [showDelay]="500"
+              (click)="getBlock(firstBlock)">
+        <span class="mina-icon f-18">first_page</span>
+      </button>
+      <div class="pagination-group fx-row-vert-cent bg-selected-container border-rad-4">
+        <button class="h-sm w-sm fx-row-full-cent"
+                [class.disabled]="firstBlock === activeBlock"
+                [tooltip]="'Prev block'"
+                [showDelay]="500"
+                (click)="getBlock(activeBlock - 1)">
+          <span class="mina-icon f-18">navigate_before</span>
+        </button>
+        <span class="f-600 selected-primary pl-5 pr-5">{{ activeBlock }}</span>
+        <button class="h-sm w-sm fx-row-full-cent"
+                [class.disabled]="earliestBlock === activeBlock"
+                [tooltip]="'Next block'"
+                [showDelay]="500"
+                (click)="getBlock(activeBlock + 1)">
+          <span class="mina-icon f-18">navigate_next</span>
+        </button>
+      </div>
+      <button class="btn-secondary h-sm w-sm mr-10 ml-5 fx-row-full-cent"
+              [class.disabled]="earliestBlock === activeBlock"
+              [tooltip]="'Last block'"
+              [showDelay]="500"
+              (click)="getBlock(earliestBlock)">
+        <span class="mina-icon f-18">last_page</span>
+      </button>
+      <button class="h-sm btn-primary mr-10"
+              (click)="centerTrees()">
+        <span class="fx-row-vert-cent">
+          Center Trees
+          <span class="mina-icon icon-200 f-18 ml-5">align_justify_center</span>
+        </span>
+      </button>
+      <button class="h-sm btn-primary mr-10"
+              (click)="toggleLeafsMarking()">
+        <span class="fx-row-vert-cent">
+          {{ !leafsMarking ? 'Show' : 'Hide' }} snarks
+          <span class="mina-icon icon-200 f-18 ml-5">{{ 'radio_button_' + (!leafsMarking ? '' : 'un') + 'checked' }}</span>
+        </span>
+      </button>
+    </div>
+    <div class="tertiary shrink-0">
+      {{ txCount }} transactions, {{ snarksCount }} snarks, {{ userCommandsCount }} user commands, {{ feeTransferCount }} fee transfers, {{ zkappCommandsCount }} zkapp commands
+    </div>
   </div>
-  <button class="btn-secondary h-sm w-sm mr-10 ml-5 flex-row flex-center align-center"
-          [class.disabled]="earliestBlock === activeBlock"
-          [tooltip]="'Last block'"
-          [showDelay]="500"
-          (click)="getBlock(earliestBlock)">
-    <span class="mina-icon f-18">last_page</span>
-  </button>
-  <div class="tertiary">
-    {{ txCount }} transactions, {{ snarksCount }} snarks, {{ userCommandsCount }} user commands, {{ feeTransferCount }} fee transfers, {{ zkappCommandsCount }} zkapp commands
-  </div>
-</div>
-<div>
-  <button class="h-sm btn-primary mr-10"
-          (click)="centerTrees()">Center Trees</button>
-  <button class="h-sm btn-primary mr-10"
-          (click)="toggleLeafsMarking()">{{ !leafsMarking ? 'Highlight snarks' : 'Hide snarks' }}</button>
-</div>
+</ng-template>

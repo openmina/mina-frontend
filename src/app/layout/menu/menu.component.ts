@@ -10,7 +10,7 @@ import { ThemeType } from '@shared/types/core/theme/theme-types.type';
 import { DOCUMENT } from '@angular/common';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 import { filter, map, tap } from 'rxjs';
-import { CONFIG } from '@shared/constants/config';
+import { CONFIG, getAvailableFeatures } from '@shared/constants/config';
 import { NavigationEnd, Router } from '@angular/router';
 import { removeParamsFromURL } from '@shared/helpers/router.helper';
 
@@ -23,6 +23,7 @@ const MENU_ITEMS: MenuItem[] = [
   { name: 'Dashboard', icon: 'dashboard' },
   { name: 'Explorer', icon: 'explore' },
   { name: 'Resources', icon: 'analytics' },
+  { name: 'Storage', icon: 'hard_drive' },
   // { name: 'Logs', icon: 'code_blocks' },
   { name: 'Network', icon: 'account_tree' },
   { name: 'Tracing', icon: 'grid_view' },
@@ -40,7 +41,7 @@ const MENU_ITEMS: MenuItem[] = [
 })
 export class MenuComponent extends ManualDetection implements OnInit {
 
-  menuItems: MenuItem[] = [];
+  menuItems: MenuItem[] = MENU_ITEMS;
   menu: AppMenu;
   currentTheme: ThemeType;
   appIdentifier: string = CONFIG.identifier;
@@ -95,7 +96,7 @@ export class MenuComponent extends ManualDetection implements OnInit {
     this.store.select(selectActiveNode)
       .pipe(
         untilDestroyed(this),
-        filter(Boolean),
+        filter(node => !!node),
       )
       .subscribe((node: MinaNode) => {
         this.activeNode = node;
@@ -105,14 +106,25 @@ export class MenuComponent extends ManualDetection implements OnInit {
   }
 
   private get allowedMenuItems(): MenuItem[] {
-    return MENU_ITEMS.filter((opt: MenuItem) => this.activeNode.features.find(f => f === opt.name.toLowerCase().split(' ').join('-')));
+    const features = getAvailableFeatures(this.activeNode || {} as any);
+    return MENU_ITEMS.filter((opt: MenuItem) => features.find(f => f === opt.name.toLowerCase().split(' ').join('-')));
+  }
+
+  showHideMenu(): void {
+    if (this.menu.isMobile) {
+      this.store.dispatch<AppToggleMenuOpening>({ type: APP_TOGGLE_MENU_OPENING });
+    }
   }
 
   toggleMenu(): void {
     if (this.menu.isMobile) {
-      this.store.dispatch<AppToggleMenuOpening>({ type: APP_TOGGLE_MENU_OPENING });
-      return;
+      this.showHideMenu();
+    } else {
+      this.collapseMenu();
     }
+  }
+
+  collapseMenu(): void {
     this.store.dispatch<AppChangeMenuCollapsing>({ type: APP_CHANGE_MENU_COLLAPSING, payload: !this.menu.collapsed });
   }
 }

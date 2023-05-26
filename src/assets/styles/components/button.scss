@@ -1,5 +1,5 @@
 @import 'variables';
-@import 'layout';
+@import 'flex';
 @import 'dimensions';
 
 button {
@@ -47,8 +47,16 @@ button {
 		background-color: $base-container;
 		color: $base-primary;
 
+		.mina-icon {
+			color: $base-tertiary;
+		}
+
 		&:hover {
 			background-color: $base-divider;
+
+			.mina-icon {
+				color: $base-primary;
+			}
 		}
 	}
 

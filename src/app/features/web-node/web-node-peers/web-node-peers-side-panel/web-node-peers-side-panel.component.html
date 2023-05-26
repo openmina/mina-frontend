@@ -1,11 +1,11 @@
 <ng-container *ngIf="activePeer">
-  <div class="flex-row flex-between p-12" fxFlex="42px">
+  <div class="flex-row flex-between p-12 h-xl">
     <span class="secondary f-600">Log details</span>
     <span (click)="closeSidePanel()"
           class="mina-icon pointer tertiary primary-hover f-18">close
     </span>
   </div>
-  <div fxFlex="34px" class="flex-row pl-12 pb-10">
+  <div class="flex-row pl-12 pb-10 h-lg">
     <button class="btn-primary mr-8" (click)="expandEntireJSON()">Expand All</button>
     <button class="btn-primary mr-8" (click)="collapseEntireJSON()">Collapse All</button>
     <button class="btn-primary mr-8" [copyToClipboard]="jsonString">Copy

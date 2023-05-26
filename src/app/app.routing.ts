@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { CONFIG } from '@shared/constants/config';
+import { getFirstFeature } from '@shared/constants/config';
 import { FeatureGuard } from '@core/guards/feature.guard';
 
 const APP_TITLE: string = 'Open Mina';
@@ -13,38 +13,39 @@ export const BENCHMARKS_TITLE: string = APP_TITLE + ' - Benchmarks';
 export const DASHBOARD_TITLE: string = APP_TITLE + ' - Dashboard';
 export const EXPLORER_TITLE: string = APP_TITLE + ' - Explorer';
 export const LOGS_TITLE: string = APP_TITLE + ' - Logs';
+export const STORAGE_TITLE: string = APP_TITLE + ' - Storage';
 
 
-export const routes: Routes = [
+const routes: Routes = [
   {
     path: 'resources',
-    loadChildren: () => import('./features/resources/resources.module').then(module => module.ResourcesModule),
+    loadChildren: () => import('@resources/resources.module').then(m => m.ResourcesModule),
     title: RESOURCES_TITLE,
     canActivate: [FeatureGuard],
   },
   {
     path: 'network',
-    loadChildren: () => import('./features/network/network.module').then(module => module.NetworkModule),
+    loadChildren: () => import('@network/network.module').then(m => m.NetworkModule),
     title: NETWORK_TITLE,
     canActivate: [FeatureGuard],
   },
   {
     path: 'tracing',
-    loadChildren: () => import('./features/tracing/tracing.module').then(module => module.TracingModule),
+    loadChildren: () => import('@tracing/tracing.module').then(m => m.TracingModule),
     title: TRACING_TITLE,
     canActivate: [FeatureGuard],
   },
   {
     path: 'web-node',
-    loadChildren: () => import('./features/web-node/web-node.module').then(module => module.WebNodeModule),
+    loadChildren: () => import('@web-node/web-node.module').then(m => m.WebNodeModule),
     title: WEB_NODE_TITLE,
     canActivate: [FeatureGuard],
   },
   {
     path: 'benchmarks',
-    loadChildren: () => import('@benchmarks/benchmarks.module').then(module => module.BenchmarksModule),
+    loadChildren: () => import('@benchmarks/benchmarks.module').then(m => m.BenchmarksModule),
     title: BENCHMARKS_TITLE,
-    canActivate: [FeatureGuard],
+    // canActivate: [FeatureGuard],
   },
   {
     path: 'dashboard',
@@ -65,8 +66,18 @@ export const routes: Routes = [
     canActivate: [FeatureGuard],
   },
   {
+    path: 'storage',
+    loadChildren: () => import('@storage/storage.module').then(m => m.StorageModule),
+    title: STORAGE_TITLE,
+    canActivate: [FeatureGuard],
+  },
+  {
+    path: 'zk-app',
+    loadChildren: () => import('./features/zk-app/zk-app.module').then(m => m.ZkAppModule),
+  },
+  {
     path: '**',
-    redirectTo: CONFIG.configs[0].features[0],
+    redirectTo: getFirstFeature(),
     pathMatch: 'full',
   },
 ];
@@ -76,9 +87,8 @@ export const routes: Routes = [
     RouterModule.forRoot(routes, {
       // enableTracing: true,
       preloadingStrategy: PreloadAllModules,
-      relativeLinkResolution: 'legacy',
       onSameUrlNavigation: 'ignore',
-      initialNavigation: 'enabledBlocking',
+      initialNavigation: 'enabledNonBlocking',
     }),
   ],
   exports: [RouterModule],

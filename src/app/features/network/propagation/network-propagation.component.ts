@@ -1,6 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
-import { graphviz } from 'd3-graphviz';
 import { CONFIG } from '@shared/constants/config';
 import * as d3 from 'd3';
 import { Path } from 'd3';
@@ -632,122 +631,122 @@ export class NetworkPropagationComponent implements OnInit, AfterViewInit {
   }
 
   private initDiagram(data: any[]): void {
-    const graph = graphviz(this.diagramRef.nativeElement)
-      .renderDot(`
-      digraph {
-# layout= specifies a layout engine:
-#   circo — for circular layout of graphs
-#   dot — for drawing directed graphs (the default)
-#   fdp — for drawing undirected graphs
-#   neato — for drawing undirected graphs
-#   osage — for drawing large undirected graphs
-#   twopi — for radial layouts of graphs
-layout=dot
-bgcolor="none"
-   graph [ratio="compress"];
-   
-# Default node attributes
-node [
-  colorscheme = reds9
-  shape = circle
-  style = "filled"
-  color = black
-  fillcolor = "0 0 1"
-  fontsize=8
-  label=""
-  width=0.23
-]
-
-edge [
-  colorscheme = rdylbu9
-  penwidth = 0.75
-  fontsize=8
-  arrowhead=standard
-  color="#727272"
-]
-
-# Rank
-{rank=source; 2}
-{rank=sink; 43}
-{rank=same; 3 0 5 7 9 8 12 10}
-{rank=same; 21 23 25 15 1 17 19 4 35 29 26 27 14 13}
-{rank=same; 41 22 6 24 16 18 51 20 11}
-{rank=same; 33 37 36 28 31 30 47}
-{rank=same; 34 32 38 48}
-{rank=same; 39 42}
-
-43 [fillcolor=9, color=9]
-42, 39 [fillcolor=7, color=7]
-34, 32, 38, 48 [fillcolor=5, color=5]
-33, 37, 36, 28, 31, 30, 47 [fillcolor=4, color=4]
-41, 22, 6, 24, 16, 18, 51, 20, 11 [fillcolor=3, color=3]
-21, 23, 25, 15, 1, 17, 19, 4, 35, 29, 26, 27, 14, 13 [fillcolor=2, color=2]
-3, 0, 5, 7, 9, 8, 12, 10 [fillcolor=1, color=1]
-2 [fillcolor="#211F25", color="#927FB9"]
-
-
-# Edges
-0 -> 1 [weight=82]
-2 -> 0 [weight=94]
-2 -> 3 [weight=100]
-5 -> 6 [weight=36]
-2 -> 5 [weight=89]
-2 -> 7 [weight=89]
-8 -> 9 [weight=58]
-8 -> 25 [weight=98]
-2 -> 8 [weight=89]
-10 -> 11 [weight=16.]
-2 -> 10 [weight=89]
-12 -> 13 [weight=58]
-2 -> 12 [weight=89]
-9 -> 14 [weight=59]
-2 -> 9 [weight=89]
-7 -> 10 [weight=58]
-1 -> 14 [weight=53]
-15 -> 16 [weight=54]
-0 -> 15 [weight=82]
-17 -> 18 [weight=51]
-0 -> 17 [weight=82]
-19 -> 20 [weight=47]
-0 -> 19  [weight=78]
-21 -> 22 [weight=49]
-2 -> 21 [weight=78]
-23 -> 24 [weight=47]
-2 -> 23 [weight=78]
-25 -> 26 [weight=72]
-27 -> 28 [weight=42]
-25 -> 27 [weight=72]
-29 -> 14 [weight=43]
-25 -> 29 [weight=72]
-14 -> 26 [weight=40]
-25 -> 14 [weight=72]
-16 -> 30 [weight=42]
-18 -> 16 [weight=72]
-4 -> 27 [weight=42]
-3 -> 4  [weight=72]
-31 -> 32 [weight=1]
-18 -> 31 [weight=71]
-33 -> 34 [weight=37]
-22 -> 33 [weight=71]
-13 -> 4 [weight=39]
-22 -> 13 [weight=71]
-35 -> 10 [weight=19]
-0 -> 35 [weight=67]
-36 -> 32 [weight=36]
-22 -> 36 [weight=66]
-37 -> 38 [weight=36]
-22 -> 37 [weight=66]
-34 -> 39 [weight=34]
-41 -> 26 [weight=33]
-25 -> 41 [weight=63]
-42 -> 43 [weight=34]
-39 -> 42 [weight=62]
-28 -> 5 [weight=32]
-47 -> 48 [weight=60]
-6 -> 47 [weight=31]
-35 -> 51 [weight=65]
-51 -> 36 [weight=19]
-}
-      `);
+//     const graph = graphviz(this.diagramRef.nativeElement)
+//       .renderDot(`
+//       digraph {
+// # layout= specifies a layout engine:
+// #   circo — for circular layout of graphs
+// #   dot — for drawing directed graphs (the default)
+// #   fdp — for drawing undirected graphs
+// #   neato — for drawing undirected graphs
+// #   osage — for drawing large undirected graphs
+// #   twopi — for radial layouts of graphs
+// layout=dot
+// bgcolor="none"
+//    graph [ratio="compress"];
+//
+// # Default node attributes
+// node [
+//   colorscheme = reds9
+//   shape = circle
+//   style = "filled"
+//   color = black
+//   fillcolor = "0 0 1"
+//   fontsize=8
+//   label=""
+//   width=0.23
+// ]
+//
+// edge [
+//   colorscheme = rdylbu9
+//   penwidth = 0.75
+//   fontsize=8
+//   arrowhead=standard
+//   color="#727272"
+// ]
+//
+// # Rank
+// {rank=source; 2}
+// {rank=sink; 43}
+// {rank=same; 3 0 5 7 9 8 12 10}
+// {rank=same; 21 23 25 15 1 17 19 4 35 29 26 27 14 13}
+// {rank=same; 41 22 6 24 16 18 51 20 11}
+// {rank=same; 33 37 36 28 31 30 47}
+// {rank=same; 34 32 38 48}
+// {rank=same; 39 42}
+//
+// 43 [fillcolor=9, color=9]
+// 42, 39 [fillcolor=7, color=7]
+// 34, 32, 38, 48 [fillcolor=5, color=5]
+// 33, 37, 36, 28, 31, 30, 47 [fillcolor=4, color=4]
+// 41, 22, 6, 24, 16, 18, 51, 20, 11 [fillcolor=3, color=3]
+// 21, 23, 25, 15, 1, 17, 19, 4, 35, 29, 26, 27, 14, 13 [fillcolor=2, color=2]
+// 3, 0, 5, 7, 9, 8, 12, 10 [fillcolor=1, color=1]
+// 2 [fillcolor="#211F25", color="#927FB9"]
+//
+//
+// # Edges
+// 0 -> 1 [weight=82]
+// 2 -> 0 [weight=94]
+// 2 -> 3 [weight=100]
+// 5 -> 6 [weight=36]
+// 2 -> 5 [weight=89]
+// 2 -> 7 [weight=89]
+// 8 -> 9 [weight=58]
+// 8 -> 25 [weight=98]
+// 2 -> 8 [weight=89]
+// 10 -> 11 [weight=16.]
+// 2 -> 10 [weight=89]
+// 12 -> 13 [weight=58]
+// 2 -> 12 [weight=89]
+// 9 -> 14 [weight=59]
+// 2 -> 9 [weight=89]
+// 7 -> 10 [weight=58]
+// 1 -> 14 [weight=53]
+// 15 -> 16 [weight=54]
+// 0 -> 15 [weight=82]
+// 17 -> 18 [weight=51]
+// 0 -> 17 [weight=82]
+// 19 -> 20 [weight=47]
+// 0 -> 19  [weight=78]
+// 21 -> 22 [weight=49]
+// 2 -> 21 [weight=78]
+// 23 -> 24 [weight=47]
+// 2 -> 23 [weight=78]
+// 25 -> 26 [weight=72]
+// 27 -> 28 [weight=42]
+// 25 -> 27 [weight=72]
+// 29 -> 14 [weight=43]
+// 25 -> 29 [weight=72]
+// 14 -> 26 [weight=40]
+// 25 -> 14 [weight=72]
+// 16 -> 30 [weight=42]
+// 18 -> 16 [weight=72]
+// 4 -> 27 [weight=42]
+// 3 -> 4  [weight=72]
+// 31 -> 32 [weight=1]
+// 18 -> 31 [weight=71]
+// 33 -> 34 [weight=37]
+// 22 -> 33 [weight=71]
+// 13 -> 4 [weight=39]
+// 22 -> 13 [weight=71]
+// 35 -> 10 [weight=19]
+// 0 -> 35 [weight=67]
+// 36 -> 32 [weight=36]
+// 22 -> 36 [weight=66]
+// 37 -> 38 [weight=36]
+// 22 -> 37 [weight=66]
+// 34 -> 39 [weight=34]
+// 41 -> 26 [weight=33]
+// 25 -> 41 [weight=63]
+// 42 -> 43 [weight=34]
+// 39 -> 42 [weight=62]
+// 28 -> 5 [weight=32]
+// 47 -> 48 [weight=60]
+// 6 -> 47 [weight=31]
+// 35 -> 51 [weight=65]
+// 51 -> 36 [weight=19]
+// }
+//       `);
   }
 }

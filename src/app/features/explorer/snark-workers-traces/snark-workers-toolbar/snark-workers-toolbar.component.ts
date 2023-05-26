@@ -8,7 +8,6 @@ import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal, TemplatePortal } from '@angular/cdk/portal';
 import { SW_TRACES_GET_JOBS, SWTracesGetJobs } from '@explorer/snark-workers-traces/snark-workers-traces.actions';
 import { Router } from '@angular/router';
-import { Routes } from '@shared/enums/routes.enum';
 import { IntervalSelectComponent } from '@shared/components/interval-select/interval-select.component';
 import { TimestampInterval } from '@shared/types/shared/timestamp-interval.type';
 import { DatePipe } from '@angular/common';
@@ -23,7 +22,7 @@ import { toggleItem } from '@shared/helpers/array.helper';
   templateUrl: './snark-workers-toolbar.component.html',
   styleUrls: ['./snark-workers-toolbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'border-bottom h-xl flex-row align-center pl-12 flex-between' },
+  host: { class: 'border-bottom h-xl fx-row-vert-cent flex-between' },
   providers: [DatePipe],
 })
 export class SnarkWorkersToolbarComponent extends ManualDetection implements OnInit {

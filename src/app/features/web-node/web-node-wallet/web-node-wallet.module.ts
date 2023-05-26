@@ -10,6 +10,8 @@ import { WebNodeWalletTransactionsComponent } from './web-node-wallet-transactio
 import { WebNodeWalletCreateTransactionComponent } from './web-node-wallet-create-transaction/web-node-wallet-create-transaction.component';
 import { WebNodeWalletToolbarComponent } from './web-node-wallet-toolbar/web-node-wallet-toolbar.component';
 import { WebNodeWalletSidePanelComponent } from './web-node-wallet-side-panel/web-node-wallet-side-panel.component';
+import { StepperComponent } from '@shared/components/stepper/stepper.component';
+import { CopyComponent } from '@shared/components/copy/copy.component';
 
 
 @NgModule({
@@ -23,6 +25,8 @@ import { WebNodeWalletSidePanelComponent } from './web-node-wallet-side-panel/we
   ],
   imports: [
     SharedModule,
+    CopyComponent,
+    StepperComponent,
     WebNodeWalletRouting,
     EffectsModule.forFeature([WebNodeWalletEffects]),
   ],

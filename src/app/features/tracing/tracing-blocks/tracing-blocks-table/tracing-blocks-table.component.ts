@@ -1,29 +1,19 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
+import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { TracingBlockTrace } from '@shared/types/tracing/blocks/tracing-block-trace.type';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Router } from '@angular/router';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
 import { filter } from 'rxjs';
 import { Routes } from '@shared/enums/routes.enum';
 import { selectTracingActiveTrace, selectTracingBlocksSorting, selectTracingTraces } from '@tracing/tracing-blocks/tracing-blocks.state';
-import {
-  TRACING_BLOCKS_SELECT_ROW,
-  TRACING_BLOCKS_SORT,
-  TracingBlocksGetTraces,
-  TracingBlocksSelectRow,
-  TracingBlocksSort,
-} from '@tracing/tracing-blocks/tracing-blocks.actions';
+import { TracingBlocksSelectRow, TracingBlocksSort } from '@tracing/tracing-blocks/tracing-blocks.actions';
 import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
-import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
-import { TableHeadSorting } from '@shared/types/shared/table-head-sorting.type';
+import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { selectActiveNode } from '@app/app.state';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
+import { MinaTableComponent } from '@shared/components/mina-table/mina-table.component';
+import { untilDestroyed } from '@ngneat/until-destroy';
 
 const secDurationConfig: SecDurationConfig = {
   red: 50,
@@ -42,9 +32,12 @@ const secDurationConfig: SecDurationConfig = {
 })
 export class TracingBlocksTableComponent extends StoreDispatcher implements OnInit {
 
-  readonly itemSize: number = 36;
   readonly secDurationConfig: SecDurationConfig = secDurationConfig;
-  readonly tableHeads: TableHeadSorting<TracingBlockTrace>[] = [
+  readonly origin: string = origin;
+
+  activeNodeName: string;
+
+  private readonly tableHeads: TableColumnList<TracingBlockTrace> = [
     { name: 'height' },
     { name: 'global slot', sort: 'globalSlot' },
     { name: 'hash' },
@@ -53,22 +46,33 @@ export class TracingBlocksTableComponent extends StoreDispatcher implements OnIn
     { name: 'source' },
     { name: 'status' },
   ];
-  readonly origin: string = origin;
 
-  traces: TracingBlockTrace[] = [];
-  activeTrace: TracingBlockTrace;
-  currentSort: TableSort<TracingBlockTrace>;
-  activeNodeName: string;
-
-  @ViewChild(CdkVirtualScrollViewport) private scrollViewport: CdkVirtualScrollViewport;
+  private traces: TracingBlockTrace[] = [];
+  private activeTrace: TracingBlockTrace;
   private hashFromRoute: string;
   private preselect: boolean;
 
+  @ViewChild('rowTemplate') private rowTemplate: TemplateRef<TracingBlockTrace>;
+  @ViewChild('minaTable', { read: ViewContainerRef }) private containerRef: ViewContainerRef;
+
+  private table: MinaTableComponent<TracingBlockTrace>;
+
   constructor(private router: Router) { super(); }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    await import('@shared/components/mina-table/mina-table.component').then(c => {
+      this.table = this.containerRef.createComponent(c.MinaTableComponent<TracingBlockTrace>).instance;
+      this.table.tableHeads = this.tableHeads;
+      this.table.rowTemplate = this.rowTemplate;
+      this.table.gridTemplateColumns = [96, 96, 230, 'auto ', 120, 120, 120];
+      this.table.minWidth = 998;
+      this.table.sortClz = TracingBlocksSort;
+      this.table.sortSelector = selectTracingBlocksSorting;
+      this.table.rowClickEmitter.pipe(untilDestroyed(this)).subscribe((row: TracingBlockTrace) => this.onRowClick(row));
+      this.table.propertyForActiveCheck = 'id';
+      this.table.init();
+    });
     this.listenToTracesChanges();
-    this.listenToSortingChanges();
     this.listenToActiveTraceChange();
     this.listenToRouteChange();
     this.listenToActiveNodeChange();
@@ -78,13 +82,6 @@ export class TracingBlocksTableComponent extends StoreDispatcher implements OnIn
     this.select(selectActiveNode, (node: MinaNode) => {
       this.activeNodeName = node.name;
     }, filter(Boolean));
-  }
-
-  sortTable(sortBy: string): void {
-    const sortDirection = sortBy !== this.currentSort.sortBy
-      ? this.currentSort.sortDirection
-      : this.currentSort.sortDirection === SortDirection.ASC ? SortDirection.DSC : SortDirection.ASC;
-    this.dispatch(TracingBlocksSort, { sortBy: sortBy as keyof TracingBlockTrace, sortDirection });
   }
 
   onRowClick(trace: TracingBlockTrace): void {
@@ -107,14 +104,14 @@ export class TracingBlocksTableComponent extends StoreDispatcher implements OnIn
   private listenToTracesChanges(): void {
     this.select(selectTracingTraces, (traces: TracingBlockTrace[]) => {
       this.traces = traces;
+      this.table.rows = traces;
+      this.table.detect();
       if (this.preselect) {
         this.dispatch(TracingBlocksSelectRow, this.traces.find(t => t.hash === this.hashFromRoute));
         this.preselect = false;
         this.detect();
         this.scrollToElement();
         return;
-      } else {
-        this.scrollViewport.scrollTo({ top: 0 });
       }
       this.detect();
     }, filter(Boolean));
@@ -124,23 +121,16 @@ export class TracingBlocksTableComponent extends StoreDispatcher implements OnIn
     if (!this.hashFromRoute) {
       return;
     }
-    const topElements = Math.floor(this.scrollViewport.elementRef.nativeElement.offsetHeight / 2 / this.itemSize);
-    const index = this.traces.findIndex(t => t.hash === this.hashFromRoute) - topElements;
-    this.scrollViewport.scrollToIndex(index);
+    this.table.scrollToElement(t => t.hash === this.hashFromRoute);
   }
 
   private listenToActiveTraceChange(): void {
     this.select(selectTracingActiveTrace, (activeTrace: TracingBlockTrace) => {
       this.activeTrace = activeTrace;
+      this.table.activeRow = activeTrace;
+      this.table.detect();
       this.detect();
     }, filter(trace => trace !== this.activeTrace));
-  }
-
-  private listenToSortingChanges(): void {
-    this.select(selectTracingBlocksSorting, (sort: TableSort<TracingBlockTrace>) => {
-      this.currentSort = sort;
-      this.detect();
-    });
   }
 
   seeBlockInNetwork(height: number): void {

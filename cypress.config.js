@@ -11,8 +11,12 @@ module.exports = defineConfig({
     },
     specPattern: '**/*.cy.ts',
   },
+  numTestsKeptInMemory: 20,
+  experimentalMemoryManagement: true,
+  defaultCommandTimeout: 10000,
+  videoUploadOnPasses: false,
   e2e: {
-    baseUrl: "http://frontend-server:80",
+    baseUrl: 'http://frontend-server:80',
     setupNodeEvents(on, config) {
       return require('./cypress/plugins/index.js')(on, config);
       // return require('cypress-real-events/support')(on, config);

@@ -1,56 +1,61 @@
-<div fxFlex="50" class="row1 flex-row flex-wrap align-center f-600 pl-12">
-  <span class="tertiary mr-10">Height</span>
-  <div class="pagination-group flex-row align-center bg-selected-container ml-10 border-rad-4">
-    <button class="h-sm w-sm flex-row flex-center align-center"
-            [class.disabled]="!earliestBlock || activeBlock === 1"
-            [tooltip]="'Prev block'"
-            [showDelay]="500"
-            (click)="getBlock(activeBlock - 1)">
-      <span class="mina-icon f-18">navigate_before</span>
-    </button>
-    <span class="selected-primary pl-5 pr-5">{{ activeBlock ?? '-' }}</span>
-    <button class="h-sm w-sm flex-row flex-center align-center"
+<div class="row1 fx-row-vert-cent flex-between h-50">
+  <mina-horizontal-menu [clz]="'pl-12'" [template]="template1"></mina-horizontal-menu>
+  <ng-template #template1>
+    <span class="tertiary mr-10 f-600 shrink-0">Global Slot</span>
+    <div class="pagination-group fx-row-vert-cent bg-selected-container ml-10 border-rad-4">
+      <button class="h-sm w-sm fx-row-full-cent"
+              [class.disabled]="!earliestBlock || activeBlock === 1"
+              [tooltip]="'Prev block'"
+              [showDelay]="500"
+              (click)="getBlock(activeBlock - 1)">
+        <span class="mina-icon f-18">navigate_before</span>
+      </button>
+      <span class="selected-primary pl-5 pr-5 f-600">{{ activeBlock ?? '-' }}</span>
+      <button class="h-sm w-sm fx-row-full-cent"
+              [class.disabled]="!earliestBlock || earliestBlock === activeBlock"
+              [tooltip]="'Next block'"
+              [showDelay]="500"
+              (click)="getBlock(activeBlock + 1)">
+        <span class="mina-icon f-18">navigate_next</span>
+      </button>
+    </div>
+    <button class="btn-secondary h-sm w-sm mr-10 ml-5 fx-row-full-cent"
             [class.disabled]="!earliestBlock || earliestBlock === activeBlock"
-            [tooltip]="'Next block'"
+            [tooltip]="'Last block'"
             [showDelay]="500"
-            (click)="getBlock(activeBlock + 1)">
-      <span class="mina-icon f-18">navigate_next</span>
+            (click)="getBlock(earliestBlock)">
+      <span class="mina-icon f-18">last_page</span>
     </button>
-  </div>
-  <button class="btn-secondary h-sm w-sm mr-10 ml-5 flex-row flex-center align-center"
-          [class.disabled]="!earliestBlock || earliestBlock === activeBlock"
-          [tooltip]="'Last block'"
-          [showDelay]="500"
-          (click)="getBlock(earliestBlock)">
-    <span class="mina-icon f-18">last_page</span>
-  </button>
-  <div fxFlex class="pl-12 f-600 flex-row flex-wrap align-center flex-between">
-    <div class="flex-row flex-wrap align-center">
-      <span class="tertiary">Count:</span>
-      <span class="bg-selected-container ml-10 p-5 border-rad-4 selected-primary">{{ count.nodes }} Node{{ count.nodes !== 1 ? 's' : '' }}</span>
-      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.producers }} Producer{{ count.producers !== 1 ? 's' : '' }}</span>
-      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.snarkers }} Snarker{{ count.snarkers !== 1 ? 's' : '' }}</span>
-      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.seeders }} Seeder{{ count.seeders !== 1 ? 's' : '' }}</span>
-      <span class="bg-selected-container ml-8 p-5 border-rad-4 selected-primary">{{ count.transactionGenerators }} Transaction Generator{{ count.transactionGenerators !== 1 ? 's' : '' }}</span>
-    </div>
-    <div class="flex-row">
+    <div class="flex-row shrink-0">
       <button class="h-sm btn-primary mr-5"
-              [class.disabled]="loadingNodes"
-              (click)="toggleShowLatencyFromFastest()">{{ latencyFromFastest ? 'Show latency from second fastest' : 'Show latency from fastest' }}</button>
+              [class.disabled]="isLoading"
+              (click)="toggleShowLatencyFromFastest()">Show latency from {{ latencyFromFastest ? 'second' : '' }} fastest</button>
       <button class="h-sm btn-primary mr-5"
-              [class.disabled]="loadingNodes"
-              (click)="toggleNodesShowing()">{{ showOffline ? 'Show active nodes' : 'Show all nodes' }}</button>
+              [class.disabled]="isLoading"
+              (click)="toggleNodesShowing()">Show {{ showOffline ? 'active' : 'all' }} nodes</button>
     </div>
+  </ng-template>
+  <div class="mr-10 fx-row-vert-cent selected-primary h-sm shrink-0">
+    {{ count.nodes }} Node{{ count.nodes | plural }} · {{ count.producers }} Producer{{ count.producers | plural }} · {{ count.snarkers }} Snarker{{ count.snarkers | plural }} · {{ count.seeders }} Seeder{{ count.seeders | plural }} · {{ count.transactionGenerators }} Generator{{ count.transactionGenerators | plural }}
   </div>
-
 </div>
 
-<div fxFlex="50" fxLayout="row wrap" class="row2 align-center h-100 pl-12">
-  <span class="tertiary mr-10 f-600">Block candidates</span>
-  <button *ngFor="let filter of allFilters"
-          (click)="toggleFilter(filter)"
-          class="mr-5 border-rad-6 f-600 flex-row align-center"
-          [ngClass]="activeFilters.includes(filter) ? 'btn-selected' : 'btn-primary'">
-    <span>{{ filter | truncateMid }}</span>
-  </button>
+<div class="row2 fx-row-vert-cent h-50">
+  <mina-horizontal-menu [clz]="'pl-12'" [template]="template2"></mina-horizontal-menu>
+  <ng-template #template2>
+    <span class="tertiary mr-10 f-600">{{ !forks ? '0 ' : forks.length === 0 ? 'Loading ' : '' }}Branches</span>
+    <span *ngFor="let fork of (forks || [])"
+          [class.section-active]="activeForkFilter?.value === fork.branch || fork.candidates.includes(activeForkFilter?.value)"
+          class="mr-5 border-rad-4 overflow-hidden f-600 fx-row-vert-cent shrink-0">
+      <button [ngClass]="'btn-' + (activeForkFilter?.value === fork.branch ? 'selected' : 'primary')"
+              (click)="toggleFilter({ value: fork.branch, type: 'branch' })"
+              class="border-rad-0 border-right">{{ fork.branch }}</button>
+      <button *ngFor="let candidate of fork.candidates"
+              class="border-rad-0 f-600 fx-row-vert-cent border-right"
+              (click)="toggleFilter({ value: candidate, type: 'bestTip' })"
+              [ngClass]="'btn-' + (activeForkFilter?.value === candidate ? 'selected' : 'primary')">
+        <span>{{ candidate | truncateMid: 0: 5 }}</span>
+      </button>
+    </span>
+  </ng-template>
 </div>

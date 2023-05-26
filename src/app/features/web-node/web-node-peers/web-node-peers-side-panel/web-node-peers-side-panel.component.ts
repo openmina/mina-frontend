@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { WebNodeLog } from '@shared/types/web-node/logs/web-node-log.type';
-import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/custom-components/mina-json-viewer/mina-json-viewer.component';
+import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

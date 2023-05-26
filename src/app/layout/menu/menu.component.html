@@ -1,17 +1,19 @@
-<div *ngIf="menu" class="menu flex-column" [class.collapsed]="menu.collapsed && !menu.isMobile">
+<div *ngIf="menu"
+     class="menu flex-column" [class.collapsed]="menu.collapsed && !menu.isMobile">
   <button class="menu-toggle f-big h-xl primary pointer flex-row align-center f-400"
           [class.flex-between]="menu.isMobile"
           (click)="toggleMenu()">
     <span>OpenMina</span>
     <span [class.flipped]="menu.isMobile ? false : menu.collapsed"
-          class="mina-icon f-20">{{ !menu.isMobile ? 'first_page' : 'close'}}</span>
+          class="mina-icon f-20">{{ !menu.isMobile ? 'first_page' : 'close' }}</span>
   </button>
   <a *ngFor="let item of menuItems"
      [routerLink]="'/' + item.name.toLowerCase().split(' ').join('-')"
      [queryParams]="activeNode ? { node: activeNode.name } : null"
      [tooltip]="item.name"
      [tooltipDisabled]="!menu.collapsed || menu.isMobile"
-     [class.active]="activeRoute === item.name.toLowerCase()"
+     [class.active]="activeRoute === item.name.toLowerCase().split(' ').join('-')"
+     (click)="showHideMenu()"
      class="item h-lg">
     <span class="item-content h-sm">
       <span class="mina-icon">{{ item.icon }}</span>

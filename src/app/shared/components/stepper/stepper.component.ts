@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, TemplateRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'mina-stepper',
@@ -6,6 +7,8 @@ import { ChangeDetectionStrategy, Component, Input, TemplateRef } from '@angular
   styleUrls: ['./stepper.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'w-100 mt-16 flex-column' },
+  standalone: true,
+  imports: [CommonModule],
 })
 export class StepperComponent {
 

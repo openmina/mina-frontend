@@ -18,8 +18,9 @@ export class CopyToClipboardDirective {
               private tooltipService: TooltipService,
               private clipboard: Clipboard) { }
 
-  @HostListener('click')
-  private onClick(): void {
+  @HostListener('click', ['$event'])
+  private onClick(event: MouseEvent): void {
+    event.stopPropagation();
     this.clipboard.copy(this.copyToClipboard);
     this.tooltipService.openTooltipsWithClipboardClick.push(0);
     MinaTooltipDirective.showTooltip(this.popup, this.el.nativeElement, 'Copied to clipboard', 250);

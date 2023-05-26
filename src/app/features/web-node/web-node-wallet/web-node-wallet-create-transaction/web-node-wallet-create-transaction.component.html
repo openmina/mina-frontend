@@ -1,12 +1,12 @@
-<div fxFlex="36px">
-  <button class="mt-5 ml-12 flex-row align-center secondary primary-hover bg-transparent"
+<div class="h-lg">
+  <button class="mt-5 ml-12 fx-row-vert-cent secondary primary-hover bg-transparent"
           routerLink="/web-node/wallet/transactions">
     <span class="mina-icon f-20 mr-8">arrow_back</span>
     <span>Send Mina</span>
   </button>
 </div>
 
-<div class="flex-column align-center pt-12 flex-grow">
+<div class="fx-col-horiz-cent pt-12 flex-grow">
   <mina-stepper [stepHeaders]="['Tx Details', 'Submit', 'Overview']"
                 [steps]="[step1, step2, step3]"
                 [activeStep]="activeStep"
@@ -16,11 +16,11 @@
 
 <ng-template #step1>
   <form [formGroup]="formGroup" class="h-100 w-100 border-rad-6 border p-12 flex-column">
-    <div class="dropdown flex-row flex-between align-center pointer border-rad-4 pr-8 pl-8"
+    <div class="dropdown fx-row-vert-cent flex-between pointer border-rad-4 pr-8 pl-8"
          #dropdownTrigger
          (click)="openDropdown($event)">
       <span class="tertiary">Recipient</span>
-      <span class="flex-row align-center monospace">
+      <span class="fx-row-vert-cent monospace">
         <span>{{ formGroup.value.recipient }}</span>
         <span class="mina-icon secondary f-20 ml-5">arrow_drop_down</span>
       </span>
@@ -43,7 +43,7 @@
 </ng-template>
 
 <ng-template #step2>
-  <div class="border-rad-6 border p-12 flex-column flex-center align-center h-100 w-100">
+  <div class="border-rad-6 border p-12 fx-col-full-cent h-100 w-100">
     <span class="help-icon mina-icon mb-16">help</span>
     <div class="mt-5 mb-8">
       Send {{ formGroup.value.amount }}
@@ -60,7 +60,7 @@
 
 <ng-template #step3>
   <div class="border-rad-6 border p-12 flex-column flex-between h-100 w-100">
-    <div class="flex-column flex-center align-center">
+    <div class="fx-col-full-cent">
       <span class="help-icon mina-icon mb-16">check_circle</span>
       <span class="mb-10">Success</span>
       <div class="mt-5 mb-8">
@@ -74,7 +74,7 @@
         {{ formGroup.value.recipient }}
       </div>
     </div>
-    <div class="flex-row tertiary flex-center align-center">
+    <div class="fx-row-full-cent tertiary">
       <span class="mina-icon mr-5 f-16">info</span>
       It is going to take up to 3 minutes to include the transaction into a block.
     </div>
@@ -100,7 +100,7 @@
     <div class="overflow-y-auto h-100"
          (clickOutside)="detachOverlay()">
       <div *ngFor="let wallet of wallets"
-           class="flex-row flex-between align-center dropdown-item pl-8 pointer pr-8 border-rad-4 mb-5"
+           class="fx-row-vert-cent flex-between dropdown-item pl-8 pointer pr-8 border-rad-4 mb-5"
            [class.active]="formGroup.value.recipient === wallet.publicKey"
            (click)="selectRecipient(wallet)">
         <span class="mina-icon f-20">check_small</span>

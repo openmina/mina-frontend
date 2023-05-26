@@ -5,9 +5,9 @@
        class="d3-tooltip z-1 f-small p-absolute bg-surface-top border-rad-8 popup-box-shadow-weak p-8 secondary">
     <div class="tertiary date mb-5"></div>
     <div class="paths">
-      <div class="flex-row align-center flex-between h-xs"
+      <div class="fx-row-vert-cent flex-between h-xs"
            *ngFor="let path of paths; let i=index">
-        <div class="flex-row align-center">
+        <div class="fx-row-vert-cent">
           <span class="point mr-5"
                 [style.background-color]="colors[i] || colors[i - colors.length]"></span>
           {{ path }}
@@ -17,8 +17,8 @@
     </div>
   </div>
 
-  <div class="w-100 flex-row flex-center align-center tertiary f-600 flex-wrap">
-    <div class="flex-row align-center mr-16"
+  <div class="w-100 fx-row-full-cent tertiary f-600 flex-wrap">
+    <div class="fx-row-vert-cent mr-16"
          *ngFor="let path of paths; let i=index">
       <span class="bullet mr-5" [style.background-color]="colors[i] || colors[i - colors.length]"></span>
       <span>{{ path }}</span>

@@ -1,0 +1,35 @@
+<div class="h-xl flex-row align-center flex-between pl-12 pr-12 tertiary border-bottom">
+  <div class="flex-row align-center">
+    <div class="mr-10 f-600">Filters</div>
+  </div>
+  <div>{{ transactions.length }} transactions</div>
+</div>
+<div class="mina-table overflow-x-auto flex-column h-minus-xl">
+  <div class="row head sorting p-relative pr-12" *ngIf="currentSort">
+    <span *ngFor="let tableHead of tableHeads; let i=index"
+          (click)="sortTable(tableHead.sort ?? tableHead.name)"
+          [class.active]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
+          class="pointer">
+      {{ tableHead.name }}
+      <span [class.flip]="currentSort.sortDirection === 'descending'"
+            [class.show]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
+            class="mina-icon f-18 icon-200">arrow_upward
+      </span>
+    </span>
+  </div>
+  <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-auto h-minus-lg"
+                               [itemSize]="32">
+    <div *cdkVirtualFor="let tx of transactions; let i=index"
+         [class.row-even]="i % 2 === 0"
+         class="row">
+      <span>{{ tx.date }}</span>
+      <span class="tertiary">{{ tx.from | truncateMid }}</span>
+      <span class="tertiary">{{ tx.to | truncateMid }}</span>
+      <span>{{ tx.nonce }}</span>
+      <span>{{ tx.amount }}</span>
+      <span>{{ tx.fee }}</span>
+      <span class="tertiary">{{ tx.memo }}</span>
+      <span class="tertiary">{{ tx.validUntil }}</span>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>

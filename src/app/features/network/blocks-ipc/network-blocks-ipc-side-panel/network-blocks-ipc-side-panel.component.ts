@@ -6,7 +6,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { selectNetworkBlocksIpc } from '@network/blocks-ipc/network-blocks-ipc.state';
 import { NetworkBlockIpc } from '@shared/types/network/blocks-ipc/network-block-ipc.type';
 import { BarGraphComponent } from '@shared/components/bar-graph/bar-graph.component';
-import { AGGREGATOR_TOGGLE_SIDE_PANEL, AggregatorToggleSidePanel } from '@dashboard/aggregator/aggregator.actions';
 import { NETWORK_BLOCKS_IPC_TOGGLE_SIDE_PANEL, NetworkBlocksIpcToggleSidePanel } from '@network/blocks-ipc/network-blocks-ipc.actions';
 
 @UntilDestroy()

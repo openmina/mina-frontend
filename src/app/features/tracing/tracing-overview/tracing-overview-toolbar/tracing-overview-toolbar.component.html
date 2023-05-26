@@ -1,10 +1,10 @@
-<div class="flex-row align-center">
+<div class="fx-row-vert-cent">
   <div class="mr-16 tertiary">Sort</div>
   <button class="mr-5 pl-8 pr-8"
-          [ngClass]="currentSort === SORT_DIRECTIONS.DSC ? 'btn-selected' : 'btn-primary'"
+          [ngClass]="'btn-' + (currentSort === SORT_DIRECTIONS.DSC ? 'selected' : 'primary')"
           (click)="sort(SORT_DIRECTIONS.DSC)">Slowest First</button>
   <button class="pl-8 pr-8"
-          [ngClass]="currentSort === SORT_DIRECTIONS.ASC ? 'btn-selected' : 'btn-primary'"
+          [ngClass]="'btn-' + (currentSort === SORT_DIRECTIONS.ASC ? 'selected' : 'primary')"
           (click)="sort(SORT_DIRECTIONS.ASC)">Fastest First</button>
 </div>
 <div class="flex-row">

@@ -6,6 +6,9 @@ import { ExplorerScanStateComponent } from '@explorer/scan-state/explorer-scan-s
 import { EffectsModule } from '@ngrx/effects';
 import { ExplorerScanStateEffects } from '@explorer/scan-state/explorer-scan-state.effects';
 import { ExplorerScanStateToolbarComponent } from './explorer-scan-state-toolbar/explorer-scan-state-toolbar.component';
+import { HorizontalMenuComponent } from '@shared/components/horizontal-menu/horizontal-menu.component';
+import { ScanStateChartComponent } from './scan-state-chart/scan-state-chart.component';
+import { ExplorerScanStateChartListComponent } from './explorer-scan-state-chart-list/explorer-scan-state-chart-list.component';
 
 
 @NgModule({
@@ -13,11 +16,14 @@ import { ExplorerScanStateToolbarComponent } from './explorer-scan-state-toolbar
     ExplorerScanStateListComponent,
     ExplorerScanStateComponent,
     ExplorerScanStateToolbarComponent,
+    ScanStateChartComponent,
+    ExplorerScanStateChartListComponent,
   ],
   imports: [
     SharedModule,
     ExplorerScanStateRouting,
-    EffectsModule.forFeature([ExplorerScanStateEffects]),
+    EffectsModule.forFeature(ExplorerScanStateEffects),
+    HorizontalMenuComponent,
   ],
 })
 export class ExplorerScanStateModule {}

@@ -1,9 +1,7 @@
 @import 'variables';
 
 .mina-table {
-
 	.row {
-		//grid-template-columns: $col0 $col1 $col2 $col3 1fr;
 		color: $base-tertiary;
 
 		&:not(.head) {
@@ -12,7 +10,57 @@
 	}
 
 	.cdk-virtual-scroll-viewport {
-		//min-width: $col0 + $col1 + $col2 + $col3 + $col4;
 		overflow-x: hidden;
+		@media (max-width: 700px) {
+			padding-bottom: 70px;
+		}
+	}
+}
+
+.to-top {
+	display: none;
+}
+
+@media (max-width: 700px) {
+	.to-top {
+		display: block;
+		position: fixed;
+		bottom: 76px;
+		right: 20px;
+		transform: rotate(-90deg);
+		color: $base-secondary;
+
+		&.hide {
+			bottom: -100px;
+			animation: bounceHide 0.5s cubic-bezier(0.5, 0.1, 0.5, 1.25) forwards;
+		}
+
+		&:not(.hide) {
+			animation: bounceShow 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
+		}
+	}
+}
+
+@keyframes bounceHide {
+	0% {
+		bottom: 76px;
+	}
+	50% {
+		bottom: 96px;
+	}
+	100% {
+		bottom: -100px;
+	}
+}
+
+@keyframes bounceShow {
+	0% {
+		bottom: -100px;
+	}
+	50% {
+		bottom: 96px;
+	}
+	90% {
+		bottom: 76px;
 	}
 }

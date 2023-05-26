@@ -1,12 +1,12 @@
 # Open Mina Explorer
 
-This project was created to help developers to trace and debug the Mina blockchain. It is a web application written in Angular 14 that uses one or more Mina nodes as backends.
+This project was created to help developers to trace and debug the Mina blockchain. It is a web application written in Angular 15 that uses one or more Mina nodes as backends.
 
-The application is available at [http://1.k8.openmina.com:31308](http://1.k8.openmina.com:31308)
+The application is available at [https://metrics.openmina.com](https://metrics.openmina.com)
 
 # Table of Contents
 1. [How to run it on your machine](#how-to-run-it-on-your-machine)
-2. [How to use the application](#how-to-run-it-on-your-machine)
+2. [How to use the application](#how-to-use-the-application)
 3. [Available features (pages)](#available-features-pages)
 4. [Architecture](#architecture)
 5. [Configuring your own setup of nodes](#configuring-your-own-setup-of-nodes)
@@ -18,8 +18,8 @@ The application is available at [http://1.k8.openmina.com:31308](http://1.k8.ope
 1. **Install Node.js:** First, you need to install Node.js on your computer. You can download the installer from the Node.js website at https://nodejs.org/en/download/. Make sure you install the latest version of Node.js that is compatible with your operating system.
 
 2. **Install Angular CLI:** Once you have Node.js installed, open a command prompt or terminal window and run the following command to install the Angular CLI:
-`npm install -g @angular/cli@14.0.0`.
-This command will install the version 14 of the Angular CLI globally on your computer.
+`npm install -g @angular/cli@15.0.0`.
+This command will install the version 15 of the Angular CLI globally on your computer.
 
 3. **Clone the project:** Next, clone the Angular project from the Git repository or download the source code as a ZIP file and extract it to a local directory on your computer.
 
@@ -116,24 +116,109 @@ export const environment: Readonly<MinaEnv> = {
   production: false,
   isVanilla: false,
   identifier: 'My Config',
-  aggregator: 'https://trace.dev.openmina.com:3003',
   configs: [
     {
       backend: 'https://trace.dev.openmina.com:3086',
       debugger: 'https://trace.dev.openmina.com:3087', 
       minaExplorer: 'https://devnet.api.minaexplorer.com',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs'],
+      features: {
+        dashboard: ['nodes'],
+        explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
+        resources: ['system'],
+        network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
+        tracing: ['overview', 'blocks'],
+        benchmarks: ['wallets'],
+        'web-node': ['wallet', 'peers', 'logs', 'state'],
+      },
       name: 'Awesome Node 1 😎',
     },
     {
       backend: 'https://sandbox.dev.openmina.com:3086',
       minaExplorer: 'https://devnet.api.minaexplorer.com',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs'],
+      features: {
+        dashboard: ['nodes'],
+        explorer: ['blocks', 'snark-pool'],
+        resources: ['system'],
+        network: ['messages', 'blocks'],
+        tracing: ['blocks'],
+        benchmarks: ['wallets'],
+      },
       name: 'Awesome Node 2 😎',
     },
   ],
 };
 ```
+
+As you can see, the features object is used to enable/disable the features of the application. Each feature is optional and if it is not present, it will be non-accessible.
+Each feature can contain an array of sub-features (sub-pages) that are also customizable.
+The features and sub-features that are available are:
+- **dashboard**
+  - **nodes**
+- **explorer**
+  - **blocks**
+  - **transactions**
+  - **snark-pool**
+  - **scan-state**
+  - **snark-traces**
+- **resources**
+  - **system**
+- **network**
+  - **messages**
+  - **connections**
+  - **blocks**
+  - **blocks-ipc**
+- **tracing**
+  - **overview**
+  - **blocks**
+- **benchmarks**
+  - **wallets**
+- **web-node**
+  - **wallet**
+  - **peers**
+  - **logs**
+  - **state**
+
+Beside a node-specific configuration, you can also add a global configuration that will be used by all the nodes who don't contain a specific feature configuration.
+The global configuration is optional and if it is not present, the default values will be used.
+> Please note that the global configuration is not merged with the node-specific configuration. If a node-specific configuration is present, it will override the global configuration entirely.
+
+Here is a setup that exemplifies the global configuration with all currently available features:
+```typescript
+import { MinaEnv } from '@shared/types/core/environment/mina-env.type';
+
+export const environment: Readonly<MinaEnv> = {
+  production: false,
+  isVanilla: false,
+  identifier: 'My Config',
+  globalConfig: {
+    features: {
+      dashboard: ['nodes'],
+      explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
+      resources: ['system'],
+      network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
+      tracing: ['overview', 'blocks'],
+      benchmarks: ['wallets'],
+      'web-node': ['wallet', 'peers', 'logs', 'state'],
+    },
+  },
+  configs: [
+    {
+      backend: 'https://trace.dev.openmina.com:3086',
+      debugger: 'https://trace.dev.openmina.com:3087',
+      minaExplorer: 'https://devnet.api.minaexplorer.com',
+      name: 'Awesome Node 1 😎',
+    },
+    {
+      backend: 'https://sandbox.dev.openmina.com:3086',
+      minaExplorer: 'https://devnet.api.minaexplorer.com',
+      name: 'Awesome Node 2 😎',
+    },
+  ],
+};
+```
+
+The following properties of the `MinaEnv` configuration are optional:
+`isVanilla`, `identifier`, `globalConfig`, `globalConfig.features`, `configs.debugger`, `configs.minaExplorer`, `configs.features`
 
 ## Running tests
 The application is tested using the Cypress framework. The tests are located in the _cypress/e2e_ directory. To run the tests, you need to run the following command:

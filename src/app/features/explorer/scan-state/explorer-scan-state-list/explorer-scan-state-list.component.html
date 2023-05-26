@@ -1,29 +1,26 @@
-<div class="legend p-absolute flex-column z-1 bg-surface-top pl-8 pr-8 pb-5 border-rad-4 popup-box-shadow-weak">
-  <div class="f-600 h-md flex-row align-center">Legend</div>
-  <div class="flex-row">
-    <div class="list">
-      <div class="flex-row align-center">
-        <span class="leaf Todo"></span>
-        <span>&nbsp;= Todo</span>
-      </div>
-      <div class="flex-row align-center">
-        <span class="leaf Done"></span>
-        <span>&nbsp;= Done</span>
-      </div>
-      <div class="flex-row align-center">
-        <span class="leaf empty"></span>
-        <span>&nbsp;= Empty</span>
-      </div>
-    </div>
+<div class="legend p-absolute z-1 bg-surface-top pl-8 pr-8 pb-5 border-rad-4 popup-box-shadow-weak">
+  <div class="f-600 h-md fx-row-vert-cent">Legend</div>
+  <div class="fx-row-vert-cent mb-5">
+    <span class="leaf Todo"></span>
+    <span>&nbsp;= Todo</span>
+  </div>
+  <div class="fx-row-vert-cent mb-5">
+    <span class="leaf Done"></span>
+    <span>&nbsp;= Done</span>
+  </div>
+  <div class="fx-row-vert-cent mb-5">
+    <span class="leaf empty"></span>
+    <span>&nbsp;= Empty</span>
   </div>
 </div>
 <div class="h-100 overflow-y-auto flex-column p-relative">
-  <div *ngFor="let tree of scanStateTrees; let i=index; trackBy: treeTrackBy" class="mb-16 flex-column border-bottom pl-12">
-    <div class="f-600 h-xl flex-row align-center">
+  <div *ngFor="let tree of scanStateTrees; let i=index; trackBy: treeTrackBy"
+       class="mb-16 flex-column border-bottom pl-12">
+    <div class="f-600 h-xl fx-row-vert-cent">
       TREE {{ i }}
-      <div class="border-rad-4 h-sm ml-8 pl-5 pr-5 flex-row align-center stats-done">{{ tree.done }} Done</div>
-      <div class="border-rad-4 h-sm ml-8 pl-5 pr-5 flex-row align-center stats-todo">{{ tree.todo }} Todo</div>
-      <div class="border-rad-4 h-sm ml-8 pl-5 pr-5 flex-row align-center stats-empty">{{ tree.empty }} Empty</div>
+      <div class="border-rad-4 h-sm ml-8 pl-5 pr-5 fx-row-vert-cent stats-done">{{ tree.done }} Done</div>
+      <div class="border-rad-4 h-sm ml-8 pl-5 pr-5 fx-row-vert-cent stats-todo">{{ tree.todo }} Todo</div>
+      <div class="border-rad-4 h-sm ml-8 pl-5 pr-5 fx-row-vert-cent stats-empty">{{ tree.empty }} Empty</div>
     </div>
     <div #trees class="flex-column f-small overflow-x-auto">
       <div class="flex-row leaf-row" [style.margin-left.px]="25 * 63.5">

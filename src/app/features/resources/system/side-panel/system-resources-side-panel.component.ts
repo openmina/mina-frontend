@@ -17,6 +17,7 @@ import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
   templateUrl: './system-resources-side-panel.component.html',
   styleUrls: ['./system-resources-side-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'border-left' },
 })
 export class SystemResourcesSidePanelComponent extends StoreDispatcher implements OnInit {
 

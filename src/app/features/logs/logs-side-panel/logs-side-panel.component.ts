@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { selectActiveLog } from '@logs/logs.state';
 import { Log } from '@shared/types/logs/log.type';
-import { ExpandTracking } from '@shared/components/custom-components/mina-json-viewer/mina-json-viewer.component';
+import { ExpandTracking } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
 import { LogsSetActiveLog } from '@logs/logs.actions';
 
 @Component({

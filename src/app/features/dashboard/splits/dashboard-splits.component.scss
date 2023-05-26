@@ -1,0 +1,9 @@
+$width: 410px;
+
+.wrapper {
+	width: calc(100% - #{$width});
+}
+
+mina-dashboard-splits-side-panel {
+	width: #{$width};
+}

@@ -10,15 +10,14 @@
             class="mina-icon f-18 icon-200">arrow_upward</span>
     </span>
     <div class="flex-row flex-end">
-      <button class="h-sm w-sm flex-row align-center flex-center btn-selected p-0 toggle p-relative"
+      <button class="h-sm w-sm fx-row-full-cent btn-selected p-0 toggle p-relative"
               *ngIf="!isSidePanelOpen"
               (click)="toggleSidePanel()">
         <span class="mina-icon f-20">view_sidebar</span>
       </button>
     </div>
   </div>
-  <cdk-virtual-scroll-viewport class="border-bottom border-top h-100 overflow-y-scroll"
-                               fxFlex="calc(100% - 36px)"
+  <cdk-virtual-scroll-viewport class="border-bottom border-top h-100 overflow-y-scroll h-minus-lg"
                                [itemSize]="itemSize">
     <div *cdkVirtualFor="let block of blocks; let i=index"
          [class.row-even]="i % 2 === 0"
@@ -31,17 +30,19 @@
       </span>
       <span class="tertiary">{{ block.date }}</span>
       <span [tooltip]="'Producer ID: ' + block.producerId | truncateMid: 19"
-            [showDelay]="500">{{ block.hash | truncateMid }}</span>
+            [showDelay]="500">
+        <mina-copy [value]="block.hash" [display]="block.hash | truncateMid"></mina-copy>
+      </span>
       <span class="tertiary"
             [tooltip]="'Global slot: ' + block.globalSlot"
             [showDelay]="500">{{ block.height }}</span>
-      <span class="secondary">
+      <span>
         <span (click)="seeMessagesForAddress(block.sender)"
               class="underline"
               [tooltip]="'See messages for this address'"
               [showDelay]="1000">{{ block.sender }}</span>
       </span>
-      <span class="secondary">
+      <span>
         <span (click)="seeMessagesForAddress(block.receiver)"
               class="underline"
               [tooltip]="'See messages for this address'"

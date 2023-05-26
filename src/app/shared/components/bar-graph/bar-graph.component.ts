@@ -12,7 +12,7 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { MIN_WIDTH_700 } from '@shared/constants/breakpoint-observer';
+import { MAX_WIDTH_700 } from '@shared/constants/breakpoint-observer';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
@@ -20,7 +20,6 @@ import { TemplatePortal } from '@angular/cdk/portal';
 import { getXTicks, niceYScale } from '@shared/helpers/graph.helper';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { CommonModule } from '@angular/common';
 
 class ChartColumn {
@@ -34,7 +33,7 @@ class ChartColumn {
 @Component({
   standalone: true,
   selector: 'mina-bar-graph',
-  imports: [CommonModule, FlexLayoutModule],
+  imports: [CommonModule],
   templateUrl: './bar-graph.component.html',
   styleUrls: ['./bar-graph.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -165,10 +164,10 @@ export class BarGraphComponent extends ManualDetection implements OnInit, AfterV
       return;
     }
     this.breakpointObserver
-      .observe(MIN_WIDTH_700)
+      .observe(MAX_WIDTH_700)
       .pipe(untilDestroyed(this))
       .subscribe((value: BreakpointState) => {
-        if (value.breakpoints[MIN_WIDTH_700]) {
+        if (value.breakpoints[MAX_WIDTH_700]) {
           this.xTicksLength = this.initialXTicksLength;
         } else {
           this.xTicksLength = 6;

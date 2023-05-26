@@ -50,3 +50,7 @@ export function toggleItem<T>(array: T[], item: T, comparator: (curr: T) => bool
   }
   return array;
 }
+
+export function removeLast<T>(arr: T[]): T[] {
+  return arr.slice(0, arr.length - 1);
+}

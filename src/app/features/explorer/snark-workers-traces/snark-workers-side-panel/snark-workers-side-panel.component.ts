@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { selectSWTracesActiveRow } from '@explorer/snark-workers-traces/snark-workers-traces.state';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { SnarkWorkerTraceJob } from '@shared/types/explorer/snark-traces/snark-worker-trace-job.type';
@@ -6,7 +6,6 @@ import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { SW_TRACES_SET_ACTIVE_JOB, SWTracesSetActiveJob } from '@explorer/snark-workers-traces/snark-workers-traces.actions';
-import { ExpandTracking } from '@shared/components/custom-components/mina-json-viewer/mina-json-viewer.component';
 import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
 
 @UntilDestroy()
@@ -21,10 +20,7 @@ export class SnarkWorkersSidePanelComponent extends ManualDetection implements O
 
   readonly secConfig: SecDurationConfig = { color: true, yellow: 0.5, orange: 0.75, red: 1, undefinedAlternative: '-' };
 
-  @Input() workers: string[];
-
   activeRow: SnarkWorkerTraceJob;
-  expandTracking: ExpandTracking = {};
 
   constructor(private store: Store<MinaState>) { super(); }
 
@@ -41,7 +37,7 @@ export class SnarkWorkersSidePanelComponent extends ManualDetection implements O
       });
   }
 
-  closeSidePanel() : void{
+  closeSidePanel(): void {
     this.store.dispatch<SWTracesSetActiveJob>({ type: SW_TRACES_SET_ACTIVE_JOB, payload: undefined });
   }
 }
