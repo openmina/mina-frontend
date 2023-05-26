@@ -2,43 +2,6 @@
 # USED GRAPHQL QUERIES & RPCS
 
 ## GraphQL queries & mutations:
-### Benchmarks
-* query getAccounts { account(publicKey: "${wallet.publicKey}") { nonce balance { liquid } } }
-* query pooledUserCommands { pooledUserCommands { ... on UserCommandPayment {  nonce memoVerbatim from } } }
-* **Mutation** - sendPayment:
-($fee:UInt64!, $amount:UInt64!,
-$to: PublicKey!, $from: PublicKey!, $nonce:UInt32, $memo: String,
-$validUntil: UInt32,$scalar: String!, $field: String!
-) {
-sendPayment(
-input: {
-fee: $fee,
-amount: $amount,
-to: $to,
-from: $from,
-memo: $memo,
-nonce: $nonce,
-validUntil: $validUntil
-},
-signature: {
-field: $field, scalar: $scalar
-}) {
-payment {
-amount
-fee
-feeToken
-from
-hash
-id
-isDelegation
-memo
-memoVerbatim
-nonce
-kind
-to
-}
-}
-}
 ### Dashboard
 * query latestBlockHeight {
 bestChain(maxLength: 1) {
@@ -437,6 +400,44 @@ feeToken
 failureReason
 token
 validUntil } } }
+
+### Benchmarks
+* query getAccounts { account(publicKey: "${wallet.publicKey}") { nonce balance { liquid } } }
+* query pooledUserCommands { pooledUserCommands { ... on UserCommandPayment {  nonce memoVerbatim from } } }
+* **Mutation** - sendPayment:
+  ($fee:UInt64!, $amount:UInt64!,
+  $to: PublicKey!, $from: PublicKey!, $nonce:UInt32, $memo: String,
+  $validUntil: UInt32,$scalar: String!, $field: String!
+  ) {
+  sendPayment(
+  input: {
+  fee: $fee,
+  amount: $amount,
+  to: $to,
+  from: $from,
+  memo: $memo,
+  nonce: $nonce,
+  validUntil: $validUntil
+  },
+  signature: {
+  field: $field, scalar: $scalar
+  }) {
+  payment {
+  amount
+  fee
+  feeToken
+  from
+  hash
+  id
+  isDelegation
+  memo
+  memoVerbatim
+  nonce
+  kind
+  to
+  }
+  }
+  }
 
 ### Toolbar:
 * query status {
