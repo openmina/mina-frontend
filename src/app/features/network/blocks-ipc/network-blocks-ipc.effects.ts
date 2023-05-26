@@ -51,19 +51,18 @@ export class NetworkBlocksIpcEffects extends MinaBaseEffect<NetworkBlocksIpcActi
     this.earliestBlock$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_BLOCKS_IPC_GET_EARLIEST_BLOCK),
       this.latestActionState<NetworkBlocksIpcGetEarliestBlock>(),
-      switchMap(({ action, state }) => {
-        return this.networkBlocksService.getEarliestBlockHeight().pipe(
-          tap(height => this.router.navigate([Routes.NETWORK, Routes.BLOCKS_IPC, height], { queryParamsHandling: 'merge' })),
+      switchMap(({ action, state }) =>
+        this.networkBlocksService.getEarliestBlockHeight().pipe(
           switchMap(height => {
             const actions: NetworkBlocksIpcActions[] = [{ type: NETWORK_BLOCKS_IPC_SET_EARLIEST_BLOCK, payload: { height } }];
             if (!state.network.blocksIpc.activeBlock) {
+              this.router.navigate([Routes.NETWORK, Routes.BLOCKS_IPC, height ?? ''], { queryParamsHandling: 'merge' });
               actions.push({ type: NETWORK_BLOCKS_IPC_SET_ACTIVE_BLOCK, payload: { height } });
               actions.push({ type: NETWORK_BLOCKS_IPC_INIT });
             }
             return actions;
           }),
-        );
-      }),
+        )),
     ));
 
     this.init$ = createEffect(() => this.actions$.pipe(

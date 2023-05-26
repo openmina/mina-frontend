@@ -2,8 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/
 import { WebNodeService } from '@web-node/web-node.service';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { downloadJson } from '@app/shared/helpers/user-input.helper';
-import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/custom-components/mina-json-viewer/mina-json-viewer.component';
-import { debounceTime } from 'rxjs';
+import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -12,7 +11,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   templateUrl: './web-node-state.component.html',
   styleUrls: ['./web-node-state.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'flex-column h-100' },
+  host: { class: 'flex-column h-100 overflow-auto pt-12' },
 })
 export class WebNodeStateComponent extends ManualDetection implements OnInit {
 

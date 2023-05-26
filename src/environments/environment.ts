@@ -3,810 +3,711 @@ import { MinaEnv } from '@shared/types/core/environment/mina-env.type';
 export const environment: Readonly<MinaEnv> = {
   production: false,
   identifier: 'local',
-  aggregator: 'http://1.k8.openmina.com:31308/aggregator',
-  isVanilla: false,
+  aggregator: 'http://1.k8.openmina.com:31355/aggregator',
+  isVanilla: true,
+  globalConfig: {
+    features: {
+      dashboard: ['nodes', 'topology'],
+      explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
+      resources: ['system'],
+      network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
+      tracing: ['overview', 'blocks'],
+      benchmarks: ['wallets', 'transactions'],
+      storage: ['accounts'],
+      'web-node': ['wallet', 'peers', 'logs', 'state'],
+    },
+  },
   configs: [
     // {
-    //   // backend: 'http://sandbox.dev.openmina.com:3085',
-    //   backend: 'https://trace.dev.openmina.com:3086',
-    //   minaExplorer: 'https://berkeley.api.minaexplorer.com',
-    //   features: ['dashboard', 'resources', 'network', 'tracing', 'web-node', 'benchmarks', 'explorer'],
-    //   name: 'trace',
+    //   "graphql": "http://1.k8.openmina.com:31355/node1",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/node1/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/node1/bpf-debugger",
+    //   "name": "node1"
     // },
     // {
-    //   backend: 'https://webrtc.webnode.openmina.com',
-    //   minaExplorer: 'https://berkeley.api.minaexplorer.com',
-    //   features: ['web-node', 'tracing', 'explorer', 'benchmarks'],
-    //   name: 'webrtc',
+    //   "graphql": "http://1.k8.openmina.com:31355/node2",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/node2/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/node2/bpf-debugger",
+    //   "name": "node2"
     // },
     // {
-    //   debugger: 'https://debug.dev.openmina.com',
-    //   backend: 'https://debug.dev.openmina.com:3086',
-    //   minaExplorer: 'https://berkeley.api.minaexplorer.com',
-    //   features: ['dashboard', 'resources', 'network', 'tracing', 'web-node', 'benchmarks', 'explorer'],
-    //   name: 'debug',
+    //   "graphql": "http://1.k8.openmina.com:31355/prod2",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/prod2/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/prod2/bpf-debugger",
+    //   "name": "prod2"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/seed2",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/seed2/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/seed2/bpf-debugger",
+    //   "name": "seed2"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/node1",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/node1/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/node1/bpf-debugger",
+    //   "name": "node1"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/node2",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/node2/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/node2/bpf-debugger",
+    //   "name": "node2"
     // },
     {
-      backend: 'http://1.k8.openmina.com:31311/node1',
-      debugger: 'http://1.k8.openmina.com:31311/node1/bpf-debugger',
-      name: 'node1',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources', 'logs'],
+      "graphql": "http://1.k8.openmina.com:31355/node3",
+      "tracing-graphql": "http://1.k8.openmina.com:31355/node3/internal-trace",
+      "debugger": "http://1.k8.openmina.com:31355/node3/bpf-debugger",
+      "name": "node3"
     },
     {
-      backend: 'http://1.k8.openmina.com:31311/node2',
-      name: 'node2',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
+      "graphql": "http://1.k8.openmina.com:31355/node4",
+      "tracing-graphql": "http://1.k8.openmina.com:31355/node4/internal-trace",
+      "debugger": "http://1.k8.openmina.com:31355/node4/bpf-debugger",
+      "name": "node4"
     },
     {
-      backend: 'http://1.k8.openmina.com:31311/node3',
-      name: 'node3',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node4',
-    //   name: 'node4',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node5',
-    //   name: 'node5',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node6',
-    //   name: 'node6',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node7',
-    //   name: 'node7',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node8',
-    //   name: 'node8',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node9',
-    //   name: 'node9',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node10',
-    //   name: 'node10',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node11',
-    //   name: 'node11',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node12',
-    //   name: 'node12',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node13',
-    //   name: 'node13',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node14',
-    //   name: 'node14',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node15',
-    //   name: 'node15',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node16',
-    //   name: 'node16',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node17',
-    //   name: 'node17',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node18',
-    //   name: 'node18',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node19',
-    //   name: 'node19',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node20',
-    //   name: 'node20',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node21',
-    //   name: 'node21',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node22',
-    //   name: 'node22',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node23',
-    //   name: 'node23',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node24',
-    //   name: 'node24',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node25',
-    //   name: 'node25',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node26',
-    //   name: 'node26',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node27',
-    //   name: 'node27',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node28',
-    //   name: 'node28',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node29',
-    //   name: 'node29',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node30',
-    //   name: 'node30',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node31',
-    //   name: 'node31',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node32',
-    //   name: 'node32',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node33',
-    //   name: 'node33',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node34',
-    //   name: 'node34',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node35',
-    //   name: 'node35',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node36',
-    //   name: 'node36',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node37',
-    //   name: 'node37',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node38',
-    //   name: 'node38',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node39',
-    //   name: 'node39',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node40',
-    //   name: 'node40',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node41',
-    //   name: 'node41',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node42',
-    //   name: 'node42',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node43',
-    //   name: 'node43',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node44',
-    //   name: 'node44',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node45',
-    //   name: 'node45',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node46',
-    //   name: 'node46',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node47',
-    //   name: 'node47',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node48',
-    //   name: 'node48',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node49',
-    //   name: 'node49',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node50',
-    //   name: 'node50',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node51',
-    //   name: 'node51',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node52',
-    //   name: 'node52',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node53',
-    //   name: 'node53',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node54',
-    //   name: 'node54',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node55',
-    //   name: 'node55',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node56',
-    //   name: 'node56',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node57',
-    //   name: 'node57',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node58',
-    //   name: 'node58',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node59',
-    //   name: 'node59',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node60',
-    //   name: 'node60',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node61',
-    //   name: 'node61',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node62',
-    //   name: 'node62',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node63',
-    //   name: 'node63',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node64',
-    //   name: 'node64',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node65',
-    //   name: 'node65',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node66',
-    //   name: 'node66',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node67',
-    //   name: 'node67',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node68',
-    //   name: 'node68',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node69',
-    //   name: 'node69',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node70',
-    //   name: 'node70',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node71',
-    //   name: 'node71',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node72',
-    //   name: 'node72',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node73',
-    //   name: 'node73',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node74',
-    //   name: 'node74',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node75',
-    //   name: 'node75',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node76',
-    //   name: 'node76',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node77',
-    //   name: 'node77',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node78',
-    //   name: 'node78',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node79',
-    //   name: 'node79',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node80',
-    //   name: 'node80',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node81',
-    //   name: 'node81',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node82',
-    //   name: 'node82',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node83',
-    //   name: 'node83',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node84',
-    //   name: 'node84',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node85',
-    //   name: 'node85',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node86',
-    //   name: 'node86',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node87',
-    //   name: 'node87',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node88',
-    //   name: 'node88',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node89',
-    //   name: 'node89',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node90',
-    //   name: 'node90',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node91',
-    //   name: 'node91',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node92',
-    //   name: 'node92',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node93',
-    //   name: 'node93',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node94',
-    //   name: 'node94',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node95',
-    //   name: 'node95',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node96',
-    //   name: 'node96',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node97',
-    //   name: 'node97',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node98',
-    //   name: 'node98',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node99',
-    //   name: 'node99',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node100',
-    //   name: 'node100',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node101',
-    //   name: 'node101',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node102',
-    //   name: 'node102',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node103',
-    //   name: 'node103',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node104',
-    //   name: 'node104',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node105',
-    //   name: 'node105',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node106',
-    //   name: 'node106',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node107',
-    //   name: 'node107',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node108',
-    //   name: 'node108',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node109',
-    //   name: 'node109',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node110',
-    //   name: 'node110',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node111',
-    //   name: 'node111',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node112',
-    //   name: 'node112',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node113',
-    //   name: 'node113',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node114',
-    //   name: 'node114',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node115',
-    //   name: 'node115',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node116',
-    //   name: 'node116',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node117',
-    //   name: 'node117',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node118',
-    //   name: 'node118',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node119',
-    //   name: 'node119',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node120',
-    //   name: 'node120',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node121',
-    //   name: 'node121',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node122',
-    //   name: 'node122',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node123',
-    //   name: 'node123',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node124',
-    //   name: 'node124',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node125',
-    //   name: 'node125',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node126',
-    //   name: 'node126',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node127',
-    //   name: 'node127',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node128',
-    //   name: 'node128',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node129',
-    //   name: 'node129',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/node130',
-    //   name: 'node130',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/prod1',
-    //   name: 'prod1',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/prod2',
-    //   name: 'prod2',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/prod3',
-    //   name: 'prod3',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/prod4',
-    //   name: 'prod4',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/prod5',
-    //   name: 'prod5',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/prod6',
-    //   name: 'prod6',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/prod7',
-    //   name: 'prod7',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/prod8',
-    //   name: 'prod8',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/prod9',
-    //   name: 'prod9',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/prod10',
-    //   name: 'prod10',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/snarker1',
-    //   name: 'snarker1',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/snarker2',
-    //   name: 'snarker2',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/snarker3',
-    //   name: 'snarker3',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/snarker4',
-    //   name: 'snarker4',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/snarker5',
-    //   name: 'snarker5',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/snarker6',
-    //   name: 'snarker6',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    // {
-    //   backend: 'http://1.k8.openmina.com:31311/snarker7',
-    //   name: 'snarker7',
-    //   features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    // },
-    {
-      backend: 'http://1.k8.openmina.com:31311/snarker8',
-      name: 'snarker8',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
+      "graphql": "http://1.k8.openmina.com:31355/node5",
+      "tracing-graphql": "http://1.k8.openmina.com:31355/node5/internal-trace",
+      "debugger": "http://1.k8.openmina.com:31355/node5/bpf-debugger",
+      "name": "node5"
     },
     {
-      backend: 'http://1.k8.openmina.com:31311/snarker9',
-      name: 'snarker9',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
+      "graphql": "http://1.k8.openmina.com:31355/node6",
+      "tracing-graphql": "http://1.k8.openmina.com:31355/node6/internal-trace",
+      "debugger": "http://1.k8.openmina.com:31355/node6/bpf-debugger",
+      "name": "node6"
     },
     {
-      backend: 'http://1.k8.openmina.com:31311/snarker10',
-      name: 'snarker10',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
+      "graphql": "http://1.k8.openmina.com:31355/node7",
+      "tracing-graphql": "http://1.k8.openmina.com:31355/node7/internal-trace",
+      "debugger": "http://1.k8.openmina.com:31355/node7/bpf-debugger",
+      "name": "node7"
     },
     {
-      backend: 'http://1.k8.openmina.com:31311/seed1',
-      name: 'seed1',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
+      "graphql": "http://1.k8.openmina.com:31355/node8",
+      "tracing-graphql": "http://1.k8.openmina.com:31355/node8/internal-trace",
+      "debugger": "http://1.k8.openmina.com:31355/node8/bpf-debugger",
+      "name": "node8"
     },
     {
-      backend: 'http://1.k8.openmina.com:31311/seed2',
-      name: 'seed2',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
+      "graphql": "http://1.k8.openmina.com:31355/prod01",
+      "tracing-graphql": "http://1.k8.openmina.com:31355/prod01/internal-trace",
+      "debugger": "http://1.k8.openmina.com:31355/prod01/bpf-debugger",
+      "name": "prod01"
     },
     {
-      backend: 'http://1.k8.openmina.com:31311/seed3',
-      name: 'seed3',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
+      "graphql": "http://1.k8.openmina.com:31355/prod02",
+      "tracing-graphql": "http://1.k8.openmina.com:31355/prod02/internal-trace",
+      "debugger": "http://1.k8.openmina.com:31355/prod02/bpf-debugger",
+      "name": "prod02"
     },
-    {
-      backend: 'http://1.k8.openmina.com:31311/seed4',
-      name: 'seed4',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    },
-    {
-      backend: 'http://1.k8.openmina.com:31311/seed5',
-      name: 'seed5',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    },
-    {
-      backend: 'http://1.k8.openmina.com:31311/transaction-generator',
-      name: 'transaction-generator',
-      features: ['dashboard', 'network', 'benchmarks', 'explorer', 'tracing', 'resources'],
-    },
-  ],
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/prod03",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/prod03/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/prod03/bpf-debugger",
+    //   "name": "prod03"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/prod2",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/prod2/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/prod2/bpf-debugger",
+    //   "name": "prod2"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/prod3",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/prod3/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/prod3/bpf-debugger",
+    //   "name": "prod3"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/seed1",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/seed1/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/seed1/bpf-debugger",
+    //   "name": "seed1"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/seed2",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/seed2/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/seed2/bpf-debugger",
+    //   "name": "seed2"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker001",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker001/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker001/bpf-debugger",
+    //   "name": "snarker001"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker002",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker002/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker002/bpf-debugger",
+    //   "name": "snarker002"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker003",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker003/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker003/bpf-debugger",
+    //   "name": "snarker003"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker004",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker004/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker004/bpf-debugger",
+    //   "name": "snarker004"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker005",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker005/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker005/bpf-debugger",
+    //   "name": "snarker005"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker006",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker006/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker006/bpf-debugger",
+    //   "name": "snarker006"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker007",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker007/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker007/bpf-debugger",
+    //   "name": "snarker007"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker008",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker008/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker008/bpf-debugger",
+    //   "name": "snarker008"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker009",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker009/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker009/bpf-debugger",
+    //   "name": "snarker009"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker010",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker010/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker010/bpf-debugger",
+    //   "name": "snarker010"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker011",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker011/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker011/bpf-debugger",
+    //   "name": "snarker011"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker012",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker012/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker012/bpf-debugger",
+    //   "name": "snarker012"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker013",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker013/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker013/bpf-debugger",
+    //   "name": "snarker013"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker014",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker014/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker014/bpf-debugger",
+    //   "name": "snarker014"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker015",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker015/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker015/bpf-debugger",
+    //   "name": "snarker015"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker016",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker016/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker016/bpf-debugger",
+    //   "name": "snarker016"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker017",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker017/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker017/bpf-debugger",
+    //   "name": "snarker017"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker018",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker018/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker018/bpf-debugger",
+    //   "name": "snarker018"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker019",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker019/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker019/bpf-debugger",
+    //   "name": "snarker019"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker020",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker020/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker020/bpf-debugger",
+    //   "name": "snarker020"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker021",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker021/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker021/bpf-debugger",
+    //   "name": "snarker021"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker022",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker022/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker022/bpf-debugger",
+    //   "name": "snarker022"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker023",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker023/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker023/bpf-debugger",
+    //   "name": "snarker023"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker024",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker024/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker024/bpf-debugger",
+    //   "name": "snarker024"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker025",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker025/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker025/bpf-debugger",
+    //   "name": "snarker025"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker026",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker026/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker026/bpf-debugger",
+    //   "name": "snarker026"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker027",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker027/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker027/bpf-debugger",
+    //   "name": "snarker027"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker028",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker028/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker028/bpf-debugger",
+    //   "name": "snarker028"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker029",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker029/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker029/bpf-debugger",
+    //   "name": "snarker029"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker030",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker030/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker030/bpf-debugger",
+    //   "name": "snarker030"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker031",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker031/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker031/bpf-debugger",
+    //   "name": "snarker031"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker032",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker032/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker032/bpf-debugger",
+    //   "name": "snarker032"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker033",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker033/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker033/bpf-debugger",
+    //   "name": "snarker033"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker034",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker034/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker034/bpf-debugger",
+    //   "name": "snarker034"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker035",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker035/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker035/bpf-debugger",
+    //   "name": "snarker035"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker036",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker036/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker036/bpf-debugger",
+    //   "name": "snarker036"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker037",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker037/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker037/bpf-debugger",
+    //   "name": "snarker037"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker038",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker038/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker038/bpf-debugger",
+    //   "name": "snarker038"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker039",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker039/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker039/bpf-debugger",
+    //   "name": "snarker039"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker040",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker040/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker040/bpf-debugger",
+    //   "name": "snarker040"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker041",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker041/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker041/bpf-debugger",
+    //   "name": "snarker041"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker042",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker042/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker042/bpf-debugger",
+    //   "name": "snarker042"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker043",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker043/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker043/bpf-debugger",
+    //   "name": "snarker043"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker044",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker044/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker044/bpf-debugger",
+    //   "name": "snarker044"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker045",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker045/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker045/bpf-debugger",
+    //   "name": "snarker045"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker046",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker046/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker046/bpf-debugger",
+    //   "name": "snarker046"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker047",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker047/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker047/bpf-debugger",
+    //   "name": "snarker047"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker048",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker048/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker048/bpf-debugger",
+    //   "name": "snarker048"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker049",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker049/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker049/bpf-debugger",
+    //   "name": "snarker049"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker050",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker050/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker050/bpf-debugger",
+    //   "name": "snarker050"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker051",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker051/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker051/bpf-debugger",
+    //   "name": "snarker051"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker052",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker052/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker052/bpf-debugger",
+    //   "name": "snarker052"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker053",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker053/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker053/bpf-debugger",
+    //   "name": "snarker053"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker054",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker054/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker054/bpf-debugger",
+    //   "name": "snarker054"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker055",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker055/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker055/bpf-debugger",
+    //   "name": "snarker055"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker056",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker056/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker056/bpf-debugger",
+    //   "name": "snarker056"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker057",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker057/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker057/bpf-debugger",
+    //   "name": "snarker057"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker058",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker058/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker058/bpf-debugger",
+    //   "name": "snarker058"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker059",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker059/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker059/bpf-debugger",
+    //   "name": "snarker059"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker060",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker060/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker060/bpf-debugger",
+    //   "name": "snarker060"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker061",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker061/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker061/bpf-debugger",
+    //   "name": "snarker061"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker062",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker062/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker062/bpf-debugger",
+    //   "name": "snarker062"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker063",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker063/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker063/bpf-debugger",
+    //   "name": "snarker063"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker064",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker064/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker064/bpf-debugger",
+    //   "name": "snarker064"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker065",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker065/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker065/bpf-debugger",
+    //   "name": "snarker065"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker066",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker066/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker066/bpf-debugger",
+    //   "name": "snarker066"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker067",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker067/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker067/bpf-debugger",
+    //   "name": "snarker067"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker068",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker068/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker068/bpf-debugger",
+    //   "name": "snarker068"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker069",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker069/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker069/bpf-debugger",
+    //   "name": "snarker069"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker070",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker070/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker070/bpf-debugger",
+    //   "name": "snarker070"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker071",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker071/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker071/bpf-debugger",
+    //   "name": "snarker071"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker072",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker072/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker072/bpf-debugger",
+    //   "name": "snarker072"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker073",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker073/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker073/bpf-debugger",
+    //   "name": "snarker073"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker074",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker074/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker074/bpf-debugger",
+    //   "name": "snarker074"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker075",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker075/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker075/bpf-debugger",
+    //   "name": "snarker075"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker076",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker076/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker076/bpf-debugger",
+    //   "name": "snarker076"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker077",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker077/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker077/bpf-debugger",
+    //   "name": "snarker077"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker078",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker078/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker078/bpf-debugger",
+    //   "name": "snarker078"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker079",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker079/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker079/bpf-debugger",
+    //   "name": "snarker079"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker080",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker080/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker080/bpf-debugger",
+    //   "name": "snarker080"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker081",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker081/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker081/bpf-debugger",
+    //   "name": "snarker081"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker082",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker082/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker082/bpf-debugger",
+    //   "name": "snarker082"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker083",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker083/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker083/bpf-debugger",
+    //   "name": "snarker083"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker084",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker084/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker084/bpf-debugger",
+    //   "name": "snarker084"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker085",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker085/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker085/bpf-debugger",
+    //   "name": "snarker085"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker086",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker086/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker086/bpf-debugger",
+    //   "name": "snarker086"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker087",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker087/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker087/bpf-debugger",
+    //   "name": "snarker087"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker088",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker088/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker088/bpf-debugger",
+    //   "name": "snarker088"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker089",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker089/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker089/bpf-debugger",
+    //   "name": "snarker089"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker090",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker090/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker090/bpf-debugger",
+    //   "name": "snarker090"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker091",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker091/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker091/bpf-debugger",
+    //   "name": "snarker091"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker092",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker092/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker092/bpf-debugger",
+    //   "name": "snarker092"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker093",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker093/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker093/bpf-debugger",
+    //   "name": "snarker093"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker094",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker094/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker094/bpf-debugger",
+    //   "name": "snarker094"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker095",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker095/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker095/bpf-debugger",
+    //   "name": "snarker095"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31355/snarker096",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31355/snarker096/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31355/snarker096/bpf-debugger",
+    //   "name": "snarker096"
+    // }
+  ]
 };
 

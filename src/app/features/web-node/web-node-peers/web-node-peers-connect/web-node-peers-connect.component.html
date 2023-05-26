@@ -1,12 +1,12 @@
-<div fxFlex="36px">
-  <button class="mt-5 ml-12 flex-row align-center secondary primary-hover bg-transparent"
+<div class="h-lg">
+  <button class="mt-5 ml-12 fx-row-vert-cent secondary primary-hover bg-transparent"
           routerLink="/web-node/peers">
     <span class="mina-icon f-20 mr-8">arrow_back</span>
     <span>Back to Peers</span>
   </button>
 </div>
 
-<div class="flex-column align-center pt-12 flex-grow">
+<div class="fx-col-horiz-cent pt-12 flex-grow">
   <mina-stepper [stepHeaders]="['Receive Peer ID', 'Generate Offer', 'Receive Answer', 'Confirm Connection']"
                 [steps]="[step1, step2, step3, step4]"
                 [activeStep]="activeStep"
@@ -17,11 +17,11 @@
 
 <ng-template #step1>
   <div class="border-rad-6 border p-12 flex-column h-100">
-    <div class="flex-column flex-center align-center flex-grow">
+    <div class="fx-col-full-cent flex-grow">
       <span class="mina-icon icon-100 paste-icon">conversion_path</span>
     </div>
     <div class="p-relative">
-      <span class="p-absolute pl-12 h-100 flex-row align-center selected-primary"
+      <span class="p-absolute pl-12 h-100 fx-row-vert-cent selected-primary"
             [class.success-primary]="!peerIdMessage && formControl.value"
             [class.error]="peerIdMessage">Peer ID
       </span>
@@ -31,9 +31,9 @@
              [class.input-success]="!peerIdMessage && formControl.value"
              [formControl]="formControl">
     </div>
-    <div class="flex-row tertiary align-center pt-12">
+    <div class="fx-row-vert-cent tertiary pt-12">
       <ng-container *ngIf="peerIdMessage; else noError">
-        <span class="error flex-row align-center">
+        <span class="error fx-row-vert-cent">
           <span class="mina-icon f-20 mr-5 icon-100">error</span>
           {{ peerIdMessage }}
         </span>
@@ -44,7 +44,7 @@
           Ask the peer to share their ID and paste it here
         </ng-container>
         <ng-template #successValueInInput>
-          <span class="success-primary flex-row align-center">
+          <span class="success-primary fx-row-vert-cent">
             <span class="mina-icon f-20 mr-5 icon-100">check_circle</span>
             Success, valid ID entered
           </span>
@@ -83,14 +83,14 @@
 
 <ng-template #step3>
   <div class="border-rad-6 border p-12 flex-column flex-center align-center h-100">
-    <div fxFlex="50" class="flex-column bg-container border-rad-4 p-12 w-100 mb-5">
-      <div fxFlex="24px" class="f-600">Initial Offer</div>
+    <div class="h-50 flex-column bg-container border-rad-4 p-12 w-100 mb-5">
+      <div class="f-600 h-sm">Initial Offer</div>
       <div class="flex-column flex-grow overflow-auto transparent-scrollbar-track">
         <mina-json-viewer [json]="offer" [expanded]="true"></mina-json-viewer>
       </div>
     </div>
-    <div fxFlex="50" class="flex-column bg-container border-rad-4 p-12 w-100">
-      <div fxFlex="24px" class="f-600">Received Answer</div>
+    <div class="h-50 flex-column bg-container border-rad-4 p-12 w-100">
+      <div class="f-600 h-sm">Received Answer</div>
       <div class="flex-grow flex-column align-center flex-center tertiary">
         <span class="paste-icon mina-icon mb-5 icon-100">content_paste</span>
         <span>Paste answer here</span>
@@ -101,14 +101,14 @@
 
 <ng-template #step4>
   <div class="border-rad-6 border p-12 flex-column h-100">
-    <div fxFlex="50" class="flex-column bg-container border-rad-4 p-12 w-100 mb-5">
-      <div fxFlex="24px" class="f-600">Initial Offer</div>
+    <div class="h-50 flex-column bg-container border-rad-4 p-12 w-100 mb-5">
+      <div class="f-600 h-sm">Initial Offer</div>
       <div class="flex-column flex-grow overflow-auto transparent-scrollbar-track">
         <mina-json-viewer [json]="offer" [expanded]="true"></mina-json-viewer>
       </div>
     </div>
-    <div fxFlex="50" class="flex-column bg-container border-rad-4 p-12 w-100">
-      <div fxFlex="24px" class="f-600">Received Answer</div>
+    <div class="h-50 flex-column bg-container border-rad-4 p-12 w-100">
+      <div class="f-600 h-sm">Received Answer</div>
       <div class="flex-column flex-grow overflow-auto transparent-scrollbar-track">
         <mina-json-viewer [json]="answer" [expanded]="true"></mina-json-viewer>
       </div>

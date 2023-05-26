@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { BenchmarksComponent } from '@benchmarks/benchmarks.component';
-import { BenchmarksWalletsComponent } from '@benchmarks/benchmarks-wallets/benchmarks-wallets.component';
 import { BENCHMARKS_TITLE } from '@app/app.routing';
 
 const routes: Routes = [
@@ -11,13 +10,19 @@ const routes: Routes = [
     children: [
       {
         path: 'wallets',
-        component: BenchmarksWalletsComponent,
+        loadChildren: () => import('./wallets/benchmarks-wallets.module').then(m => m.BenchmarksWalletsModule),
+        title: BENCHMARKS_TITLE,
+      },
+      {
+        path: 'transactions',
+        loadChildren: () => import('./transactions/benchmarks-transactions.module').then(m => m.BenchmarksTransactionsModule),
         title: BENCHMARKS_TITLE,
       },
       {
         path: '**',
+        pathMatch: 'full',
         redirectTo: 'wallets',
-      }
+      },
     ],
   },
 ];

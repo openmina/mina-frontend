@@ -11,15 +11,13 @@ export class ExplorerSnarksService {
   constructor(private graphQL: GraphQLService) { }
 
   getSnarks(): Observable<ExplorerSnark[]> {
-    return this.graphQL.query('snarkPool',
-      `{
+    return this.graphQL.query('snarkPool',`{
         snarkPool {
           workIds
           prover
           fee
         }
-      }
-      `)
+      }`)
       .pipe(
         map((data: any) => data.snarkPool
           .map((sn: any) => ({

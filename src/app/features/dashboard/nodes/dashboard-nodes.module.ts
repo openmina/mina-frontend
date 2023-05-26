@@ -8,6 +8,9 @@ import { DashboardNodesToolbarComponent } from './dashboard-nodes-toolbar/dashbo
 import { EffectsModule } from '@ngrx/effects';
 import { DashboardNodesEffects } from '@dashboard/nodes/dashboard-nodes.effects';
 import { DashboardNodesSidePanelComponent } from './dashboard-nodes-side-panel/dashboard-nodes-side-panel.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
+import { CopyComponent } from '@shared/components/copy/copy.component';
+import { HorizontalMenuComponent } from '@shared/components/horizontal-menu/horizontal-menu.component';
 
 
 @NgModule({
@@ -19,8 +22,11 @@ import { DashboardNodesSidePanelComponent } from './dashboard-nodes-side-panel/d
   ],
   imports: [
     SharedModule,
+    CopyComponent,
+    HorizontalResizableContainerComponent,
     DashboardNodesRouting,
     EffectsModule.forFeature([DashboardNodesEffects]),
+    HorizontalMenuComponent,
   ],
 })
 export class DashboardNodesModule {}

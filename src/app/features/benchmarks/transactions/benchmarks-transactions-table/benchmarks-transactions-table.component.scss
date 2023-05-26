@@ -1,0 +1,33 @@
+@import 'variables';
+
+$column-widths: 200px 140px 165px 120px 150px 150px 150px 260px;
+
+.mina-table {
+	.row {
+		grid-template-columns: $column-widths;
+		color: $base-secondary;
+
+		&:not(.head) {
+			cursor: pointer;
+		}
+
+		.status {
+			padding: 3px;
+
+			&.pending {
+				color: $aware-primary;
+				background-color: $aware-container;
+			}
+
+			&.included {
+				color: $success-primary;
+				background-color: $success-container;
+			}
+		}
+	}
+
+	.cdk-virtual-scroll-viewport {
+		min-width: sum($column-widths);
+		overflow-x: hidden;
+	}
+}

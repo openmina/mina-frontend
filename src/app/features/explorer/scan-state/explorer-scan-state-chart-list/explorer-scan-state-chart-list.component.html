@@ -1,0 +1,6 @@
+<div class="flex-row flex-wrap p-12 overflow-y-auto h-100 w-100" *ngIf="charts">
+  <div *ngFor="let chart of charts"
+       class="sunburst mr-10 mb-10 border border-rad-6">
+    <mina-scan-state-chart [data]="chart"></mina-scan-state-chart>
+  </div>
+</div>

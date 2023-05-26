@@ -4,13 +4,16 @@ import { ExplorerBlock } from '@shared/types/explorer/blocks/explorer-block.type
 import { ExplorerBlocksState } from '@explorer/blocks/explorer-blocks.state';
 import {
   EXPLORER_BLOCKS_CLOSE,
-  EXPLORER_BLOCKS_GET_BLOCKS_SUCCESS,
+  EXPLORER_BLOCKS_GET_BLOCKS_SUCCESS, EXPLORER_BLOCKS_GET_TXS_SUCCESS, EXPLORER_BLOCKS_SET_ACTIVE_BLOCK,
   EXPLORER_BLOCKS_SORT,
   ExplorerBlocksActions,
 } from '@explorer/blocks/explorer-blocks.actions';
 
 const initialState: ExplorerBlocksState = {
   blocks: [],
+  activeBlock: undefined,
+  txs: [],
+  zkApps: [],
   sort: {
     sortBy: 'timestamp',
     sortDirection: SortDirection.DSC,
@@ -33,6 +36,23 @@ export function reducer(state: ExplorerBlocksState = initialState, action: Explo
         sort: action.payload,
         blocks: sortBlocks(state.blocks, action.payload),
       };
+    }
+
+    case EXPLORER_BLOCKS_SET_ACTIVE_BLOCK: {
+      return {
+        ...state,
+        activeBlock: action.payload,
+        txs: [],
+        zkApps: [],
+      }
+    }
+
+    case EXPLORER_BLOCKS_GET_TXS_SUCCESS: {
+      return {
+        ...state,
+        txs: action.payload[0],
+        zkApps: action.payload[1],
+      }
     }
 
     case EXPLORER_BLOCKS_CLOSE:

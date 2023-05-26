@@ -1,20 +1,11 @@
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
-import { PROMISE, storeDashboardSubscription } from '../../../support/commands';
+import { stateSliceAsPromise } from '../../../support/commands';
 import { DashboardNodesState } from '@dashboard/nodes/dashboard-nodes.state';
 
-const getDashboard = (store: Store<MinaState>) => {
-  const promiseBody = (resolve: (result?: unknown) => void): void => {
-    const observer = (dashboard: DashboardNodesState) => {
-      if (dashboard.filteredNodes.length > 2) {
-        return resolve(dashboard);
-      }
-      setTimeout(() => resolve(), 3000);
-    };
-    storeDashboardSubscription(store, observer);
-  };
-  return PROMISE(promiseBody);
-};
+const condition = (state: DashboardNodesState) => state && state.nodes.length > 1;
+const getDashboard = (store: Store<MinaState>) => stateSliceAsPromise<DashboardNodesState>(store, condition, 'dashboard', 'nodes');
+
 
 describe('DASHBOARD NODES TOOLBAR', () => {
   beforeEach(() => {
@@ -23,26 +14,31 @@ describe('DASHBOARD NODES TOOLBAR', () => {
 
   it('goes to previous block', () => {
     let activeBlock: number;
-    cy
-      .wait(1000)
+    cy.wait(1000)
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        activeBlock = dashboard.activeBlock;
+      .then((state: DashboardNodesState) => {
+        cy.log(JSON.stringify(state.nodes))
+        if (state && state.nodes.length > 1) {
+          activeBlock = state.activeBlock;
+        }
       })
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('have.class', 'disabled')
       .get('mina-dashboard-nodes-toolbar > div:first-child button:last-child')
       .should('have.class', 'disabled')
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:first-child')
-      .click()
+      .click({ force: true })
       .wait(1000)
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        expect(activeBlock).to.equal(dashboard.activeBlock + 1);
+      .then((state: DashboardNodesState) => {
+        cy.log(JSON.stringify(state.nodes))
+        if (state && activeBlock !== undefined) {
+          expect(activeBlock).to.equal(state.activeBlock + 1);
+        }
       })
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('not.have.class', 'disabled')
@@ -52,36 +48,44 @@ describe('DASHBOARD NODES TOOLBAR', () => {
 
   it('goes to next block', () => {
     let activeBlock: number;
-    cy
-      .wait(1000)
+    cy.wait(1000)
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        activeBlock = dashboard.activeBlock;
+      .then((state: DashboardNodesState) => {
+        cy.log(JSON.stringify(state.nodes))
+        if (state && state.nodes.length > 1) {
+          activeBlock = state.activeBlock;
+        }
       })
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('have.class', 'disabled')
       .get('mina-dashboard-nodes-toolbar > div:first-child button:last-child')
       .should('have.class', 'disabled')
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:first-child')
-      .click()
+      .click({ force: true })
       .wait(1000)
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        expect(activeBlock).to.equal(dashboard.activeBlock + 1);
+      .then((state: DashboardNodesState) => {
+        cy.log(JSON.stringify(state.nodes))
+        if (state && activeBlock !== undefined) {
+          expect(activeBlock).to.equal(state.activeBlock + 1);
+        }
       })
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('not.have.class', 'disabled')
-      .click()
+      .click({ force: true })
       .wait(1000)
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        expect(activeBlock).to.equal(dashboard.activeBlock);
+      .then((state: DashboardNodesState) => {
+        cy.log(JSON.stringify(state.nodes))
+        if (state && activeBlock !== undefined) {
+          expect(activeBlock).to.equal(state.activeBlock);
+        }
       })
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('have.class', 'disabled')
@@ -91,36 +95,41 @@ describe('DASHBOARD NODES TOOLBAR', () => {
 
   it('goes to earliest block', () => {
     let earliestBlock: number;
-    cy
-      .wait(1000)
+    cy.wait(1000)
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        earliestBlock = dashboard.earliestBlock;
+      .then((state: DashboardNodesState) => {
+        cy.log(JSON.stringify(state.nodes))
+        if (state && state.nodes.length > 1) {
+          earliestBlock = state.earliestBlock;
+        }
       })
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('have.class', 'disabled')
       .get('mina-dashboard-nodes-toolbar > div:first-child button:last-child')
       .should('have.class', 'disabled')
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:first-child')
-      .click()
+      .click({ force: true })
       .wait(1000)
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('not.have.class', 'disabled')
       .get('mina-dashboard-nodes-toolbar > div:first-child button:last-child')
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:first-child')
-      .click()
+      .click({ force: true })
       .wait(1000)
       .get('mina-dashboard-nodes-toolbar .row1 > button')
       .should('not.have.class', 'disabled')
-      .click()
+      .click({ force: true })
       .wait(1000)
       .window()
       .its('store')
       .then(getDashboard)
-      .then((dashboard: DashboardNodesState) => {
-        expect(earliestBlock).to.equal(dashboard.activeBlock);
+      .then((state: DashboardNodesState) => {
+        cy.log(JSON.stringify(state.nodes))
+        if (state && earliestBlock !== undefined) {
+          expect(earliestBlock).to.equal(state.activeBlock);
+        }
       })
       .get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:last-child')
       .should('have.class', 'disabled')

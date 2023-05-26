@@ -1,0 +1,46 @@
+<div class="flex-row p-12 h-xl secondary f-600">Details</div>
+<div class="overflow-y-auto h-minus-xl">
+  <div class="flex-column h-100 w-100">
+    <div *ngFor="let set of sets; let i = index"
+         [ngClass]="{ 'mb-5': expandedItems.includes(i) }"
+         class="border-rad-4 border-top">
+      <div (click)="toggleExpandedItems(i)"
+           class="flex-row align-center flex-between h-lg bg-container-hover tertiary primary-hover border-rad-4 pl-12 pr-8 pointer">
+        <div>
+          <span class="mr-5 f-600 primary">Branch {{ i + 1 }}</span>
+          <span>{{ set.peers.length }} Nodes</span>
+        </div>
+        <span [class.rotate-90]="expandedItems.includes(i)"
+              class="mina-icon icon-200">chevron_right
+        </span>
+      </div>
+      <div class="tertiary mina-table" *ngIf="expandedItems.includes(i)">
+        <div class="row head sorting" *ngIf="currentSort">
+          <span *ngFor="let tableHead of tableHeads; let i=index"
+                (click)="sortTable(tableHead.sort ?? tableHead.name)"
+                [class.active]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
+                class="pointer">
+            {{ tableHead.name }}
+            <span [class.flip]="currentSort.sortDirection === 'descending'"
+                  [class.show]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
+                  class="mina-icon f-18 icon-200">arrow_upward
+            </span>
+          </span>
+        </div>
+        <div *ngFor="let peer of set.peers"
+             [class.active]="peer === activePeer"
+             (click)="selectPeer(peer)"
+             class="row">
+          <span>
+            <mina-copy [value]="peer.address"></mina-copy>
+          </span>
+          <span>{{ peer.node || '-' }}</span>
+          <span>
+            <mina-copy [value]="peer.peerId" [display]="peer.peerId | truncateMid: 0: 4"></mina-copy>
+          </span>
+          <span class="primary text-right pr-12 mr-5">{{ peer.incomingConnections }} <span class="tertiary">/</span> {{ peer.outgoingConnections }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

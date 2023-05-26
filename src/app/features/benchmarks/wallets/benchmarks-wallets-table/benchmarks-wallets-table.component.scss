@@ -1,0 +1,16 @@
+@import 'variables';
+
+.status {
+	padding: 2px 5px;
+	border-radius: 4px;
+
+	&.generated {
+		background-color: $success-container;
+		color: $success-primary;
+	}
+
+	&.error {
+		background-color: $warn-container;
+		color: $warn-primary;
+	}
+}

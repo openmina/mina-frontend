@@ -1,0 +1,12 @@
+<ng-container #minaTable></ng-container>
+
+<ng-template #rowTemplate let-row="row">
+  <span class="secondary">
+    <mina-copy [value]="row.publicKey" [display]="row.publicKey | truncateMid: 15"></mina-copy>
+  </span>
+  <span>{{ row.balance.total | number:'1.0':'fr' }}</span>
+  <span class="secondary">{{ row.nonce }}</span>
+  <span class="secondary">
+    <mina-copy [value]="row.tokenId" [display]="row.tokenId | truncateMid: 15"></mina-copy>
+  </span>
+</ng-template>

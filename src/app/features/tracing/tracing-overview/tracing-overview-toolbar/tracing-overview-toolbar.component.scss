@@ -7,8 +7,8 @@
 		color: $base-tertiary;
 	}
 
-	&:hover:not(.active) {
-		filter: brightness(140%);
+	&:hover:not(.active) .mina-icon {
+		color: $base-primary;
 	}
 
 	&.active {

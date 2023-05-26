@@ -7,4 +7,8 @@ export abstract class ManualDetection {
   detect(): void {
     this.changeDetectorRef.detectChanges();
   };
+
+  mark(): void {
+    this.changeDetectorRef.markForCheck();
+  }
 }

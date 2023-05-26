@@ -1,5 +1,5 @@
 @import 'variables';
-@import 'layout';
+@import 'flex';
 
 .row {
 	display: grid;
@@ -21,7 +21,6 @@
 }
 
 .group-list {
-	position: relative;
 	padding-left: 22px;
 
 	> .checkpoint-row {

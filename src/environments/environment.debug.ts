@@ -8,7 +8,7 @@ export const environment: Readonly<MinaEnv> = {
   },
   configs: [
     {
-      backend: 'https://debug.dev.openmina.com:3086',
+      graphql: 'https://debug.dev.openmina.com:3086',
       debugger: 'https://debug.dev.openmina.com',
       minaExplorer: 'https://berkeley.api.minaexplorer.com',
       features: ['network', 'benchmarks'],

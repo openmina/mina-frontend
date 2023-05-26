@@ -30,7 +30,6 @@ export class NetworkConnectionsComponent extends ManualDetection implements OnIn
 
   private removedClass: boolean;
 
-  @ViewChild(NetworkConnectionsTableComponent) private tableComponent: NetworkConnectionsTableComponent;
   @ViewChild(NetworkConnectionsTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
   @ViewChild(HorizontalResizableContainerComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
 
@@ -72,16 +71,8 @@ export class NetworkConnectionsComponent extends ManualDetection implements OnIn
     this.tableRef.nativeElement.style.width = `calc(100% - ${width}px)`;
   }
 
-  checkVirtualScrollViewport(): void {
-    this.tableComponent.scrollViewport.checkViewportSize();
-  }
-
   toggleResizing(): void {
     this.tableRef.nativeElement.classList.toggle('no-transition');
-  }
-
-  scrollToTop(): void {
-    this.tableComponent.scrollViewport.scrollToIndex(0);
   }
 
   ngOnDestroy(): void {

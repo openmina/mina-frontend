@@ -1,11 +1,14 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { distinctUntilChanged } from 'rxjs';
 import { TimestampInterval } from '@shared/types/shared/timestamp-interval.type';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { ONE_THOUSAND, TEN_BILLIONS } from '@shared/constants/unit-measurements';
 import { hasValue } from '@shared/helpers/values.helper';
+import { CommonModule } from '@angular/common';
+import { ClickOutsideDirective } from '@shared/directives/click-outside.directive';
+import { EagerSharedModule } from '@shared/eager-shared.module';
 
 type PresetIntervals = { name: string, value: number }[];
 
@@ -43,6 +46,8 @@ const yearStr = 'year';
   templateUrl: './interval-select.component.html',
   styleUrls: ['./interval-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, EagerSharedModule],
 })
 export class IntervalSelectComponent extends ManualDetection implements OnInit, AfterViewInit {
 
@@ -59,7 +64,6 @@ export class IntervalSelectComponent extends ManualDetection implements OnInit, 
   fromFormGroup: FormGroup<TimeForm>;
   toFormGroup: FormGroup<TimeForm>;
   invalidInterval: boolean;
-  disabledBtn: boolean = true;
 
   @ViewChild('firstInput')
   private firstInput: ElementRef<HTMLInputElement>;

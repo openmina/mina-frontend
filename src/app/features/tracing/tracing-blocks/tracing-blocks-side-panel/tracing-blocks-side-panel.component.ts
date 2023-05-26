@@ -7,7 +7,7 @@ import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-gr
 import { selectTracingActiveTraceDetails, selectTracingActiveTraceGroups } from '@tracing/tracing-blocks/tracing-blocks.state';
 import { TracingBlocksSelectRow } from '@tracing/tracing-blocks/tracing-blocks.actions';
 import { BlockStructuredTraceComponent } from '@shared/components/block-structured-trace/block-structured-trace.component';
-import { ExpandTracking } from '@shared/components/custom-components/mina-json-viewer/mina-json-viewer.component';
+import { ExpandTracking } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
 @Component({

@@ -1,5 +1,5 @@
 <ng-container *ngIf="transaction">
-  <div class="flex-row flex-between p-12" fxFlex="42px">
+  <div class="flex-row flex-between p-12 h-xl">
     <span class="secondary f-600">Transaction details</span>
     <span (click)="closeSidePanel()"
           class="mina-icon pointer tertiary primary-hover f-18">close
@@ -7,60 +7,60 @@
   </div>
   <div class="flex-column flex-grow overflow-y-scroll">
     <div class="list flex-column">
-      <div class="flex-row flex-between align-center tertiary pl-12">
+      <div class="fx-row-vert-cent flex-between tertiary pl-12">
         Status
         <span>{{ transaction.status }}</span>
       </div>
-      <div class="flex-row flex-between align-center tertiary pl-12">
+      <div class="fx-row-vert-cent flex-between tertiary pl-12">
         Block height
         <span>{{ transaction.blockHeight || '-' }}</span>
       </div>
-      <div class="flex-row flex-between align-center tertiary pl-12">
+      <div class="fx-row-vert-cent flex-between tertiary pl-12">
         Block state hash
         <span>{{ transaction.blockStateHash || '-' | truncateMid }}</span>
       </div>
-      <div class="flex-row flex-between align-center tertiary pl-12">
+      <div class="fx-row-vert-cent flex-between tertiary pl-12">
         Kind
         <span>{{ transaction.kind }}</span>
       </div>
-      <div class="flex-row flex-between align-center tertiary pl-12">
+      <div class="fx-row-vert-cent flex-between tertiary pl-12">
         Amount
         <span>{{ transaction.amount }}</span>
       </div>
-      <div class="flex-row flex-between align-center tertiary pl-12">
+      <div class="fx-row-vert-cent flex-between tertiary pl-12">
         Fee
         <span>{{ transaction.fee }}</span>
       </div>
-      <div class="flex-row flex-between align-center tertiary pl-12">
+      <div class="fx-row-vert-cent flex-between tertiary pl-12">
         From
         <span>{{ transaction.from | truncateMid }}</span>
       </div>
-      <div class="flex-row flex-between align-center tertiary pl-12">
+      <div class="fx-row-vert-cent flex-between tertiary pl-12">
         To
         <span>{{ transaction.to | truncateMid }}</span>
       </div>
-      <div class="flex-row flex-between align-center tertiary pl-12">
+      <div class="fx-row-vert-cent flex-between tertiary pl-12">
         Memo
         <span>{{ transaction.memo || '-' | truncateMid }}</span>
       </div>
-      <div class="flex-row align-center tertiary border-top pl-12">
+      <div class="fx-row-vert-cent tertiary border-top pl-12">
         Additional Details
       </div>
-      <div class="flex-row flex-between align-center tertiary pl-12">
+      <div class="fx-row-vert-cent flex-between tertiary pl-12">
         Date
         <span>{{ transaction.dateTime || '-' }}</span>
       </div>
-      <div class="flex-row flex-between align-center tertiary pl-12">
+      <div class="fx-row-vert-cent flex-between tertiary pl-12">
         Nonce
         <span>{{ transaction.nonce }}</span>
       </div>
-      <div class="flex-row align-center tertiary border-top pl-12">
+      <div class="fx-row-vert-cent tertiary border-top pl-12">
         Block Explorer
       </div>
-      <div class="flex-row flex-between align-center tertiary pl-12">
+      <div class="fx-row-vert-cent flex-between tertiary pl-12">
         <a [href]="'https://devnet.minaexplorer.com/transaction/' + transaction.hash"
            class="text-underline primary truncate"
-           fxFlex="75" target="_blank">
+           [style.width.%]="75" target="_blank">
           https://devnet.minaexplorer.com/transaction/{{transaction.hash}}
         </a>
         <span class="mina-icon tertiary f-20">arrow_outward</span>

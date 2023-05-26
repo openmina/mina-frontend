@@ -21,7 +21,7 @@ export class SystemResourcesService {
 
   getResources(): Observable<SystemResourcesChartData> {
     this.loadingService.addURL();
-    return this.http.get<any>(this.config.API + '/resources?limit=1500').pipe(
+    return this.http.get<any>(this.config.GQL + '/resources?limit=1500').pipe(
       map(response => SystemResourcesService.mapSystemResourcesResponse(response)),
       finalize(() => this.loadingService.removeURL()),
     );
@@ -171,13 +171,16 @@ export class SystemResourcesService {
         }),
       });
     });
-    const getMax = (key: string) => niceYScale(0, Math.max(
+    resources.cpuMax = this.getMax('cpu', resources);
+    resources.memoryMax = this.getMax('memory', resources);
+    resources.ioMax = this.getMax('io', resources);
+    resources.networkMax = this.getMax('network', resources);
+    return resources;
+  }
+
+  private static getMax(key: string, resources: SystemResourcesChartData): number {
+    return niceYScale(0, Math.max(
       ...resources[key].reduce((acc: number[], curr: SystemResourcesPoint) => [...acc, ...Object.values(curr.pathPoints).map(v => v.value)], []),
     ), 3)[1];
-    resources.cpuMax = getMax('cpu');
-    resources.memoryMax = getMax('memory');
-    resources.ioMax = getMax('io');
-    resources.networkMax = getMax('network');
-    return resources;
   }
 }

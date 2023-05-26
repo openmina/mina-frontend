@@ -21,3 +21,7 @@
 		transition: 150ms ease-out !important;
 	}
 }
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+	background-color: unset !important;
+}

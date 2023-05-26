@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter } from '@angular/core';
-import { TracingBlockTrace } from '@shared/types/tracing/blocks/tracing-block-trace.type';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
 import { TracingTraceCheckpoint } from '@shared/types/tracing/blocks/tracing-trace-checkpoint.type';
 import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';

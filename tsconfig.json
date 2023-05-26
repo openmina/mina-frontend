@@ -22,7 +22,7 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "es2020",
-    "module": "es2020",
+    "module": "es2022",
     "types": [
       "node",
       "google",
@@ -76,7 +76,11 @@
       "@logs/*": [
         "src/app/features/logs/*"
       ],
-    }
+      "@storage/*": [
+        "src/app/features/storage/*"
+      ]
+    },
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

@@ -26,6 +26,7 @@ import { Store } from '@ngrx/store';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { Routes } from '@shared/enums/routes.enum';
 import { Router } from '@angular/router';
+import { DASHBOARD_NODES_SET_ACTIVE_BLOCK } from '@dashboard/nodes/dashboard-nodes.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -52,19 +53,18 @@ export class NetworkBlocksEffects extends MinaBaseEffect<NetworkBlocksActions> {
     this.earliestBlock$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_BLOCKS_GET_EARLIEST_BLOCK),
       this.latestActionState<NetworkBlocksGetEarliestBlock>(),
-      switchMap(({ action, state }) => {
-        return this.networkBlocksService.getEarliestBlockHeight().pipe(
-          tap(height => this.router.navigate([Routes.NETWORK, Routes.BLOCKS, height], { queryParamsHandling: 'merge' })),
+      switchMap(({ action, state }) =>
+        this.networkBlocksService.getEarliestBlockHeight().pipe(
           switchMap(height => {
             const actions: NetworkBlocksActions[] = [{ type: NETWORK_BLOCKS_SET_EARLIEST_BLOCK, payload: { height } }];
             if (!state.network.blocks.activeBlock) {
+              this.router.navigate([Routes.NETWORK, Routes.BLOCKS, height ?? ''], { queryParamsHandling: 'merge' });
               actions.push({ type: NETWORK_BLOCKS_SET_ACTIVE_BLOCK, payload: { height } });
               actions.push({ type: NETWORK_BLOCKS_INIT });
             }
             return actions;
           }),
-        );
-      }),
+        )),
     ));
 
     this.init$ = createEffect(() => this.actions$.pipe(

@@ -1,15 +1,15 @@
-<div class="wallet-toolbar h-lg flex-row align-center border-bottom pl-12 p-relative z-1"
+<div class="wallet-toolbar h-lg fx-row-vert-cent border-bottom pl-12 p-relative z-1"
      [class.flex-stretch]="isMobile">
-  <button class="btn-selected h-sm flex-row flex-between align-center mr-5"
+  <button class="btn-selected h-sm fx-row-vert-cent flex-between mr-5"
           #dropdownTrigger
           (click)="openDropdown($event)">
-    <div class="flex-row align-center">
+    <div class="fx-row-vert-cent">
       <span class="mina-icon f-20 mr-5">account_balance_wallet</span>
       <span *ngIf="activeWallet; else loadingWallet"
             class="mr-8">{{ activeWallet.minaTokens | number: '1.0-3' }} MINA</span>
       <ng-template #loadingWallet><span class="selected-secondary">Loading wallet..</span></ng-template>
     </div>
-    <div class="flex-row align-center">
+    <div class="fx-row-vert-cent">
       <span class="selected-secondary monospace">{{ activeWallet?.publicKey | truncateMid: isMobile ? 0 : 6 }}</span>
       <span class="mina-icon">arrow_drop_down</span>
     </div>
@@ -23,7 +23,7 @@
             [disabled]="nodeStatus !== 'SYNCED'">Send Mina
     </button>
   </div>
-  <button *ngIf="isMobile; else btnGroup" class="btn-primary flex-row align-center mr-10"
+  <button *ngIf="isMobile; else btnGroup" class="btn-primary fx-row-vert-cent mr-10"
           (click)="openMobileDropdown = !openMobileDropdown">
     <span class="mina-icon icon-200">more_vert</span>
   </button>
@@ -38,7 +38,7 @@
        (clickOutside)="detachOverlay()">
     <div class="overflow-auto h-100 p-10">
       <div *ngFor="let wallet of wallets"
-           class="dropdown-item flex-row flex-between align-center pointer pl-8 pr-8 border-rad-4 mb-5"
+           class="dropdown-item fx-row-vert-cent flex-between pointer pl-8 pr-8 border-rad-4 mb-5"
            [class.active]="activeWallet.publicKey === wallet.publicKey"
            (click)="changeWallet(wallet)">
         <span class="mina-icon f-20">check_small</span>

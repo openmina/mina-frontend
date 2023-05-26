@@ -1,5 +1,5 @@
 @import 'variables';
-@import 'layout';
+@import 'flex';
 
 .mina-table {
 	@include flexColumn();
@@ -90,6 +90,14 @@
 				}
 			}
 		}
+
+		span mina-copy .cpy {
+			opacity: 0;
+		}
+
+		span:hover mina-copy .cpy {
+			opacity: 1;
+		}
 	}
 
 	&.active {
@@ -108,26 +116,36 @@
 
 			.mob-row {
 				padding: 0 10px;
-				border: 1px solid $base-divider;
+				outline: 1px solid $base-divider;
 				background-color: $base-surface;
 				border-radius: 6px;
 				width: 100%;
 				display: flex;
 				flex-direction: row;
 				justify-content: space-between;
+				font-size: 12px;
 
 				.th, .td {
 					display: flex;
 					flex-direction: column;
 
 					span {
-						height: 40px;
-						line-height: 40px;
+						height: 26px;
+						line-height: 26px;
 					}
 				}
 
+				.th {
+					text-transform: capitalize;
+				}
+
 				.td {
-					text-align: right;
+					align-items: flex-end;
+				}
+
+				span mina-copy .cpy {
+					opacity: 1;
+					margin-right: -5px;
 				}
 			}
 		}

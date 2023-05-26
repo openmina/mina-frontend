@@ -1,12 +1,12 @@
-<div fxFlex="36px">
-  <button class="mt-5 ml-12 flex-row align-center secondary primary-hover bg-transparent"
+<div class="h-lg">
+  <button class="mt-5 ml-12 fx-row-vert-cent secondary primary-hover bg-transparent"
           routerLink="/web-node/wallet/transactions">
     <span class="mina-icon f-20 mr-8">arrow_back</span>
     <span>Send Mina</span>
   </button>
 </div>
 
-<div class="flex-column align-center pt-12 flex-grow">
+<div class="fx-col-horiz-cent pt-12 flex-grow">
   <mina-stepper [stepHeaders]="['Generate Keys', 'Request Tokens', 'Wallet Overview']"
                 [steps]="[step1, step2, step1]"
                 [activeStep]="activeStep"
@@ -15,7 +15,7 @@
                 [style.max-width.px]="600"></mina-stepper>
 </div>
 <ng-template #contentHeaderInfo>
-  <div class="w-100 h-xl flex-row align-center p-12 error bg-warn-container mb-10 border-rad-4">
+  <div class="w-100 h-xl fx-row-vert-cent p-12 error bg-warn-container mb-10 border-rad-4">
     <span class="mina-icon f-22 mr-10 icon-300">error</span>
     Development purposes only, wallets are stored in a super dangerous way.
   </div>
@@ -24,23 +24,21 @@
 <ng-template #step1>
   <div class="border-rad-6 border p-12 flex-column h-100 w-100">
     <ng-container *ngIf="!newWallet; else walletCreated">
-      <div class="flex-row flex-grow flex-center align-center">
+      <div class="fx-row-full-cent flex-grow">
         <span class="f-48 mina-icon primary icon-100">vpn_key</span>
       </div>
       <div class="flex-column">
-        <div class="mb-5 border-rad-4 border flex-row flex-center align-center tertiary"
-             fxFlex="36px">
+        <div class="mb-5 border-rad-4 border fx-row-full-cent tertiary h-lg">
           Public Key
         </div>
-        <div class="border-rad-4 border flex-row flex-center align-center tertiary"
-             fxFlex="36px">
+        <div class="border-rad-4 border fx-row-full-cent tertiary h-lg">
           Private Key
         </div>
       </div>
     </ng-container>
     <ng-template #walletCreated>
       <div class="flex-column flex-between h-100">
-        <div class="flex-column align-center">
+        <div class="fx-col-full-cent">
           <span class="mb-10 mina-icon f-48 icon-100">check_circle</span>
           <p>Success</p>
           <p class="tertiary mt-10 mb-10">
@@ -50,10 +48,9 @@
           </p>
         </div>
         <div class="flex-column">
-          <div fxFlex="36px"
-               class="mb-5 pr-12 pl-12 tertiary border-rad-4 bg-container flex-row flex-between align-center">
+          <div class="h-lg mb-5 pr-12 pl-12 tertiary border-rad-4 bg-container fx-row-vert-cent flex-between">
             Public Key
-            <span class="flex-row align-center">
+            <span class="fx-row-vert-cent">
               <span class="primary monospace">{{ newWallet?.publicKey }}</span>
               <span class="mina-icon ml-8 tertiary primary-hover f-18 pointer"
                     *ngIf="newWallet"
@@ -61,11 +58,10 @@
               </span>
             </span>
           </div>
-          <div fxFlex="36px"
-               class="pr-12 pl-12 tertiary border-rad-4 bg-container flex-row flex-between align-center">
+          <div class="h-lg pr-12 pl-12 tertiary border-rad-4 bg-container fx-row-vert-cent flex-between">
             <div class="text-nowrap">Private Key</div>
-            <span class="flex-row align-center flex-end">
-              <span fxFlex="81.5"
+            <span class="fx-row-vert-cent flex-end">
+              <span [style.width.%]="81.5"
                     class="primary private-key overflow-hidden monospace">{{ newWallet?.privateKey }}</span>
               <span class="mina-icon ml-8 tertiary primary-hover f-18 pointer"
                     *ngIf="newWallet"
@@ -80,11 +76,11 @@
 </ng-template>
 
 <ng-template #step2>
-  <div class="border-rad-6 border p-12 flex-column align-center h-100">
-    <div class="flex-column flex-grow flex-center align-center">
+  <div class="border-rad-6 border p-12 fx-col-horiz-cent h-100">
+    <div class="flex-grow fx-col-full-cent">
       <span class="f-48 mina-icon icon-100">toll</span>
     </div>
-    <div class="flex-column flex-end flex-center text-center">
+    <div class="fx-col-vert-cent flex-end text-center">
       <span>
         <span *ngIf="requestingTokensInProgress || tokensRequested">Requesting</span>
         Testnet MINA (tMINA)

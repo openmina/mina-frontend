@@ -5,6 +5,8 @@ import { selectDashboardNodesState } from '@dashboard/dashboard.state';
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
 import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
+import { DashboardFork } from '@shared/types/dashboard/node-list/dashboard-fork.type';
+import { DashboardForkFilter } from '@shared/types/dashboard/node-list/dashboard-fork-filter.type';
 
 
 export interface DashboardNodesState {
@@ -20,6 +22,9 @@ export interface DashboardNodesState {
   activeFilters: string[];
   showOfflineNodes: boolean;
   latencyFromFastest: boolean;
+  remainingOngoingRequests: number;
+  forks: DashboardForkFilter[];
+  activeForkFilter: { value: string, type: 'branch' | 'bestTip' };
 }
 
 const select = <T>(selector: (state: DashboardNodesState) => T): MemoizedSelector<MinaState, T> => createSelector(
@@ -38,3 +43,6 @@ export const selectDashboardNodesAllFilters = select((state: DashboardNodesState
 export const selectDashboardNodesActiveFilters = select((state: DashboardNodesState): string[] => state.activeFilters);
 export const selectDashboardNodesShowOfflineNodes = select((state: DashboardNodesState): boolean => state.showOfflineNodes);
 export const selectDashboardNodesLatencyFromFastest = select((state: DashboardNodesState): boolean => state.latencyFromFastest);
+export const selectDashboardNodesRemainingRequests = select((state: DashboardNodesState): number => state.remainingOngoingRequests);
+export const selectDashboardNodesForks = select((state: DashboardNodesState): DashboardForkFilter[] => state.forks);
+export const selectDashboardNodesActiveForkFilter = select((state: DashboardNodesState): { value: string, type: 'branch' | 'bestTip' } => state.activeForkFilter);

@@ -7,6 +7,7 @@ import { ConfigService } from '@core/services/config.service';
 import { hasValue } from '@shared/helpers/values.helper';
 import { SnarkWorkerTraceJob } from '@shared/types/explorer/snark-traces/snark-worker-trace-job.type';
 import { SnarkWorkerTraceFilter } from '@shared/types/explorer/snark-traces/snark-worker-trace-filters.type';
+import { removeLast } from '@shared/helpers/array.helper';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,7 @@ export class SnarkWorkersTracesService {
               private config: ConfigService) { }
 
   getWorkers(): Observable<string[]> {
-    return this.http.get<string[]>(removeLast(this.config.API.split('/')).join('/') + '/snarker-http-coordinator/workers');
+    return this.http.get<string[]>(removeLast(this.config.GQL.split('/')).join('/') + '/snarker-http-coordinator/workers');
   }
 
   getTraces(filter: SnarkWorkerTraceFilter): Observable<SnarkWorkerTraceJob[]> {
@@ -29,7 +30,7 @@ export class SnarkWorkersTracesService {
       build.push(f[0] === 'to' ? `to_t=${f[1]}` : null);
     });
     const queryParams = filters.length ? '?' + build.filter(Boolean).join('&') : '';
-    return this.http.get(removeLast(this.config.API.split('/')).join('/') + '/snarker-http-coordinator/worker-stats' + queryParams).pipe(
+    return this.http.get(removeLast(this.config.GQL.split('/')).join('/') + '/snarker-http-coordinator/worker-stats' + queryParams).pipe(
       map(response => this.mapTraces(response)),
     );
   }
@@ -40,7 +41,7 @@ export class SnarkWorkersTracesService {
         [
           ...acc,
           ...response[key].map((work: any, i2: number) => ({
-            worker: i,
+            worker: key,
             kind: work.kind,
             ids: work.ids,
             id: acc.length + i2,
@@ -62,8 +63,3 @@ export class SnarkWorkersTracesService {
       []);
   }
 }
-
-function removeLast<T>(arr: T[]): T[] {
-  return arr.slice(0, arr.length - 1);
-}
-

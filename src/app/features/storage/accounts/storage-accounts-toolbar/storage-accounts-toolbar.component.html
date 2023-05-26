@@ -1,0 +1,33 @@
+<div class="fx-row-vert-cent shrink-0">
+  <button class="btn-secondary h-sm w-sm mr-5 ml-10 fx-row-full-cent"
+          [class.disabled]="pageStart === 0"
+          [tooltip]="'First page'"
+          [showDelay]="500"
+          (click)=changePage(0)>
+    <span class="mina-icon f-18">first_page</span>
+  </button>
+  <div class="pagination-group fx-row-vert-cent bg-selected-container border-rad-4 mr-10">
+    <button class="h-sm w-sm fx-row-full-cent"
+            [class.disabled]="pageStart === 0"
+            [tooltip]="'Prev page'"
+            [showDelay]="500"
+            (click)="changePage(pageStart)">
+      <span class="mina-icon f-18">navigate_before</span>
+    </button>
+    <span class="f-600 text-center selected-primary"
+          [style.width.px]="134">Accounts {{ pageStart }} - {{ pageStart + pageSize }}</span>
+    <button class="h-sm w-sm fx-row-full-cent"
+            [class.disabled]="accountsLength < pageSize"
+            [tooltip]="'Next page'"
+            [showDelay]="500"
+            (click)="changePage(pageStart + pageSize)">
+      <span class="mina-icon f-18">navigate_next</span>
+    </button>
+  </div>
+</div>
+<div class="fx-row-vert-cent">
+  <button class="btn-primary flex-row align-center mr-10 pl-8 f-base" (click)="refetchReports()">
+    Refetch
+    <span class="mina-icon icon-200 f-20 ml-5 tertiary">cached</span>
+  </button>
+</div>

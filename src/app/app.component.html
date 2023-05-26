@@ -1,20 +1,19 @@
-<mat-sidenav-container [hasBackdrop]="menu.isMobile"
-                       (backdropClick)="toggleMenu()"
-                       [@.disabled]="true"
+<mat-sidenav-container [hasBackdrop]="false"
                        class="w-100 h-100">
   <mat-sidenav [mode]="menu.isMobile ? 'over' : 'side'"
-               [opened]="menu.open"
+               [class.opened]="menu.open"
                [class.collapsed]="menu.collapsed"
                [class.mobile]="menu.isMobile">
     <mina-menu></mina-menu>
+    <div class="backdrop" (click)="toggleMenu()"></div>
   </mat-sidenav>
-  <mat-sidenav-content *ngIf="menu" class="flex-column"
+  <mat-sidenav-content class="flex-column"
                        [style.marginLeft.px]="menu.isMobile ? 0 : (menu.collapsed ? 44 : 160)">
     <mina-toolbar></mina-toolbar>
     <div class="mina-content"
          [class.mobile]="menu.isMobile">
       <router-outlet></router-outlet>
     </div>
-    <mina-submenu-tabs *ngIf="menu.isMobile" class="border-top"></mina-submenu-tabs>
+    <mina-submenu-tabs *ngIf="menu.isMobile" class="mobile-menu border-top"></mina-submenu-tabs>
   </mat-sidenav-content>
 </mat-sidenav-container>

@@ -2,34 +2,34 @@
      [class.fade]="activePoint"
      [style.transition-delay.s]="0.1">
   <ng-container *ngIf="activePoint">
-    <div class="flex-column pt-12">
-      <div class="flex-row align-center flex-between f-600 pb-12 primary pl-12 pr-12">
+    <div class="flex-column">
+      <div class="h-xl fx-row-vert-cent flex-between f-600 primary pl-12 pr-12">
         {{ activePoint.title }} {{ activePoint.point.timestamp | readableDate: 'HH:mm:ss, dd MMM yy' }}
       </div>
       <div class="flex-column align-start f-600 pb-12 secondary pl-12 pr-12">
         Open this time in
-        <button class="btn-primary flex-row align-center border-rad-6 h-sm p-0 mr-5 mb-10 mt-10">
+        <button class="btn-primary fx-row-vert-cent border-rad-6 h-sm p-0 mr-5 mb-10 mt-10">
           <a class="pl-8 pr-8 primary"
              target="_blank" [href]="origin + '/network/messages?from=' + activePoint.point.timestamp">Network - Messages
           </a>
         </button>
-        <button class="btn-primary flex-row align-center border-rad-6 h-sm p-0">
+        <button class="btn-primary fx-row-vert-cent border-rad-6 h-sm p-0">
           <a class="pl-8 pr-8 primary"
              target="_blank" [href]="origin + '/explorer/snark-traces?from=' + activePoint.point.timestamp">Explorer - Snark Traces
           </a>
         </button>
       </div>
       <div class="flex-column pl-5 pr-5">
-        <div class="path flex-row align-center flex-between h-lg border-rad-8 pointer"
+        <div class="path fx-row-vert-cent flex-between h-lg border-rad-8 pointer"
              *ngFor="let path of pathsMap; let i=index"
              [class.active]="activePath === path.name"
              (click)="setActivePath(path.name)">
-          <div class="flex-row align-center f-600">
+          <div class="fx-row-vert-cent f-600">
             <span [style.background-color]="activePoint.colors[i] || activePoint.colors[i - activePoint.colors.length]"
                   class="point border-rad-8 mr-10 ml-8"></span>
             <span>{{ path.name }}</span>
           </div>
-          <div class="flex-row align-center">
+          <div class="fx-row-vert-cent">
             <span>{{ path.value | number: '1.2-2' }}{{ activePoint.um }}</span>
             <span class="mina-icon icon-200">chevron_right</span>
           </div>
@@ -50,9 +50,9 @@
         </div>
       </div>
     </div>
-    <div fxFlex="grow" class="flex-column p-relative">
+    <div class="flex-column p-relative flex-grow">
       <div class="p-absolute-cover overflow-y-scroll pl-12 pr-12 tertiary">
-        <div class="flex-row align-center flex-between h-lg"
+        <div class="fx-row-vert-cent flex-between h-lg"
              *ngFor="let task of activePoint?.point.pathPoints[activePath]?.taskThreads || []">
           <span>{{ task.name }}</span>
           <span>{{ task.value | number: '1.2-2' }}{{ activePoint.um }}</span>

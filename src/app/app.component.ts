@@ -6,13 +6,14 @@ import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { AppMenu } from '@shared/types/app/app-menu.type';
 import { selectAppMenu } from '@app/app.state';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { MIN_WIDTH_700 } from '@shared/constants/breakpoint-observer';
+import { MAX_WIDTH_700 } from '@shared/constants/breakpoint-observer';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'd-block h-100 w-100' },
 })
 export class AppComponent extends ManualDetection implements OnInit {
 
@@ -41,9 +42,9 @@ export class AppComponent extends ManualDetection implements OnInit {
 
   private listenToWindowResizing(): void {
     this.breakpointObserver
-      .observe(MIN_WIDTH_700)
+      .observe(MAX_WIDTH_700)
       .subscribe((bs: BreakpointState) => {
-        this.store.dispatch<AppToggleMobile>({ type: APP_TOGGLE_MOBILE, payload: { isMobile: !bs.matches } });
+        this.store.dispatch<AppToggleMobile>({ type: APP_TOGGLE_MOBILE, payload: { isMobile: bs.matches } });
       });
   }
 

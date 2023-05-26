@@ -29,6 +29,8 @@ import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { map, Subscription } from 'rxjs';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
+import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
+import { NodeStatus } from '@shared/types/app/node-status.type';
 
 declare global {
   namespace Cypress {
@@ -43,7 +45,7 @@ declare global {
 export const PROMISE = (resolveFunction: (resolve: (result?: unknown) => void) => void) => new Cypress.Promise(resolveFunction);
 export const storeSubscription = (store: Store<MinaState>, slice: keyof MinaState, observer: any): Subscription => store.select(slice).subscribe(observer);
 export const getActiveNode = (store: Store<MinaState>) => {
-  const promiseBody = (resolve: (result?: unknown) => void): void => {
+  const promiseBody = (resolve: (result?: MinaNode) => void): void => {
     const observer = (node: MinaNode) => {
       if (node) {
         return resolve(node);
@@ -51,6 +53,18 @@ export const getActiveNode = (store: Store<MinaState>) => {
       setTimeout(() => resolve(), 3000);
     };
     store.select('app').pipe(map(app => app.activeNode)).subscribe(observer);
+  };
+  return PROMISE(promiseBody);
+};
+export const getActiveNodeStatus = (store: Store<MinaState>) => {
+  const promiseBody = (resolve: (result?: NodeStatus) => void): void => {
+    const observer = (status: NodeStatus) => {
+      if (status) {
+        return resolve(status);
+      }
+      setTimeout(() => resolve(), 3000);
+    };
+    store.select('app').pipe(map(app => app.nodeStatus)).subscribe(observer);
   };
   return PROMISE(promiseBody);
 };
@@ -67,13 +81,30 @@ export const getNodes = (store: Store<MinaState>) => {
   return PROMISE(promiseBody);
 };
 
+export const stateSliceAsPromise = <T = MinaState | MinaState[keyof MinaState]>(
+  store: Store<MinaState>, resolveCondition: (state: T) => boolean, slice: keyof MinaState, subSlice: string, timeout: number = 3000,
+) => {
+  return new Cypress.Promise((resolve: (result?: T | void) => void): void => {
+    const observer = (state: T) => {
+      if (resolveCondition(state)) {
+        return resolve(state);
+      }
+      setTimeout(() => resolve(), timeout);
+    };
+    store.select(slice).pipe(
+      map((subState: MinaState[keyof MinaState]) => {
+        cy.log('');
+        return subSlice ? subState[subSlice] : subState;
+      }),
+    ).subscribe(observer);
+  });
+};
+
 export const storeNetworkSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('network').subscribe(observer);
 
 export const storeWebNodeWalletSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('webNode').pipe(map(wn => wn.wallet)).subscribe(observer);
 export const storeWebNodeLogsSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('webNode').pipe(map(wn => wn.log)).subscribe(observer);
 export const storeWebNodePeersSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('webNode').pipe(map(wn => wn.peers)).subscribe(observer);
 export const storeWebNodeSharedSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('webNode').pipe(map(wn => wn.shared)).subscribe(observer);
-
-export const storeDashboardSubscription = (store: Store<MinaState>, observer: any): Subscription => store.select('dashboard').pipe(map(d => d.nodes)).subscribe(observer);
 
 Cypress.Commands.overwrite('log', (subject, message) => cy.task('log', message));

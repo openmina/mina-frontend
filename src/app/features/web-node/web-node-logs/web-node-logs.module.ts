@@ -5,6 +5,8 @@ import { WebNodeLogsComponent } from './web-node-logs.component';
 import { SharedModule } from '@shared/shared.module';
 import { WebNodeLogsTableComponent } from './web-node-logs-table/web-node-logs-table.component';
 import { WebNodeLogsSidePanelComponent } from './web-node-logs-side-panel/web-node-logs-side-panel.component';
+import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 
 
 @NgModule({
@@ -15,6 +17,8 @@ import { WebNodeLogsSidePanelComponent } from './web-node-logs-side-panel/web-no
   ],
   imports: [
     WebNodeLogsRouting,
+    MinaJsonViewerComponent,
+    HorizontalResizableContainerComponent,
     SharedModule,
   ],
 })

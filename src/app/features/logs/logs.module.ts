@@ -8,6 +8,8 @@ import { LogsEffects } from '@logs/logs.effects';
 import { LogsTableComponent } from './logs-table/logs-table.component';
 import { LogsToolbarComponent } from './logs-toolbar/logs-toolbar.component';
 import { LogsSidePanelComponent } from './logs-side-panel/logs-side-panel.component';
+import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 
 
 @NgModule({
@@ -19,6 +21,8 @@ import { LogsSidePanelComponent } from './logs-side-panel/logs-side-panel.compon
   ],
   imports: [
     SharedModule,
+    MinaJsonViewerComponent,
+    HorizontalResizableContainerComponent,
     LogsRouting,
     EffectsModule.forFeature([LogsEffects]),
   ],

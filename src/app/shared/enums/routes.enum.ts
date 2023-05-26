@@ -24,4 +24,6 @@ export enum Routes {
   SYSTEM = 'system',
   SNARK_TRACES = 'snark-traces',
   RESOURCES = 'resources',
+  TOPOLOGY = 'topology',
+  NEW = 'new',
 }

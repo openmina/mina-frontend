@@ -1,0 +1,20 @@
+<div class="h-xl fx-row-vert-cent flex-between pl-12 pr-12">
+  <span class="secondary f-600">Account Details</span>
+  <span class="mina-icon pointer tertiary primary-hover f-18"
+        (click)="closeSidePanel()">close
+  </span>
+</div>
+<div class="flex-column h-minus-xl">
+  <div class="h-lg flex-row pl-12 pb-10">
+    <button class="btn-primary mr-8" (click)="expandEntireJSON()">Expand All</button>
+    <button class="btn-primary mr-8" (click)="collapseEntireJSON()">Collapse All</button>
+    <button class="btn-primary mr-8" [copyToClipboard]="toCopy">Copy</button>
+    <button class="btn-primary mr-8" (click)="downloadJson()" #saveButton>Save JSON</button>
+    <!--  <button class="btn-primary" (click)="copyToClipboard()">Copy Link</button>-->
+  </div>
+  <div class="flex-column h-minus-lg overflow-auto flex-1 pr-5">
+    <mina-json-viewer [expanded]="false"
+                      [json]="activeRow || {}"
+                      [expandTracking]="expandTracking"></mina-json-viewer>
+  </div>
+</div>

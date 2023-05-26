@@ -4,6 +4,7 @@ import { ExplorerSnarksTableComponent } from './explorer-snarks-table/explorer-s
 import { SharedModule } from '@shared/shared.module';
 import { ExplorerSnarksComponent } from '@explorer/snarks/explorer-snarks.component';
 import { ExplorerSnarksRouting } from '@explorer/snarks/explorer-snarks.routing';
+import { CopyComponent } from '@shared/components/copy/copy.component';
 
 
 @NgModule({
@@ -13,6 +14,7 @@ import { ExplorerSnarksRouting } from '@explorer/snarks/explorer-snarks.routing'
   ],
   imports: [
     SharedModule,
+    CopyComponent,
     ExplorerSnarksRouting,
   ],
 })

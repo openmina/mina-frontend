@@ -3,15 +3,19 @@ import { map, Observable } from 'rxjs';
 import { GraphQLService } from '@core/services/graph-ql.service';
 import { ExplorerScanStateTree } from '@shared/types/explorer/scan-state/explorer-scan-state-tree.type';
 import { ExplorerScanStateResponse } from '@shared/types/explorer/scan-state/explorer-scan-state-response.type';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExplorerScanStateService {
 
-  constructor(private graphQL: GraphQLService) { }
+  constructor(private graphQL: GraphQLService,
+              private http: HttpClient) { }
 
   getScanState(height: number): Observable<ExplorerScanStateResponse> {
+    // get json file called ss.json from same folder
+    // return this.http.get<ExplorerScanStateResponse>('./assets/ss.json')
     return this.graphQL.query<any>('getScanState', `{
        blockScanState(height: ${height})
        block(height: ${height}) {
@@ -28,7 +32,7 @@ export class ExplorerScanStateService {
            }
          }
        }
-       bestChain(maxLength: 0) {
+       bestChain(maxLength: 1) {
          protocolState {
            consensusState {
              blockHeight

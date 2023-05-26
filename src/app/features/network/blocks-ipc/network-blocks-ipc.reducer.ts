@@ -10,8 +10,7 @@ import {
 } from '@network/blocks-ipc/network-blocks-ipc.actions';
 import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
 import { sort } from '@shared/helpers/array.helper';
-import { NetworkBlock } from '@shared/types/network/blocks/network-block.type';
-import { ONE_BILLION, ONE_MILLION } from '@shared/constants/unit-measurements';
+import { ONE_MILLION } from '@shared/constants/unit-measurements';
 import { NetworkBlocksIpcState } from '@network/blocks-ipc/network-blocks-ipc.state';
 import { NetworkBlockIpc } from '@shared/types/network/blocks-ipc/network-block-ipc.type';
 
@@ -105,10 +104,8 @@ function sortBlocks(blocks: NetworkBlockIpc[], tableSort: TableSort<NetworkBlock
 
 function applyNewLatencies(blocks: NetworkBlockIpc[]): NetworkBlockIpc[] {
   const fastestTime = Math.min(...blocks.map(b => b.timestamp));
-  const realFastestTime = Math.min(...blocks.map(b => b.realTimestamp));
   return blocks.map(b => ({
     ...b,
     blockLatency: (b.timestamp - fastestTime) / ONE_MILLION,
-    realBlockLatency: (b.realTimestamp - realFastestTime) / ONE_MILLION,
   }));
 }

@@ -34,8 +34,6 @@ export class NetworkBlocksIpcTableComponent extends ManualDetection implements O
   readonly secConfig: SecDurationConfig = { color: true, yellow: 0.5, orange: 0.75, red: 1, undefinedAlternative: '-' };
   readonly tableHeads: TableHeadSorting<NetworkBlockIpc>[] = [
     { name: 'datetime', sort: 'timestamp' },
-    { name: 'real datetime', sort: 'realTimestamp' },
-    { name: 'date diff', sort: 'dateDiff' },
     { name: 'message hash', sort: 'hash' },
     { name: 'height' },
     { name: 'node address', sort: 'nodeAddress' },
@@ -43,7 +41,6 @@ export class NetworkBlocksIpcTableComponent extends ManualDetection implements O
     { name:  'type' },
     { name: 'message type', sort: 'msgType' },
     { name: 'block latency', sort: 'blockLatency' },
-    { name: 'real block latency', sort: 'realBlockLatency' },
   ];
 
   blocks: NetworkBlockIpc[] = [];

@@ -1,39 +1,25 @@
-<div class="mina-table flex-grow overflow-x-auto">
-  <div class="row head sorting p-relative pr-12" *ngIf="currentSort">
-    <span *ngFor="let th of tableHeads; let i=index"
-          (click)="sortTable(th.sort ?? th.name)"
-          [class.active]="currentSort.sortBy === (th.sort ?? th.name)"
-          [class.p-relative]="th.tooltip"
-          class="pointer">
-      <span *ngIf="th.tooltip" class="p-absolute w-100 h-100" [tooltip]="th.tooltip" [maxWidth]="400"></span>
-      {{ th.name }}
-      <span [class.flip]="currentSort.sortDirection === 'descending'"
-            [class.show]="currentSort.sortBy === (th.sort ?? th.name)"
-            class="mina-icon f-18 icon-200">arrow_upward
-      </span>
-    </span>
-  </div>
-  <cdk-virtual-scroll-viewport class="border-bottom border-top h-100 overflow-y-scroll"
-                               fxFlex="calc(100% - 36px)"
-                               [itemSize]="itemSize">
-    <div *cdkVirtualFor="let node of blocks; let i=index"
-         (click)="onRowClick(node)"
-         [class.row-even]="i % 2 === 0"
-         class="row">
-      <span class="tertiary">{{ node.date }}</span>
-      <span>{{ node.hash | truncateMid }}</span>
-      <span>
-        <span (click)="goToScanState(node.height)"
-              [tooltip]="'See scan state for this block'"
-              [showDelay]="500"
-              class="underline">{{ node.height }}</span>
-      </span>
-      <span class="tertiary">{{ node.globalSlot }}</span>
-      <span>{{ node.txCount }}</span>
-      <span>{{ node.totalTxCount }}</span>
-      <span>{{ node.snarkCount }}</span>
-      <span class="tertiary">{{ node.stagedLedgerHash | truncateMid }}</span>
-      <span class="tertiary">{{ node.snarkedLedgerHash | truncateMid }}</span>
-    </div>
-  </cdk-virtual-scroll-viewport>
-</div>
+<ng-container #minaTable></ng-container>
+
+<ng-template #rowTemplate let-row="row">
+  <span>{{ row.date }}</span>
+  <span class="secondary">
+    <mina-copy [value]="row.hash" [display]="row.hash | truncateMid"></mina-copy>
+  </span>
+  <span class="secondary">
+    <span (click)="goToScanState(row.height)"
+          [tooltip]="'See scan state for this block'"
+          [showDelay]="500"
+          class="underline">{{ row.height }}</span>
+  </span>
+  <span>{{ row.globalSlot }}</span>
+  <span class="secondary">{{ row.txCount }}</span>
+  <span class="secondary">{{ row.zkAppsCount }}</span>
+  <span class="secondary">{{ row.totalTxCount }}</span>
+  <span class="secondary">{{ row.snarkCount }}</span>
+  <span>
+    <mina-copy [value]="row.stagedLedgerHash" [display]="row.stagedLedgerHash | truncateMid"></mina-copy>
+  </span>
+  <span>
+    <mina-copy [value]="row.snarkedLedgerHash" [display]="row.snarkedLedgerHash | truncateMid"></mina-copy>
+  </span>
+</ng-template>

@@ -17,7 +17,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.store.dispatch<AppChangeSubMenus>({
       type: APP_CHANGE_SUB_MENUS,
-      payload: [/*Routes.BLOCK, Routes.LIBP2P, */Routes.NODES],
+      payload: [/*Routes.BLOCK, Routes.LIBP2P, */Routes.NODES, Routes.TOPOLOGY],
     });
   }
 

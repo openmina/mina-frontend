@@ -1,15 +1,16 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Inject, TemplateRef, ViewChild } from '@angular/core';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
 import { selectAppMenu } from '@app/app.state';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter } from 'rxjs';
+import { untilDestroyed } from '@ngneat/until-destroy';
+import { debounceTime, filter } from 'rxjs';
 import { AppMenu } from '@shared/types/app/app-menu.type';
 import { SharedModule } from '@shared/shared.module';
+import { DOCUMENT } from '@angular/common';
+import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
+import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
+import { MinaState } from '@app/app.setup';
 
-@UntilDestroy()
 @Component({
   standalone: true,
   imports: [SharedModule],
@@ -17,37 +18,89 @@ import { SharedModule } from '@shared/shared.module';
   templateUrl: './mina-table.component.html',
   styleUrls: ['./mina-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'h-100 d-flex' },
+  host: { class: 'h-100 flex-column' },
 })
-export class MinaTableComponent<T = any> extends ManualDetection {
+export class MinaTableComponent<T = object> extends StoreDispatcher {
 
-  itemSize: number = 32;
+  rowSize: number = 36;
   isMobile: boolean;
 
-  items: T[];
-  headerCells: string[];
+  rows: T[] = [];
+  activeRow: T;
+  tableHeads: TableColumnList<T>;
   rowTemplate: TemplateRef<T>;
-  propertyForActiveCheck: string;
-  activeItem: T;
-  gridTemplateColumns: number[] = [];
+  currentSort: TableSort<T>;
+  propertyForActiveCheck: keyof T;
+  gridTemplateColumns: Array<number | string> = [];
+  minWidth: number;
+  sortClz: new (payload: TableSort<T>) => { type: string, payload: TableSort<T> };
+  sortSelector: (state: MinaState) => TableSort<T>;
 
-  readonly rowClickEmitter = new EventEmitter<T>();
+  readonly rowClickEmitter: EventEmitter<T> = new EventEmitter<T>();
 
-  @ViewChild(CdkVirtualScrollViewport) private virtualScroll: CdkVirtualScrollViewport;
+  @ViewChild(CdkVirtualScrollViewport) private vs: CdkVirtualScrollViewport;
+  @ViewChild('toTop') private toTop: ElementRef<HTMLDivElement>;
+  private hiddenToTop: boolean = true;
 
-  constructor(private store: Store<MinaState>) { super(); }
+  constructor(@Inject(DOCUMENT) private document: Document) { super(); }
 
   init(): void {
+    this.minWidth = this.minWidth || this.gridTemplateColumns.reduce((acc: number, curr: number | string) => acc + Number(curr), 0);
     this.listenToMenuChange();
-    this.addGridTemplateColumns();
-    // this.createMobileItems();
+    this.addGridTemplateColumnsInCssFile();
+    this.listenToScrolling();
+    this.listenToSortingChanges();
     this.detect();
   }
 
-  private addGridTemplateColumns(): void {
+  private addGridTemplateColumnsInCssFile(): void {
     let value = 'mina-table .mina-table .row{grid-template-columns:';
-    this.gridTemplateColumns.forEach(v => value += `${v}px `);
-    document.getElementById('table-style').textContent = value + '}';
+    this.gridTemplateColumns.forEach(v => value += typeof v === 'number' ? `${v}px ` : `${v} `);
+    this.document.getElementById('table-style').textContent = value + '}';
+  }
+
+  onRowClick(row: T): void {
+    this.rowClickEmitter.emit(row);
+  }
+
+  sortTable(sortBy: string | keyof T): void {
+    const sortDirection = sortBy !== this.currentSort.sortBy
+      ? this.currentSort.sortDirection
+      : this.currentSort.sortDirection === SortDirection.ASC ? SortDirection.DSC : SortDirection.ASC;
+    this.dispatch(this.sortClz, { sortBy: sortBy as keyof T, sortDirection });
+  }
+
+  scrollToTop(): void {
+    this.vs.scrollToIndex(0, 'smooth');
+    this.toTop.nativeElement.classList.add('hide');
+    this.hiddenToTop = true;
+  }
+
+  scrollToElement(rowFinder: (row: T) => boolean): void {
+    const topElements = Math.round(this.vs.elementRef.nativeElement.offsetHeight / 2 / this.rowSize) - 3;
+    const jobIndex = this.rows.findIndex(rowFinder);
+    this.vs.scrollToIndex(jobIndex - topElements);
+  }
+
+  private listenToScrolling(): void {
+    this.vs.scrolledIndexChange
+      .pipe(untilDestroyed(this), debounceTime(this.hiddenToTop ? 200 : 0))
+      .subscribe(index => {
+        if (index === 0) {
+          this.toTop.nativeElement.classList.add('hide');
+        } else {
+          this.toTop.nativeElement.classList.remove('hide');
+        }
+        this.hiddenToTop = index === 0;
+      });
+  }
+
+  private listenToSortingChanges(): void {
+    if (!this.sortSelector) return;
+    this.select(this.sortSelector, (sort: TableSort<T>) => {
+      this.currentSort = sort;
+      this.detect();
+    });
   }
 
   private listenToMenuChange(): void {
@@ -58,13 +111,13 @@ export class MinaTableComponent<T = any> extends ManualDetection {
       )
       .subscribe((menu: AppMenu) => {
         this.isMobile = menu.isMobile;
-        this.itemSize = menu.isMobile ? 200 : 32;
-        this.virtualScroll?.checkViewportSize();
+        this.rowSize = menu.isMobile ? (26 * this.tableHeads.length + 10) : 36;
+        this.vs?.checkViewportSize();
         this.detect();
       });
   }
 
-  onItemClick(item: T): void {
-    this.rowClickEmitter.emit(item);
+  get virtualScroll(): CdkVirtualScrollViewport {
+    return this.vs;
   }
 }

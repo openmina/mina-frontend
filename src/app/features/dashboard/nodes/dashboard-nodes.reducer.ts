@@ -4,7 +4,9 @@ import { DashboardNodesState } from '@dashboard/nodes/dashboard-nodes.state';
 import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
 import {
   DASHBOARD_NODES_CLOSE,
+  DASHBOARD_NODES_GET_FORKS_SUCCESS,
   DASHBOARD_NODES_GET_NODE_SUCCESS,
+  DASHBOARD_NODES_GET_NODES,
   DASHBOARD_NODES_GET_TRACES_SUCCESS,
   DASHBOARD_NODES_INIT,
   DASHBOARD_NODES_SET_ACTIVE_BLOCK,
@@ -21,6 +23,7 @@ import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 import { CONFIG } from '@shared/constants/config';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
+import { DashboardForkFilter } from '@shared/types/dashboard/node-list/dashboard-fork-filter.type';
 
 const initialState: DashboardNodesState = {
   nodes: [],
@@ -38,6 +41,9 @@ const initialState: DashboardNodesState = {
   earliestBlock: undefined,
   allFilters: [],
   activeFilters: [],
+  remainingOngoingRequests: 0,
+  forks: [],
+  activeForkFilter: undefined,
 };
 
 export function reducer(state: DashboardNodesState = initialState, action: DashboardNodesActions): DashboardNodesState {
@@ -59,9 +65,11 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
       const nodes = sortNodes(CONFIG.configs.map((node: MinaNode) => {
         return ({
           ...{} as any,
-          url: node.backend + '/graphql',
-          name: name(node.backend),
+          url: node.graphql + '/graphql',
+          tracingUrl: node['tracing-graphql'] + '/graphql',
+          name: name(node.graphql),
           status: AppNodeStatusTypes.OFFLINE,
+          forks: [],
         });
       }), state.sort);
       const nodeCount: DashboardNodeCount = getNodeCount(nodes);
@@ -70,6 +78,7 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
         nodes,
         filteredNodes: !state.showOfflineNodes ? getActiveNodes(nodes) : nodes,
         nodeCount,
+        remainingOngoingRequests: nodes.length,
       };
     }
 
@@ -83,6 +92,53 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
         nodes,
         filteredNodes: !state.showOfflineNodes ? getActiveNodes(nodes) : nodes,
         allFilters: Array.from(new Set(nodes.map(n => n.hash).filter(Boolean))),
+        remainingOngoingRequests: (state.remainingOngoingRequests - 1) > 0 ? (state.remainingOngoingRequests - 1) : 0,
+      };
+    }
+
+    case DASHBOARD_NODES_GET_NODES: {
+      return {
+        ...state,
+        forks: initialState.forks,
+        activeForkFilter: undefined,
+      };
+    }
+
+    case DASHBOARD_NODES_GET_FORKS_SUCCESS: {
+      if (!action.payload) {
+        return {
+          ...state,
+          forks: undefined,
+        };
+      }
+      const nodes = state.nodes.map(n => ({
+        ...n,
+        branch: action.payload.find(f => f.name === n.name)?.branch,
+        bestTip: action.payload.find(f => f.name === n.name)?.bestTip,
+      }));
+
+      const forks = action.payload.reduce((acc: DashboardForkFilter[], fork) => {
+        const existingFilter = acc.find((filter) => filter.branch === fork.branch);
+
+        if (existingFilter) {
+          if (!existingFilter.candidates.includes(fork.bestTip)) {
+            existingFilter.candidates.push(fork.bestTip);
+          }
+        } else {
+          acc.push({
+            branch: fork.branch,
+            candidates: [fork.bestTip],
+          });
+        }
+
+        return acc;
+      }, []);
+
+      return {
+        ...state,
+        nodes,
+        forks,
+        filteredNodes: !state.showOfflineNodes ? getActiveNodes(nodes) : nodes,
       };
     }
 
@@ -95,7 +151,7 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
     }
 
     case DASHBOARD_NODES_TOGGLE_NODES_SHOWING: {
-      const filteredNodes = filterNodes(state.nodes, state.activeFilters);
+      const filteredNodes = filterNodes(state.nodes, state.activeForkFilter);
       const showOfflineNodes = !state.showOfflineNodes;
       const filteredNodesByOffline = showOfflineNodes ? sortNodes(filteredNodes, state.sort) : sortNodes(getActiveNodes(filteredNodes), state.sort);
       const nodeCount: DashboardNodeCount = getNodeCount(showOfflineNodes ? filteredNodes : filteredNodes.filter(n => n.status !== AppNodeStatusTypes.OFFLINE));
@@ -117,19 +173,35 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
     }
 
     case DASHBOARD_NODES_TOGGLE_FILTER: {
-      const activeFilters = state.activeFilters.includes(action.payload)
-        ? state.activeFilters.filter(f => f !== action.payload)
-        : [...state.activeFilters, action.payload];
+      // const activeFilters = state.activeFilters.includes(action.payload)
+      //   ? state.activeFilters.filter(f => f !== action.payload)
+      //   : [...state.activeFilters, action.payload];
+      //
+      // const showOfflineNodes = state.showOfflineNodes;
+      // let filteredNodes = showOfflineNodes ? state.nodes : getActiveNodes(state.nodes);
+      // filteredNodes = state.allFilters.length === 0 ? filteredNodes : filterNodes(filteredNodes, activeFilters);
+      // filteredNodes = applyNewLatencies(filteredNodes, state.latencyFromFastest);
+      // const nodeCount: DashboardNodeCount = getNodeCount(showOfflineNodes ? filteredNodes : filteredNodes.filter(n => n.status !== AppNodeStatusTypes.OFFLINE));
+      //
+      // return {
+      //   ...state,
+      //   activeFilters,
+      //   filteredNodes,
+      //   nodeCount,
+      // };
 
+      const filter = action.payload.value === state.activeForkFilter?.value && action.payload.type === state.activeForkFilter?.type
+        ? undefined
+        : action.payload;
       const showOfflineNodes = state.showOfflineNodes;
       let filteredNodes = showOfflineNodes ? state.nodes : getActiveNodes(state.nodes);
-      filteredNodes = state.allFilters.length === 0 ? filteredNodes : filterNodes(filteredNodes, activeFilters);
+      filteredNodes = filterNodes(filteredNodes, filter);
       filteredNodes = applyNewLatencies(filteredNodes, state.latencyFromFastest);
       const nodeCount: DashboardNodeCount = getNodeCount(showOfflineNodes ? filteredNodes : filteredNodes.filter(n => n.status !== AppNodeStatusTypes.OFFLINE));
 
       return {
         ...state,
-        activeFilters,
+        activeForkFilter: filter,
         filteredNodes,
         nodeCount,
       };
@@ -140,6 +212,7 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
         ...state,
         activeBlock: action.payload.height,
         activeFilters: [],
+        remainingOngoingRequests: state.nodes.length,
       };
     }
 
@@ -172,7 +245,7 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
   }
 }
 
-function getNodeCount(nodes: DashboardNode[]): DashboardNodeCount {
+function getNodeCount<T extends { url: string }>(nodes: T[]): DashboardNodeCount {
   return {
     nodes: new Set(nodes.filter(node => node.url.includes('node')).map(n => n.url)).size,
     producers: new Set(nodes.filter(node => node.url.includes('prod')).map(n => n.url)).size,
@@ -187,15 +260,19 @@ function getActiveNodes(nodes: DashboardNode[]): DashboardNode[] {
 }
 
 function sortNodes(messages: DashboardNode[], tableSort: TableSort<DashboardNode>): DashboardNode[] {
-  return sort<DashboardNode>(messages, tableSort, ['addr', 'source', 'status', 'name', 'hash'], true);
+  return sort<DashboardNode>(messages, tableSort, ['addr', 'source', 'status', 'name', 'bestTip', 'branch', 'hash', 'traceStatus'], true);
 }
 
-function filterNodes(nodes: DashboardNode[], activeFilters: string[]): DashboardNode[] {
-  return activeFilters.length > 0 ? nodes.filter(n => activeFilters.includes(n.hash)) : nodes;
+// function filterNodes(nodes: DashboardNode[], activeFilters: string[]): DashboardNode[] {
+//   return activeFilters.length > 0 ? nodes.filter(n => activeFilters.includes(n.hash)) : nodes;
+// }
+
+function filterNodes(nodes: DashboardNode[], forkFilter: { value: string, type: 'branch' | 'bestTip' }): DashboardNode[] {
+  return forkFilter ? nodes.filter(n => n[forkFilter.type] === forkFilter.value) : nodes;
 }
 
 function applyNewLatencies(nodes: DashboardNode[], fromFastest: boolean): DashboardNode[] {
-  if (nodes.length === 0) {
+  if (nodes.length === 0 || nodes.length === 1) {
     return nodes;
   }
   const fastestTime = nodes.slice().sort((n1, n2) => n1.timestamp - n2.timestamp)[fromFastest ? 0 : 1].timestamp;

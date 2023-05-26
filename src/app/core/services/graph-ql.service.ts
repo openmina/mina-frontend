@@ -25,7 +25,7 @@ export class GraphQLService {
               private http: HttpClient) { }
 
   changeGraphQlProvider(node: MinaNode): void {
-    this.url = node.backend + '/graphql';
+    this.url = getURL(node.graphql + '/graphql');
   }
 
   query<T>(queryName: string, query: string, variables?: { [key: string]: any }): Observable<T> {
@@ -44,10 +44,9 @@ export class GraphQLService {
       this.loadingService.addURL();
     }
 
-    const fullUrl = getURL(this.url);
     return this.http
       .post<{ data: T }>(
-        fullUrl,
+        this.url,
         { query, variables },
         { headers: { 'Content-Type': 'application/json' } },
       )
@@ -58,6 +57,11 @@ export class GraphQLService {
         map((response: { data: T }) => {
           if (response.data) {
             return response.data;
+          }
+          try {
+            (response as any).errors[0].message
+          } catch (e) {
+            throw new Error(response as any);
           }
           throw new Error((response as any).errors[0].message);
         }),

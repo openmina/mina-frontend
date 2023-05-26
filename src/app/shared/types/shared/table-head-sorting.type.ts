@@ -3,3 +3,5 @@ export interface TableHeadSorting<T = any> {
   sort?: keyof T;
   tooltip?: string | number;
 }
+
+export type TableColumnList<T = object> = TableHeadSorting<T>[];
