@@ -8,7 +8,7 @@ import { NetworkConnectionsSidePanelComponent } from './network-connections-side
 import { EffectsModule } from '@ngrx/effects';
 import { NetworkConnectionsEffects } from '@network/connections/network-connections.effects';
 import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
-import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
+import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 
 
 @NgModule({
@@ -20,7 +20,7 @@ import { HorizontalResizableContainerComponent } from '@shared/components/horizo
   imports: [
     SharedModule,
     MinaJsonViewerComponent,
-    HorizontalResizableContainerComponent,
+    HorizontalResizableContainerOldComponent,
     NetworkConnectionsRouting,
     EffectsModule.forFeature([NetworkConnectionsEffects]),
   ],

@@ -6,7 +6,8 @@ import { SharedModule } from '@shared/shared.module';
 import { WebNodeLogsTableComponent } from './web-node-logs-table/web-node-logs-table.component';
 import { WebNodeLogsSidePanelComponent } from './web-node-logs-side-panel/web-node-logs-side-panel.component';
 import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
-import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
+import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
+import { CopyComponent } from '@shared/components/copy/copy.component';
 
 
 @NgModule({
@@ -18,8 +19,9 @@ import { HorizontalResizableContainerComponent } from '@shared/components/horizo
   imports: [
     WebNodeLogsRouting,
     MinaJsonViewerComponent,
-    HorizontalResizableContainerComponent,
+    HorizontalResizableContainerOldComponent,
     SharedModule,
+    CopyComponent,
   ],
 })
 export class WebNodeLogsModule {}

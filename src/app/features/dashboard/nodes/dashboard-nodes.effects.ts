@@ -16,6 +16,8 @@ import {
   DASHBOARD_NODES_GET_NODE_SUCCESS,
   DASHBOARD_NODES_GET_NODES,
   DASHBOARD_NODES_GET_TRACES_SUCCESS,
+  DASHBOARD_NODES_INIT,
+  DASHBOARD_NODES_INIT_SUCCESS,
   DASHBOARD_NODES_SET_ACTIVE_BLOCK,
   DASHBOARD_NODES_SET_ACTIVE_NODE,
   DASHBOARD_NODES_SET_EARLIEST_BLOCK,
@@ -25,6 +27,7 @@ import {
   DashboardNodesGetForks,
   DashboardNodesGetNode,
   DashboardNodesGetNodes,
+  DashboardNodesInitSuccess,
   DashboardNodesSetActiveBlock,
   DashboardNodesSetActiveNode,
 } from '@dashboard/nodes/dashboard-nodes.actions';
@@ -41,6 +44,7 @@ import { DashboardFork } from '@shared/types/dashboard/node-list/dashboard-fork.
 })
 export class DashboardNodesEffects extends MinaBaseEffect<DashboardNodesActions> {
 
+  readonly init$: Effect;
   readonly earliestBlock$: Effect;
   readonly setActiveBlock$: Effect;
   readonly getNodes$: Effect;
@@ -56,13 +60,20 @@ export class DashboardNodesEffects extends MinaBaseEffect<DashboardNodesActions>
 
     super(store, selectMinaState);
 
+    this.init$ = createEffect(() => this.actions$.pipe(
+      ofType(DASHBOARD_NODES_INIT),
+      this.latestActionState<DashboardNodesGetEarliestBlock>(),
+      switchMap(({ state }) => this.nodesService.getNodes()),
+      map((nodes: any[]) => ({ type: DASHBOARD_NODES_INIT_SUCCESS, payload: { nodes } })),
+    ));
+
     this.earliestBlock$ = createEffect(() => this.actions$.pipe(
       ofType(DASHBOARD_NODES_GET_EARLIEST_BLOCK, DASHBOARD_NODES_CLOSE),
       this.latestActionState<DashboardNodesGetEarliestBlock | DashboardNodesClose>(),
       switchMap(({ state, action }) =>
         action.type === DASHBOARD_NODES_CLOSE
           ? EMPTY
-          : this.nodesService.getLatestHeight(state.dashboard.nodes.nodes)
+          : this.nodesService.getLatestGlobalSlot(state.dashboard.nodes.nodes)
             .pipe(
               switchMap((height: number) => {
                 const actions: DashboardNodesActions[] = [{ type: DASHBOARD_NODES_SET_EARLIEST_BLOCK, payload: { height } }];
@@ -84,10 +95,11 @@ export class DashboardNodesEffects extends MinaBaseEffect<DashboardNodesActions>
     ));
 
     this.getNodes$ = createEffect(() => this.actions$.pipe(
-      ofType(DASHBOARD_NODES_GET_NODES),
-      this.latestActionState<DashboardNodesGetNodes>(),
+      ofType(DASHBOARD_NODES_GET_NODES, DASHBOARD_NODES_INIT_SUCCESS),
+      this.latestActionState<DashboardNodesGetNodes | DashboardNodesInitSuccess>(),
+      filter(({ state }) => !!state.dashboard.nodes.nodes.length),
       switchMap(({ action, state }) => state.dashboard.nodes.nodes.map(node =>
-        ({ type: DASHBOARD_NODES_GET_NODE, payload: { node, height: action.payload.height } }),
+        ({ type: DASHBOARD_NODES_GET_NODE, payload: { node, height: state.dashboard.nodes.activeBlock } }),
       )),
     ));
 

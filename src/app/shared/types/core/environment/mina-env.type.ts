@@ -6,6 +6,10 @@ export interface MinaEnv {
   identifier?: string;
   isVanilla?: boolean;
   aggregator?: string;
+  nodeLister?: {
+    domain: string;
+    port: number;
+  };
   sentry?: SentryConfig;
   firebase?: FirebaseOptions;
   globalConfig?: {

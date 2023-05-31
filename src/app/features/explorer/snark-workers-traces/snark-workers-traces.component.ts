@@ -24,7 +24,7 @@ import {
   selectSWTracesSort,
   selectSWTracesWorkers,
 } from '@explorer/snark-workers-traces/snark-workers-traces.state';
-import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
+import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { SnarkWorkersTracesTableComponent } from '@explorer/snark-workers-traces/snark-workers-traces-table/snark-workers-traces-table.component';
 import { SnarkWorkerTraceFilter } from '@shared/types/explorer/snark-traces/snark-worker-trace-filters.type';
 import { selectActiveNode } from '@app/app.state';
@@ -45,7 +45,7 @@ export class SnarkWorkersTracesComponent extends ManualDetection implements OnIn
   removedClass: boolean;
 
   @ViewChild(SnarkWorkersTracesTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
-  @ViewChild(HorizontalResizableContainerComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
+  @ViewChild(HorizontalResizableContainerOldComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
 
   private destroyComponent: boolean;
 

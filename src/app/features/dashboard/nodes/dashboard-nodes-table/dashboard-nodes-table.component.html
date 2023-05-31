@@ -26,8 +26,34 @@
   <span class="secondary" [innerHTML]="row.blockApplication | secDuration: secConfig"></span>
   <span class="secondary">{{ row.source || '-' }}</span>
   <span [ngClass]="row.traceStatus">{{ row.traceStatus || '-' }}</span>
-  <span [tooltip]="row.addedTx + ' added, ' + row.broadcastedTx + ' broadcasted, ' + row.receivedTx + ' received'">{{ row.txPool ?? '-' }}</span>
-  <span [tooltip]="row.snarkDiffBroadcasted + ' broadcasted, ' + row.snarkDiffReceived + ' received, ' + row.pendingSnarkWork + ' pending snark work'">{{ row.snarkPool ?? '-' }}</span>
+  <span [tooltipDisabled]="row.status !== 'SYNCED'"
+        [tooltip]="row.addedTx + ' added, ' + row.broadcastedTx + ' broadcasted, ' + row.receivedTx + ' received'">{{ row.txPool ?? '-' }}</span>
+  <span [tooltipDisabled]="row.status !== 'SYNCED'"
+        [tooltip]="row.snarkDiffBroadcasted + ' broadcasted, ' + row.snarkDiffReceived + ' received, ' + row.pendingSnarkWork + ' pending snark work'">{{ row.snarkPool ?? '-' }}</span>
+  <span class="fx-row-vert-cent">
+    <button class="btn-transparent tertiary fx-row-full-cent primary-hover pr-0 f-400 ml--5 mr--5 bg-container-hover pl-5"
+            [disabled]="downloadingNodes.includes(i)"
+            (click)="downloadLogs(row, i, $event)">
+      Download
+      <span class="mina-icon icon-200 f-20 ml-5">{{ downloadingNodes.includes(i) ? 'more_horiz' : 'download' }}</span>
+    </button>
+  </span>
+</ng-template>
+
+<ng-template #minimalRowTemplate let-row="row" let-i="i">
+  <span class="fx-row-vert-cent">
+    <a [href]="row.url" target="_blank" class="underline secondary" (click)="$event.stopPropagation()">{{ row.name }}</a>
+    <mina-copy class="d-flex" [value]="row.url" [display]="' '"></mina-copy>
+  </span>
+  <span>
+    <mina-copy [value]="row.hash" [display]="row.hash || '-' | truncateMid"></mina-copy>
+  </span>
+  <span class="secondary">{{ row.blockchainLength || '-' }}</span>
+  <span class="secondary">{{ row.date || '-' }}</span>
+  <span class="secondary" [innerHTML]="row.latency | secDuration: secConfig"></span>
+  <span class="secondary" [innerHTML]="row.blockApplication | secDuration: secConfig"></span>
+  <span class="secondary">{{ row.source || '-' }}</span>
+  <span [ngClass]="row.traceStatus">{{ row.traceStatus || '-' }}</span>
   <span class="fx-row-vert-cent">
     <button class="btn-transparent tertiary fx-row-full-cent primary-hover pr-0 f-400 ml--5 mr--5 bg-container-hover pl-5"
             [disabled]="downloadingNodes.includes(i)"

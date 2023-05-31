@@ -1,21 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { NetworkMessagesFilter } from '@shared/types/network/messages/network-messages-filter.type';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Routes } from '@shared/enums/routes.enum';
-import { selectNetworkBlocks, selectNetworkBlocksSidePanelOpen, selectNetworkBlocksSorting } from '@network/blocks/network-blocks.state';
+import { selectNetworkBlocks, selectNetworkBlocksSorting } from '@network/blocks/network-blocks.state';
 import { NetworkBlock } from '@shared/types/network/blocks/network-block.type';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
 import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
-import { TableHeadSorting } from '@shared/types/shared/table-head-sorting.type';
-import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
-import { NETWORK_BLOCKS_SORT, NETWORK_BLOCKS_TOGGLE_SIDE_PANEL, NetworkBlocksSort, NetworkBlocksToggleSidePanel } from '@network/blocks/network-blocks.actions';
-import { delay, mergeMap, of } from 'rxjs';
+import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
+import { NetworkBlocksSort } from '@network/blocks/network-blocks.actions';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
+import { MinaTableComponent } from '@shared/components/mina-table/mina-table.component';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-network-blocks-table',
   templateUrl: './network-blocks-table.component.html',
@@ -23,11 +16,11 @@ import { delay, mergeMap, of } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'h-100 flex-column' },
 })
-export class NetworkBlocksTableComponent extends ManualDetection implements OnInit {
+export class NetworkBlocksTableComponent extends StoreDispatcher implements OnInit {
 
-  readonly itemSize: number = 36;
   readonly secConfig: SecDurationConfig = { onlySeconds: true, undefinedAlternative: '-', color: true, red: 30, orange: 5 };
-  readonly tableHeads: TableHeadSorting<NetworkBlock>[] = [
+
+  private readonly tableHeads: TableColumnList<NetworkBlock> = [
     { name: 'ID', sort: 'messageId' },
     { name: 'datetime', sort: 'date' },
     { name: 'message hash', sort: 'hash' },
@@ -39,65 +32,24 @@ export class NetworkBlocksTableComponent extends ManualDetection implements OnIn
     { name: 'message kind', sort: 'messageKind' },
   ];
 
-  blocks: NetworkBlock[] = [];
-  activeFilters: NetworkMessagesFilter[] = [];
-  idFromRoute: string;
-  currentSort: TableSort<NetworkBlock>;
-  isSidePanelOpen: boolean;
+  private table: MinaTableComponent<NetworkBlock>;
 
-  @ViewChild(CdkVirtualScrollViewport)
-  public scrollViewport: CdkVirtualScrollViewport;
+  @ViewChild('rowTemplate') private rowTemplate: TemplateRef<NetworkBlock>;
+  @ViewChild('minaTable', { read: ViewContainerRef }) private containerRef: ViewContainerRef;
 
-  constructor(private store: Store<MinaState>,
-              private router: Router) { super(); }
+  constructor(private router: Router) { super(); }
 
-  ngOnInit(): void {
-    this.listenToNetworkBlocks();
-    this.listenToSortingChanges();
-    this.listenToSidePanelOpeningChange();
-  }
-
-  private listenToSortingChanges(): void {
-    this.store.select(selectNetworkBlocksSorting)
-      .pipe(untilDestroyed(this))
-      .subscribe(sort => {
-        this.currentSort = sort;
-        this.detect();
-      });
-  }
-
-  private listenToNetworkBlocks(): void {
-    this.store.select(selectNetworkBlocks)
-      .pipe(untilDestroyed(this))
-      .subscribe((blocks: NetworkBlock[]) => {
-        this.blocks = blocks;
-        this.detect();
-      });
-  }
-
-  private listenToSidePanelOpeningChange(): void {
-    this.store.select(selectNetworkBlocksSidePanelOpen)
-      .pipe(
-        untilDestroyed(this),
-        mergeMap((open: boolean) => {
-          const ms = open ? 0 : 150;
-          return of(open).pipe(delay(ms));
-        }),
-      )
-      .subscribe((open: boolean) => {
-        this.isSidePanelOpen = open;
-        this.detect();
-      });
-  }
-
-  sortTable(sortBy: string): void {
-    const sortDirection = sortBy !== this.currentSort.sortBy
-      ? this.currentSort.sortDirection
-      : this.currentSort.sortDirection === SortDirection.ASC ? SortDirection.DSC : SortDirection.ASC;
-    this.store.dispatch<NetworkBlocksSort>({
-      type: NETWORK_BLOCKS_SORT,
-      payload: { sortBy: sortBy as keyof NetworkBlock, sortDirection },
+  async ngOnInit(): Promise<void> {
+    await import('@shared/components/mina-table/mina-table.component').then(c => {
+      this.table = this.containerRef.createComponent(c.MinaTableComponent<NetworkBlock>).instance;
+      this.table.tableHeads = this.tableHeads;
+      this.table.rowTemplate = this.rowTemplate;
+      this.table.gridTemplateColumns = [90, 165, 125, 80, 150, 150, 110, 110, 160, 40];
+      this.table.sortClz = NetworkBlocksSort;
+      this.table.sortSelector = selectNetworkBlocksSorting;
+      this.table.init();
     });
+    this.listenToNetworkBlocks();
   }
 
   seeMessageInMessages(messageId: number): void {
@@ -111,7 +63,10 @@ export class NetworkBlocksTableComponent extends ManualDetection implements OnIn
     });
   }
 
-  toggleSidePanel(): void {
-    this.store.dispatch<NetworkBlocksToggleSidePanel>({ type: NETWORK_BLOCKS_TOGGLE_SIDE_PANEL });
+  private listenToNetworkBlocks(): void {
+    this.select(selectNetworkBlocks, (blocks: NetworkBlock[]) => {
+      this.table.rows = blocks;
+      this.table.detect();
+    });
   }
 }

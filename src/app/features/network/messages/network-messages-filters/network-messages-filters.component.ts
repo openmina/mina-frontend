@@ -1,19 +1,16 @@
 import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, OnInit, Output } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
 import { selectNetworkActiveFilters, selectNetworkTimestampInterval } from '@network/messages/network-messages.state';
 import { NetworkMessagesFilterCategory } from '@shared/types/network/messages/network-messages-filter-group.type';
-import { NETWORK_TOGGLE_FILTER, NetworkMessagesToggleFilter } from '@network/messages/network-messages.actions';
+import { NetworkMessagesToggleFilter } from '@network/messages/network-messages.actions';
 import { NetworkMessagesFilter } from '@shared/types/network/messages/network-messages-filter.type';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NetworkMessagesFilterTypes } from '@shared/types/network/messages/network-messages-filter-types.enum';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { ActivatedRoute, Router } from '@angular/router';
 import { skip } from 'rxjs';
 import { TimestampInterval } from '@shared/types/shared/timestamp-interval.type';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
-import { trigger, state, style, transition, animate } from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
 
 export const networkAvailableFilters: NetworkMessagesFilterCategory[][] = [
@@ -316,7 +313,6 @@ export const networkAvailableFilters: NetworkMessagesFilterCategory[][] = [
   ],
 ];
 
-@UntilDestroy()
 @Component({
   selector: 'mina-network-messages-filters',
   templateUrl: './network-messages-filters.component.html',
@@ -330,7 +326,7 @@ export const networkAvailableFilters: NetworkMessagesFilterCategory[][] = [
     ]),
   ],
 })
-export class NetworkMessagesFiltersComponent extends ManualDetection implements OnInit {
+export class NetworkMessagesFiltersComponent extends StoreDispatcher implements OnInit {
 
   @Output() onSizeChange: EventEmitter<void> = new EventEmitter<void>();
 
@@ -342,8 +338,7 @@ export class NetworkMessagesFiltersComponent extends ManualDetection implements 
   private timestamp: TimestampInterval;
   private activeNodeName: string;
 
-  constructor(private store: Store<MinaState>,
-              private router: Router,
+  constructor(private router: Router,
               private route: ActivatedRoute,
               private elementRef: ElementRef<HTMLElement>) { super(); }
 
@@ -358,21 +353,17 @@ export class NetworkMessagesFiltersComponent extends ManualDetection implements 
   }
 
   private listenToRouteChange(): void {
-    this.store.select(getMergedRoute)
-      .pipe(untilDestroyed(this))
-      .subscribe((route: MergedRoute) => {
-        this.activeNodeName = route.queryParams['node'];
-      });
+    this.select(getMergedRoute, (route: MergedRoute) => {
+      this.activeNodeName = route.queryParams['node'];
+    });
   }
 
   private listenToNetworkFilters(): void {
-    this.store.select(selectNetworkActiveFilters)
-      .pipe(untilDestroyed(this), skip(1))
-      .subscribe((activeFilters: NetworkMessagesFilter[]) => {
-        this.activeFilters = activeFilters;
-        this.addFiltersToRoute();
-        this.detect();
-      });
+    this.select(selectNetworkActiveFilters, (activeFilters: NetworkMessagesFilter[]) => {
+      this.activeFilters = activeFilters;
+      this.addFiltersToRoute();
+      this.detect();
+    }, skip(1));
   }
 
   private addFiltersToRoute(): void {
@@ -393,17 +384,15 @@ export class NetworkMessagesFiltersComponent extends ManualDetection implements 
   }
 
   private listenToNetworkTimestampFilter(): void {
-    this.store.select(selectNetworkTimestampInterval)
-      .pipe(untilDestroyed(this))
-      .subscribe((timestamp: TimestampInterval) => {
-        this.timestamp = timestamp;
-      });
+    this.select(selectNetworkTimestampInterval, (timestamp: TimestampInterval) => {
+      this.timestamp = timestamp;
+    });
   }
 
   toggleFilter(filter: NetworkMessagesFilter): void {
     const type = this.activeFilters.includes(filter) ? 'remove' : 'add';
     const filters = [filter];
-    this.store.dispatch<NetworkMessagesToggleFilter>({ type: NETWORK_TOGGLE_FILTER, payload: { filters, type } });
+    this.dispatch(NetworkMessagesToggleFilter, { filters, type });
     this.onResize();
   }
 
@@ -417,6 +406,6 @@ export class NetworkMessagesFiltersComponent extends ManualDetection implements 
   filterByCategory(category: NetworkMessagesFilterCategory): void {
     const filters = category.filters;
     const type = filters.every(f => this.activeFilters.includes(f)) ? 'remove' : 'add';
-    this.store.dispatch<NetworkMessagesToggleFilter>({ type: NETWORK_TOGGLE_FILTER, payload: { filters, type } });
+    this.dispatch(NetworkMessagesToggleFilter, { filters, type });
   }
 }

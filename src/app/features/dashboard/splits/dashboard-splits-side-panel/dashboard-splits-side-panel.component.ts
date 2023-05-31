@@ -19,7 +19,7 @@ import { TableHeadSorting } from '@shared/types/shared/table-head-sorting.type';
   templateUrl: './dashboard-splits-side-panel.component.html',
   styleUrls: ['./dashboard-splits-side-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'flex-column border-left h-100' },
+  host: { class: 'flex-column border-left h-100 w-100' },
 })
 export class DashboardSplitsSidePanelComponent extends StoreDispatcher implements OnInit {
 

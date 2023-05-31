@@ -1,11 +1,9 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { selectActiveNode, selectAppNodeStatus } from '@app/app.state';
 import { filter, skip } from 'rxjs';
 import { ExplorerBlocksClose, ExplorerBlocksGetBlocks } from '@explorer/blocks/explorer-blocks.actions';
 import { NodeStatus } from '@shared/types/app/node-status.type';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
-import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
-import { ExplorerBlocksTableComponent } from '@explorer/blocks/explorer-blocks-table/explorer-blocks-table.component';
 import { selectExplorerBlocksActiveBlock } from '@explorer/blocks/explorer-blocks.state';
 import { ExplorerBlock } from '@shared/types/explorer/blocks/explorer-block.type';
 
@@ -21,10 +19,8 @@ export class ExplorerBlocksComponent extends StoreDispatcher implements OnInit, 
   isActiveRow: boolean;
 
   private blockLevel: number;
-  private removedClass: boolean;
 
-  @ViewChild(ExplorerBlocksTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
-  @ViewChild(HorizontalResizableContainerComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
+  constructor(public el: ElementRef) { super() }
 
   ngOnInit(): void {
     this.listenToActiveNodeAndBlockChange();
@@ -47,25 +43,12 @@ export class ExplorerBlocksComponent extends StoreDispatcher implements OnInit, 
     this.select(selectExplorerBlocksActiveBlock, (row: ExplorerBlock) => {
       if (row && !this.isActiveRow) {
         this.isActiveRow = true;
-        if (!this.removedClass) {
-          this.removedClass = true;
-          this.horizontalResizableContainer.nativeElement.classList.remove('no-transition');
-        }
         this.detect();
       } else if (!row && this.isActiveRow) {
         this.isActiveRow = false;
         this.detect();
       }
     });
-  }
-
-  toggleResizing(): void {
-    this.tableRef.nativeElement.classList.toggle('no-transition');
-  }
-
-  onWidthChange(width: number): void {
-    this.horizontalResizableContainer.nativeElement.style.right = (width * -1) + 'px';
-    this.tableRef.nativeElement.style.width = `calc(100% - ${width}px)`;
   }
 
   override ngOnDestroy(): void {

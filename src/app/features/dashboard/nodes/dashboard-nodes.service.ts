@@ -8,11 +8,10 @@ import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-gr
 import { TracingBlocksService } from '@tracing/tracing-blocks/tracing-blocks.service';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { lastItem } from '@shared/helpers/array.helper';
-import { isNotVanilla } from '@shared/constants/config';
+import { CONFIG, isNotVanilla } from '@shared/constants/config';
 import { LoadingService } from '@core/services/loading.service';
 import { DashboardFork } from '@shared/types/dashboard/node-list/dashboard-fork.type';
-
-const dash = '-';
+import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 
 @Injectable({
   providedIn: 'root',
@@ -25,11 +24,68 @@ export class DashboardNodesService {
   constructor(private http: HttpClient,
               private loadingService: LoadingService) { }
 
-  getLatestHeight(nodes: DashboardNode[]): Observable<number> {
+  getNodes(): Observable<MinaNode[]> {
+    const name = (node: string) => {
+      let org = origin;
+      let url: string;
+      if (org.includes('localhost:4200')) {
+        const strings = node?.split('/') || [];
+        url = '/' + strings[strings.length - 1];
+      } else {
+        url = node.replace(org, '');
+      }
+      return `${url}/graphql`;
+    };
+
+    if (CONFIG.nodeLister) {
+      return this.http.get<MinaNode[]>(CONFIG.nodeLister.domain + ':' + CONFIG.nodeLister.port + '/nodes').pipe(
+        map((response: any[]) => {
+          return response.map((node: any) => {
+            return ({
+              ...{} as any,
+              name: node.ip,
+              url: CONFIG.nodeLister.domain + ':' + node.graphql_port + '/' + node.ip + '/graphql',
+              tracingUrl: CONFIG.nodeLister.domain + ':' + node.internal_trace_port + '/graphql',
+              status: AppNodeStatusTypes.SYNCED,
+              forks: [],
+            });
+          });
+        }),
+      );
+    }
+    return of(CONFIG.configs.map((node: MinaNode) => {
+      return ({
+        ...{} as any,
+        url: node.graphql + '/graphql',
+        tracingUrl: node['tracing-graphql'] + '/graphql',
+        name: name(node.graphql),
+        status: AppNodeStatusTypes.OFFLINE,
+        forks: [],
+      });
+    }));
+  }
+
+  getLatestGlobalSlot(nodes: DashboardNode[]): Observable<number> {
+    if (CONFIG.nodeLister) {
+      return from(
+        nodes.map(node =>
+          this.http
+            .post(node.tracingUrl, { query: latestGlobalSlotFromTrace }, this.options)
+            .pipe(
+              map((response: any) => Number(lastItem(response.data.blockTraces.traces).global_slot)),
+              catchError(() => EMPTY),
+            ),
+        ),
+      ).pipe(
+        concatAll(),
+        filter(Boolean),
+        take(1),
+      );
+    }
     return from(
       nodes.map(node =>
         this.http
-          .post(node.url, { query: latestBlockHeight }, this.options)
+          .post(node.url, { query: latestGlobalSlot }, this.options)
           .pipe(
             map((response: any) => Number(lastItem(response.data.bestChain).protocolState.consensusState.slotSinceGenesis)),
             catchError(() => EMPTY),
@@ -43,6 +99,9 @@ export class DashboardNodesService {
   }
 
   getForks(nodes: DashboardNode[]): Observable<DashboardFork[]> {
+    if (CONFIG.nodeLister) {
+      return of([])
+    }
     const uniqueNodes = Array.from(new Set(nodes.map(node => node.name)))
       .map(name => nodes.find(node => node.name === name))
       .filter(n => n.status === AppNodeStatusTypes.SYNCED);
@@ -135,9 +194,11 @@ export class DashboardNodesService {
   }
 
   getNode(node: DashboardNode, globalSlot: number): Observable<DashboardNode[]> {
-    if (true) {//isNotVanilla()) {
-      const body = { query: isNotVanilla() ? syncQuery : syncQueryVanilla };
-      return this.http.post(node.url, body, this.options).pipe(
+    const body = { query: isNotVanilla() ? syncQuery : syncQueryVanilla };
+    return (CONFIG.nodeLister
+      ? of(null)
+      : this.http.post(node.url, body, this.options))
+      .pipe(
         switchMap((syncResponse: any) =>
           this.http.post(node.tracingUrl, { query: tracingQuery(globalSlot) }, this.options).pipe(
             map((tracingResponse: any) => ({ syncResponse, tracingResponse })),
@@ -149,8 +210,8 @@ export class DashboardNodesService {
           ),
         ),
         map(({ syncResponse, tracingResponse }: { syncResponse: any, tracingResponse: any }) => {
-          const daemon = syncResponse.data.daemonStatus;
-          const metrics = syncResponse.data.daemonStatus.metrics;
+          const daemon = syncResponse?.data.daemonStatus || { syncStatus: AppNodeStatusTypes.SYNCED};
+          const metrics = syncResponse?.data.daemonStatus.metrics || {};
           let blockTraces = tracingResponse.data.blockTraces.traces;
           blockTraces = blockTraces.length ? blockTraces : [{}];
           const map1 = blockTraces.map((trace: any) => ({
@@ -158,7 +219,7 @@ export class DashboardNodesService {
             status: daemon.syncStatus,
             blockchainLength: trace.blockchain_length,
             hash: trace.state_hash,
-            addr: daemon.addrsAndPorts.externalIp + ':' + daemon.addrsAndPorts.clientPort,
+            addr: daemon.addrsAndPorts ? (daemon.addrsAndPorts.externalIp + ':' + daemon.addrsAndPorts.clientPort) : undefined,
             date: trace.started_at ? toReadableDate(trace.started_at * ONE_THOUSAND) : undefined,
             timestamp: trace.started_at * ONE_THOUSAND,
             blockApplication: trace.total_time,
@@ -182,43 +243,44 @@ export class DashboardNodesService {
         catchError((error) => this.buildNodeFromErrorResponse(error, node)),
         finalize(() => this.loadingService.removeURL()),
       );
-    } else {
-      return this.http.post(node.url, { query: syncQueryVanilla }, this.options).pipe(
-        map((response: any) => ({
-          daemon: response.data.daemonStatus,
-          metrics: response.data.daemonStatus.metrics,
-          bestChain: response.data.bestChain.filter((c: any) => Number(c.protocolState.consensusState.blockHeight) === globalSlot),
-        })),
-        map(({ daemon, metrics, bestChain }: { daemon: any, metrics: any, bestChain: any[] }) => {
-          return bestChain.map(chain => ({
-            ...node,
-            status: daemon.syncStatus,
-            blockchainLength: chain.protocolState.consensusState.blockHeight,
-            addr: daemon.addrsAndPorts.externalIp + ':' + daemon.addrsAndPorts.clientPort,
-            date: dash,
-            timestamp: 0,
-            blockApplication: null,
-            txPool: metrics.transactionPoolSize || 0,
-            addedTx: metrics.transactionsAddedToPool || 0,
-            broadcastedTx: metrics.transactionPoolDiffBroadcasted || 0,
-            receivedTx: metrics.transactionPoolDiffReceived || 0,
-            snarkPool: metrics.snarkPoolSize || 0,
-            snarkDiffReceived: metrics.snarkPoolDiffReceived || 0,
-            snarkDiffBroadcasted: metrics.snarkPoolDiffBroadcasted || 0,
-            pendingSnarkWork: metrics.pendingSnarkWork || 0,
-            latency: 0,
-            source: dash,
-            hash: chain.stateHash,
-            loaded: true,
-            traceStatus: chain.status,
-            branch: undefined,
-            bestTip: undefined,
-          } as DashboardNode));
-        }),
-        catchError((error) => this.buildNodeFromErrorResponse(error, node)),
-        finalize(() => this.loadingService.removeURL()),
-      );
-    }
+    // }
+    // else {
+    // return this.http.post(node.url, { query: syncQueryVanilla }, this.options).pipe(
+    //   map((response: any) => ({
+    //     daemon: response.data.daemonStatus,
+    //     metrics: response.data.daemonStatus.metrics,
+    //     bestChain: response.data.bestChain.filter((c: any) => Number(c.protocolState.consensusState.blockHeight) === globalSlot),
+    //   })),
+    //   map(({ daemon, metrics, bestChain }: { daemon: any, metrics: any, bestChain: any[] }) => {
+    //     return bestChain.map(chain => ({
+    //       ...node,
+    //       status: daemon.syncStatus,
+    //       blockchainLength: chain.protocolState.consensusState.blockHeight,
+    //       addr: daemon.addrsAndPorts.externalIp + ':' + daemon.addrsAndPorts.clientPort,
+    //       date: dash,
+    //       timestamp: 0,
+    //       blockApplication: null,
+    //       txPool: metrics.transactionPoolSize || 0,
+    //       addedTx: metrics.transactionsAddedToPool || 0,
+    //       broadcastedTx: metrics.transactionPoolDiffBroadcasted || 0,
+    //       receivedTx: metrics.transactionPoolDiffReceived || 0,
+    //       snarkPool: metrics.snarkPoolSize || 0,
+    //       snarkDiffReceived: metrics.snarkPoolDiffReceived || 0,
+    //       snarkDiffBroadcasted: metrics.snarkPoolDiffBroadcasted || 0,
+    //       pendingSnarkWork: metrics.pendingSnarkWork || 0,
+    //       latency: 0,
+    //       source: dash,
+    //       hash: chain.stateHash,
+    //       loaded: true,
+    //       traceStatus: chain.status,
+    //       branch: undefined,
+    //       bestTip: undefined,
+    //     } as DashboardNode));
+    //   }),
+    //   catchError((error) => this.buildNodeFromErrorResponse(error, node)),
+    //   finalize(() => this.loadingService.removeURL()),
+    // );
+    // }
   }
 
   private buildNodeFromErrorResponse(error: { data?: any }, node: DashboardNode): Observable<DashboardNode[]> {
@@ -355,7 +417,7 @@ const syncQueryVanilla = `
   }
 `;
 
-const latestBlockHeight = `
+const latestGlobalSlot = `
   query latestBlockHeight {
     bestChain(maxLength: 1) {
       protocolState {
@@ -367,6 +429,7 @@ const latestBlockHeight = `
   }
 `;
 
+const latestGlobalSlotFromTrace = `query latestBlockHeight { blockTraces }`;
 
 const bestChain = (maxLength: number = 10) => `
   query BestChain {

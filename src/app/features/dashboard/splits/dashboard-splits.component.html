@@ -1,7 +1,21 @@
+<!--todo: fix this-->
+
 <div class="flex-row w-100 h-100" #parent>
-  <div class="wrapper flex-column h-100">
+  <mina-horizontal-resizable-container [leftTemplate]="left"
+                                       [rightTemplate]="right"
+                                       [show]="show"
+                                       [minWidth]="410"
+                                       [maxWidthElement]="parent"
+                                       localStorageKey="db-topology-spw"></mina-horizontal-resizable-container>
+</div>
+
+<ng-template #left>
+  <div class="flex-column h-100 w-100">
     <mina-dashboard-splits-toolbar></mina-dashboard-splits-toolbar>
     <mina-dashboard-splits-graph [parentWidth]="parent.offsetWidth"></mina-dashboard-splits-graph>
   </div>
+</ng-template>
+
+<ng-template #right>
   <mina-dashboard-splits-side-panel></mina-dashboard-splits-side-panel>
-</div>
+</ng-template>

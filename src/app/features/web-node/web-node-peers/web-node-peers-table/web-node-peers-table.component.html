@@ -2,41 +2,29 @@
 <div #parent class="w-100 flex-row p-relative h-minus-lg">
   <div #table class="table-wrapper p-relative"
        [class.shrink]="activePeer">
-    <div class="mina-table flex-grow overflow-x-auto h-100">
-      <div class="row head">
-        <span>ID</span>
-        <span>Datetime</span>
-        <span>Peer ID</span>
-        <span>Kind</span>
-        <span>Summary</span>
-        <span>Level</span>
-      </div>
-      <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-scroll h-minus-lg"
-                                   itemSize="32">
-        <div *cdkVirtualFor="let peer of peers; let i=index"
-             (click)="onRowClick(peer)"
-             [class.active]="activePeer?.id === peer.id"
-             [class.row-even]="i % 2 === 0"
-             class="row">
-          <span>{{ peer.id }}</span>
-          <span>{{ peer.date }}</span>
-          <span>
-            <mina-copy [value]="peer.peerId" [display]="peer.peerId | truncateMid: 17"></mina-copy>
-          </span>
-          <span class="secondary truncate">{{ peer.kind }}</span>
-          <span class="truncate">{{ peer.summary || '-' }}</span>
-          <span class="secondary truncate">{{ peer.level }}</span>
-        </div>
-      </cdk-virtual-scroll-viewport>
-    </div>
+    <ng-container #minaTable></ng-container>
+
+    <ng-template #rowTemplate let-row="row">
+      <span>{{ row.id }}</span>
+      <span>{{ row.date }}</span>
+      <span>
+        <mina-copy [value]="row.peerId" [display]="row.peerId | truncateMid: 17"></mina-copy>
+      </span>
+      <span class="secondary truncate">{{ row.kind }}</span>
+      <span>
+        <mina-copy [value]="row.summary" [display]="row.summary | truncateMid: 17"></mina-copy>
+      </span>
+      <span class="secondary truncate">{{ row.level }}</span>
+    </ng-template>
   </div>
-  <mina-horizontal-resizable-container (endResizing)="toggleResizing()"
+  <mina-horizontal-resizable-container-old (endResizing)="toggleResizing()"
                                        (startResizing)="toggleResizing()"
                                        (widthChange)="onWidthChange($event)"
                                        [class.show]="activePeer"
                                        [maxWidthElement]="parent"
                                        [minWidth]="400"
+                                       class="no-transition"
                                        localStorageKey="web-node-peers-side-panel-width">
     <mina-web-node-peers-side-panel></mina-web-node-peers-side-panel>
-  </mina-horizontal-resizable-container>
+  </mina-horizontal-resizable-container-old>
 </div>

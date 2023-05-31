@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import {
   DashboardNodesGetForks,
@@ -26,6 +26,7 @@ import { LoadingService } from '@core/services/loading.service';
 import { Routes } from '@shared/enums/routes.enum';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { DashboardForkFilter } from '@shared/types/dashboard/node-list/dashboard-fork-filter.type';
+import { CONFIG } from '@shared/constants/config';
 
 @UntilDestroy()
 @Component({
@@ -37,6 +38,7 @@ import { DashboardForkFilter } from '@shared/types/dashboard/node-list/dashboard
 })
 export class DashboardNodesToolbarComponent extends StoreDispatcher implements OnInit, OnDestroy {
 
+  readonly nodeLister = CONFIG.nodeLister;
   count: DashboardNodeCount = {} as DashboardNodeCount;
   activeFilters: string[] = [];
   allFilters: string[] = [];
@@ -49,6 +51,11 @@ export class DashboardNodesToolbarComponent extends StoreDispatcher implements O
   activeForkFilter: { value: string, type: 'branch' | 'bestTip' };
 
   private urlRemoved: boolean;
+
+  // change height of host element
+
+  @HostBinding('style.height.px')
+  height: number = this.nodeLister ? 40 : 80;
 
   constructor(private loadingService: LoadingService,
               private router: Router) { super(); }

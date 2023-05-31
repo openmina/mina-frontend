@@ -1,8 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { NetworkMessage } from '@shared/types/network/messages/network-message.type';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
 import {
   NETWORK_GET_SPECIFIC_MESSAGE,
   NETWORK_PAUSE,
@@ -16,7 +13,7 @@ import {
   NetworkMessagesToggleFilter,
 } from '@network/messages/network-messages.actions';
 import { selectNetworkActiveFilters, selectNetworkActiveRow, selectNetworkMessages, selectNetworkStream } from '@network/messages/network-messages.state';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { NetworkMessagesFilter } from '@shared/types/network/messages/network-messages-filter.type';
 import { NetworkMessagesFilterTypes } from '@shared/types/network/messages/network-messages-filter-types.enum';
 import { filter, fromEvent, throttleTime } from 'rxjs';
@@ -25,13 +22,15 @@ import { networkAvailableFilters } from '@network/messages/network-messages-filt
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
 import { Params, Router } from '@angular/router';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { Routes } from '@shared/enums/routes.enum';
 import { TimestampInterval } from '@shared/types/shared/timestamp-interval.type';
 import { NetworkMessagesDirection } from '@shared/types/network/messages/network-messages-direction.enum';
 import { APP_UPDATE_DEBUGGER_STATUS, AppUpdateDebuggerStatus } from '@app/app.actions';
+import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
+import { MinaTableComponent } from '@shared/components/mina-table/mina-table.component';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
+import { lastItem } from '@shared/helpers/array.helper';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-network-messages-table',
   templateUrl: './network-messages-table.component.html',
@@ -39,26 +38,47 @@ import { APP_UPDATE_DEBUGGER_STATUS, AppUpdateDebuggerStatus } from '@app/app.ac
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-column h-100' },
 })
-export class NetworkMessagesTableComponent extends ManualDetection implements OnInit {
+export class NetworkMessagesTableComponent extends StoreDispatcher implements OnInit {
 
-  readonly itemSize: number = 36;
+  private readonly tableHeads: TableColumnList<NetworkMessage> = [
+    { name: 'ID' },
+    { name: 'datetime' },
+    { name: 'remote address' },
+    { name: 'direction' },
+    { name: 'size' },
+    { name: 'stream kind' },
+    { name: 'message kind' },
+  ];
 
   messages: NetworkMessage[] = [];
-  activeRow: NetworkMessage;
   activeFilters: NetworkMessagesFilter[] = [];
-  idFromRoute: number;
   attemptToGetMessagesFromRoute: boolean = true;
 
-  @ViewChild(CdkVirtualScrollViewport)
-  public scrollViewport: CdkVirtualScrollViewport;
+  // @ViewChild(CdkVirtualScrollViewport)
+  // public scrollViewport: CdkVirtualScrollViewport;
 
+  private idFromRoute: number;
+  private activeRow: NetworkMessage;
   private stream: boolean;
   private queryParams: Params;
 
-  constructor(private store: Store<MinaState>,
-              private router: Router) { super(); }
+  @ViewChild('rowTemplate') private rowTemplate: TemplateRef<NetworkMessage>;
+  @ViewChild('minaTable', { read: ViewContainerRef }) private containerRef: ViewContainerRef;
 
-  ngOnInit(): void {
+  public table: MinaTableComponent<NetworkMessage>;
+
+  constructor(private router: Router) { super(); }
+
+  async ngOnInit(): Promise<void> {
+    await import('@shared/components/mina-table/mina-table.component').then(c => {
+      this.table = this.containerRef.createComponent(c.MinaTableComponent<NetworkMessage>).instance;
+      this.table.tableHeads = this.tableHeads;
+      this.table.rowTemplate = this.rowTemplate;
+      this.table.gridTemplateColumns = [80, 170, 190, 100, 80, 140, 400];
+      this.table.rowClickEmitter.pipe(untilDestroyed(this)).subscribe((row: NetworkMessage) => this.onRowClick(row));
+      this.table.propertyForActiveCheck = 'id';
+      this.table.init();
+    });
     this.listenToNetworkMessages();
     this.listenToActiveRowChange();
     this.listenToNetworkFilters();
@@ -130,6 +150,8 @@ export class NetworkMessagesTableComponent extends ManualDetection implements On
       .pipe(untilDestroyed(this))
       .subscribe((messages: NetworkMessage[]) => {
         this.messages = messages;
+        this.table.rows = messages;
+        this.table.detect();
         this.detect();
         this.scrollToElement();
         this.sendTotalDecrypted();
@@ -137,13 +159,20 @@ export class NetworkMessagesTableComponent extends ManualDetection implements On
   }
 
   private scrollToElement(): void {
-    let scrollTo = this.messages.length;
-    if (this.idFromRoute) {
-      const topElements = Math.floor(this.scrollViewport.elementRef.nativeElement.offsetHeight / 2 / this.itemSize);
-      scrollTo = this.messages.findIndex(m => m.id === this.idFromRoute) - topElements;
-      this.idFromRoute = undefined;
+    // let scrollTo = this.messages.length;
+    // if (this.idFromRoute) {
+    //   const topElements = Math.floor(this.scrollViewport.elementRef.nativeElement.offsetHeight / 2 / this.itemSize);
+    //   scrollTo = this.messages.findIndex(m => m.id === this.idFromRoute) - topElements;
+    //   this.idFromRoute = undefined;
+    // }
+    // this.scrollViewport.scrollToIndex(scrollTo);
+
+    let rowFinder = (r: NetworkMessage) => r.id === this.idFromRoute;
+    if (!this.idFromRoute) {
+      rowFinder = (r: NetworkMessage) => r.id === lastItem(this.table.rows).id;
     }
-    this.scrollViewport.scrollToIndex(scrollTo);
+    this.table.scrollToElement(rowFinder);
+    delete this.idFromRoute;
   }
 
   private listenToNetworkStream(): void {
@@ -157,6 +186,8 @@ export class NetworkMessagesTableComponent extends ManualDetection implements On
       .pipe(untilDestroyed(this))
       .subscribe((row: NetworkMessage) => {
         this.activeRow = row;
+        this.table.activeRow = row;
+        this.table.detect();
         this.detect();
       });
   }
@@ -170,14 +201,14 @@ export class NetworkMessagesTableComponent extends ManualDetection implements On
   }
 
   private listenToVirtualScrolling(): void {
-    fromEvent(this.scrollViewport.elementRef.nativeElement.firstChild, 'wheel', { passive: true })
+    fromEvent(this.table.virtualScroll.elementRef.nativeElement.firstChild, 'wheel', { passive: true })
       .pipe(
         untilDestroyed(this),
         throttleTime(600),
         filter((event: Event) => this.stream && (event as WheelEvent).deltaY < 0),
       )
       .subscribe(() => this.pause());
-    fromEvent(this.scrollViewport.elementRef.nativeElement, 'touchmove', { passive: true })
+    fromEvent(this.table.virtualScroll.elementRef.nativeElement, 'touchmove', { passive: true })
       .pipe(
         untilDestroyed(this),
         throttleTime(600),

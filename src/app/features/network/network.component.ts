@@ -18,8 +18,7 @@ export class NetworkComponent implements OnInit {
   ngOnInit(): void {
     this.store.dispatch<AppChangeSubMenus>({
       type: APP_CHANGE_SUB_MENUS,
-      payload: [Routes.MESSAGES, Routes.CONNECTIONS, Routes.BLOCKS, Routes.BLOCKS_IPC, ...(CONFIG.production ? [] : [Routes.PROPAGATION]) /* Routes.SNARKS, Routes.TRANSACTIONS,*/],
+      payload: [Routes.MESSAGES, Routes.CONNECTIONS, Routes.BLOCKS, Routes.BLOCKS_IPC, ...(CONFIG.production ? [] : [Routes.PROPAGATION])],
     });
   }
-
 }

@@ -1,16 +1,17 @@
-<div class="flex-column h-100">
+<div #parent class="flex-column h-100">
   <mina-dashboard-nodes-toolbar></mina-dashboard-nodes-toolbar>
-  <div #parent class="h-100 w-100 flex-row p-relative">
-    <mina-dashboard-nodes-table [class.shrink]="isActiveTrace"></mina-dashboard-nodes-table>
-    <mina-horizontal-resizable-container (endResizing)="toggleResizing()"
-                                         (startResizing)="toggleResizing()"
-                                         (widthChange)="onWidthChange($event)"
-                                         [class.show]="isActiveTrace"
-                                         [maxWidthElement]="parent"
-                                         [minWidth]="420"
-                                         class="no-transition"
-                                         localStorageKey="db-nodes-side-panel-width">
-      <mina-dashboard-nodes-side-panel></mina-dashboard-nodes-side-panel>
-    </mina-horizontal-resizable-container>
-  </div>
+  <mina-horizontal-resizable-container [leftTemplate]="left"
+                                       [rightTemplate]="right"
+                                       [show]="isActiveTrace"
+                                       [minWidth]="420"
+                                       [maxWidthElement]="parent"
+                                       localStorageKey="db-nodes-spw"></mina-horizontal-resizable-container>
 </div>
+
+<ng-template #left>
+  <mina-dashboard-nodes-table></mina-dashboard-nodes-table>
+</ng-template>
+
+<ng-template #right>
+  <mina-dashboard-nodes-side-panel></mina-dashboard-nodes-side-panel>
+</ng-template>

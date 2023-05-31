@@ -8,7 +8,7 @@ import {
   DASHBOARD_NODES_GET_NODE_SUCCESS,
   DASHBOARD_NODES_GET_NODES,
   DASHBOARD_NODES_GET_TRACES_SUCCESS,
-  DASHBOARD_NODES_INIT,
+  DASHBOARD_NODES_INIT_SUCCESS,
   DASHBOARD_NODES_SET_ACTIVE_BLOCK,
   DASHBOARD_NODES_SET_ACTIVE_NODE,
   DASHBOARD_NODES_SET_EARLIEST_BLOCK,
@@ -49,29 +49,8 @@ const initialState: DashboardNodesState = {
 export function reducer(state: DashboardNodesState = initialState, action: DashboardNodesActions): DashboardNodesState {
   switch (action.type) {
 
-    case DASHBOARD_NODES_INIT: {
-      const name = (node: string) => {
-        let org = origin;
-        let url: string;
-        if (org.includes('localhost:4200')) {
-          const strings = node.split('/');
-          url = '/' + strings[strings.length - 1];
-        } else {
-          url = node.replace(org, '');
-        }
-        return `${url}/graphql`;
-      };
-
-      const nodes = sortNodes(CONFIG.configs.map((node: MinaNode) => {
-        return ({
-          ...{} as any,
-          url: node.graphql + '/graphql',
-          tracingUrl: node['tracing-graphql'] + '/graphql',
-          name: name(node.graphql),
-          status: AppNodeStatusTypes.OFFLINE,
-          forks: [],
-        });
-      }), state.sort);
+    case DASHBOARD_NODES_INIT_SUCCESS: {
+      const nodes = sortNodes(action.payload.nodes, state.sort);
       const nodeCount: DashboardNodeCount = getNodeCount(nodes);
       return {
         ...state,

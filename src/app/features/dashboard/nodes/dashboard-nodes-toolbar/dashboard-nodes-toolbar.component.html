@@ -1,4 +1,5 @@
-<div class="row1 fx-row-vert-cent flex-between h-50">
+<div class="row1 fx-row-vert-cent flex-between"
+     [ngClass]="nodeLister ? 'h-100' : 'h-50'">
   <mina-horizontal-menu [clz]="'pl-12'" [template]="template1"></mina-horizontal-menu>
   <ng-template #template1>
     <span class="tertiary mr-10 f-600 shrink-0">Global Slot</span>
@@ -35,12 +36,13 @@
               (click)="toggleNodesShowing()">Show {{ showOffline ? 'active' : 'all' }} nodes</button>
     </div>
   </ng-template>
-  <div class="mr-10 fx-row-vert-cent selected-primary h-sm shrink-0">
+  <div class="mr-10 fx-row-vert-cent selected-primary h-sm shrink-0"
+       *ngIf="!nodeLister">
     {{ count.nodes }} Node{{ count.nodes | plural }} · {{ count.producers }} Producer{{ count.producers | plural }} · {{ count.snarkers }} Snarker{{ count.snarkers | plural }} · {{ count.seeders }} Seeder{{ count.seeders | plural }} · {{ count.transactionGenerators }} Generator{{ count.transactionGenerators | plural }}
   </div>
 </div>
 
-<div class="row2 fx-row-vert-cent h-50">
+<div *ngIf="!nodeLister" class="row2 fx-row-vert-cent h-50">
   <mina-horizontal-menu [clz]="'pl-12'" [template]="template2"></mina-horizontal-menu>
   <ng-template #template2>
     <span class="tertiary mr-10 f-600">{{ !forks ? '0 ' : forks.length === 0 ? 'Loading ' : '' }}Branches</span>

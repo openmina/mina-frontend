@@ -9,8 +9,9 @@ import { ExplorerBlocksTableComponent } from '@explorer/blocks/explorer-blocks-t
 import { CopyComponent } from '@shared/components/copy/copy.component';
 import { HorizontalMenuComponent } from '@app/shared/components/horizontal-menu/horizontal-menu.component';
 import { ExplorerBlocksSidePanelComponent } from './explorer-blocks-side-panel/explorer-blocks-side-panel.component';
-import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
+import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 
 
 @NgModule({
@@ -25,8 +26,9 @@ import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/min
     ExplorerBlocksRouting,
     EffectsModule.forFeature(ExplorerBlocksEffects),
     HorizontalMenuComponent,
-    HorizontalResizableContainerComponent,
+    HorizontalResizableContainerOldComponent,
     MinaJsonViewerComponent,
+    HorizontalResizableContainerComponent,
   ],
 })
 export class ExplorerBlocksModule { }

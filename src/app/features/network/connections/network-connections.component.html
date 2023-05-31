@@ -1,15 +1,15 @@
 <div class="flex-column h-100">
-  <div class="flex-row flex-grow overflow-hidden p-relative" #table>
+  <div #table class="flex-row flex-grow overflow-hidden p-relative">
     <mina-network-connections-table [class.shrink]="isActiveRow"></mina-network-connections-table>
-    <mina-horizontal-resizable-container (widthChange)="onWidthChange($event)"
+    <mina-horizontal-resizable-container-old (endResizing)="toggleResizing()"
                                          (startResizing)="toggleResizing()"
-                                         (endResizing)="toggleResizing()"
-                                         [minWidth]="320"
-                                         [maxWidthElement]="table"
+                                         (widthChange)="onWidthChange($event)"
                                          [class.show]="isActiveRow"
-                                         localStorageKey="network-connections-side-panel-width"
-                                         class="no-transition">
+                                         [maxWidthElement]="table"
+                                         [minWidth]="320"
+                                         class="no-transition"
+                                         localStorageKey="network-connections-side-panel-width">
       <mina-network-connections-side-panel></mina-network-connections-side-panel>
-    </mina-horizontal-resizable-container>
+    </mina-horizontal-resizable-container-old>
   </div>
 </div>

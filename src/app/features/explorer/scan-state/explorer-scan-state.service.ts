@@ -14,29 +14,20 @@ export class ExplorerScanStateService {
               private http: HttpClient) { }
 
   getScanState(height: number): Observable<ExplorerScanStateResponse> {
-    // get json file called ss.json from same folder
     // return this.http.get<ExplorerScanStateResponse>('./assets/ss.json')
     return this.graphQL.query<any>('getScanState', `{
        blockScanState(height: ${height})
        block(height: ${height}) {
          snarkJobs
          transactions {
-           userCommands {
-             nonce
-           }
-           feeTransfer {
-             fee
-           }
-           zkappCommands {
-             id
-           }
+           userCommands { nonce }
+           feeTransfer { fee }
+           zkappCommands { id }
          }
        }
        bestChain(maxLength: 1) {
          protocolState {
-           consensusState {
-             blockHeight
-           }
+           consensusState { blockHeight }
          }
         }
       }`)

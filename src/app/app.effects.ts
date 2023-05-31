@@ -77,9 +77,11 @@ export class AppEffects extends MinaBaseEffect<AppActions> {
 
     this.init$ = createEffect(() => this.actions$.pipe(
       ofType(APP_INIT),
-      switchMap(() => this.appService.getActiveNode()),
-      filter(Boolean),
-      map((node: MinaNode) => ({ type: APP_INIT_SUCCESS, payload: { node } })),
+      switchMap(() => this.appService.getNodes()),
+      switchMap((nodes: MinaNode[]) => this.appService.getActiveNode(nodes).pipe(
+        map((activeNode: MinaNode) => ({ activeNode, nodes })),
+      )),
+      map((payload: { activeNode: MinaNode, nodes: MinaNode[] }) => ({ type: APP_INIT_SUCCESS, payload })),
     ));
 
     this.initSuccess$ = createEffect(() => this.actions$.pipe(
@@ -113,7 +115,7 @@ export class AppEffects extends MinaBaseEffect<AppActions> {
       ofType(APP_CHANGE_ACTIVE_NODE),
       this.latestActionState<AppChangeActiveNode>(),
       tap(({ state }) => {
-        this.changeGqlProvider(state.app.activeNode)
+        this.changeGqlProvider(state.app.activeNode);
         this.nodeCheckInterval$.next(10000);
         const activePage = removeParamsFromURL(this.router.url.split('/')[1]) as FeatureType;
         this.router.navigate([], {

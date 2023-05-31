@@ -11,6 +11,7 @@ import { DashboardSplitsEffects } from '@dashboard/splits/dashboard-splits.effec
 import { DashboardSplitsComponent } from '@dashboard/splits/dashboard-splits.component';
 import { CopyComponent } from '@shared/components/copy/copy.component';
 import { HorizontalMenuComponent } from '@shared/components/horizontal-menu/horizontal-menu.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 
 
 @NgModule({
@@ -27,6 +28,7 @@ import { HorizontalMenuComponent } from '@shared/components/horizontal-menu/hori
     SharedModule,
     EffectsModule.forFeature([DashboardSplitsEffects]),
     HorizontalMenuComponent,
+    HorizontalResizableContainerComponent,
   ],
 })
 export class DashboardSplitsModule {}

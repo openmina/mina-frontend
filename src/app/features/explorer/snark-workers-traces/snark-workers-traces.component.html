@@ -2,7 +2,7 @@
   <mina-snark-workers-toolbar [data]="data"></mina-snark-workers-toolbar>
   <div #parent class="h-100 w-100 flex-row p-relative">
     <mina-snark-workers-traces-table [data]="data" [class.shrink]="isActiveRow"></mina-snark-workers-traces-table>
-    <mina-horizontal-resizable-container (endResizing)="toggleResizing()"
+    <mina-horizontal-resizable-container-old (endResizing)="toggleResizing()"
                                          (startResizing)="toggleResizing()"
                                          (widthChange)="onWidthChange($event)"
                                          [class.show]="isActiveRow"
@@ -11,6 +11,6 @@
                                          class="no-transition"
                                          localStorageKey="st-side-panel-width">
       <mina-snark-workers-side-panel></mina-snark-workers-side-panel>
-    </mina-horizontal-resizable-container>
+    </mina-horizontal-resizable-container-old>
   </div>
 </div>

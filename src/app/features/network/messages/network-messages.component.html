@@ -1,17 +1,17 @@
 <div class="flex-column h-100">
   <mina-network-messages-filters (onSizeChange)="checkVirtualScrollViewport()"></mina-network-messages-filters>
-  <div class="flex-row flex-grow overflow-hidden p-relative" #table>
+  <div #table class="flex-row flex-grow overflow-hidden p-relative">
     <mina-network-messages-table [class.shrink]="isActiveRow"></mina-network-messages-table>
-    <mina-horizontal-resizable-container (widthChange)="onWidthChange($event)"
+    <mina-horizontal-resizable-container-old (endResizing)="toggleResizing()"
                                          (startResizing)="toggleResizing()"
-                                         (endResizing)="toggleResizing()"
-                                         [minWidth]="460"
-                                         [maxWidthElement]="table"
+                                         (widthChange)="onWidthChange($event)"
                                          [class.show]="isActiveRow"
-                                         localStorageKey="network-messages-side-panel-width"
-                                         class="no-transition">
+                                         [maxWidthElement]="table"
+                                         [minWidth]="460"
+                                         class="no-transition"
+                                         localStorageKey="network-messages-side-panel-width">
       <mina-network-messages-side-panel></mina-network-messages-side-panel>
-    </mina-horizontal-resizable-container>
+    </mina-horizontal-resizable-container-old>
   </div>
   <mina-network-messages-table-footer (onScrollTopClick)="scrollToTop()"></mina-network-messages-table-footer>
 </div>

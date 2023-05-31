@@ -8,7 +8,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { AggregatorEffects } from '@dashboard/aggregator/aggregator.effects';
 import { DashboardToolbarComponent } from './dashboard-toolbar/dashboard-toolbar.component';
 import { DashboardSidePanelComponent } from './dashboard-side-panel/dashboard-side-panel.component';
-import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
+import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 
 
 @NgModule({
@@ -21,7 +21,7 @@ import { HorizontalResizableContainerComponent } from '@shared/components/horizo
   imports: [
     SharedModule,
     AggregatorRouting,
-    HorizontalResizableContainerComponent,
+    HorizontalResizableContainerOldComponent,
     EffectsModule.forFeature([AggregatorEffects]),
   ],
   exports: [

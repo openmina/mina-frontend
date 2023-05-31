@@ -15,7 +15,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { selectAppNodeStatus } from '@app/app.state';
 import { filter, merge, take, timer } from 'rxjs';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
+import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
 import { NodeStatus } from '@shared/types/app/node-status.type';
@@ -38,7 +38,7 @@ export class AggregatorComponent extends ManualDetection implements OnInit, Afte
   private removedClass: boolean;
 
   @ViewChild(DashboardTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
-  @ViewChild(HorizontalResizableContainerComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
+  @ViewChild(HorizontalResizableContainerOldComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
 
   constructor(private store: Store<MinaState>) { super(); }
 

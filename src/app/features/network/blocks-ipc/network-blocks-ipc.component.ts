@@ -1,29 +1,17 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
+import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { filter, take } from 'rxjs';
 import { MergedRoute } from '@shared/router/merged-route';
 import { selectAppNodeStatus } from '@app/app.state';
 import { NodeStatus } from '@shared/types/app/node-status.type';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
-import {
-  NETWORK_BLOCKS_IPC_CLOSE,
-  NETWORK_BLOCKS_IPC_GET_EARLIEST_BLOCK,
-  NETWORK_BLOCKS_IPC_INIT,
-  NETWORK_BLOCKS_IPC_SET_ACTIVE_BLOCK,
-  NetworkBlocksIpcClose,
-  NetworkBlocksIpcGetEarliestBlock,
-  NetworkBlocksIpcInit,
-  NetworkBlocksIpcSetActiveBlock,
-} from './network-blocks-ipc.actions';
+import { NetworkBlocksIpcClose, NetworkBlocksIpcGetEarliestBlock, NetworkBlocksIpcInit, NetworkBlocksIpcSetActiveBlock } from './network-blocks-ipc.actions';
 import { selectNetworkBlocksIpcSidePanelOpen } from './network-blocks-ipc.state';
 import { NetworkBlocksIpcTableComponent } from '@network/blocks-ipc/network-blocks-ipc-table/network-blocks-ipc-table.component';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-network-blocks-ipc',
   templateUrl: './network-blocks-ipc.component.html',
@@ -31,7 +19,7 @@ import { NetworkBlocksIpcTableComponent } from '@network/blocks-ipc/network-bloc
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'h-100 w-100' },
 })
-export class NetworkBlocksIpcComponent extends ManualDetection implements OnInit, AfterViewInit, OnDestroy {
+export class NetworkBlocksIpcComponent extends StoreDispatcher implements OnInit, AfterViewInit, OnDestroy {
 
   isSidePanelOpen: boolean;
 
@@ -39,9 +27,7 @@ export class NetworkBlocksIpcComponent extends ManualDetection implements OnInit
   private removedClass: boolean;
 
   @ViewChild(NetworkBlocksIpcTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
-  @ViewChild(HorizontalResizableContainerComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
-
-  constructor(private store: Store<MinaState>) { super(); }
+  @ViewChild(HorizontalResizableContainerOldComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
 
   ngOnInit(): void {
     this.listenToRouteChange();
@@ -62,32 +48,17 @@ export class NetworkBlocksIpcComponent extends ManualDetection implements OnInit
   }
 
   private listenToRouteChange(): void {
-    this.store.select(getMergedRoute)
-      .pipe(
-        untilDestroyed(this),
-        take(1),
-        filter(route => route.params['height']),
-      )
-      .subscribe((route: MergedRoute) => {
-        this.blockHeight = Number(route.params['height']);
-        this.store.dispatch<NetworkBlocksIpcSetActiveBlock>({
-          type: NETWORK_BLOCKS_IPC_SET_ACTIVE_BLOCK,
-          payload: { height: this.blockHeight },
-        });
-        this.store.dispatch<NetworkBlocksIpcInit>({ type: NETWORK_BLOCKS_IPC_INIT });
-      });
+    this.select(getMergedRoute, (route: MergedRoute) => {
+      this.blockHeight = Number(route.params['height']);
+      this.dispatch(NetworkBlocksIpcSetActiveBlock, { height: this.blockHeight });
+      this.dispatch(NetworkBlocksIpcInit);
+    }, take(1), filter(route => route.params['height']));
   }
 
   private listenToActiveBlockChangeFromNode(): void {
-    this.store.select(selectAppNodeStatus)
-      .pipe(
-        untilDestroyed(this),
-        filter(Boolean),
-        filter((node: NodeStatus) => node.status !== AppNodeStatusTypes.CONNECTING),
-      )
-      .subscribe((node: NodeStatus) => {
-        this.store.dispatch<NetworkBlocksIpcGetEarliestBlock>({ type: NETWORK_BLOCKS_IPC_GET_EARLIEST_BLOCK, payload: node });
-      });
+    this.select(selectAppNodeStatus, (node: NodeStatus) => {
+      this.dispatch(NetworkBlocksIpcGetEarliestBlock, node);
+    }, filter(Boolean), filter((node: NodeStatus) => node.status !== AppNodeStatusTypes.CONNECTING));
   }
 
   private listenToSidePanelOpeningChange(): void {
@@ -103,7 +74,8 @@ export class NetworkBlocksIpcComponent extends ManualDetection implements OnInit
       });
   }
 
-  ngOnDestroy(): void {
-    this.store.dispatch<NetworkBlocksIpcClose>({ type: NETWORK_BLOCKS_IPC_CLOSE });
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.dispatch(NetworkBlocksIpcClose);
   }
 }
