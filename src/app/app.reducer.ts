@@ -47,8 +47,8 @@ export function reducer(state: AppState = initialState, action: any): AppState {
     case APP_INIT_SUCCESS: {
       return {
         ...state,
-        nodes: CONFIG.configs,
-        activeNode: action.payload.node,
+        nodes: action.payload.nodes,
+        activeNode: action.payload.activeNode,
       };
     }
 

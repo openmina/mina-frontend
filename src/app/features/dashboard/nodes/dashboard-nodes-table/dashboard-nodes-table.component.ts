@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
-import { TableColumnList, TableHeadSorting } from '@shared/types/shared/table-head-sorting.type';
+import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
 import { DashboardNode } from '@app/shared/types/dashboard/node-list/dashboard-node.type';
-import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
+import { TableSort } from '@shared/types/shared/table-sort.type';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
@@ -17,7 +17,6 @@ import {
 import {
   DASHBOARD_NODES_SET_ACTIVE_BLOCK,
   DASHBOARD_NODES_SET_ACTIVE_NODE,
-  DASHBOARD_NODES_SORT,
   DashboardNodesSetActiveBlock,
   DashboardNodesSetActiveNode,
   DashboardNodesSort,
@@ -26,10 +25,8 @@ import { filter } from 'rxjs';
 import { toggleItem } from '@shared/helpers/array.helper';
 import { Routes } from '@shared/enums/routes.enum';
 import { Router } from '@angular/router';
-import { ExplorerBlock } from '@shared/types/explorer/blocks/explorer-block.type';
-import { ExplorerBlocksSort } from '@explorer/blocks/explorer-blocks.actions';
-import { selectExplorerBlocksSorting } from '@explorer/blocks/explorer-blocks.state';
 import { MinaTableComponent } from '@shared/components/mina-table/mina-table.component';
+import { CONFIG } from '@shared/constants/config';
 
 @UntilDestroy()
 @Component({
@@ -41,25 +38,36 @@ import { MinaTableComponent } from '@shared/components/mina-table/mina-table.com
 })
 export class DashboardNodesTableComponent extends ManualDetection implements OnInit {
 
-  readonly itemSize: number = 36;
   readonly secConfig: SecDurationConfig = { color: true, yellow: 0.5, orange: 0.75, red: 1, undefinedAlternative: '-' };
-  readonly tableHeads: TableColumnList<DashboardNode> = [
-    { name: 'name' },
-    { name: 'status' },
-    { name: 'candidate', sort: 'hash' },
-    { name: 'branch' },
-    { name: 'best tip', sort: 'bestTip' },
-    { name: 'height', sort: 'blockchainLength' },
-    { name: 'address', sort: 'addr' },
-    { name: 'datetime', sort: 'timestamp' },
-    { name: 'latency' },
-    { name: 'block application', sort: 'blockApplication' },
-    { name: 'source' },
-    { name: 'trace status', sort: 'traceStatus' },
-    { name: 'tx. pool', sort: 'txPool' },
-    { name: 'snark pool', sort: 'snarkPool' },
-    { name: 'logs', sort: 'name' },
-  ];
+  private readonly tableHeads: TableColumnList<DashboardNode> = CONFIG.nodeLister
+    ? [
+      { name: 'name' },
+      { name: 'candidate', sort: 'hash' },
+      { name: 'height', sort: 'blockchainLength' },
+      { name: 'datetime', sort: 'timestamp' },
+      { name: 'latency' },
+      { name: 'block application', sort: 'blockApplication' },
+      { name: 'source' },
+      { name: 'trace status', sort: 'traceStatus' },
+      { name: 'logs', sort: 'name' },
+    ]
+    : [
+      { name: 'name' },
+      { name: 'status' },
+      { name: 'candidate', sort: 'hash' },
+      { name: 'branch' },
+      { name: 'best tip', sort: 'bestTip' },
+      { name: 'height', sort: 'blockchainLength' },
+      { name: 'address', sort: 'addr' },
+      { name: 'datetime', sort: 'timestamp' },
+      { name: 'latency' },
+      { name: 'block application', sort: 'blockApplication' },
+      { name: 'source' },
+      { name: 'trace status', sort: 'traceStatus' },
+      { name: 'tx. pool', sort: 'txPool' },
+      { name: 'snark pool', sort: 'snarkPool' },
+      { name: 'logs', sort: 'name' },
+    ];
 
   nodes: DashboardNode[] = [];
   currentSort: TableSort<DashboardNode>;
@@ -71,6 +79,7 @@ export class DashboardNodesTableComponent extends ManualDetection implements OnI
   private activeHeight: number;
 
   @ViewChild('rowTemplate') private rowTemplate: TemplateRef<DashboardNode>;
+  @ViewChild('minimalRowTemplate') private minimalRowTemplate: TemplateRef<DashboardNode>;
   private containerRef: ViewContainerRef;
 
   @ViewChild('minaTable', { read: ViewContainerRef }) set minaTable(containerRef: ViewContainerRef) {
@@ -94,9 +103,11 @@ export class DashboardNodesTableComponent extends ManualDetection implements OnI
     await import('@shared/components/mina-table/mina-table.component').then(c => {
       this.table = this.containerRef.createComponent(c.MinaTableComponent<DashboardNode>).instance;
       this.table.tableHeads = this.tableHeads;
-      this.table.rowTemplate = this.rowTemplate;
+      this.table.rowTemplate = CONFIG.nodeLister ? this.minimalRowTemplate : this.rowTemplate;
       this.table.propertyForActiveCheck = 'index';
-      this.table.gridTemplateColumns = [200, 105, 145, 75, 140, 80, 135, 160, 90, 140, 100, 110, 90, 100, 100];
+      this.table.gridTemplateColumns = CONFIG.nodeLister
+        ? [200, 145, 80, 160, 90, 140, 100, 110, 100]
+        : [200, 105, 145, 75, 140, 80, 135, 160, 90, 140, 100, 110, 90, 100, 100];
       this.table.sortClz = DashboardNodesSort;
       this.table.sortSelector = selectDashboardNodesSorting;
       this.table.rowClickEmitter.pipe(untilDestroyed(this)).subscribe(node => this.onRowClick(node));

@@ -1,22 +1,18 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
-import { NETWORK_CHANGE_TAB, NETWORK_SET_ACTIVE_ROW, NetworkMessagesChangeTab, NetworkMessagesSetActiveRow } from '@network/messages/network-messages.actions';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { NetworkMessagesChangeTab, NetworkMessagesSetActiveRow } from '@network/messages/network-messages.actions';
 import { NetworkMessage } from '@shared/types/network/messages/network-message.type';
 import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
 import { NetworkMessageConnection } from '@shared/types/network/messages/network-messages-connection.type';
 import { selectNetworkActiveRow, selectNetworkConnection, selectNetworkFullMessage, selectNetworkMessageHex } from '@network/messages/network-messages.state';
 import { downloadJson, downloadJsonFromURL } from '@shared/helpers/user-input.helper';
 import { filter } from 'rxjs';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { Router } from '@angular/router';
 import { Routes } from '@shared/enums/routes.enum';
 import { selectActiveNode } from '@app/app.state';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-network-messages-side-panel',
   templateUrl: './network-messages-side-panel.component.html',
@@ -24,7 +20,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-column h-100 w-100' },
 })
-export class NetworkMessagesSidePanelComponent extends ManualDetection implements AfterViewInit {
+export class NetworkMessagesSidePanelComponent extends StoreDispatcher implements AfterViewInit {
 
   activeRow: NetworkMessage;
   connection: NetworkMessageConnection;
@@ -34,7 +30,6 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
   jsonTooBig: boolean;
   toCopy: string;
   expandingTracking: ExpandTracking = {};
-  linkOfPage: string;
 
   @ViewChild(MinaJsonViewerComponent) private minaJsonViewer: MinaJsonViewerComponent;
   @ViewChild('saveButton') private saveButton: ElementRef<HTMLButtonElement>;
@@ -45,8 +40,7 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
   private currentMessageKind: string;
   private debuggerURL: string;
 
-  constructor(private store: Store<MinaState>,
-              private clipboard: Clipboard,
+  constructor(private clipboard: Clipboard,
               private router: Router) { super(); }
 
   ngAfterViewInit(): void {
@@ -55,56 +49,46 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
   }
 
   private listenToActiveNodeChange(): void {
-    this.store.select(selectActiveNode)
-      .pipe(untilDestroyed(this), filter(Boolean))
-      .subscribe((node: MinaNode) => {
-        this.debuggerURL = node.debugger;
-      });
+    this.select(selectActiveNode, (node: MinaNode) => {
+      this.debuggerURL = node.debugger;
+    }, filter(Boolean));
   }
 
   private listenToActiveRowChange(): void {
-    this.store.select(selectNetworkActiveRow)
-      .pipe(untilDestroyed(this))
-      .subscribe((activeRow: NetworkMessage) => {
-        this.activeRow = activeRow;
-        if (activeRow) {
-          if (activeRow.messageKind !== this.currentMessageKind) {
-            this.expandingTracking = {}; // reset
-          }
-          this.currentMessageKind = activeRow.messageKind;
+    this.select(selectNetworkActiveRow, (activeRow: NetworkMessage) => {
+      this.activeRow = activeRow;
+      if (activeRow) {
+        if (activeRow.messageKind !== this.currentMessageKind) {
+          this.expandingTracking = {}; // reset
         }
+        this.currentMessageKind = activeRow.messageKind;
+      }
 
-        if (!activeRow) {
-          this.cancelDownload = true;
-          this.saveButton.nativeElement.textContent = 'Save JSON';
-          this.activeRowFullMessage = this.activeRowHex = this.activeRowHexDisplayedValue = this.connection = undefined;
-        }
-        this.detect();
-      });
+      if (!activeRow) {
+        this.cancelDownload = true;
+        this.saveButton.nativeElement.textContent = 'Save JSON';
+        this.activeRowFullMessage = this.activeRowHex = this.activeRowHexDisplayedValue = this.connection = undefined;
+      }
+      this.detect();
+    });
 
-    this.store.select(selectNetworkFullMessage)
-      .pipe(untilDestroyed(this), filter(Boolean))
-      .subscribe((message: any) => {
-        this.jsonTooBig = !isNaN(message) ? Number(message) > 10485760 : false;
-        this.activeRowFullMessage = message;
-        this.setToCopy();
-        this.detect();
-      });
-    this.store.select(selectNetworkMessageHex)
-      .pipe(untilDestroyed(this), filter(Boolean))
-      .subscribe((hex: string) => {
-        this.activeRowHex = hex;
-        this.activeRowHexDisplayedValue = NetworkMessagesSidePanelComponent.getActiveRowHexDisplayedValue(hex);
-        this.setToCopy();
-        this.detect();
-      });
-    this.store.select(selectNetworkConnection)
-      .pipe(untilDestroyed(this), filter(Boolean))
-      .subscribe((connection: NetworkMessageConnection) => {
-        this.connection = connection;
-        this.setToCopy();
-        this.detect();
-      });
+    this.select(selectNetworkFullMessage, (message: any) => {
+      this.jsonTooBig = !isNaN(message) ? Number(message) > 10485760 : false;
+      this.activeRowFullMessage = message;
+      this.setToCopy();
+      this.detect();
+    }, filter(Boolean));
+    this.select(selectNetworkMessageHex, (hex: string) => {
+      this.activeRowHex = hex;
+      this.activeRowHexDisplayedValue = NetworkMessagesSidePanelComponent.getActiveRowHexDisplayedValue(hex);
+      this.setToCopy();
+      this.detect();
+    }, filter(Boolean));
+    this.select(selectNetworkConnection, (connection: NetworkMessageConnection) => {
+      this.connection = connection;
+      this.setToCopy();
+      this.detect();
+    }, filter(Boolean));
   }
 
   private static getActiveRowHexDisplayedValue(hex: string): string {
@@ -144,7 +128,7 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
 
   closeSidePanel(): void {
     this.router.navigate([Routes.NETWORK, Routes.MESSAGES], { queryParamsHandling: 'merge' });
-    this.store.dispatch<NetworkMessagesSetActiveRow>({ type: NETWORK_SET_ACTIVE_ROW, payload: undefined });
+    this.dispatch(NetworkMessagesSetActiveRow, undefined);
   }
 
   expandEntireJSON(): void {
@@ -161,7 +145,7 @@ export class NetworkMessagesSidePanelComponent extends ManualDetection implement
     this.cancelDownload = true;
     this.saveButton.nativeElement.textContent = 'Save JSON';
     this.selectedTabIndex = tabNum;
-    this.store.dispatch<NetworkMessagesChangeTab>({ type: NETWORK_CHANGE_TAB, payload: tabNum });
+    this.dispatch(NetworkMessagesChangeTab, tabNum);
     this.setToCopy();
   }
 

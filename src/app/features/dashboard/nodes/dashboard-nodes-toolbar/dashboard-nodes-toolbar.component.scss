@@ -1,9 +1,5 @@
 @import 'variables';
 
-:host {
-	min-height: 80px;
-}
-
 @media (max-width: 700px) {
 	.row1 > div:last-child {
 		display: none;

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, View
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { timer } from 'rxjs';
 import { LogsClose, LogsGetLogs } from '@logs/logs.actions';
-import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
+import { HorizontalResizableContainerOldComponent } from '../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { LogsTableComponent } from '@logs/logs-table/logs-table.component';
 import { selectActiveLog } from '@logs/logs.state';
 import { Log } from '@shared/types/logs/log.type';
@@ -21,7 +21,7 @@ export class LogsComponent extends StoreDispatcher implements OnInit, OnDestroy 
   private removedClass: boolean;
 
   @ViewChild(LogsTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
-  @ViewChild(HorizontalResizableContainerComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
+  @ViewChild(HorizontalResizableContainerOldComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
 
   ngOnInit(): void {
     this.getLogs();

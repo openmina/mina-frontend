@@ -44,7 +44,7 @@ export class AppInit implements AppAction {
 export class AppInitSuccess implements AppAction {
   readonly type = APP_INIT_SUCCESS;
 
-  constructor(public payload: { node: MinaNode }) {}
+  constructor(public payload: { activeNode: MinaNode, nodes: MinaNode[] }) {}
 }
 
 export class AppStartBackgroundChecks implements AppAction {

@@ -1,22 +1,13 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
+import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { NetworkConnectionsTableComponent } from '@network/connections/network-connections-table/network-connections-table.component';
-import {
-  NETWORK_CONNECTIONS_CLOSE,
-  NETWORK_CONNECTIONS_INIT,
-  NetworkConnectionsClose,
-  NetworkConnectionsInit,
-} from '@network/connections/network-connections.actions';
+import { NetworkConnectionsClose, NetworkConnectionsInit } from '@network/connections/network-connections.actions';
 import { selectNetworkConnectionsActiveConnection } from '@network/connections/network-connections.state';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NetworkConnection } from '@shared/types/network/connections/network-connection.type';
 import { selectActiveNode } from '@app/app.state';
 import { filter } from 'rxjs';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-network-connections',
   templateUrl: './network-connections.component.html',
@@ -24,16 +15,14 @@ import { filter } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'h-100' },
 })
-export class NetworkConnectionsComponent extends ManualDetection implements OnInit, OnDestroy {
+export class NetworkConnectionsComponent extends StoreDispatcher implements OnInit, OnDestroy {
 
   isActiveRow: boolean = false;
 
   private removedClass: boolean;
 
   @ViewChild(NetworkConnectionsTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
-  @ViewChild(HorizontalResizableContainerComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
-
-  constructor(private store: Store<MinaState>) { super(); }
+  @ViewChild(HorizontalResizableContainerOldComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
 
   ngOnInit(): void {
     this.listenToActiveRowChange();
@@ -41,29 +30,25 @@ export class NetworkConnectionsComponent extends ManualDetection implements OnIn
   }
 
   private listenToActiveNodeChange(): void {
-    this.store.select(selectActiveNode)
-      .pipe(untilDestroyed(this), filter(Boolean))
-      .subscribe(() => {
-        this.store.dispatch<NetworkConnectionsInit>({ type: NETWORK_CONNECTIONS_INIT });
-      });
+    this.select(selectActiveNode, () => {
+      this.dispatch(NetworkConnectionsInit);
+    }, filter(Boolean));
   }
 
   private listenToActiveRowChange(): void {
-    this.store.select(selectNetworkConnectionsActiveConnection)
-      .pipe(untilDestroyed(this))
-      .subscribe((row: NetworkConnection) => {
-        if (row && !this.isActiveRow) {
-          this.isActiveRow = true;
-          if (!this.removedClass) {
-            this.removedClass = true;
-            this.horizontalResizableContainer.nativeElement.classList.remove('no-transition');
-          }
-          this.detect();
-        } else if (!row && this.isActiveRow) {
-          this.isActiveRow = false;
-          this.detect();
+    this.select(selectNetworkConnectionsActiveConnection, (row: NetworkConnection) => {
+      if (row && !this.isActiveRow) {
+        this.isActiveRow = true;
+        if (!this.removedClass) {
+          this.removedClass = true;
+          this.horizontalResizableContainer.nativeElement.classList.remove('no-transition');
         }
-      });
+        this.detect();
+      } else if (!row && this.isActiveRow) {
+        this.isActiveRow = false;
+        this.detect();
+      }
+    });
   }
 
   onWidthChange(width: number): void {
@@ -75,7 +60,8 @@ export class NetworkConnectionsComponent extends ManualDetection implements OnIn
     this.tableRef.nativeElement.classList.toggle('no-transition');
   }
 
-  ngOnDestroy(): void {
-    this.store.dispatch<NetworkConnectionsClose>({ type: NETWORK_CONNECTIONS_CLOSE });
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.dispatch(NetworkConnectionsClose);
   }
 }

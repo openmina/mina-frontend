@@ -56,7 +56,7 @@ export class HorizontalResizeDirective implements AfterViewInit {
             );
           }),
         ),
-      this.subj.asObservable().pipe(delay(1)),
+      this.subj.asObservable()
     );
   }
 
@@ -65,6 +65,8 @@ export class HorizontalResizeDirective implements AfterViewInit {
     const localStorageWidth = Number(localStorage.getItem(this.localStorageKey));
     if (localStorageWidth) {
       this.subj.next(localStorageWidth);
+    } else {
+      this.subj.next(this.minWidth);
     }
 
     fromEvent(window, 'resize')

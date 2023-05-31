@@ -1,18 +1,14 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NetworkMessagesTableComponent } from '@network/messages/network-messages-table/network-messages-table.component';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
 import { selectNetworkActiveRow } from '@network/messages/network-messages.state';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NetworkMessage } from '@shared/types/network/messages/network-message.type';
-import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
-import { NETWORK_CLOSE, NETWORK_INIT, NetworkMessagesClose, NetworkMessagesInit } from '@network/messages/network-messages.actions';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { APP_UPDATE_DEBUGGER_STATUS, AppUpdateDebuggerStatus } from '@app/app.actions';
+import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
+import { NetworkMessagesClose, NetworkMessagesInit } from '@network/messages/network-messages.actions';
+import { AppUpdateDebuggerStatus } from '@app/app.actions';
 import { selectActiveNode } from '@app/app.state';
 import { filter } from 'rxjs';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-network-messages',
   templateUrl: './network-messages.component.html',
@@ -20,7 +16,7 @@ import { filter } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'h-100' },
 })
-export class NetworkMessagesComponent extends ManualDetection implements OnInit, OnDestroy {
+export class NetworkMessagesComponent extends StoreDispatcher implements OnInit, OnDestroy {
 
   isActiveRow: boolean;
 
@@ -28,9 +24,7 @@ export class NetworkMessagesComponent extends ManualDetection implements OnInit,
 
   @ViewChild(NetworkMessagesTableComponent) private tableComponent: NetworkMessagesTableComponent;
   @ViewChild(NetworkMessagesTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
-  @ViewChild(HorizontalResizableContainerComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
-
-  constructor(private store: Store<MinaState>) { super(); }
+  @ViewChild(HorizontalResizableContainerOldComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
 
   ngOnInit(): void {
     this.listenToActiveRowChange();
@@ -38,29 +32,25 @@ export class NetworkMessagesComponent extends ManualDetection implements OnInit,
   }
 
   private listenToActiveNodeChange(): void {
-    this.store.select(selectActiveNode)
-      .pipe(untilDestroyed(this), filter(Boolean))
-      .subscribe(() => {
-        this.store.dispatch<NetworkMessagesInit>({ type: NETWORK_INIT });
-      });
+    this.select(selectActiveNode, () => {
+      this.dispatch(NetworkMessagesInit);
+    }, filter(Boolean));
   }
 
   private listenToActiveRowChange(): void {
-    this.store.select(selectNetworkActiveRow)
-      .pipe(untilDestroyed(this))
-      .subscribe((row: NetworkMessage) => {
-        if (row && !this.isActiveRow) {
-          this.isActiveRow = true;
-          if (!this.removedClass) {
-            this.removedClass = true;
-            this.horizontalResizableContainer.nativeElement.classList.remove('no-transition');
-          }
-          this.detect();
-        } else if (!row && this.isActiveRow) {
-          this.isActiveRow = false;
-          this.detect();
+    this.select(selectNetworkActiveRow, (row: NetworkMessage) => {
+      if (row && !this.isActiveRow) {
+        this.isActiveRow = true;
+        if (!this.removedClass) {
+          this.removedClass = true;
+          this.horizontalResizableContainer.nativeElement.classList.remove('no-transition');
         }
-      });
+        this.detect();
+      } else if (!row && this.isActiveRow) {
+        this.isActiveRow = false;
+        this.detect();
+      }
+    });
   }
 
   onWidthChange(width: number): void {
@@ -69,7 +59,7 @@ export class NetworkMessagesComponent extends ManualDetection implements OnInit,
   }
 
   checkVirtualScrollViewport(): void {
-    this.tableComponent.scrollViewport.checkViewportSize();
+    this.tableComponent.table.virtualScroll.checkViewportSize();
   }
 
   toggleResizing(): void {
@@ -77,11 +67,12 @@ export class NetworkMessagesComponent extends ManualDetection implements OnInit,
   }
 
   scrollToTop(): void {
-    this.tableComponent.scrollViewport.scrollToIndex(0);
+    this.tableComponent.table.virtualScroll.scrollToIndex(0);
   }
 
-  ngOnDestroy(): void {
-    this.store.dispatch<AppUpdateDebuggerStatus>({ type: APP_UPDATE_DEBUGGER_STATUS, payload: { failed: undefined } });
-    this.store.dispatch<NetworkMessagesClose>({ type: NETWORK_CLOSE });
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.dispatch(AppUpdateDebuggerStatus, { failed: undefined });
+    this.dispatch(NetworkMessagesClose);
   }
 }

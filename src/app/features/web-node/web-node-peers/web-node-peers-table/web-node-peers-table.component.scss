@@ -1,28 +1,5 @@
 @import 'variables';
 
-.mina-table {
-	$col0: 70px;
-	$col1: 155px;
-	$col2: 210px;
-	$col3: 200px;
-	$col4: 400px;
-	$col5: 150px;
-
-	.row {
-		grid-template-columns: $col0 $col1 $col2 $col3 $col4 1fr;
-		color: $base-tertiary;
-
-		&:not(.head) {
-			cursor: pointer;
-		}
-	}
-
-	.cdk-virtual-scroll-viewport {
-		min-width: $col0 + $col1 + $col2 + $col3 + $col4 + $col5;
-		overflow-x: hidden;
-	}
-}
-
 .table-wrapper {
 	transition: width 400ms cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -35,7 +12,7 @@
 	}
 }
 
-mina-horizontal-resizable-container {
+mina-horizontal-resizable-container-old {
 	width: 400px;
 	height: 100%;
 	position: absolute;

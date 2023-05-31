@@ -1,13 +1,6 @@
 import { ChangeDetectionStrategy, Component, ComponentRef, EventEmitter, OnInit, Output } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
 import { NetworkMessagesState, selectNetworkTimestampInterval } from '@network/messages/network-messages.state';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  NETWORK_GET_PAGINATED_MESSAGES,
-  NETWORK_GO_LIVE,
-  NETWORK_PAUSE,
-  NETWORK_SET_TIMESTAMP_INTERVAL,
   NetworkMessagesGetPaginatedMessages,
   NetworkMessagesGoLive,
   NetworkMessagesPause,
@@ -17,7 +10,6 @@ import { NetworkMessagesDirection } from '@shared/types/network/messages/network
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { filter, take } from 'rxjs';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { TimestampInterval } from '@shared/types/shared/timestamp-interval.type';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
@@ -27,8 +19,8 @@ import { Routes } from '@shared/enums/routes.enum';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 import { selectNetworkMessagesState } from '@network/network.state';
 import { IntervalSelectComponent } from '@shared/components/interval-select/interval-select.component';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-network-messages-table-footer',
   templateUrl: './network-messages-table-footer.component.html',
@@ -36,7 +28,7 @@ import { IntervalSelectComponent } from '@shared/components/interval-select/inte
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'fx-row-vert-cent border-top h-lg' },
 })
-export class NetworkMessagesTableFooterComponent extends ManualDetection implements OnInit {
+export class NetworkMessagesTableFooterComponent extends StoreDispatcher implements OnInit {
 
   @Output() onScrollTopClick: EventEmitter<void> = new EventEmitter<void>();
 
@@ -50,8 +42,7 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
   private currentTimestamp: TimestampInterval;
   private urlMessageId: string;
 
-  constructor(private store: Store<MinaState>,
-              private datePipe: DatePipe,
+  constructor(private datePipe: DatePipe,
               private overlay: Overlay,
               private router: Router) { super(); }
 
@@ -62,57 +53,48 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
   }
 
   private listenToRouteChange(): void {
-    this.store.select(getMergedRoute)
-      .pipe(untilDestroyed(this))
-      .subscribe((route: MergedRoute) => {
-        this.urlMessageId = route.params['messageId'];
-      });
+    this.select(getMergedRoute, (route: MergedRoute) => {
+      this.urlMessageId = route.params['messageId'];
+    });
   }
 
   private listenToNetworkMessages(): void {
-    this.store.select(selectNetworkMessagesState)
-      .pipe(untilDestroyed(this))
-      .subscribe((state: NetworkMessagesState) => {
-        this.state = state;
-        this.isFirstPage = state.activePage.start?.id === 0
-          || !state.activePage.firstPageIdWithTimestamp && state.messages.length < state.limit
-          || state.activePage.firstPageIdWithFilters === state.activePage.start?.id
-          || state.activePage.firstPageIdWithTimestamp && state.activePage.start?.id <= state.activePage.firstPageIdWithTimestamp;
-        this.isLastPage = state.stream
-          || (
-            !state.activePage.firstPageIdWithTimestamp
-            && (state.pages.length === 0 || state.activePage.end?.id === state.pages[state.pages.length - 1])
-          )
-          || state.activePage.lastPageIdWithFilters === state.activePage.end.id
-          || state.activePage.lastPageIdWithTimestamp === state.activePage.end.id;
-        this.detect();
-      });
+    this.select(selectNetworkMessagesState, (state: NetworkMessagesState) => {
+      this.state = state;
+      this.isFirstPage = state.activePage.start?.id === 0
+        || !state.activePage.firstPageIdWithTimestamp && state.messages.length < state.limit
+        || state.activePage.firstPageIdWithFilters === state.activePage.start?.id
+        || state.activePage.firstPageIdWithTimestamp && state.activePage.start?.id <= state.activePage.firstPageIdWithTimestamp;
+      this.isLastPage = state.stream
+        || (
+          !state.activePage.firstPageIdWithTimestamp
+          && (state.pages.length === 0 || state.activePage.end?.id === state.pages[state.pages.length - 1])
+        )
+        || state.activePage.lastPageIdWithFilters === state.activePage.end.id
+        || state.activePage.lastPageIdWithTimestamp === state.activePage.end.id;
+      this.detect();
+    });
   }
 
   private listenToTimestampIntervalChange(): void {
-    this.store.select(selectNetworkTimestampInterval)
-      .pipe(
-        untilDestroyed(this),
-        filter(timestamp => !!timestamp.from),
-      )
-      .subscribe((timestamp: TimestampInterval) => {
-        this.currentTimestamp = timestamp;
-        const from = this.datePipe.transform(timestamp.from * ONE_THOUSAND, 'MMM d, H:mm:ss');
-        let to = this.datePipe.transform(timestamp.to * ONE_THOUSAND, 'MMM d, H:mm:ss');
-        if (from.split(',')[0] === to.split(',')[0]) {
-          to = this.datePipe.transform(timestamp.to * ONE_THOUSAND, 'H:mm:ss');
-        }
-        this.activeInterval = from + ' - ' + to;
-        this.detect();
-      });
+    this.select(selectNetworkTimestampInterval, (timestamp: TimestampInterval) => {
+      this.currentTimestamp = timestamp;
+      const from = this.datePipe.transform(timestamp.from * ONE_THOUSAND, 'MMM d, H:mm:ss');
+      let to = this.datePipe.transform(timestamp.to * ONE_THOUSAND, 'MMM d, H:mm:ss');
+      if (from.split(',')[0] === to.split(',')[0]) {
+        to = this.datePipe.transform(timestamp.to * ONE_THOUSAND, 'H:mm:ss');
+      }
+      this.activeInterval = from + ' - ' + to;
+      this.detect();
+    }, filter(timestamp => !!timestamp.from));
   }
 
   goLive(): void {
-    this.store.dispatch<NetworkMessagesGoLive>({ type: NETWORK_GO_LIVE });
+    this.dispatch(NetworkMessagesGoLive);
   }
 
   pause(): void {
-    this.store.dispatch<NetworkMessagesPause>({ type: NETWORK_PAUSE });
+    this.dispatch(NetworkMessagesPause);
   }
 
   previousPage(): void {
@@ -129,7 +111,7 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
         direction: NetworkMessagesDirection.REVERSE,
       };
     }
-    this.store.dispatch<NetworkMessagesGetPaginatedMessages>({ type: NETWORK_GET_PAGINATED_MESSAGES, payload });
+    this.dispatch(NetworkMessagesGetPaginatedMessages, payload);
   }
 
   nextPage(): void {
@@ -140,7 +122,7 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
     if (this.currentTimestamp) {
       payload.timestamp = { from: undefined, to: this.currentTimestamp.to };
     }
-    this.store.dispatch<NetworkMessagesGetPaginatedMessages>({ type: NETWORK_GET_PAGINATED_MESSAGES, payload });
+    this.dispatch(NetworkMessagesGetPaginatedMessages, payload);
   }
 
   firstPage(): void {
@@ -157,7 +139,7 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
         direction: NetworkMessagesDirection.FORWARD,
       };
     }
-    this.store.dispatch<NetworkMessagesGetPaginatedMessages>({ type: NETWORK_GET_PAGINATED_MESSAGES, payload });
+    this.dispatch(NetworkMessagesGetPaginatedMessages, payload);
   }
 
   lastPage(): void {
@@ -173,7 +155,7 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
         direction: NetworkMessagesDirection.REVERSE,
       };
     }
-    this.store.dispatch<NetworkMessagesGetPaginatedMessages>({ type: NETWORK_GET_PAGINATED_MESSAGES, payload });
+    this.dispatch(NetworkMessagesGetPaginatedMessages, payload);
   }
 
   openIntervalPicker(event?: MouseEvent): void {
@@ -216,12 +198,9 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
               from: response.from / ONE_THOUSAND, to: response.to / ONE_THOUSAND,
             },
           });
-          this.store.dispatch<NetworkMessagesSetTimestampInterval>({
-            type: NETWORK_SET_TIMESTAMP_INTERVAL,
-            payload: {
-              timestamp: { from: response.from / ONE_THOUSAND, to: response.to / ONE_THOUSAND },
-              direction: NetworkMessagesDirection.FORWARD,
-            },
+          this.dispatch(NetworkMessagesSetTimestampInterval, {
+            timestamp: { from: response.from / ONE_THOUSAND, to: response.to / ONE_THOUSAND },
+            direction: NetworkMessagesDirection.FORWARD,
           });
         }
         setTimeout(() => this.detachOverlay(), 250);
@@ -248,12 +227,9 @@ export class NetworkMessagesTableFooterComponent extends ManualDetection impleme
         from: undefined, to: undefined,
       },
     });
-    this.store.dispatch<NetworkMessagesSetTimestampInterval>({
-      type: NETWORK_SET_TIMESTAMP_INTERVAL,
-      payload: {
-        timestamp: { from: undefined, to: undefined },
-        direction: NetworkMessagesDirection.REVERSE,
-      },
+    this.dispatch(NetworkMessagesSetTimestampInterval, {
+      timestamp: { from: undefined, to: undefined },
+      direction: NetworkMessagesDirection.REVERSE,
     });
   }
 }

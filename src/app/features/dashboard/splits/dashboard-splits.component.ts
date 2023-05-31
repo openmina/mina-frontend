@@ -11,8 +11,14 @@ import { DashboardSplitsClose, DashboardSplitsGetSplits } from '@dashboard/split
 })
 export class DashboardSplitsComponent extends StoreDispatcher implements OnInit, OnDestroy {
 
+  show: boolean;
+
   ngOnInit(): void {
     this.dispatch(DashboardSplitsGetSplits);
+    setTimeout(() => {
+      this.show = true;
+      this.detect();
+    }, 500);
   }
 
   override ngOnDestroy(): void {

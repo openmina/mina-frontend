@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, View
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { WEB_NODE_LOGS_CLOSE, WebNodeLogsClose } from '@web-node/web-node-logs/web-node-logs.actions';
-import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
+import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { WebNodeLogsTableComponent } from '@web-node/web-node-logs/web-node-logs-table/web-node-logs-table.component';
@@ -24,7 +24,7 @@ export class WebNodeLogsComponent extends ManualDetection implements OnInit, OnD
   private removedClass: boolean;
 
   @ViewChild(WebNodeLogsTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
-  @ViewChild(HorizontalResizableContainerComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
+  @ViewChild(HorizontalResizableContainerOldComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
 
   constructor(private store: Store<MinaState>) { super(); }
 

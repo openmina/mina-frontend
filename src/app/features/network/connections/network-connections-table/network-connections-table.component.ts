@@ -1,20 +1,17 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
+import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { Routes } from '@shared/enums/routes.enum';
 import { NetworkConnection } from '@shared/types/network/connections/network-connection.type';
 import { selectNetworkConnections, selectNetworkConnectionsActiveConnection } from '@network/connections/network-connections.state';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { NETWORK_CONNECTIONS_SELECT_CONNECTION, NetworkConnectionsSelectConnection } from '@network/connections/network-connections.actions';
+import { untilDestroyed } from '@ngneat/until-destroy';
+import { NetworkConnectionsSelectConnection } from '@network/connections/network-connections.actions';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { filter, take } from 'rxjs';
 import { MergedRoute } from '@shared/router/merged-route';
-import { SW_TRACES_SET_ACTIVE_JOB, SWTracesSetActiveJob } from '@explorer/snark-workers-traces/snark-workers-traces.actions';
+import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
+import { MinaTableComponent } from '@shared/components/mina-table/mina-table.component';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-network-connections-table',
   templateUrl: './network-connections-table.component.html',
@@ -22,54 +19,68 @@ import { SW_TRACES_SET_ACTIVE_JOB, SWTracesSetActiveJob } from '@explorer/snark-
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-column h-100' },
 })
-export class NetworkConnectionsTableComponent extends ManualDetection implements OnInit {
+export class NetworkConnectionsTableComponent extends StoreDispatcher implements OnInit {
 
-  readonly itemSize: number = 36;
+  private readonly tableHeads: TableColumnList<NetworkConnection> = [
+    { name: 'ID' },
+    { name: 'datetime' },
+    { name: 'remote address' },
+    { name: 'PID' },
+    { name: 'FD' },
+    { name: 'incoming' },
+    { name: 'alias' },
+    { name: 'decrypted in' },
+    { name: 'decrypted out' },
+  ];
 
-  connections: NetworkConnection[] = [];
-  activeRow: NetworkConnection;
+  @ViewChild('rowTemplate') private rowTemplate: TemplateRef<NetworkConnection>;
+  @ViewChild('minaTable', { read: ViewContainerRef }) private containerRef: ViewContainerRef;
 
-  @ViewChild(CdkVirtualScrollViewport)
-  public scrollViewport: CdkVirtualScrollViewport;
-
+  private connections: NetworkConnection[] = [];
+  private activeRow: NetworkConnection;
   private idFromRoute: number;
+  private table: MinaTableComponent<NetworkConnection>;
 
-  constructor(private store: Store<MinaState>,
-              private router: Router) { super(); }
+  constructor(private router: Router) { super(); }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    await import('@shared/components/mina-table/mina-table.component').then(c => {
+      this.table = this.containerRef.createComponent(c.MinaTableComponent<NetworkConnection>).instance;
+      this.table.tableHeads = this.tableHeads;
+      this.table.rowTemplate = this.rowTemplate;
+      this.table.gridTemplateColumns = [80, 170, 190, 90, 60, 100, 120, 110, 110];
+      this.table.rowClickEmitter.pipe(untilDestroyed(this)).subscribe((row: NetworkConnection) => this.onRowClick(row));
+      this.table.propertyForActiveCheck = 'connectionId';
+      this.table.init();
+    });
     this.listenToRouteChange();
     this.listenToNetworkConnectionsChanges();
     this.listenToActiveRowChange();
   }
 
   private listenToRouteChange(): void {
-    this.store.select(getMergedRoute)
-      .pipe(untilDestroyed(this), take(1))
-      .subscribe((route: MergedRoute) => {
-        if (route.params['id'] && this.connections.length === 0) {
-          this.idFromRoute = Number(route.params['id']);
-        }
-      });
+    this.select(getMergedRoute, (route: MergedRoute) => {
+      if (route.params['id'] && this.connections.length === 0) {
+        this.idFromRoute = Number(route.params['id']);
+      }
+    }, take(1));
   }
 
   private listenToNetworkConnectionsChanges(): void {
-    this.store.select(selectNetworkConnections)
-      .pipe(untilDestroyed(this), filter(connections => connections.length > 0))
-      .subscribe((connections: NetworkConnection[]) => {
-        this.connections = connections;
-        this.detect();
-        this.scrollToElement();
-      });
+    this.select(selectNetworkConnections, (connections: NetworkConnection[]) => {
+      this.connections = connections;
+      this.table.rows = connections;
+      this.table.detect();
+      this.scrollToElement();
+    }, filter(connections => connections.length > 0));
   }
 
   private listenToActiveRowChange(): void {
-    this.store.select(selectNetworkConnectionsActiveConnection)
-      .pipe(untilDestroyed(this))
-      .subscribe((connection: NetworkConnection) => {
-        this.activeRow = connection;
-        this.detect();
-      });
+    this.select(selectNetworkConnectionsActiveConnection, (connection: NetworkConnection) => {
+      this.activeRow = connection;
+      this.table.activeRow = connection;
+      this.table.detect();
+    });
   }
 
   onRowClick(row: NetworkConnection): void {
@@ -80,16 +91,13 @@ export class NetworkConnectionsTableComponent extends ManualDetection implements
   }
 
   private setActiveRow(row: NetworkConnection): void {
-    this.store.dispatch<NetworkConnectionsSelectConnection>({ type: NETWORK_CONNECTIONS_SELECT_CONNECTION, payload: row });
+    this.dispatch(NetworkConnectionsSelectConnection, row);
   }
 
   private scrollToElement(): void {
     if (this.idFromRoute) {
-      const topElements = Math.round(this.scrollViewport.elementRef.nativeElement.offsetHeight / 2 / this.itemSize) - 3;
-      const index = this.connections.findIndex(c => c.connectionId === this.idFromRoute);
-      this.idFromRoute = undefined;
-      this.scrollViewport.scrollToIndex(index - topElements);
-      this.setActiveRow(this.connections[index]);
+      this.table.scrollToElement(c => c.connectionId === this.idFromRoute);
+      delete this.idFromRoute;
     }
   }
 

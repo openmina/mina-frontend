@@ -24,7 +24,7 @@ const initialState: NetworkBlocksState = {
     sortBy: 'date',
     sortDirection: SortDirection.ASC,
   },
-  openSidePanel: true,
+  openSidePanel: false,
   allFilters: [],
   activeFilters: [],
 };

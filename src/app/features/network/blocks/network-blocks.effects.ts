@@ -3,7 +3,7 @@ import { MinaState, selectMinaState } from '@app/app.setup';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { MinaBaseEffect } from '@shared/base-classes/mina-base.effect';
 import { Effect, NonDispatchableEffect } from '@shared/types/store/effect.type';
-import { catchError, filter, map, of, repeat, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
+import { catchError, filter, map, repeat, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
 import { addErrorObservable, createNonDispatchableEffect } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import {
@@ -23,10 +23,8 @@ import {
 import { NetworkBlocksService } from '@network/blocks/network-blocks.service';
 import { NetworkBlock } from '@shared/types/network/blocks/network-block.type';
 import { Store } from '@ngrx/store';
-import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { Routes } from '@shared/enums/routes.enum';
 import { Router } from '@angular/router';
-import { DASHBOARD_NODES_SET_ACTIVE_BLOCK } from '@dashboard/nodes/dashboard-nodes.actions';
 
 @Injectable({
   providedIn: 'root',

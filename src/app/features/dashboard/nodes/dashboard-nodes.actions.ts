@@ -6,6 +6,7 @@ import { DashboardFork } from '@shared/types/dashboard/node-list/dashboard-fork.
 
 enum DashboardNodesActionTypes {
   DASHBOARD_NODES_INIT = 'DASHBOARD_NODES_INIT',
+  DASHBOARD_NODES_INIT_SUCCESS = 'DASHBOARD_NODES_INIT_SUCCESS',
   DASHBOARD_NODES_CLOSE = 'DASHBOARD_NODES_CLOSE',
   DASHBOARD_NODES_GET_NODES = 'DASHBOARD_NODES_GET_NODES',
   DASHBOARD_NODES_GET_NODE = 'DASHBOARD_NODES_GET_NODE',
@@ -24,6 +25,7 @@ enum DashboardNodesActionTypes {
 }
 
 export const DASHBOARD_NODES_INIT = DashboardNodesActionTypes.DASHBOARD_NODES_INIT;
+export const DASHBOARD_NODES_INIT_SUCCESS = DashboardNodesActionTypes.DASHBOARD_NODES_INIT_SUCCESS;
 export const DASHBOARD_NODES_CLOSE = DashboardNodesActionTypes.DASHBOARD_NODES_CLOSE;
 export const DASHBOARD_NODES_GET_NODES = DashboardNodesActionTypes.DASHBOARD_NODES_GET_NODES;
 export const DASHBOARD_NODES_GET_NODE = DashboardNodesActionTypes.DASHBOARD_NODES_GET_NODE;
@@ -46,6 +48,12 @@ export interface DashboardNodesAction extends FeatureAction<DashboardNodesAction
 
 export class DashboardNodesInit implements DashboardNodesAction {
   readonly type = DASHBOARD_NODES_INIT;
+}
+
+export class DashboardNodesInitSuccess implements DashboardNodesAction {
+  readonly type = DASHBOARD_NODES_INIT_SUCCESS;
+
+  constructor(public payload: { nodes: any[] }) { }
 }
 
 export class DashboardNodesClose implements DashboardNodesAction {
@@ -130,6 +138,7 @@ export class DashboardNodesGetForksSuccess implements DashboardNodesAction {
 
 export type DashboardNodesActions =
   | DashboardNodesInit
+  | DashboardNodesInitSuccess
   | DashboardNodesClose
   | DashboardNodesGetNodes
   | DashboardNodesGetNode

@@ -1,36 +1,18 @@
-<div class="mina-table flex-grow overflow-x-auto">
-  <div class="row head">
-    <span>ID</span>
-    <span>Datetime</span>
-    <span>Remote Address</span>
-    <span>PID</span>
-    <span>FD</span>
-    <span>Incoming</span>
-    <span>Alias</span>
-    <span>Decrypted In</span>
-    <span>Decrypted Out</span>
-  </div>
-  <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-auto h-minus-lg"
-                               [itemSize]="itemSize">
-    <div *cdkVirtualFor="let c of connections; let i=index"
-         [class.active]="activeRow?.connectionId === c.connectionId"
-         [class.row-even]="i % 2 === 0"
-         (click)="onRowClick(c)"
-         class="row">
-      <span>{{ c.connectionId }}</span>
-      <span>{{ c.date }}</span>
-      <span class="secondary">
-        <span (click)="goToNetworkMessages(c.addr)"
-              [tooltip]="'See messages for this address'"
-              [showDelay]="1000"
-              class="underline">{{ c.addr }}</span>
-      </span>
-      <span>{{ c.pid }}</span>
-      <span>{{ c.fd }}</span>
-      <span>{{ c.incoming }}</span>
-      <span class="truncate">{{ c.alias }}</span>
-      <span class="secondary">{{ c.stats_in.total_bytes !== undefined ? (c.stats_in.total_bytes === 0 ? 100 : c.stats_in.decrypted_bytes * 100 / c.stats_in.total_bytes) : 0 | number: '1.0-1' }}%</span>
-      <span class="secondary">{{ c.stats_out.total_bytes !== undefined ? (c.stats_out.total_bytes ? 100 : c.stats_out.decrypted_bytes * 100 / c.stats_out.total_bytes) : 0 | number: '1.0-1' }}%</span>
-    </div>
-  </cdk-virtual-scroll-viewport>
-</div>
+<ng-container #minaTable></ng-container>
+
+<ng-template #rowTemplate let-row="row">
+  <span>{{ row.connectionId }}</span>
+  <span>{{ row.date }}</span>
+  <span class="secondary">
+    <span (click)="goToNetworkMessages(row.addr)"
+          [tooltip]="'See messages for this address'"
+          [showDelay]="1000"
+          class="underline">{{ row.addr }}</span>
+  </span>
+  <span>{{ row.pid }}</span>
+  <span>{{ row.fd }}</span>
+  <span>{{ row.incoming }}</span>
+  <span class="truncate">{{ row.alias }}</span>
+  <span class="secondary">{{ row.stats_in.total_bytes !== undefined ? (row.stats_in.total_bytes === 0 ? 100 : row.stats_in.decrypted_bytes * 100 / row.stats_in.total_bytes) : 0 | number: '1.0-1' }}%</span>
+  <span class="secondary">{{ row.stats_out.total_bytes !== undefined ? (row.stats_out.total_bytes ? 100 : row.stats_out.decrypted_bytes * 100 / row.stats_out.total_bytes) : 0 | number: '1.0-1' }}%</span>
+</ng-template>

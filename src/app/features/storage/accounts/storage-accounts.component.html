@@ -5,7 +5,7 @@
       <mina-storage-accounts-filter></mina-storage-accounts-filter>
       <mina-storage-accounts-table></mina-storage-accounts-table>
     </div>
-    <mina-horizontal-resizable-container (endResizing)="toggleResizing()"
+    <mina-horizontal-resizable-container-old (endResizing)="toggleResizing()"
                                          (startResizing)="toggleResizing()"
                                          (widthChange)="onWidthChange($event)"
                                          [class.show]="isActiveRow"
@@ -14,6 +14,6 @@
                                          class="no-transition"
                                          localStorageKey="storage-accounts-side-panel-width">
       <mina-storage-accounts-side-panel></mina-storage-accounts-side-panel>
-    </mina-horizontal-resizable-container>
+    </mina-horizontal-resizable-container-old>
   </div>
 </div>

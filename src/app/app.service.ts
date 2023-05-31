@@ -13,9 +13,12 @@ export class AppService {
   constructor(private graphQL: GraphQLService,
               private http: HttpClient) { }
 
-  getActiveNode(): Observable<MinaNode | null> {
+  getActiveNode(nodes: MinaNode[]): Observable<MinaNode | null> {
+    if (CONFIG.nodeLister) {
+      return of(nodes[0]);
+    }
     const nodeName = new URL(location.href).searchParams.get('node');
-    const configs = [...CONFIG.configs];
+    const configs = nodes;
     const nodeFromURL = configs.find(c => c.name === nodeName) || configs[0];
     const nodeNameWasFound = configs.some(c => c.name === nodeName);
 
@@ -51,6 +54,21 @@ export class AppService {
 
   private getDebuggerStatus(node: MinaNode): Observable<MinaNode> {
     return this.http.get<string>(`${node.debugger}/version`).pipe(map(() => node));
+  }
+
+  getNodes(): Observable<MinaNode[]> {
+    if (CONFIG.nodeLister) {
+      return this.http.get<MinaNode[]>(CONFIG.nodeLister.domain + ':' + CONFIG.nodeLister.port + '/nodes').pipe(
+        map((response: any[]) => {
+          return response.map((node: any) => ({
+            name: node.ip,
+            graphql: CONFIG.nodeLister.domain + ':' + node.graphql_port + '/' + node.ip,
+            'tracing-graphql': CONFIG.nodeLister.domain + ':' + node.internal_trace_port,
+          }));
+        }),
+      );
+    }
+    return of(CONFIG.configs);
   }
 }
 

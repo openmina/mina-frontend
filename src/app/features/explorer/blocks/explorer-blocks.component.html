@@ -1,13 +1,15 @@
-<div #parent class="h-100 w-100 flex-row p-relative">
-  <mina-explorer-blocks-table [class.shrink]="isActiveRow"></mina-explorer-blocks-table>
-  <mina-horizontal-resizable-container (endResizing)="toggleResizing()"
-                                       (startResizing)="toggleResizing()"
-                                       (widthChange)="onWidthChange($event)"
-                                       [class.show]="isActiveRow"
-                                       [maxWidthElement]="parent"
-                                       [minWidth]="420"
-                                       class="no-transition"
-                                       localStorageKey="explorer-blocks-spw">
-    <mina-explorer-blocks-side-panel></mina-explorer-blocks-side-panel>
-  </mina-horizontal-resizable-container>
-</div>
+<mina-horizontal-resizable-container *ngIf="el" [leftTemplate]="left"
+                                     [rightTemplate]="right"
+                                     [show]="isActiveRow"
+                                     [minWidth]="420"
+                                     [maxWidthElement]="el.nativeElement"
+                                     localStorageKey="explorer-blocks-spw">
+</mina-horizontal-resizable-container>
+
+<ng-template #left>
+  <mina-explorer-blocks-table></mina-explorer-blocks-table>
+</ng-template>
+
+<ng-template #right>
+  <mina-explorer-blocks-side-panel></mina-explorer-blocks-side-panel>
+</ng-template>

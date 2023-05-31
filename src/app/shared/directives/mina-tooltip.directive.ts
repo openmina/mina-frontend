@@ -24,8 +24,8 @@ export class MinaTooltipDirective implements OnInit, OnDestroy {
   private cancelShowing: boolean = false;
 
   constructor(private el: ElementRef,
-              @Inject(DOCUMENT) private document: Document,
-              private tooltipService: TooltipService) {}
+              private tooltipService: TooltipService,
+              @Inject(DOCUMENT) private document: Document) {}
 
   ngOnInit(): void {
     if (this.globalTooltip) {

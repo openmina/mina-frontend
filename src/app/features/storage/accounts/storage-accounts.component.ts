@@ -3,7 +3,7 @@ import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { StorageAccountsClose, StorageAccountsGetAccounts } from '@storage/accounts/storage-accounts.actions';
 import { selectActiveNode } from '@app/app.state';
 import { filter } from 'rxjs';
-import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
+import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { selectStorageAccountsActiveAccount } from '@storage/accounts/storage-accounts.state';
 import { StorageAccount } from '@shared/types/storage/accounts/storage-account.type';
 
@@ -21,7 +21,7 @@ export class StorageAccountsComponent extends StoreDispatcher implements OnInit 
   private removedClass: boolean;
 
   @ViewChild('tableWrapper') private tableWrapper: ElementRef<HTMLElement>;
-  @ViewChild(HorizontalResizableContainerComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
+  @ViewChild(HorizontalResizableContainerOldComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
 
   ngOnInit(): void {
     this.listenToActiveNodeChange();

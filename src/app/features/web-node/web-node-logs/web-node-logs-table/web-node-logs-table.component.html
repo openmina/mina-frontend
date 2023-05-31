@@ -1,23 +1,11 @@
-<div class="mina-table flex-grow overflow-x-auto">
-  <div class="row head">
-    <span>ID</span>
-    <span>Datetime</span>
-    <span>Kind</span>
-    <span>Summary</span>
-    <span>Level</span>
-  </div>
-  <cdk-virtual-scroll-viewport class="border-bottom h-100 overflow-y-scroll h-minus-lg"
-                               itemSize="32">
-    <div *cdkVirtualFor="let log of logs; let i=index"
-         (click)="onRowClick(log)"
-         [class.active]="activeLog?.id === log.id"
-         [class.row-even]="i % 2 === 0"
-         class="row">
-      <span>{{ log.id }}</span>
-      <span>{{ log.date }}</span>
-      <span class="secondary truncate">{{ log.kind }}</span>
-      <span class="truncate">{{ log.summary || '-' }}</span>
-      <span class="secondary truncate">{{ log.level }}</span>
-    </div>
-  </cdk-virtual-scroll-viewport>
-</div>
+<ng-container #minaTable></ng-container>
+
+<ng-template #rowTemplate let-row="row">
+  <span>{{ row.id }}</span>
+  <span>{{ row.date }}</span>
+  <span class="secondary truncate">{{ row.kind }}</span>
+  <span>
+    <mina-copy [value]="row.summary" [display]="row.summary | truncateMid: 17"></mina-copy>
+  </span>
+  <span class="secondary truncate">{{ row.level }}</span>
+</ng-template>

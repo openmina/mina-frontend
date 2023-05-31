@@ -2,7 +2,7 @@
   <mina-network-blocks-toolbar></mina-network-blocks-toolbar>
   <div #parent class="h-100 w-100 flex-row p-relative">
     <mina-network-blocks-table [class.shrink]="isSidePanelOpen"></mina-network-blocks-table>
-    <mina-horizontal-resizable-container (endResizing)="toggleResizing()"
+    <mina-horizontal-resizable-container-old (endResizing)="toggleResizing()"
                                          (startResizing)="toggleResizing()"
                                          (widthChange)="onWidthChange($event)"
                                          [class.show]="isSidePanelOpen"
@@ -11,6 +11,6 @@
                                          class="no-transition"
                                          localStorageKey="network-blocks-side-panel-width">
       <mina-network-blocks-side-panel></mina-network-blocks-side-panel>
-    </mina-horizontal-resizable-container>
+    </mina-horizontal-resizable-container-old>
   </div>
 </div>

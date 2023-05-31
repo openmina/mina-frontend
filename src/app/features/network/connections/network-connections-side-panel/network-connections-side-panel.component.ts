@@ -1,17 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { selectNetworkConnectionsActiveConnection } from '@network/connections/network-connections.state';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NetworkConnection } from '@shared/types/network/connections/network-connection.type';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { Routes } from '@shared/enums/routes.enum';
 import { Router } from '@angular/router';
-import { NETWORK_CONNECTIONS_SELECT_CONNECTION, NetworkConnectionsSelectConnection } from '@network/connections/network-connections.actions';
+import { NetworkConnectionsSelectConnection } from '@network/connections/network-connections.actions';
 import { downloadJson } from '@app/shared/helpers/user-input.helper';
 import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-network-connections-side-panel',
   templateUrl: './network-connections-side-panel.component.html',
@@ -19,7 +15,7 @@ import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/mina
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'h-100 flex-column border-left' },
 })
-export class NetworkConnectionsSidePanelComponent extends ManualDetection implements OnInit {
+export class NetworkConnectionsSidePanelComponent extends StoreDispatcher implements OnInit {
 
   connection: NetworkConnection;
   jsonString: string;
@@ -27,26 +23,23 @@ export class NetworkConnectionsSidePanelComponent extends ManualDetection implem
 
   @ViewChild(MinaJsonViewerComponent) private minaJsonViewer: MinaJsonViewerComponent;
 
-  constructor(private store: Store<MinaState>,
-              private router: Router) { super(); }
+  constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
     this.listenToActiveRowChange();
   }
 
   private listenToActiveRowChange(): void {
-    this.store.select(selectNetworkConnectionsActiveConnection)
-      .pipe(untilDestroyed(this))
-      .subscribe((connection: NetworkConnection) => {
-        this.connection = connection;
-        this.jsonString = JSON.stringify(connection);
-        this.detect();
-      });
+    this.select(selectNetworkConnectionsActiveConnection, (connection: NetworkConnection) => {
+      this.connection = connection;
+      this.jsonString = JSON.stringify(connection);
+      this.detect();
+    });
   }
 
   closeSidePanel(): void {
     this.router.navigate([Routes.NETWORK, Routes.CONNECTIONS], { queryParamsHandling: 'merge' });
-    this.store.dispatch<NetworkConnectionsSelectConnection>({ type: NETWORK_CONNECTIONS_SELECT_CONNECTION, payload: undefined });
+    this.dispatch(NetworkConnectionsSelectConnection, undefined);
   }
 
   downloadJson(): void {

@@ -1,19 +1,18 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { selectWebNodeLogsActiveLog } from '@web-node/web-node-logs/web-node-logs.state';
 import { WebNodeLog } from '@shared/types/web-node/logs/web-node-log.type';
-import { WEB_NODE_LOGS_SELECT_LOG, WebNodeLogsSelectLog } from '@web-node/web-node-logs/web-node-logs.actions';
+import { WebNodeLogsSelectLog } from '@web-node/web-node-logs/web-node-logs.actions';
 import { Routes } from '@shared/enums/routes.enum';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
 import { selectWebNodeLogs } from '@web-node/web-node.state';
+import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
+import { MinaTableComponent } from '@shared/components/mina-table/mina-table.component';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
+import { untilDestroyed } from '@ngneat/until-destroy';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-web-node-logs-table',
   templateUrl: './web-node-logs-table.component.html',
@@ -21,7 +20,15 @@ import { selectWebNodeLogs } from '@web-node/web-node.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-column h-100' },
 })
-export class WebNodeLogsTableComponent extends ManualDetection implements OnInit {
+export class WebNodeLogsTableComponent extends StoreDispatcher implements OnInit {
+
+  private readonly tableHeads: TableColumnList<WebNodeLog> = [
+    { name: 'ID' },
+    { name: 'datetime' },
+    { name: 'kind' },
+    { name: 'summary' },
+    { name: 'level' },
+  ];
 
   logs: WebNodeLog[] = [];
   activeLog: WebNodeLog;
@@ -29,55 +36,57 @@ export class WebNodeLogsTableComponent extends ManualDetection implements OnInit
   private idFromRoute: number;
   private preselect: boolean;
 
-  constructor(private store: Store<MinaState>,
-              private router: Router) { super(); }
+  @ViewChild('rowTemplate') private rowTemplate: TemplateRef<WebNodeLog>;
+  @ViewChild('minaTable', { read: ViewContainerRef }) private containerRef: ViewContainerRef;
 
-  ngOnInit(): void {
+  private table: MinaTableComponent<WebNodeLog>;
+
+  constructor(private router: Router) { super(); }
+
+  async ngOnInit(): Promise<void> {
+    await import('@shared/components/mina-table/mina-table.component').then(c => {
+      this.table = this.containerRef.createComponent(c.MinaTableComponent<WebNodeLog>).instance;
+      this.table.tableHeads = this.tableHeads;
+      this.table.rowTemplate = this.rowTemplate;
+      this.table.gridTemplateColumns = [70, 155, 200, 400, 200];
+      this.table.rowClickEmitter.pipe(untilDestroyed(this)).subscribe((row: WebNodeLog) => this.onRowClick(row));
+      this.table.propertyForActiveCheck = 'id';
+      this.table.init();
+    });
     this.listenToRouteChange();
     this.listenToWebNodeLogsChanges();
     this.listenToActiveLog();
   }
 
   private listenToRouteChange(): void {
-    this.store.select(getMergedRoute)
-      .pipe(untilDestroyed(this))
-      .subscribe((route: MergedRoute) => {
-        if (route.params['id'] && this.logs.length === 0) {
-          this.idFromRoute = Number(route.params['id']);
-          this.preselect = true;
-        }
-      });
+    this.select(getMergedRoute, (route: MergedRoute) => {
+      if (route.params['id'] && this.logs.length === 0) {
+        this.idFromRoute = Number(route.params['id']);
+        this.preselect = true;
+      }
+    });
   }
 
   private listenToWebNodeLogsChanges(): void {
-    this.store.select(selectWebNodeLogs)
-      .pipe(
-        untilDestroyed(this),
-        filter(logs => !!logs?.length),
-      )
-      .subscribe((logs: WebNodeLog[]) => {
-        this.logs = logs;
-        if (this.preselect) {
-          this.store.dispatch<WebNodeLogsSelectLog>({
-            type: WEB_NODE_LOGS_SELECT_LOG,
-            payload: this.logs.find(l => l.id === this.idFromRoute),
-          });
-          this.preselect = false;
-        }
-        this.detect();
-      });
+    this.select(selectWebNodeLogs, (logs: WebNodeLog[]) => {
+      this.logs = logs;
+      this.table.rows = logs;
+      this.table.detect();
+      if (this.preselect) {
+        this.dispatch(WebNodeLogsSelectLog, this.logs.find(l => l.id === this.idFromRoute));
+        this.preselect = false;
+      }
+      this.detect();
+    }, filter(logs => !!logs?.length));
   }
 
   private listenToActiveLog(): void {
-    this.store.select(selectWebNodeLogsActiveLog)
-      .pipe(
-        untilDestroyed(this),
-        filter(log => log !== this.activeLog),
-      )
-      .subscribe((log: WebNodeLog) => {
-        this.activeLog = log;
-        this.detect();
-      });
+    this.select(selectWebNodeLogsActiveLog, (log: WebNodeLog) => {
+      this.activeLog = log;
+      this.table.activeRow = log;
+      this.table.detect();
+      this.detect();
+    }, filter(log => log !== this.activeLog));
   }
 
   onRowClick(log: WebNodeLog): void {
@@ -89,6 +98,6 @@ export class WebNodeLogsTableComponent extends ManualDetection implements OnInit
   }
 
   private selectLog(log: WebNodeLog): void {
-    this.store.dispatch<WebNodeLogsSelectLog>({ type: WEB_NODE_LOGS_SELECT_LOG, payload: log });
+    this.dispatch(WebNodeLogsSelectLog, log);
   }
 }

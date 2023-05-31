@@ -1,48 +1,24 @@
-<div class="mina-table flex-grow overflow-x-auto">
-  <div class="row head sorting p-relative pr-12" *ngIf="currentSort">
-    <span *ngFor="let tableHead of tableHeads; let i=index"
-          (click)="sortTable(tableHead.sort ?? tableHead.name)"
-          [class.active]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
-          class="pointer">
-      {{ tableHead.name }}
-      <span [class.flip]="currentSort.sortDirection === 'descending'"
-            [class.show]="currentSort.sortBy === (tableHead.sort ?? tableHead.name)"
-            class="mina-icon f-18 icon-200">arrow_upward
-      </span>
-    </span>
-    <div class="flex-row flex-end">
-      <button class="h-sm w-sm fx-row-full-cent btn-selected p-0 toggle p-relative"
-              *ngIf="!isSidePanelOpen"
-              (click)="toggleSidePanel()">
-        <span class="mina-icon f-20">view_sidebar</span>
-      </button>
-    </div>
-  </div>
-  <cdk-virtual-scroll-viewport class="border-bottom border-top h-100 overflow-y-scroll h-minus-lg"
-                               [itemSize]="itemSize">
-    <div *cdkVirtualFor="let block of blocks; let i=index"
-         [class.row-even]="i % 2 === 0"
-         class="row">
-      <span class="tertiary">{{ block.date }}</span>
-      <span>
-        <mina-copy [value]="block.hash" [display]="block.hash | truncateMid"></mina-copy>
-      </span>
-      <span class="tertiary">{{ block.height }}</span>
-      <span>
-        <span (click)="seeMessagesForAddress(block.nodeAddress)"
-              class="underline"
-              [tooltip]="'See messages for this address'"
-              [showDelay]="1000">{{ block.nodeAddress }}</span>
-      </span>
-      <span>
-        <span (click)="seeMessagesForAddress(block.peerAddress)"
-              class="underline"
-              [tooltip]="'Peer ID: ' + block.peerId | truncateMid: 17"
-              [showDelay]="1000">{{ block.peerAddress }}</span>
-      </span>
-      <span class="tertiary">{{ block.type }}</span>
-      <span class="tertiary">{{ block.msgType }}</span>
-      <span [innerHTML]="block.blockLatency | secDuration: secConfig"></span>
-    </div>
-  </cdk-virtual-scroll-viewport>
-</div>
+<ng-container #minaTable></ng-container>
+
+<ng-template #rowTemplate let-row="row">
+  <span>{{ row.date }}</span>
+  <span class="secondary">
+    <mina-copy [value]="row.hash" [display]="row.hash | truncateMid"></mina-copy>
+  </span>
+  <span>{{ row.height }}</span>
+  <span>
+    <span (click)="seeMessagesForAddress(row.nodeAddress)"
+          class="underline secondary"
+          [tooltip]="'See messages for this address'"
+          [showDelay]="1000">{{ row.nodeAddress }}</span>
+  </span>
+  <span>
+    <span (click)="seeMessagesForAddress(row.peerAddress)"
+          class="underline secondary"
+          [tooltip]="'Peer ID: ' + row.peerId | truncateMid: 17"
+          [showDelay]="1000">{{ row.peerAddress }}</span>
+  </span>
+  <span>{{ row.type }}</span>
+  <span>{{ row.msgType }}</span>
+  <span class="secondary" [innerHTML]="row.blockLatency | secDuration: secConfig"></span>
+</ng-template>
