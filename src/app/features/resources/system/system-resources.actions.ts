@@ -12,6 +12,7 @@ enum SystemResourcesActionTypes {
   SYSTEM_RESOURCES_SET_ACTIVE_TIME = 'SYSTEM_RESOURCES_SET_ACTIVE_TIME',
   SYSTEM_RESOURCES_SORT_THREADS = 'SYSTEM_RESOURCES_SORT_THREADS',
   SYSTEM_RESOURCES_SET_SIDE_PANEL_ACTIVE_PATH = 'SYSTEM_RESOURCES_SET_SIDE_PANEL_ACTIVE_PATH',
+  SYSTEM_RESOURCES_REDRAW_CHARTS = 'SYSTEM_RESOURCES_REDRAW_CHARTS',
   SYSTEM_RESOURCES_CLOSE = 'SYSTEM_RESOURCES_CLOSE',
 }
 
@@ -22,6 +23,7 @@ export const SYSTEM_RESOURCES_SET_ACTIVE_POINT = SystemResourcesActionTypes.SYST
 export const SYSTEM_RESOURCES_SET_ACTIVE_TIME = SystemResourcesActionTypes.SYSTEM_RESOURCES_SET_ACTIVE_TIME;
 export const SYSTEM_RESOURCES_SORT_THREADS = SystemResourcesActionTypes.SYSTEM_RESOURCES_SORT_THREADS;
 export const SYSTEM_RESOURCES_SET_SIDE_PANEL_ACTIVE_PATH = SystemResourcesActionTypes.SYSTEM_RESOURCES_SET_SIDE_PANEL_ACTIVE_PATH;
+export const SYSTEM_RESOURCES_REDRAW_CHARTS = SystemResourcesActionTypes.SYSTEM_RESOURCES_REDRAW_CHARTS;
 export const SYSTEM_RESOURCES_CLOSE = SystemResourcesActionTypes.SYSTEM_RESOURCES_CLOSE;
 
 export interface SystemResourcesAction extends FeatureAction<SystemResourcesActionTypes> {
@@ -66,6 +68,10 @@ export class SystemResourcesSetSidePanelActivePath implements SystemResourcesAct
   constructor(public payload: string) {}
 }
 
+export class SystemResourcesRedrawCharts implements SystemResourcesAction {
+  readonly type = SYSTEM_RESOURCES_REDRAW_CHARTS;
+}
+
 export class SystemResourcesClose implements SystemResourcesAction {
   readonly type = SYSTEM_RESOURCES_CLOSE;
 }
@@ -78,5 +84,6 @@ export type SystemResourcesActions =
   | SystemResourcesSetActiveTime
   | SystemResourcesSortThreads
   | SystemResourcesSetSidePanelActivePath
+  | SystemResourcesRedrawCharts
   | SystemResourcesClose
   ;

@@ -12,10 +12,13 @@ import {
   STORAGE_ACCOUNTS_GET_REVISION_IDS_SUCCESS,
   STORAGE_ACCOUNTS_TOGGLE_FILTER,
   StorageAccountsActions,
+  StorageAccountsChangePage,
   StorageAccountsGetAccounts,
+  StorageAccountsToggleFilter,
 } from '@storage/accounts/storage-accounts.actions';
 import { StorageAccountsService } from '@storage/accounts/storage-accounts.service';
 import { StorageAccount } from '@shared/types/storage/accounts/storage-account.type';
+import { StorageAccountsState } from '@storage/accounts/storage-accounts.state';
 
 @Injectable({
   providedIn: 'root',
@@ -28,16 +31,15 @@ export class StorageAccountsEffects extends MinaBaseEffect<StorageAccountsAction
   constructor(private actions$: Actions,
               private accountsService: StorageAccountsService,
               store: Store<MinaState>) {
-
     super(store, selectMinaState);
 
     this.getAccounts$ = createEffect(() => this.actions$.pipe(
       ofType(STORAGE_ACCOUNTS_GET_ACCOUNTS, STORAGE_ACCOUNTS_TOGGLE_FILTER, STORAGE_ACCOUNTS_CHANGE_PAGE),
-      this.latestActionState<StorageAccountsGetAccounts>(),
-      switchMap(({ state }) => this.accountsService.getAccounts(
-        state.storage.accounts.activeFilters.map(f => f.value),
-        state.storage.accounts.pagination.start,
-        state.storage.accounts.pagination.size,
+      this.latestStateSlice<StorageAccountsState, StorageAccountsGetAccounts | StorageAccountsToggleFilter | StorageAccountsChangePage>('storage.accounts'),
+      switchMap((state: StorageAccountsState) => this.accountsService.getAccounts(
+        state.activeFilters.map(f => f.value),
+        state.pagination.start,
+        state.pagination.size,
       )),
       map((payload: StorageAccount[]) => ({ type: STORAGE_ACCOUNTS_GET_ACCOUNTS_SUCCESS, payload })),
     ));

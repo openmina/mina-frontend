@@ -17,6 +17,7 @@ export interface DashboardSplitsState {
   nodeStats: DashboardNodeCount;
   fetching: boolean;
   sort: TableSort<DashboardSplitsPeer>;
+  openSidePanel: boolean;
 }
 
 const select = <T>(selector: (state: DashboardSplitsState) => T): MemoizedSelector<MinaState, T> => createSelector(
@@ -27,10 +28,6 @@ const select = <T>(selector: (state: DashboardSplitsState) => T): MemoizedSelect
 export const selectDashboardSplitsPeers = select((state: DashboardSplitsState): DashboardSplitsPeer[] => state.peers);
 export const selectDashboardSplitsLinks = select((state: DashboardSplitsState): DashboardSplitsLink [] => state.links);
 export const selectDashboardSplitsSets = select((state: DashboardSplitsState): DashboardSplitsSet[] => state.sets);
-export const selectDashboardSplitsSetsAndFetching = select((state: DashboardSplitsState): { sets: DashboardSplitsSet[], fetching: boolean } => ({
-  sets: state.sets,
-  fetching: state.fetching,
-}));
 export const selectDashboardSplitsFetching = select((state: DashboardSplitsState): boolean => state.fetching);
 export const selectDashboardSplitsPeersAndLinksAndSetsAndFetching = createSelector(
   selectDashboardSplitsPeers,
@@ -49,4 +46,5 @@ export const selectDashboardSplitsNetworkSplitsDetails = select((state: Dashboar
 export const selectDashboardSplitsNetworkMergeDetails = select((state: DashboardSplitsState): string => state.networkMergeDetails);
 export const selectDashboardSplitsNodeStats = select((state: DashboardSplitsState): DashboardNodeCount => state.nodeStats);
 export const selectDashboardSplitsSort = select((state: DashboardSplitsState): TableSort<DashboardSplitsPeer> => state.sort);
+export const selectDashboardSplitsOpenSidePanel = select((state: DashboardSplitsState): boolean => state.openSidePanel);
 

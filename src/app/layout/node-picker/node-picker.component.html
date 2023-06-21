@@ -1,4 +1,4 @@
-<div class="node-picker flex-column border border-rad-4 bg-surface-top pointer"
+<div class="node-picker flex-column h-100 border border-rad-4 bg-surface-top overflow-x-hidden"
      [style.min-width.px]="parentInitialWidth"
      (clickOutside)="closeEmitter.emit()">
   <div class="flex-row p-relative">
@@ -11,7 +11,8 @@
     </div>
   </div>
   <div class="p-5 flex-column border-top overflow-auto">
-    <div *ngFor="let node of filteredNodes; let i=index"
+    <div class="node h-xl pl-12 pr-12 flex-row flex-between border-rad-4 pointer"
+         *ngFor="let node of filteredNodes; let i=index"
          (click)="selectNode(node)"
          [ngClass]="{
             'selected-primary bg-selected-container': activeNode === node,
@@ -19,14 +20,16 @@
             'mb-5': i < filteredNodes.length - 1
             }"
          [tabindex]="0"
-         (keydown.enter)="selectNode(node)"
-         class="node h-xl pl-12 pr-12 flex-row flex-between border-rad-4">
-      <span class="mina-icon icon-200 f-20 divider mr-8"
+         [tooltip]="node.graphql"
+         [showDelay]="500"
+         (keydown.space)="selectNode(node)"
+         (keydown.enter)="selectNode(node)">
+      <span class="mina-icon icon-200 f-20 divider"
             [class.selected-primary]="activeNode === node">check
       </span>
-      <div class="names flex-column w-100 h-xl">
+      <div class="names flex-column h-xl pl-8">
         <span class="flex-row align-end">{{ node.name }}</span>
-        <span class="flex-row align-center text-nowrap"
+        <span class="truncate w-100"
               [ngClass]="activeNode === node ? 'selected-secondary' : 'tertiary'">{{ node.graphql }}</span>
       </div>
     </div>

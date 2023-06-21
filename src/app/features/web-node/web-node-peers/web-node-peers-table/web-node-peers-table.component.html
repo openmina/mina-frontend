@@ -1,7 +1,16 @@
 <mina-web-node-peers-toolbar></mina-web-node-peers-toolbar>
 <div #parent class="w-100 flex-row p-relative h-minus-lg">
-  <div #table class="table-wrapper p-relative"
-       [class.shrink]="activePeer">
+  <mina-horizontal-resizable-container [leftTemplate]="left"
+                                       [rightTemplate]="right"
+                                       [class.show]="activePeer"
+                                       [minWidth]="420"
+                                       [maxWidthElement]="parent"
+                                       localStorageKey="web-node-peers-side-panel-width">
+  </mina-horizontal-resizable-container>
+</div>
+
+<ng-template #left>
+  <div class="h-100 table-wrapper p-relative">
     <ng-container #minaTable></ng-container>
 
     <ng-template #rowTemplate let-row="row">
@@ -17,14 +26,8 @@
       <span class="secondary truncate">{{ row.level }}</span>
     </ng-template>
   </div>
-  <mina-horizontal-resizable-container-old (endResizing)="toggleResizing()"
-                                       (startResizing)="toggleResizing()"
-                                       (widthChange)="onWidthChange($event)"
-                                       [class.show]="activePeer"
-                                       [maxWidthElement]="parent"
-                                       [minWidth]="400"
-                                       class="no-transition"
-                                       localStorageKey="web-node-peers-side-panel-width">
-    <mina-web-node-peers-side-panel></mina-web-node-peers-side-panel>
-  </mina-horizontal-resizable-container-old>
-</div>
+</ng-template>
+
+<ng-template #right>
+  <mina-web-node-peers-side-panel></mina-web-node-peers-side-panel>
+</ng-template>

@@ -23,7 +23,7 @@ export interface MinaNode {
   'tracing-graphql'?: string;
   debugger?: string;
   minaExplorer?: string;
-  features?: FeaturesConfig | string[];
+  features?: FeaturesConfig;
 }
 
 export type FeaturesConfig = {
@@ -40,6 +40,7 @@ export type FeatureType =
   | 'explorer'
   | 'logs'
   | 'storage'
+  | 'snark-worker'
   ;
 
 interface SentryConfig {

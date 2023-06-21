@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
-import { catchError, concatAll, EMPTY, filter, finalize, from, map, mergeMap, Observable, of, scan, switchMap, take, throwError, toArray } from 'rxjs';
+import { catchError, concatAll, EMPTY, filter, from, map, mergeMap, Observable, of, scan, switchMap, take, throwError, toArray } from 'rxjs';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
@@ -9,7 +9,6 @@ import { TracingBlocksService } from '@tracing/tracing-blocks/tracing-blocks.ser
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { lastItem } from '@shared/helpers/array.helper';
 import { CONFIG, isNotVanilla } from '@shared/constants/config';
-import { LoadingService } from '@core/services/loading.service';
 import { DashboardFork } from '@shared/types/dashboard/node-list/dashboard-fork.type';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 
@@ -21,10 +20,9 @@ export class DashboardNodesService {
   // readonly API = 'http://116.202.128.230:8000'; // aggregator
   private readonly options = { headers: { 'Content-Type': 'application/json' } };
 
-  constructor(private http: HttpClient,
-              private loadingService: LoadingService) { }
+  constructor(private http: HttpClient) { }
 
-  getNodes(): Observable<MinaNode[]> {
+  getNodes(): Observable<DashboardNode[]> {
     const name = (node: string) => {
       let org = origin;
       let url: string;
@@ -38,17 +36,17 @@ export class DashboardNodesService {
     };
 
     if (CONFIG.nodeLister) {
-      return this.http.get<MinaNode[]>(CONFIG.nodeLister.domain + ':' + CONFIG.nodeLister.port + '/nodes').pipe(
+      return this.http.get<any[]>(`${CONFIG.nodeLister.domain}:${CONFIG.nodeLister.port}/nodes`).pipe(
         map((response: any[]) => {
           return response.map((node: any) => {
             return ({
               ...{} as any,
-              name: node.ip,
-              url: CONFIG.nodeLister.domain + ':' + node.graphql_port + '/' + node.ip + '/graphql',
-              tracingUrl: CONFIG.nodeLister.domain + ':' + node.internal_trace_port + '/graphql',
+              name: `${node.ip}:${node.graphql_port}`,
+              url: `${CONFIG.nodeLister.domain}:${node.graphql_port}/graphql`,
+              tracingUrl: `${CONFIG.nodeLister.domain}:${node.internal_trace_port}/graphql`,
               status: AppNodeStatusTypes.SYNCED,
               forks: [],
-            });
+            } );
           });
         }),
       );
@@ -98,9 +96,97 @@ export class DashboardNodesService {
     );
   }
 
+  getNode(node: DashboardNode, globalSlot: number): Observable<DashboardNode[]> {
+    const body = { query: isNotVanilla() ? syncQuery : syncQueryVanilla };
+    return (CONFIG.nodeLister
+      ? of(null)
+      : this.http.post(node.url, body, this.options))
+      .pipe(
+        switchMap((syncResponse: any) =>
+          this.http.post(node.tracingUrl, { query: tracingQuery(globalSlot) }, this.options).pipe(
+            map((tracingResponse: any) => ({ syncResponse, tracingResponse })),
+            catchError(() => {
+              const error: any = new Error();
+              error.data = syncResponse;
+              return throwError(() => error);
+            }),
+          ),
+        ),
+        map(({ syncResponse, tracingResponse }: { syncResponse: any, tracingResponse: any }) => {
+          const daemon = syncResponse?.data.daemonStatus || { syncStatus: AppNodeStatusTypes.SYNCED };
+          const metrics = syncResponse?.data.daemonStatus.metrics || {};
+          let blockTraces = tracingResponse.data.blockTraces.traces;
+          blockTraces = blockTraces.length ? blockTraces : [{}];
+          const map1 = blockTraces.map((trace: any) => ({
+            ...node,
+            status: daemon.syncStatus,
+            blockchainLength: trace.blockchain_length,
+            hash: trace.state_hash,
+            addr: daemon.addrsAndPorts ? (daemon.addrsAndPorts.externalIp + ':' + daemon.addrsAndPorts.clientPort) : undefined,
+            date: trace.started_at ? toReadableDate(trace.started_at * ONE_THOUSAND) : undefined,
+            timestamp: trace.started_at * ONE_THOUSAND,
+            blockApplication: trace.total_time,
+            txPool: metrics.transactionPoolSize || 0,
+            addedTx: metrics.transactionsAddedToPool || 0,
+            broadcastedTx: metrics.transactionPoolDiffBroadcasted || 0,
+            receivedTx: metrics.transactionPoolDiffReceived || 0,
+            snarkPool: metrics.snarkPoolSize || 0,
+            snarkDiffReceived: metrics.snarkPoolDiffReceived || 0,
+            snarkDiffBroadcasted: metrics.snarkPoolDiffBroadcasted || 0,
+            pendingSnarkWork: metrics.pendingSnarkWork || 0,
+            latency: 0,
+            source: trace.source,
+            loaded: true,
+            traceStatus: trace.status,
+            branch: undefined,
+            bestTip: undefined,
+          } as DashboardNode));
+          return map1;
+        }),
+        catchError((error) => this.buildNodeFromErrorResponse(error, node)),
+      );
+    // }
+    // else {
+    // return this.http.post(node.url, { query: syncQueryVanilla }, this.options).pipe(
+    //   map((response: any) => ({
+    //     daemon: response.data.daemonStatus,
+    //     metrics: response.data.daemonStatus.metrics,
+    //     bestChain: response.data.bestChain.filter((c: any) => Number(c.protocolState.consensusState.blockHeight) === globalSlot),
+    //   })),
+    //   map(({ daemon, metrics, bestChain }: { daemon: any, metrics: any, bestChain: any[] }) => {
+    //     return bestChain.map(chain => ({
+    //       ...node,
+    //       status: daemon.syncStatus,
+    //       blockchainLength: chain.protocolState.consensusState.blockHeight,
+    //       addr: daemon.addrsAndPorts.externalIp + ':' + daemon.addrsAndPorts.clientPort,
+    //       date: dash,
+    //       timestamp: 0,
+    //       blockApplication: null,
+    //       txPool: metrics.transactionPoolSize || 0,
+    //       addedTx: metrics.transactionsAddedToPool || 0,
+    //       broadcastedTx: metrics.transactionPoolDiffBroadcasted || 0,
+    //       receivedTx: metrics.transactionPoolDiffReceived || 0,
+    //       snarkPool: metrics.snarkPoolSize || 0,
+    //       snarkDiffReceived: metrics.snarkPoolDiffReceived || 0,
+    //       snarkDiffBroadcasted: metrics.snarkPoolDiffBroadcasted || 0,
+    //       pendingSnarkWork: metrics.pendingSnarkWork || 0,
+    //       latency: 0,
+    //       source: dash,
+    //       hash: chain.stateHash,
+    //       loaded: true,
+    //       traceStatus: chain.status,
+    //       branch: undefined,
+    //       bestTip: undefined,
+    //     } as DashboardNode));
+    //   }),
+    //   catchError((error) => this.buildNodeFromErrorResponse(error, node)),
+    // );
+    // }
+  }
+
   getForks(nodes: DashboardNode[]): Observable<DashboardFork[]> {
     if (CONFIG.nodeLister) {
-      return of([])
+      return of([]);
     }
     const uniqueNodes = Array.from(new Set(nodes.map(node => node.name)))
       .map(name => nodes.find(node => node.name === name))
@@ -193,96 +279,6 @@ export class DashboardNodesService {
     }
   }
 
-  getNode(node: DashboardNode, globalSlot: number): Observable<DashboardNode[]> {
-    const body = { query: isNotVanilla() ? syncQuery : syncQueryVanilla };
-    return (CONFIG.nodeLister
-      ? of(null)
-      : this.http.post(node.url, body, this.options))
-      .pipe(
-        switchMap((syncResponse: any) =>
-          this.http.post(node.tracingUrl, { query: tracingQuery(globalSlot) }, this.options).pipe(
-            map((tracingResponse: any) => ({ syncResponse, tracingResponse })),
-            catchError(() => {
-              const error: any = new Error();
-              error.data = syncResponse;
-              return throwError(() => error);
-            }),
-          ),
-        ),
-        map(({ syncResponse, tracingResponse }: { syncResponse: any, tracingResponse: any }) => {
-          const daemon = syncResponse?.data.daemonStatus || { syncStatus: AppNodeStatusTypes.SYNCED};
-          const metrics = syncResponse?.data.daemonStatus.metrics || {};
-          let blockTraces = tracingResponse.data.blockTraces.traces;
-          blockTraces = blockTraces.length ? blockTraces : [{}];
-          const map1 = blockTraces.map((trace: any) => ({
-            ...node,
-            status: daemon.syncStatus,
-            blockchainLength: trace.blockchain_length,
-            hash: trace.state_hash,
-            addr: daemon.addrsAndPorts ? (daemon.addrsAndPorts.externalIp + ':' + daemon.addrsAndPorts.clientPort) : undefined,
-            date: trace.started_at ? toReadableDate(trace.started_at * ONE_THOUSAND) : undefined,
-            timestamp: trace.started_at * ONE_THOUSAND,
-            blockApplication: trace.total_time,
-            txPool: metrics.transactionPoolSize || 0,
-            addedTx: metrics.transactionsAddedToPool || 0,
-            broadcastedTx: metrics.transactionPoolDiffBroadcasted || 0,
-            receivedTx: metrics.transactionPoolDiffReceived || 0,
-            snarkPool: metrics.snarkPoolSize || 0,
-            snarkDiffReceived: metrics.snarkPoolDiffReceived || 0,
-            snarkDiffBroadcasted: metrics.snarkPoolDiffBroadcasted || 0,
-            pendingSnarkWork: metrics.pendingSnarkWork || 0,
-            latency: 0,
-            source: trace.source,
-            loaded: true,
-            traceStatus: trace.status,
-            branch: undefined,
-            bestTip: undefined,
-          } as DashboardNode));
-          return map1;
-        }),
-        catchError((error) => this.buildNodeFromErrorResponse(error, node)),
-        finalize(() => this.loadingService.removeURL()),
-      );
-    // }
-    // else {
-    // return this.http.post(node.url, { query: syncQueryVanilla }, this.options).pipe(
-    //   map((response: any) => ({
-    //     daemon: response.data.daemonStatus,
-    //     metrics: response.data.daemonStatus.metrics,
-    //     bestChain: response.data.bestChain.filter((c: any) => Number(c.protocolState.consensusState.blockHeight) === globalSlot),
-    //   })),
-    //   map(({ daemon, metrics, bestChain }: { daemon: any, metrics: any, bestChain: any[] }) => {
-    //     return bestChain.map(chain => ({
-    //       ...node,
-    //       status: daemon.syncStatus,
-    //       blockchainLength: chain.protocolState.consensusState.blockHeight,
-    //       addr: daemon.addrsAndPorts.externalIp + ':' + daemon.addrsAndPorts.clientPort,
-    //       date: dash,
-    //       timestamp: 0,
-    //       blockApplication: null,
-    //       txPool: metrics.transactionPoolSize || 0,
-    //       addedTx: metrics.transactionsAddedToPool || 0,
-    //       broadcastedTx: metrics.transactionPoolDiffBroadcasted || 0,
-    //       receivedTx: metrics.transactionPoolDiffReceived || 0,
-    //       snarkPool: metrics.snarkPoolSize || 0,
-    //       snarkDiffReceived: metrics.snarkPoolDiffReceived || 0,
-    //       snarkDiffBroadcasted: metrics.snarkPoolDiffBroadcasted || 0,
-    //       pendingSnarkWork: metrics.pendingSnarkWork || 0,
-    //       latency: 0,
-    //       source: dash,
-    //       hash: chain.stateHash,
-    //       loaded: true,
-    //       traceStatus: chain.status,
-    //       branch: undefined,
-    //       bestTip: undefined,
-    //     } as DashboardNode));
-    //   }),
-    //   catchError((error) => this.buildNodeFromErrorResponse(error, node)),
-    //   finalize(() => this.loadingService.removeURL()),
-    // );
-    // }
-  }
-
   private buildNodeFromErrorResponse(error: { data?: any }, node: DashboardNode): Observable<DashboardNode[]> {
     const daemon = error.data?.data.daemonStatus;
     const status = daemon?.syncStatus ?? AppNodeStatusTypes.OFFLINE;
@@ -315,11 +311,8 @@ export class DashboardNodesService {
   }
 
   getBlockTraceGroups(node: DashboardNode): Observable<TracingTraceGroup[]> {
-    return this.http.post(
-      node.tracingUrl,
-      { query: `query blockStructuredTrace { blockStructuredTrace(block_identifier: "${node.hash}") }` },
-      { headers: { 'Content-Type': 'application/json' } },
-    )
+    const body = { query: `query blockStructuredTrace { blockStructuredTrace(block_identifier: "${node.hash}") }` };
+    return this.http.post<any>(node.tracingUrl, body, this.options)
       .pipe(
         map((response: any) => {
           return response.data.blockStructuredTrace.sections.map((group: any) => ({
@@ -402,6 +395,7 @@ const syncQueryVanilla = `
   query status {
     daemonStatus {
       blockchainLength
+      globalSlotSinceGenesisBestTip
       addrsAndPorts {
         bindIp
         clientPort

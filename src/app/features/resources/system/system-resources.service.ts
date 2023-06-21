@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { finalize, map, Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { SystemResourcesChartData } from '@shared/types/resources/system/system-resources-chart-data.type';
 import { ConfigService } from '@core/services/config.service';
-import { LoadingService } from '@core/services/loading.service';
 import { SystemResourcesPoint } from '@shared/types/resources/system/system-resources-point.type';
 import { niceYScale } from '@shared/helpers/graph.helper';
 
@@ -16,14 +15,11 @@ const GB_DIVISOR = 1073741824;
 export class SystemResourcesService {
 
   constructor(private http: HttpClient,
-              private config: ConfigService,
-              private loadingService: LoadingService) { }
+              private config: ConfigService) { }
 
   getResources(): Observable<SystemResourcesChartData> {
-    this.loadingService.addURL();
     return this.http.get<any>(this.config.GQL + '/resources?limit=1500').pipe(
       map(response => SystemResourcesService.mapSystemResourcesResponse(response)),
-      finalize(() => this.loadingService.removeURL()),
     );
   }
 

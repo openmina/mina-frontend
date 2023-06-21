@@ -24,7 +24,7 @@ export function reducer(state: WebNodeWalletState = initialState, action: WebNod
       return {
         ...state,
         wallets: action.payload,
-        activeWallet: state.activeWallet ?? action.payload[0],
+        activeWallet: state.activeWallet ?? (action.payload.length > 0 ? action.payload[0] : { publicKey: 'No wallets' } as any),
       };
     }
 

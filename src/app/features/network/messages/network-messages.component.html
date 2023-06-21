@@ -1,17 +1,20 @@
-<div class="flex-column h-100">
+<div class="flex-column h-100" #parent>
   <mina-network-messages-filters (onSizeChange)="checkVirtualScrollViewport()"></mina-network-messages-filters>
-  <div #table class="flex-row flex-grow overflow-hidden p-relative">
-    <mina-network-messages-table [class.shrink]="isActiveRow"></mina-network-messages-table>
-    <mina-horizontal-resizable-container-old (endResizing)="toggleResizing()"
-                                         (startResizing)="toggleResizing()"
-                                         (widthChange)="onWidthChange($event)"
-                                         [class.show]="isActiveRow"
-                                         [maxWidthElement]="table"
-                                         [minWidth]="460"
-                                         class="no-transition"
-                                         localStorageKey="network-messages-side-panel-width">
-      <mina-network-messages-side-panel></mina-network-messages-side-panel>
-    </mina-horizontal-resizable-container-old>
-  </div>
+  <mina-horizontal-resizable-container [leftTemplate]="left"
+                                       [rightTemplate]="right"
+                                       [show]="isActiveRow"
+                                       [minWidth]="460"
+                                       [maxWidthElement]="parent"
+                                       localStorageKey="network-messages-side-panel-width">
+  </mina-horizontal-resizable-container>
+
+  <ng-template #left>
+    <mina-network-messages-table></mina-network-messages-table>
+  </ng-template>
+
+  <ng-template #right>
+    <mina-network-messages-side-panel></mina-network-messages-side-panel>
+  </ng-template>
+
   <mina-network-messages-table-footer (onScrollTopClick)="scrollToTop()"></mina-network-messages-table-footer>
 </div>

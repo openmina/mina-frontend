@@ -6,7 +6,7 @@ import {
   DASHBOARD_SPLITS_MERGE_NODES,
   DASHBOARD_SPLITS_SET_ACTIVE_PEER,
   DASHBOARD_SPLITS_SORT_PEERS,
-  DASHBOARD_SPLITS_SPLIT_NODES,
+  DASHBOARD_SPLITS_SPLIT_NODES, DASHBOARD_SPLITS_TOGGLE_SIDE_PANEL,
   DashboardSplitsActions,
 } from '@dashboard/splits/dashboard-splits.actions';
 import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
@@ -30,6 +30,7 @@ const initialState: DashboardSplitsState = {
     sortBy: 'outgoingConnections',
     sortDirection: SortDirection.DSC,
   },
+  openSidePanel: true,
 };
 
 export function reducer(state: DashboardSplitsState = initialState, action: DashboardSplitsActions): DashboardSplitsState {
@@ -65,6 +66,7 @@ export function reducer(state: DashboardSplitsState = initialState, action: Dash
       return {
         ...state,
         activePeer: action.payload,
+        openSidePanel: true,
       };
     }
 
@@ -91,6 +93,13 @@ export function reducer(state: DashboardSplitsState = initialState, action: Dash
           peers: sortPeers(set.peers, action.payload),
         })),
       };
+    }
+
+    case DASHBOARD_SPLITS_TOGGLE_SIDE_PANEL: {
+      return {
+        ...state,
+        openSidePanel: !state.openSidePanel,
+      }
     }
 
     case DASHBOARD_SPLITS_CLOSE:

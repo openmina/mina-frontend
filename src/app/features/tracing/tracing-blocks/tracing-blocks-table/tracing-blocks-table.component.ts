@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { TracingBlockTrace } from '@shared/types/tracing/blocks/tracing-block-trace.type';
 import { Router } from '@angular/router';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
@@ -9,11 +9,9 @@ import { selectTracingActiveTrace, selectTracingBlocksSorting, selectTracingTrac
 import { TracingBlocksSelectRow, TracingBlocksSort } from '@tracing/tracing-blocks/tracing-blocks.actions';
 import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
 import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
-import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { selectActiveNode } from '@app/app.state';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
-import { MinaTableComponent } from '@shared/components/mina-table/mina-table.component';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class';
 
 const secDurationConfig: SecDurationConfig = {
   red: 50,
@@ -30,14 +28,14 @@ const secDurationConfig: SecDurationConfig = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'h-100 flex-column' },
 })
-export class TracingBlocksTableComponent extends StoreDispatcher implements OnInit {
+export class TracingBlocksTableComponent extends MinaTableWrapper<TracingBlockTrace> implements OnInit {
 
   readonly secDurationConfig: SecDurationConfig = secDurationConfig;
   readonly origin: string = origin;
 
   activeNodeName: string;
 
-  private readonly tableHeads: TableColumnList<TracingBlockTrace> = [
+  protected readonly tableHeads: TableColumnList<TracingBlockTrace> = [
     { name: 'height' },
     { name: 'global slot', sort: 'globalSlot' },
     { name: 'hash' },
@@ -52,30 +50,22 @@ export class TracingBlocksTableComponent extends StoreDispatcher implements OnIn
   private hashFromRoute: string;
   private preselect: boolean;
 
-  @ViewChild('rowTemplate') private rowTemplate: TemplateRef<TracingBlockTrace>;
-  @ViewChild('minaTable', { read: ViewContainerRef }) private containerRef: ViewContainerRef;
-
-  private table: MinaTableComponent<TracingBlockTrace>;
-
   constructor(private router: Router) { super(); }
 
-  async ngOnInit(): Promise<void> {
-    await import('@shared/components/mina-table/mina-table.component').then(c => {
-      this.table = this.containerRef.createComponent(c.MinaTableComponent<TracingBlockTrace>).instance;
-      this.table.tableHeads = this.tableHeads;
-      this.table.rowTemplate = this.rowTemplate;
-      this.table.gridTemplateColumns = [96, 96, 230, 'auto ', 120, 120, 120];
-      this.table.minWidth = 998;
-      this.table.sortClz = TracingBlocksSort;
-      this.table.sortSelector = selectTracingBlocksSorting;
-      this.table.rowClickEmitter.pipe(untilDestroyed(this)).subscribe((row: TracingBlockTrace) => this.onRowClick(row));
-      this.table.propertyForActiveCheck = 'id';
-      this.table.init();
-    });
+  override async ngOnInit(): Promise<void> {
+    await super.ngOnInit();
     this.listenToTracesChanges();
     this.listenToActiveTraceChange();
     this.listenToRouteChange();
     this.listenToActiveNodeChange();
+  }
+
+  protected override setupTable(): void {
+    this.table.gridTemplateColumns = [96, 96, 230, 'auto', 120, 120, 120];
+    this.table.minWidth = 998;
+    this.table.sortClz = TracingBlocksSort;
+    this.table.sortSelector = selectTracingBlocksSorting;
+    this.table.propertyForActiveCheck = 'hash';
   }
 
   private listenToActiveNodeChange(): void {
@@ -84,10 +74,9 @@ export class TracingBlocksTableComponent extends StoreDispatcher implements OnIn
     }, filter(Boolean));
   }
 
-  onRowClick(trace: TracingBlockTrace): void {
+  protected override onRowClick(trace: TracingBlockTrace): void {
     if (this.activeTrace?.hash !== trace.hash) {
       this.router.navigate([Routes.TRACING, Routes.BLOCKS, trace.hash], { queryParamsHandling: 'merge' });
-      this.activeTrace = trace;
       this.dispatch(TracingBlocksSelectRow, trace);
     }
   }
@@ -131,9 +120,5 @@ export class TracingBlocksTableComponent extends StoreDispatcher implements OnIn
       this.table.detect();
       this.detect();
     }, filter(trace => trace !== this.activeTrace));
-  }
-
-  seeBlockInNetwork(height: number): void {
-
   }
 }

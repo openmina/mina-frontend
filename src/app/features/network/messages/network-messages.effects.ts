@@ -40,10 +40,12 @@ import {
 import { Effect, NonDispatchableEffect } from '@shared/types/store/effect.type';
 import { catchError, EMPTY, filter, forkJoin, map, mergeMap, of, repeat, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
 import { NetworkMessage } from '@shared/types/network/messages/network-message.type';
-import { addErrorObservable, createNonDispatchableEffect } from '@shared/constants/store-functions';
+import { addErrorObservable, catchErrorAndRepeat, createNonDispatchableEffect } from '@shared/constants/store-functions';
 import { NetworkMessageConnection } from '@shared/types/network/messages/network-messages-connection.type';
 import { NetworkMessagesDirection } from '@shared/types/network/messages/network-messages-direction.enum';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
+import { NetworkMessagesState } from '@network/messages/network-messages.state';
+import { WeekDay } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -68,18 +70,17 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
   constructor(private actions$: Actions,
               private networkMessagesService: NetworkMessagesService,
               store: Store<MinaState>) {
-
     super(store, selectMinaState);
 
     this.init$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_INIT),
-      this.latestActionState<NetworkMessagesInit>(),
-      tap(({ action, state }) => {
-        this.streamActive = state.network.messages.stream;
+      this.latestStateSlice<NetworkMessagesState, NetworkMessagesInit>('network.messages'),
+      tap(state => {
+        this.streamActive = state.stream;
         this.networkDestroy$ = new Subject<void>();
       }),
-      switchMap(({ action, state }) =>
-        timer(0, 10000).pipe(
+      switchMap(() =>
+        timer(10000, 10000).pipe(
           takeUntil(this.networkDestroy$),
           filter(() => this.streamActive && !this.waitingForServer),
           map(() => ({ type: NETWORK_GET_MESSAGES })),
@@ -104,8 +105,7 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
       ),
       tap(() => this.waitingForServer = false),
       map((payload: NetworkMessage[]) => ({ type: NETWORK_GET_MESSAGES_SUCCESS, payload })),
-      catchError((error: Error) => addErrorObservable(error, MinaErrorType.DEBUGGER)),
-      repeat(),
+      catchErrorAndRepeat(MinaErrorType.DEBUGGER, NETWORK_GET_MESSAGES_SUCCESS, []),
     ));
 
     this.getSpecificMessage$ = createEffect(() => this.actions$.pipe(
@@ -140,21 +140,22 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
         { type: NETWORK_GET_MESSAGES_SUCCESS, payload: response.messages },
         { type: NETWORK_SET_ACTIVE_ROW, payload: response.messages.find(m => m.id === response.id) },
       ]),
-      catchError((error: Error) => addErrorObservable(error, MinaErrorType.DEBUGGER)),
-      repeat(),
+      catchErrorAndRepeat(MinaErrorType.DEBUGGER, NETWORK_SET_ACTIVE_ROW),
     ));
 
     this.setActiveRow$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_SET_ACTIVE_ROW, NETWORK_CHANGE_TAB),
-      this.latestActionState<NetworkMessagesSetActiveRow | NetworkMessagesChangeTab>(),
-      filter(({ state }) => !!state.network.messages.activeRow),
-      switchMap(({ state }) => {
-        const activeTab = state.network.messages.activeTab;
-        return activeTab === 1
-          ? state.network.messages.activeRowFullMessage ? EMPTY : of({ type: NETWORK_GET_FULL_MESSAGE, payload: { id: state.network.messages.activeRow.id } })
-          : activeTab === 2
-            ? state.network.messages.activeRowHex ? EMPTY : of({ type: NETWORK_GET_MESSAGE_HEX, payload: { id: state.network.messages.activeRow.id } })
-            : state.network.messages.connection ? EMPTY : of({ type: NETWORK_GET_CONNECTION, payload: { id: state.network.messages.activeRow.connectionId } });
+      this.latestStateSlice<NetworkMessagesState, NetworkMessagesSetActiveRow | NetworkMessagesChangeTab>('network.messages'),
+      filter((state: NetworkMessagesState) => !!state.activeRow),
+      switchMap((state: NetworkMessagesState) => {
+        switch (state.activeTab) {
+          case 1:
+            return state.activeRowFullMessage ? EMPTY : of({ type: NETWORK_GET_FULL_MESSAGE, payload: { id: state.activeRow.id } });
+          case 2:
+            return state.activeRowHex ? EMPTY : of({ type: NETWORK_GET_MESSAGE_HEX, payload: { id: state.activeRow.id } });
+          default:
+            return state.connection ? EMPTY : of({ type: NETWORK_GET_CONNECTION, payload: { id: state.activeRow.connectionId } });
+        }
       }),
     ));
 
@@ -164,6 +165,7 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
       mergeMap(({ action }) => this.networkMessagesService.getNetworkFullMessage(action.payload.id)),
       map((payload: any) => ({ type: NETWORK_GET_FULL_MESSAGE_SUCCESS, payload })),
       catchError((err: Error) => of({ type: NETWORK_GET_FULL_MESSAGE_SUCCESS, payload: err.message })),
+      repeat(),
     ));
 
     this.getMessageHex$ = createEffect(() => this.actions$.pipe(
@@ -171,6 +173,7 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
       this.latestActionState<NetworkMessagesGetMessageHex>(),
       switchMap(({ action }) => this.networkMessagesService.getNetworkMessageHex(action.payload.id)),
       map((payload: string) => ({ type: NETWORK_GET_MESSAGE_HEX_SUCCESS, payload })),
+      catchErrorAndRepeat(MinaErrorType.DEBUGGER, NETWORK_GET_MESSAGE_HEX_SUCCESS, 'Error fetching hex'),
     ));
 
     this.getConnection$ = createEffect(() => this.actions$.pipe(
@@ -178,6 +181,7 @@ export class NetworkMessagesEffects extends MinaBaseEffect<NetworkMessagesAction
       this.latestActionState<NetworkMessagesGetConnection>(),
       switchMap(({ action }) => this.networkMessagesService.getNetworkConnection(action.payload.id)),
       map((payload: NetworkMessageConnection) => ({ type: NETWORK_GET_CONNECTION_SUCCESS, payload })),
+      catchErrorAndRepeat(MinaErrorType.DEBUGGER, NETWORK_GET_CONNECTION_SUCCESS, 'Error fetching connection'),
     ));
 
     this.pause$ = createNonDispatchableEffect(() => this.actions$.pipe(

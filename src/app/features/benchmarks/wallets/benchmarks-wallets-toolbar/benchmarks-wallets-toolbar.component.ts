@@ -29,6 +29,7 @@ import { distinctUntilChanged, filter } from 'rxjs';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { BenchmarksWallet } from '@shared/types/benchmarks/wallets/benchmarks-wallet.type';
+import { isMobile } from '@shared/helpers/values.helper';
 
 interface TransactionForm {
   batch: FormControl<number>;
@@ -41,7 +42,7 @@ interface TransactionForm {
   templateUrl: './benchmarks-wallets-toolbar.component.html',
   styleUrls: ['./benchmarks-wallets-toolbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'flex-column h-xl' },
+  host: { class: 'flex-column h-xl border-bottom' },
 })
 export class BenchmarksWalletsToolbarComponent extends ManualDetection implements OnInit {
 
@@ -183,6 +184,9 @@ export class BenchmarksWalletsToolbarComponent extends ManualDetection implement
 
   changeWallet(wallet: BenchmarksWallet) {
     this.store.dispatch<BenchmarksWalletsSelectWallet>({ type: BENCHMARKS_WALLETS_SELECT_WALLET, payload: wallet });
+    if (isMobile()) {
+      this.detachOverlay();
+    }
   }
 
   openDropdown(event: MouseEvent): void {
@@ -193,7 +197,7 @@ export class BenchmarksWalletsToolbarComponent extends ManualDetection implement
 
     this.overlayRef = this.overlay.create({
       hasBackdrop: false,
-      width: 650,
+      width: isMobile() ? '100%' : 'auto',
       positionStrategy: this.overlay.position()
         .flexibleConnectedTo(this.dropdownTrigger.nativeElement)
         .withPositions([{

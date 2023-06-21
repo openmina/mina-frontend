@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, of } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { ExplorerBlock } from '@shared/types/explorer/blocks/explorer-block.type';
 import { GraphQLService } from '@core/services/graph-ql.service';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { ExplorerBlockTx } from '@shared/types/explorer/blocks/explorer-block-tx.type';
+import { ExplorerBlockZkApp } from '@shared/types/explorer/blocks/explorer-block-zk-app-type';
+import { ONE_BILLION } from '@shared/constants/unit-measurements';
 
 @Injectable({
   providedIn: 'root',
@@ -13,79 +15,49 @@ export class ExplorerBlocksService {
   constructor(private graphQL: GraphQLService) { }
 
   getBlocks(): Observable<ExplorerBlock[]> {
-    // return some mock data
-    return of([
-      {
-        height: 1,
-        globalSlot: 1,
-        hash: '0x0000',
-        txCount: 1,
-        totalTxCount: 1,
-        snarkCount: 1,
-        zkAppsCount: 1,
-        date: toReadableDate(Date.now()),
-        timestamp: 1,
-        snarkedLedgerHash: '0x0000',
-        stagedLedgerHash: '0x0000',
-      },
-      {
-        height: 2,
-        globalSlot: 2,
-        hash: '0x0000',
-        txCount: 2,
-        totalTxCount: 2,
-        snarkCount: 2,
-        zkAppsCount: 2,
-        date: toReadableDate(Date.now()),
-        timestamp: 2,
-        snarkedLedgerHash: '0x0000',
-        stagedLedgerHash: '0x0000',
-      }
-    ])
-
-    // return this.graphQL.query('getBlocks', `{
-    //     bestChain {
-    //       protocolState {
-    //         blockchainState {
-    //           snarkedLedgerHash
-    //           stagedLedgerHash
-    //           date
-    //         }
-    //         consensusState {
-    //           blockHeight
-    //           slotSinceGenesis
-    //         }
-    //       }
-    //       transactions {
-    //         userCommands {
-    //           nonce
-    //         }
-    //         feeTransfer {
-    //           fee
-    //         }
-    //         zkappCommands {
-    //           hash
-    //         }
-    //       }
-    //       stateHash
-    //       snarkJobs
-    //     }
-    //   }`)
-    //   .pipe(
-    //     map((response: any) => (response.bestChain || []).map((chain: any) => ({
-    //       height: Number(chain.protocolState.consensusState.blockHeight),
-    //       globalSlot: Number(chain.protocolState.consensusState.slotSinceGenesis),
-    //       hash: chain.stateHash,
-    //       txCount: chain.transactions.userCommands.length,
-    //       totalTxCount: chain.transactions.userCommands.length + chain.transactions.feeTransfer.length + chain.transactions.zkappCommands.length + 1,
-    //       snarkCount: chain.snarkJobs.length,
-    //       zkAppsCount: chain.transactions.zkappCommands.length,
-    //       date: toReadableDate(chain.protocolState.blockchainState.date),
-    //       timestamp: chain.protocolState.blockchainState.date,
-    //       snarkedLedgerHash: chain.protocolState.blockchainState.snarkedLedgerHash,
-    //       stagedLedgerHash: chain.protocolState.blockchainState.stagedLedgerHash,
-    //     } as ExplorerBlock))),
-    //   );
+    return this.graphQL.query('getBlocks', `{
+        bestChain {
+          protocolState {
+            blockchainState {
+              snarkedLedgerHash
+              stagedLedgerHash
+              date
+            }
+            consensusState {
+              blockHeight
+              slotSinceGenesis
+            }
+          }
+          transactions {
+            userCommands {
+              nonce
+            }
+            feeTransfer {
+              fee
+            }
+            zkappCommands {
+              hash
+            }
+          }
+          stateHash
+          snarkJobs
+        }
+      }`)
+      .pipe(
+        map((response: any) => (response.bestChain || []).map((chain: any) => ({
+          height: Number(chain.protocolState.consensusState.blockHeight),
+          globalSlot: Number(chain.protocolState.consensusState.slotSinceGenesis),
+          hash: chain.stateHash,
+          txCount: chain.transactions.userCommands.length,
+          totalTxCount: chain.transactions.userCommands.length + chain.transactions.feeTransfer.length + chain.transactions.zkappCommands.length + 1,
+          snarkCount: chain.snarkJobs.length,
+          zkAppsCount: chain.transactions.zkappCommands.length,
+          date: toReadableDate(chain.protocolState.blockchainState.date),
+          timestamp: chain.protocolState.blockchainState.date,
+          snarkedLedgerHash: chain.protocolState.blockchainState.snarkedLedgerHash,
+          stagedLedgerHash: chain.protocolState.blockchainState.stagedLedgerHash,
+        } as ExplorerBlock))),
+      );
   }
 
   getTxs(height: number): Observable<ExplorerBlockTx[]> {
@@ -105,16 +77,30 @@ export class ExplorerBlocksService {
       }}`)
       .pipe(
         map((response: any) => response.block.transactions.userCommands || []),
+        map((txs: any[]) => txs.map((tx: any) => ({
+          ...tx,
+          amount: Number(tx.amount) / ONE_BILLION,
+          fee: Number(tx.fee) / ONE_BILLION,
+        }))),
       );
   }
 
-  getZkApps(height: number): Observable<any[]> {
-    return this.graphQL.query('getZkApps', this.zkAppQuery(height)).pipe(
-      map((response: any) => response.block.transactions.zkappCommands || []),
+  getZkApps(height: number): Observable<ExplorerBlockZkApp[]> {
+    return this.graphQL.query<any>('getZkApps', this.zkAppQuery(height)).pipe(
+      map((response: any) => (response.block.transactions.zkappCommands || []).map((zk: any) => ({
+        id: zk.id,
+        hash: zk.hash,
+        updates: zk.zkappCommand.accountUpdates.length,
+        failures: zk.failureReason.length,
+        zkAppFullData: {
+          ...zk,
+          id: zk.id.slice(0, 6) + '...' + zk.id.slice(zk.id.length - 6),
+        },
+      }))),
     );
   }
 
-  private zkAppQuery(height: number) {
+  private zkAppQuery(height: number): string {
     return `{ block(height: ${height}) {
     transactions {
       zkappCommands {

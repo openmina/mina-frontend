@@ -3,7 +3,7 @@
 #mina-tooltip {
 	top: 0;
 	left: 0;
-	z-index: 100;
+	z-index: 1001; // bigger than cdk overlay
 	position: fixed;
 	padding: 8px;
 	font-weight: 400;

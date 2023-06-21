@@ -8,8 +8,8 @@ import { NetworkBlocksIpcSidePanelComponent } from './network-blocks-ipc-side-pa
 import { SharedModule } from '@shared/shared.module';
 import { EffectsModule } from '@ngrx/effects';
 import { NetworkBlocksIpcEffects } from '@network/blocks-ipc/network-blocks-ipc.effects';
-import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { CopyComponent } from '@shared/components/copy/copy.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 
 
 @NgModule({
@@ -22,9 +22,9 @@ import { CopyComponent } from '@shared/components/copy/copy.component';
   imports: [
     SharedModule,
     CopyComponent,
-    HorizontalResizableContainerOldComponent,
     NetworkBlocksIpcRouting,
     EffectsModule.forFeature([NetworkBlocksIpcEffects]),
+    HorizontalResizableContainerComponent,
   ],
 })
 export class NetworkBlocksIpcModule {}

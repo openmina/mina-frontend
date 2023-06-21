@@ -78,7 +78,10 @@
       ],
       "@storage/*": [
         "src/app/features/storage/*"
-      ]
+      ],
+      "@dsw/*": [
+        "src/app/features/dsw/*"
+      ],
     },
     "useDefineForClassFields": false
   },

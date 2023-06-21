@@ -125,7 +125,7 @@ export function reducer(state: BenchmarksWalletsState = initialState, action: Be
             nonce: nonce.toString(),
             to: state.wallets[i].publicKey,
             fee: (state.sendingFee * ONE_BILLION).toString(),
-            amount: '1000000000',
+            amount: '2000000000',
             memo,
             validUntil: '4294967295',
           };

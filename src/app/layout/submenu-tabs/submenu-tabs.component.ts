@@ -55,25 +55,26 @@ export class SubmenuTabsComponent extends StoreDispatcher implements OnInit {
   }
 
   private setSubMenusOfActiveNodeForNewPage(node: MinaNode): void {
-    const feature = getAvailableFeatures(node || {} as any).find((f: FeatureType | string) => f === this.baseRoute) as FeatureType;
-    // this.subMenus = getFeaturesConfig(node)[feature] || [];
-
-    //this should be removed after the backend guys confirm that the new config is implemented in k8s
-    this.subMenus = this.features()[feature] || [];
+    const feature = getAvailableFeatures(node || {} as any).find((f: FeatureType) => f === this.baseRoute);
+    if (node && node.features) {
+      this.subMenus = node.features[feature] || [];
+    } else {
+      this.subMenus = CONFIG.globalConfig?.features[feature] || [];
+    }
   }
 
-  features() {
-    return {
-      dashboard: ['nodes', 'topology'],
-      explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
-      resources: ['system'],
-      network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
-      tracing: ['overview', 'blocks'],
-      benchmarks: CONFIG.production ? ['wallets'] : ['wallets', 'transactions'],
-      storage: ['accounts'],
-      'web-node': ['wallet', 'peers', 'logs', 'state'],
-    };
-  }
+  // features() {
+  //   return {
+  //     dashboard: ['nodes', 'topology'],
+  //     explorer: ['blocks', 'transactions', 'snark-pool', 'scan-state', 'snark-traces'],
+  //     resources: ['system'],
+  //     network: ['messages', 'connections', 'blocks', 'blocks-ipc'],
+  //     tracing: ['overview', 'blocks'],
+  //     benchmarks: CONFIG.production ? ['wallets'] : ['wallets', 'transactions'],
+  //     storage: ['accounts'],
+  //     'web-node': ['wallet', 'peers', 'logs', 'state'],
+  //   };
+  // }
 
   private listenToMenuChange(): void {
     this.select(selectAppMenu, (menu: AppMenu) => {

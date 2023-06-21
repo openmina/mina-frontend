@@ -1,16 +1,21 @@
 <div class="flex-column h-100">
   <mina-logs-toolbar></mina-logs-toolbar>
-  <div #parent class="h-100 w-100 flex-row p-relative">
+  <div #parent class="h-minus-xl w-100 flex-row p-relative">
     <mina-logs-table [class.shrink]="isActiveRow"></mina-logs-table>
-    <mina-horizontal-resizable-container-old (endResizing)="toggleResizing()"
-                                         (startResizing)="toggleResizing()"
-                                         (widthChange)="onWidthChange($event)"
-                                         [class.show]="isActiveRow"
-                                         [maxWidthElement]="parent"
+    <mina-horizontal-resizable-container [leftTemplate]="left"
+                                         [rightTemplate]="right"
+                                         [show]="isActiveRow"
                                          [minWidth]="420"
-                                         class="no-transition"
+                                         [maxWidthElement]="parent"
                                          localStorageKey="logs-side-panel-width">
-      <mina-logs-side-panel></mina-logs-side-panel>
-    </mina-horizontal-resizable-container-old>
+    </mina-horizontal-resizable-container>
   </div>
 </div>
+
+<ng-template #left>
+  <mina-logs-table></mina-logs-table>
+</ng-template>
+
+<ng-template #right>
+  <mina-logs-side-panel></mina-logs-side-panel>
+</ng-template>

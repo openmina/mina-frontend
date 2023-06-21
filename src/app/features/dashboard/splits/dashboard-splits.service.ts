@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, concatAll, EMPTY, forkJoin, from, map, Observable, switchMap, toArray } from 'rxjs';
+import { concatAll, forkJoin, from, map, Observable, toArray } from 'rxjs';
 import { CONFIG } from '@shared/constants/config';
 import { HttpClient } from '@angular/common/http';
 import { DashboardSplits } from '@shared/types/dashboard/splits/dashboard-splits.type';
@@ -17,10 +17,9 @@ export class DashboardSplitsService {
     return from(
       CONFIG.configs.map(node =>
         this.http
-          .post<{ data: GetPeersResponse }>(node.graphql + '/graphql', { query: peersQuery }, this.options)
+          .post<{ data: GetPeersResponse }>(`${node.graphql}/graphql`, { query: peersQuery }, this.options)
           .pipe(
             map(response => ({ data: response.data, node: node.name })),
-            catchError(() => EMPTY),
           ),
       ),
     ).pipe(
@@ -69,10 +68,7 @@ export class DashboardSplitsService {
           .post<any>(CONFIG.configs.find(c => c.name === nodeName(node)).debugger + '/firewall/whitelist/enable', {
             'ips': leftList.map(n => n.address.split(':')[0]),
             'ports': [10909, 10001],
-          }, this.options)
-          .pipe(
-            catchError(() => EMPTY),
-          ),
+          }, this.options),
       ),
     ).pipe(
       concatAll(),
@@ -84,17 +80,14 @@ export class DashboardSplitsService {
           .post<any>(CONFIG.configs.find(c => c.name === nodeName(node)).debugger + '/firewall/whitelist/enable', {
             'ips': rightList.map(n => n.address.split(':')[0]),
             'ports': [10909, 10001],
-          }, this.options)
-          .pipe(
-            catchError(() => EMPTY),
-          ),
+          }, this.options),
       ),
     ).pipe(
       concatAll(),
       toArray(),
     );
 
-    return forkJoin([leftObs, rightObs]).pipe(switchMap(() => EMPTY));
+    return forkJoin([leftObs, rightObs]).pipe(map(() => void 0));
   }
 
   mergeNodes(peers: DashboardSplitsPeer[]): Observable<void> {
@@ -102,15 +95,14 @@ export class DashboardSplitsService {
 
     return from(
       peers.filter(p => p.node).map(node =>
-        this.http
-          .post<void>(CONFIG.configs.find(c => c.name === nodeName(node)).debugger + '/firewall/whitelist/disable', null, this.options)
-          .pipe(
-            catchError(() => EMPTY),
-          ),
+        this.http.post<void>(
+          CONFIG.configs.find(c => c.name === nodeName(node)).debugger + '/firewall/whitelist/disable', null, this.options,
+        ),
       ),
     ).pipe(
       concatAll(),
-      switchMap(() => EMPTY),
+      toArray(),
+      map(() => void 0),
     );
   }
 

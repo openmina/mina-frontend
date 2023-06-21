@@ -1,10 +1,8 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { NetworkBlocksClose, NetworkBlocksGetEarliestBlock, NetworkBlocksInit, NetworkBlocksSetActiveBlock } from '@network/blocks/network-blocks.actions';
 import { selectAppNodeStatus } from '@app/app.state';
 import { filter, take } from 'rxjs';
 import { NodeStatus } from '@shared/types/app/node-status.type';
-import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
-import { NetworkBlocksTableComponent } from '@network/blocks/network-blocks-table/network-blocks-table.component';
 import { selectNetworkBlocksSidePanelOpen } from '@network/blocks/network-blocks.state';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
@@ -23,10 +21,8 @@ export class NetworkBlocksComponent extends StoreDispatcher implements OnInit, A
   isSidePanelOpen: boolean;
 
   private blockHeight: number;
-  private removedClass: boolean;
 
-  @ViewChild(NetworkBlocksTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
-  @ViewChild(HorizontalResizableContainerOldComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
+  constructor(public el: ElementRef) { super(); }
 
   ngOnInit(): void {
     this.listenToRouteChange();
@@ -35,15 +31,6 @@ export class NetworkBlocksComponent extends StoreDispatcher implements OnInit, A
 
   ngAfterViewInit(): void {
     this.listenToSidePanelOpeningChange();
-  }
-
-  toggleResizing(): void {
-    this.tableRef.nativeElement.classList.toggle('no-transition');
-  }
-
-  onWidthChange(width: number): void {
-    this.horizontalResizableContainer.nativeElement.style.right = (width * -1) + 'px';
-    this.tableRef.nativeElement.style.width = `calc(100% - ${width}px)`;
   }
 
   private listenToRouteChange(): void {
@@ -63,10 +50,6 @@ export class NetworkBlocksComponent extends StoreDispatcher implements OnInit, A
   private listenToSidePanelOpeningChange(): void {
     this.select(selectNetworkBlocksSidePanelOpen, (open: boolean) => {
       this.isSidePanelOpen = open;
-      if (!this.removedClass) {
-        this.removedClass = true;
-        this.horizontalResizableContainer.nativeElement.classList.remove('no-transition');
-      }
       this.detect();
     });
   }

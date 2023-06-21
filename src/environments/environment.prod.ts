@@ -7,4 +7,5 @@ export const environment: Readonly<MinaEnv> = {
   configs: window['env']['configs'] || [],
   globalConfig: window['env']['globalConfig'] || undefined,
   isVanilla: window['env']['isVanilla'],
+  nodeLister: window['env']['nodeLister'],
 };

@@ -2,8 +2,12 @@ import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChil
 import * as d3 from 'd3';
 import { Simulation } from 'd3';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
-import { selectDashboardSplitsActivePeer, selectDashboardSplitsPeersAndLinksAndSetsAndFetching } from '@dashboard/splits/dashboard-splits.state';
-import { filter, tap } from 'rxjs';
+import {
+  selectDashboardSplitsActivePeer,
+  selectDashboardSplitsOpenSidePanel,
+  selectDashboardSplitsPeersAndLinksAndSetsAndFetching,
+} from '@dashboard/splits/dashboard-splits.state';
+import { delay, filter, tap } from 'rxjs';
 import { zoom } from 'd3-zoom';
 import { DashboardSplitsPeer } from '@shared/types/dashboard/splits/dashboard-splits-peer.type';
 import { DashboardSplitsLink } from '@shared/types/dashboard/splits/dashboard-splits-link.type';
@@ -23,12 +27,11 @@ type DashboardSplitsLinkSimulation = {
   templateUrl: './dashboard-splits-graph.component.html',
   styleUrls: ['./dashboard-splits-graph.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'flex-column h-minus-xl' },
+  host: { class: 'flex-column h-minus-xl w-100' },
 })
 export class DashboardSplitsGraphComponent extends StoreDispatcher implements OnInit {
 
-  @Input() parentWidth: number;
-  @ViewChild('chart', { static: true }) chart: ElementRef<HTMLDivElement>;
+  @ViewChild('chart', { static: true }) private chart: ElementRef<HTMLDivElement>;
   @ViewChild('tooltip', { static: true }) private tooltipRef: ElementRef<HTMLDivElement>;
 
   private width: number;
@@ -52,6 +55,7 @@ export class DashboardSplitsGraphComponent extends StoreDispatcher implements On
   ngOnInit(): void {
     this.listenToActivePeerChanges();
     this.listenToPeersLinksSets();
+    this.listenToSidePanelToggling();
     this.width = this.chart.nativeElement.offsetWidth;
     this.height = this.chart.nativeElement.offsetHeight;
     this.tooltip = d3.select(this.tooltipRef.nativeElement);
@@ -67,6 +71,12 @@ export class DashboardSplitsGraphComponent extends StoreDispatcher implements On
         this.svg.selectAll('g').attr('transform', transform);
       });
     this.svg.call(this.zoom as any);
+  }
+
+  private listenToSidePanelToggling(): void {
+    this.select(selectDashboardSplitsOpenSidePanel, () => {
+      this.svg?.attr('width', this.chart.nativeElement.offsetWidth);
+    }, delay(350));
   }
 
   private listenToPeersLinksSets(): void {

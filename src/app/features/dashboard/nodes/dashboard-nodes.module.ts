@@ -8,7 +8,6 @@ import { DashboardNodesToolbarComponent } from './dashboard-nodes-toolbar/dashbo
 import { EffectsModule } from '@ngrx/effects';
 import { DashboardNodesEffects } from '@dashboard/nodes/dashboard-nodes.effects';
 import { DashboardNodesSidePanelComponent } from './dashboard-nodes-side-panel/dashboard-nodes-side-panel.component';
-import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { CopyComponent } from '@shared/components/copy/copy.component';
 import { HorizontalMenuComponent } from '@shared/components/horizontal-menu/horizontal-menu.component';
 import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
@@ -24,7 +23,6 @@ import { HorizontalResizableContainerComponent } from '@shared/components/horizo
   imports: [
     SharedModule,
     CopyComponent,
-    HorizontalResizableContainerOldComponent,
     DashboardNodesRouting,
     EffectsModule.forFeature([DashboardNodesEffects]),
     HorizontalMenuComponent,

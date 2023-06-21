@@ -1,70 +1,52 @@
-<div class="flex-column h-100">
-  <div class="flex-row flex-between p-12 h-xl">
-    <span class="secondary f-600">Block {{ block?.height }}</span>
-    <span class="mina-icon pointer tertiary primary-hover f-18"
-          (click)="closeSidePanel()">close
-    </span>
+<div class="side-panel-stepper h-100 p-relative overflow-hidden">
+  <div class="step p-absolute w-100 h-100 flex-column"
+       [class.active]="!activeZkApp"
+       [class.before]="activeZkApp">
+    <ng-container *ngTemplateOutlet="step1"></ng-container>
   </div>
-
-  <div class="h-lg tab-group pl-12 pb-10 pr-10">
-    <button class="tab mr-10 pl-10 pr-10" [class.selected]="selectedTabIndex === 0"
-            (click)="selectedTabIndex = 0">User commands
-    </button>
-    <button class="tab mr-10 pl-10 pr-10" [class.selected]="selectedTabIndex === 1"
-            (click)="selectedTabIndex = 1">ZkApp commands
-    </button>
+  <div class="step p-absolute w-100 h-100 flex-column"
+       [class.active]="activeZkApp"
+       [class.after]="!activeZkApp">
+    <ng-container *ngTemplateOutlet="step2"></ng-container>
   </div>
+</div>
 
-  <div class="flex-column p-relative flex-grow">
-    <div class="p-absolute-cover">
-      <ng-container [ngSwitch]="selectedTabIndex">
-        <ng-container *ngSwitchCase="0">
-          <div *ngIf="block" class="times h-100 overflow-y-auto flex-column secondary ml-10">
-            <div *ngFor="let tx of txs" class="border border-rad-6 mb-10 pt-5 pb-5 pr-8 pl-10 popup-box-shadow-weak">
-              <div class="fx-row-vert-cent flex-between h-sm">
-                <span>ID</span>
-                <mina-copy [value]="tx.id" [display]="tx.id | truncateMid: 6: 12" [hidden]="false"></mina-copy>
-              </div>
-              <div class="fx-row-vert-cent flex-between h-sm">
-                <span>Hash</span>
-                <mina-copy [value]="tx.hash" [display]="tx.hash | truncateMid: 6: 12" [hidden]="false"></mina-copy>
-              </div>
-              <div class="fx-row-vert-cent flex-between h-sm">
-                <span>From</span>
-                <mina-copy [value]="tx.from" [display]="tx.from | truncateMid: 6: 12" [hidden]="false"></mina-copy>
-              </div>
-              <div class="fx-row-vert-cent flex-between h-sm">
-                <span>To</span>
-                <mina-copy [value]="tx.to" [display]="tx.to | truncateMid: 6: 12" [hidden]="false"></mina-copy>
-              </div>
-              <div class="fx-row-vert-cent flex-between h-sm">
-                <span>Nonce</span>
-                <span>{{ tx.nonce }}</span>
-              </div>
-              <div class="fx-row-vert-cent flex-between h-sm">
-                <span>Amount</span>
-                <span>{{ tx.amount }}</span>
-              </div>
-              <div class="fx-row-vert-cent flex-between h-sm">
-                <span>Fee</span>
-                <span>{{ tx.fee }}</span>
-              </div>
-              <div class="fx-row-vert-cent flex-between h-sm">
-                <span>Memo</span>
-                <mina-copy [value]="tx.memo" [display]="tx.memo | truncateMid: 6: 12" [hidden]="false"></mina-copy>
-              </div>
+
+<ng-template #step1>
+  <div class="flex-column h-100">
+    <div class="flex-row flex-between p-12 h-xl">
+      <span class="secondary f-600">Block {{ block?.height }}</span>
+      <span class="mina-icon pointer tertiary primary-hover f-18"
+            (click)="closeSidePanel()">close
+      </span>
+    </div>
+
+    <div class="h-lg tab-group pl-12 pb-10 pr-10">
+      <button class="tab mr-10 pl-10 pr-10" [class.selected]="selectedTabIndex === 0"
+              (click)="selectTab(0)">User commands
+      </button>
+      <button class="tab mr-10 pl-10 pr-10" [class.selected]="selectedTabIndex === 1"
+              (click)="selectTab(1)">ZkApp commands
+      </button>
+    </div>
+
+    <div class="flex-column p-relative flex-grow">
+      <div class="p-absolute-cover">
+        <ng-container [ngSwitch]="selectedTabIndex">
+          <ng-container *ngSwitchCase="0">
+            <mina-explorer-blocks-user-commands [txs]="txs"></mina-explorer-blocks-user-commands>
+          </ng-container>
+          <ng-container *ngSwitchCase="1">
+            <div class="h-100 overflow-y-auto flex-column">
+              <mina-explorer-blocks-zk-apps-table *ngIf="zkApps" [zkApps]="zkApps"></mina-explorer-blocks-zk-apps-table>
             </div>
-          </div>
+          </ng-container>
         </ng-container>
-        <ng-container *ngSwitchCase="1">
-          <div class="h-100 overflow-y-auto pr-12 flex-column">
-            <mina-json-viewer [json]="zkApps.length === 0 ? {zkappCommands:[]} : zkApps"
-                              [expandTracking]="expandTracking"
-                              [expanded]="false"></mina-json-viewer>
-          </div>
-        </ng-container>
-      </ng-container>
+      </div>
     </div>
   </div>
+</ng-template>
 
-</div>
+<ng-template #step2>
+  <mina-explorer-blocks-zk-app-detail></mina-explorer-blocks-zk-app-detail>
+</ng-template>

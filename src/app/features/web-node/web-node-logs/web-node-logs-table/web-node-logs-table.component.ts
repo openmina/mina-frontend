@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { selectWebNodeLogsActiveLog } from '@web-node/web-node-logs/web-node-logs.state';
 import { WebNodeLog } from '@shared/types/web-node/logs/web-node-log.type';
 import { WebNodeLogsSelectLog } from '@web-node/web-node-logs/web-node-logs.actions';
@@ -9,9 +9,7 @@ import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
 import { selectWebNodeLogs } from '@web-node/web-node.state';
 import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
-import { MinaTableComponent } from '@shared/components/mina-table/mina-table.component';
-import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class';
 
 @Component({
   selector: 'mina-web-node-logs-table',
@@ -20,9 +18,9 @@ import { untilDestroyed } from '@ngneat/until-destroy';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-column h-100' },
 })
-export class WebNodeLogsTableComponent extends StoreDispatcher implements OnInit {
+export class WebNodeLogsTableComponent extends MinaTableWrapper<WebNodeLog> implements OnInit {
 
-  private readonly tableHeads: TableColumnList<WebNodeLog> = [
+  protected readonly tableHeads: TableColumnList<WebNodeLog> = [
     { name: 'ID' },
     { name: 'datetime' },
     { name: 'kind' },
@@ -36,26 +34,18 @@ export class WebNodeLogsTableComponent extends StoreDispatcher implements OnInit
   private idFromRoute: number;
   private preselect: boolean;
 
-  @ViewChild('rowTemplate') private rowTemplate: TemplateRef<WebNodeLog>;
-  @ViewChild('minaTable', { read: ViewContainerRef }) private containerRef: ViewContainerRef;
-
-  private table: MinaTableComponent<WebNodeLog>;
-
   constructor(private router: Router) { super(); }
 
-  async ngOnInit(): Promise<void> {
-    await import('@shared/components/mina-table/mina-table.component').then(c => {
-      this.table = this.containerRef.createComponent(c.MinaTableComponent<WebNodeLog>).instance;
-      this.table.tableHeads = this.tableHeads;
-      this.table.rowTemplate = this.rowTemplate;
-      this.table.gridTemplateColumns = [70, 155, 200, 400, 200];
-      this.table.rowClickEmitter.pipe(untilDestroyed(this)).subscribe((row: WebNodeLog) => this.onRowClick(row));
-      this.table.propertyForActiveCheck = 'id';
-      this.table.init();
-    });
+  override async ngOnInit(): Promise<void> {
+    await super.ngOnInit();
     this.listenToRouteChange();
     this.listenToWebNodeLogsChanges();
     this.listenToActiveLog();
+  }
+
+  protected override setupTable(): void {
+    this.table.gridTemplateColumns = [70, 155, 200, 400, 200];
+    this.table.propertyForActiveCheck = 'id';
   }
 
   private listenToRouteChange(): void {
@@ -89,7 +79,7 @@ export class WebNodeLogsTableComponent extends StoreDispatcher implements OnInit
     }, filter(log => log !== this.activeLog));
   }
 
-  onRowClick(log: WebNodeLog): void {
+  protected override onRowClick(log: WebNodeLog): void {
     if (this.activeLog?.id !== log.id) {
       this.router.navigate([Routes.WEB_NODE, Routes.LOGS, log.id], { queryParamsHandling: 'merge' });
       this.activeLog = log;

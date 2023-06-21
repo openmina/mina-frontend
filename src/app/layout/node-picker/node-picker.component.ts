@@ -13,7 +13,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   templateUrl: './node-picker.component.html',
   styleUrls: ['./node-picker.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'd-flex' },
+  host: { class: 'flex-column w-100' },
 })
 export class NodePickerComponent extends ManualDetection implements AfterViewInit {
 

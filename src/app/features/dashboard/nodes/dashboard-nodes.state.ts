@@ -5,7 +5,6 @@ import { selectDashboardNodesState } from '@dashboard/dashboard.state';
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
 import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
-import { DashboardFork } from '@shared/types/dashboard/node-list/dashboard-fork.type';
 import { DashboardForkFilter } from '@shared/types/dashboard/node-list/dashboard-fork-filter.type';
 
 
@@ -14,6 +13,7 @@ export interface DashboardNodesState {
   filteredNodes: DashboardNode[];
   sort: TableSort<DashboardNode>;
   nodeCount: DashboardNodeCount;
+  numOfNodes: number;
   activeNode: DashboardNode;
   blockTraces: TracingTraceGroup[];
   activeBlock: number;
@@ -36,6 +36,7 @@ export const selectDashboardNodes = select((state: DashboardNodesState): Dashboa
 export const selectDashboardNodesActiveNode = select((state: DashboardNodesState): DashboardNode => state.activeNode);
 export const selectDashboardNodesSorting = select((state: DashboardNodesState): TableSort<DashboardNode> => state.sort);
 export const selectDashboardNodesNodeCount = select((state: DashboardNodesState): DashboardNodeCount => state.nodeCount);
+export const selectDashboardNodesNumOfNodes = select((state: DashboardNodesState): number => state.numOfNodes);
 export const selectDashboardNodesBlockTraces = select((state: DashboardNodesState): TracingTraceGroup[] => state.blockTraces);
 export const selectDashboardNodesActiveBlockLevel = select((state: DashboardNodesState): number => state.activeBlock);
 export const selectDashboardNodesEarliestBlockLevel = select((state: DashboardNodesState): number => state.earliestBlock);

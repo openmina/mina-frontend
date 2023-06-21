@@ -3,20 +3,26 @@ import { MinaState, selectMinaState } from '@app/app.setup';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaBaseEffect } from '@shared/base-classes/mina-base.effect';
-import { Effect, NonDispatchableEffect } from '@shared/types/store/effect.type';
-import { map, switchMap, tap } from 'rxjs';
+import { Effect } from '@shared/types/store/effect.type';
+import { EMPTY, map, switchMap } from 'rxjs';
 import {
+  DASHBOARD_SPLITS_CLOSE,
   DASHBOARD_SPLITS_GET_SPLITS,
-  DASHBOARD_SPLITS_GET_SPLITS_SUCCESS, DASHBOARD_SPLITS_MERGE_NODES,
+  DASHBOARD_SPLITS_GET_SPLITS_SUCCESS,
+  DASHBOARD_SPLITS_MERGE_NODES,
+  DASHBOARD_SPLITS_MERGE_NODES_SUCCESS,
   DASHBOARD_SPLITS_SPLIT_NODES,
+  DASHBOARD_SPLITS_SPLIT_NODES_SUCCESS,
   DashboardSplitsActions,
-  DashboardSplitsGetSplits, DashboardSplitsMergeNodes,
-  DashboardSplitsSplitNodes,
+  DashboardSplitsClose,
+  DashboardSplitsGetSplits,
+  DashboardSplitsMergeNodes,
 } from '@dashboard/splits/dashboard-splits.actions';
 import { DashboardSplitsService } from '@dashboard/splits/dashboard-splits.service';
-import { LoadingService } from '@core/services/loading.service';
 import { DashboardSplits } from '@shared/types/dashboard/splits/dashboard-splits.type';
-import { createNonDispatchableEffect } from '@shared/constants/store-functions';
+import { catchErrorAndRepeat } from '@shared/constants/store-functions';
+import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
+import { DashboardSplitsState } from '@dashboard/splits/dashboard-splits.state';
 
 @Injectable({
   providedIn: 'root',
@@ -24,34 +30,41 @@ import { createNonDispatchableEffect } from '@shared/constants/store-functions';
 export class DashboardSplitsEffects extends MinaBaseEffect<DashboardSplitsActions> {
 
   readonly getSplits$: Effect;
-  readonly splitNodes$: NonDispatchableEffect;
-  readonly mergeNodes$: NonDispatchableEffect;
+  readonly splitNodes$: Effect;
+  readonly mergeNodes$: Effect;
 
   constructor(private actions$: Actions,
               private splitService: DashboardSplitsService,
-              private loadingService: LoadingService,
               store: Store<MinaState>) {
 
     super(store, selectMinaState);
 
     this.getSplits$ = createEffect(() => this.actions$.pipe(
-      ofType(DASHBOARD_SPLITS_GET_SPLITS),
-      this.latestActionState<DashboardSplitsGetSplits>(),
-      tap(() => this.loadingService.addURL()),
-      switchMap(({ state }) => this.splitService.getPeers()),
+      ofType(DASHBOARD_SPLITS_GET_SPLITS, DASHBOARD_SPLITS_CLOSE),
+      this.latestActionState<DashboardSplitsGetSplits | DashboardSplitsClose>(),
+      switchMap(({ action }) =>
+        action.type === DASHBOARD_SPLITS_CLOSE
+          ? EMPTY
+          : this.splitService.getPeers(),
+      ),
       map((payload: DashboardSplits) => ({ type: DASHBOARD_SPLITS_GET_SPLITS_SUCCESS, payload })),
-      tap(() => this.loadingService.removeURL()),
+      catchErrorAndRepeat(MinaErrorType.GRAPH_QL, DASHBOARD_SPLITS_GET_SPLITS_SUCCESS, { peers: [], links: [] }),
     ));
 
-    this.splitNodes$ = createNonDispatchableEffect(() => this.actions$.pipe(
+    this.splitNodes$ = createEffect(() => this.actions$.pipe(
       ofType(DASHBOARD_SPLITS_SPLIT_NODES),
-      this.latestActionState<DashboardSplitsSplitNodes>(),
-      switchMap(({ state }) => this.splitService.splitNodes(state.dashboard.splits.peers)),
+      this.latestStateSlice<DashboardSplitsState, DashboardSplitsMergeNodes>('dashboard.splits'),
+      switchMap(state => this.splitService.splitNodes(state.peers)),
+      map(() => ({ type: DASHBOARD_SPLITS_SPLIT_NODES_SUCCESS })),
+      catchErrorAndRepeat(MinaErrorType.GRAPH_QL, DASHBOARD_SPLITS_SPLIT_NODES_SUCCESS),
     ));
-    this.mergeNodes$ = createNonDispatchableEffect(() => this.actions$.pipe(
+
+    this.mergeNodes$ = createEffect(() => this.actions$.pipe(
       ofType(DASHBOARD_SPLITS_MERGE_NODES),
-      this.latestActionState<DashboardSplitsMergeNodes>(),
-      switchMap(({ state }) => this.splitService.mergeNodes(state.dashboard.splits.peers)),
+      this.latestStateSlice<DashboardSplitsState, DashboardSplitsMergeNodes>('dashboard.splits'),
+      switchMap(state => this.splitService.mergeNodes(state.peers)),
+      map(() => ({ type: DASHBOARD_SPLITS_MERGE_NODES_SUCCESS })),
+      catchErrorAndRepeat(MinaErrorType.GRAPH_QL, DASHBOARD_SPLITS_MERGE_NODES_SUCCESS),
     ));
   }
 }

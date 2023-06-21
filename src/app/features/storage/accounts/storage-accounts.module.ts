@@ -10,9 +10,9 @@ import { SharedModule } from '@shared/shared.module';
 import { EffectsModule } from '@ngrx/effects';
 import { StorageAccountsEffects } from '@storage/accounts/storage-accounts.effects';
 import { CopyComponent } from '@shared/components/copy/copy.component';
-import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { CommonModule } from '@angular/common';
 import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 
 
 @NgModule({
@@ -29,8 +29,8 @@ import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/min
     StorageAccountsRouting,
     EffectsModule.forFeature(StorageAccountsEffects),
     CopyComponent,
-    HorizontalResizableContainerOldComponent,
     MinaJsonViewerComponent,
+    HorizontalResizableContainerComponent,
   ],
 })
 export class StorageAccountsModule {}

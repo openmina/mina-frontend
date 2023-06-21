@@ -4,13 +4,14 @@ import { Effect } from '@shared/types/store/effect.type';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaState, selectMinaState } from '@app/app.setup';
-import { catchError, EMPTY, map, repeat, switchMap, tap } from 'rxjs';
-import { addError, addErrorObservable } from '@shared/constants/store-functions';
+import { EMPTY, map, switchMap, tap } from 'rxjs';
+import { catchErrorAndRepeat } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import { ExplorerTransactionsService } from '@explorer/transactions/explorer-transactions.service';
 import {
   EXPLORER_TRANSACTIONS_CLOSE,
   EXPLORER_TRANSACTIONS_CREATE_TX,
+  EXPLORER_TRANSACTIONS_CREATE_TX_SUCCESS,
   EXPLORER_TRANSACTIONS_GET_TRANSACTIONS,
   EXPLORER_TRANSACTIONS_GET_TRANSACTIONS_SUCCESS,
   ExplorerTransactionsActions,
@@ -36,7 +37,6 @@ export class ExplorerTransactionsEffects extends MinaBaseEffect<ExplorerTransact
               private actions$: Actions,
               private blocksService: ExplorerTransactionsService,
               store: Store<MinaState>) {
-
     super(store, selectMinaState);
 
     this.getTxs$ = createEffect(() => this.actions$.pipe(
@@ -48,11 +48,7 @@ export class ExplorerTransactionsEffects extends MinaBaseEffect<ExplorerTransact
           : this.blocksService.getTransactions(),
       ),
       map((payload: ExplorerTransaction[]) => ({ type: EXPLORER_TRANSACTIONS_GET_TRANSACTIONS_SUCCESS, payload })),
-      catchError((error: Error) => [
-        addError(error, MinaErrorType.GRAPH_QL),
-        { type: EXPLORER_TRANSACTIONS_GET_TRANSACTIONS_SUCCESS, payload: [] },
-      ]),
-      repeat(),
+      catchErrorAndRepeat(MinaErrorType.GRAPH_QL, EXPLORER_TRANSACTIONS_GET_TRANSACTIONS_SUCCESS, []),
     ));
 
     this.newTx$ = createEffect(() => this.actions$.pipe(
@@ -63,8 +59,8 @@ export class ExplorerTransactionsEffects extends MinaBaseEffect<ExplorerTransact
         : this.blocksService.sendZkAppTx(action.payload.tx as ExplorerZkAppTransaction),
       ),
       tap(() => this.router.navigate([Routes.EXPLORER, Routes.TRANSACTIONS])),
-      catchError((error: Error) => addErrorObservable(error, MinaErrorType.GRAPH_QL)),
-      repeat(),
+      map(() => ({ type: EXPLORER_TRANSACTIONS_CREATE_TX_SUCCESS })),
+      catchErrorAndRepeat(MinaErrorType.GRAPH_QL, EXPLORER_TRANSACTIONS_CREATE_TX_SUCCESS),
     ));
   }
 }

@@ -4,12 +4,13 @@ import {
   selectDashboardSplitsNetworkMergeDetails,
   selectDashboardSplitsNetworkSplitsDetails,
   selectDashboardSplitsNodeStats,
-  selectDashboardSplitsSetsAndFetching,
+  selectDashboardSplitsSets,
 } from '@dashboard/splits/dashboard-splits.state';
 import { DashboardSplitsSet } from '@shared/types/dashboard/splits/dashboard-splits-set.type';
 import { DashboardSplitsGetSplits, DashboardSplitsMergeNodes, DashboardSplitsSplitNodes } from '@dashboard/splits/dashboard-splits.actions';
 import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
 import { filter } from 'rxjs';
+import { selectLoadingStateLength } from '@app/layout/toolbar/loading.reducer';
 
 @Component({
   selector: 'mina-dashboard-splits-toolbar',
@@ -35,12 +36,16 @@ export class DashboardSplitsToolbarComponent extends StoreDispatcher implements 
   }
 
   private listenToSetsChanges(): void {
-    this.select(selectDashboardSplitsSetsAndFetching, ({ sets, fetching }: { sets: DashboardSplitsSet[], fetching: boolean }) => {
+    this.select(selectLoadingStateLength, (length: number) => {
+      this.fetching = length > 0;
+      this.detect();
+    }, filter((length: number) => this.fetching !== (length > 0)));
+
+    this.select(selectDashboardSplitsSets, (sets: DashboardSplitsSet[]) => {
       this.setsLength = sets.length;
       this.sets = sets;
-      this.fetching = fetching;
       this.detect();
-    }, filter(({ sets }) => sets.length > 0));
+    }, filter(sets => sets.length > 0));
   }
 
   private listenToSplitTimeChanges(): void {

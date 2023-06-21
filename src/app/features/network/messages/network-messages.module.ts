@@ -11,7 +11,7 @@ import { NetworkMessagesSidePanelComponent } from './network-messages-side-panel
 import { NetworkMessagesTableFooterComponent } from './network-messages-table-footer/network-messages-table-footer.component';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
-import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 
 
 @NgModule({
@@ -26,9 +26,9 @@ import { HorizontalResizableContainerOldComponent } from '../../../shared/compon
     NetworkMessagesRouting,
     SharedModule,
     MinaJsonViewerComponent,
-    HorizontalResizableContainerOldComponent,
     CommonModule,
     EffectsModule.forFeature([NetworkMessagesEffects]),
+    HorizontalResizableContainerComponent,
   ],
   providers: [
     DatePipe,

@@ -4,7 +4,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { MinaBaseEffect } from '@shared/base-classes/mina-base.effect';
 import { Effect, NonDispatchableEffect } from '@shared/types/store/effect.type';
 import { catchError, filter, map, repeat, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
-import { addErrorObservable, createNonDispatchableEffect } from '@shared/constants/store-functions';
+import { addErrorObservable, catchErrorAndRepeat, createNonDispatchableEffect } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import {
   NETWORK_BLOCKS_CLOSE,
@@ -17,7 +17,6 @@ import {
   NetworkBlocksActions,
   NetworkBlocksGetBlocks,
   NetworkBlocksGetEarliestBlock,
-  NetworkBlocksInit,
   NetworkBlocksSetActiveBlock,
 } from '@network/blocks/network-blocks.actions';
 import { NetworkBlocksService } from '@network/blocks/network-blocks.service';
@@ -25,6 +24,7 @@ import { NetworkBlock } from '@shared/types/network/blocks/network-block.type';
 import { Store } from '@ngrx/store';
 import { Routes } from '@shared/enums/routes.enum';
 import { Router } from '@angular/router';
+import { NetworkBlocksState } from '@network/blocks/network-blocks.state';
 
 @Injectable({
   providedIn: 'root',
@@ -45,29 +45,29 @@ export class NetworkBlocksEffects extends MinaBaseEffect<NetworkBlocksActions> {
               private actions$: Actions,
               private networkBlocksService: NetworkBlocksService,
               store: Store<MinaState>) {
-
     super(store, selectMinaState);
 
     this.earliestBlock$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_BLOCKS_GET_EARLIEST_BLOCK),
-      this.latestActionState<NetworkBlocksGetEarliestBlock>(),
-      switchMap(({ action, state }) =>
+      this.latestStateSlice<NetworkBlocksState, NetworkBlocksGetEarliestBlock>('network.blocks'),
+      switchMap((state: NetworkBlocksState) =>
         this.networkBlocksService.getEarliestBlockHeight().pipe(
           switchMap(height => {
             const actions: NetworkBlocksActions[] = [{ type: NETWORK_BLOCKS_SET_EARLIEST_BLOCK, payload: { height } }];
-            if (!state.network.blocks.activeBlock) {
+            if (!state.activeBlock) {
               this.router.navigate([Routes.NETWORK, Routes.BLOCKS, height ?? ''], { queryParamsHandling: 'merge' });
               actions.push({ type: NETWORK_BLOCKS_SET_ACTIVE_BLOCK, payload: { height } });
               actions.push({ type: NETWORK_BLOCKS_INIT });
             }
             return actions;
           }),
-        )),
+        ),
+      ),
+      catchErrorAndRepeat(MinaErrorType.DEBUGGER, NETWORK_BLOCKS_SET_EARLIEST_BLOCK, {}),
     ));
 
     this.init$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_BLOCKS_INIT),
-      this.latestActionState<NetworkBlocksInit>(),
       switchMap(() =>
         timer(0, 5000).pipe(
           takeUntil(this.networkDestroy$),
@@ -85,8 +85,7 @@ export class NetworkBlocksEffects extends MinaBaseEffect<NetworkBlocksActions> {
       switchMap(({ action, state }) => this.networkBlocksService.getBlockMessages(action.payload?.height || state.network.blocks.activeBlock)),
       tap(() => this.waitingForServer = false),
       map((payload: NetworkBlock[]) => ({ type: NETWORK_BLOCKS_GET_BLOCKS_SUCCESS, payload })),
-      catchError((error: Error) => addErrorObservable(error, MinaErrorType.DEBUGGER)),
-      repeat(),
+      catchErrorAndRepeat(MinaErrorType.DEBUGGER, NETWORK_BLOCKS_GET_BLOCKS_SUCCESS, []),
     ));
 
     this.setActiveBlock$ = createEffect(() => this.actions$.pipe(

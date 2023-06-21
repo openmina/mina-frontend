@@ -1,5 +1,4 @@
-<ng-container *ngIf="!currentHeightIsTooBig; else mismatch"
-              #minaTable></ng-container>
+<ng-container #minaTable></ng-container>
 
 <ng-template #rowTemplate let-row="row" let-i="i">
   <span class="fx-row-vert-cent">
@@ -46,6 +45,9 @@
     <mina-copy class="d-flex" [value]="row.url" [display]="' '"></mina-copy>
   </span>
   <span>
+    <span class="status f-600" [ngClass]="row.status.toLowerCase()">{{ row.status }}</span>
+  </span>
+  <span>
     <mina-copy [value]="row.hash" [display]="row.hash || '-' | truncateMid"></mina-copy>
   </span>
   <span class="secondary">{{ row.blockchainLength || '-' }}</span>
@@ -64,8 +66,8 @@
   </span>
 </ng-template>
 
-<ng-template #mismatch>
-  <div class="no-results p-absolute w-100 h-100 z-1 fx-col-full-cent">
+<ng-container *ngIf="currentHeightIsTooBig">
+  <div class="no-results bg-surface p-absolute w-100 h-100 z-1 fx-col-full-cent">
     <span class="mina-icon mb-16 icon-100 f-40">error</span>
     <span class="f-600 f-big">No results</span>
     <span class="tertiary mt-8 text-center">
@@ -77,7 +79,7 @@
       See latest height ({{ latestHeight }})
     </button>
   </div>
-</ng-template>
+</ng-container>
 
 <ng-template #loading>
   <span class="fx-row-vert-cent h-100">

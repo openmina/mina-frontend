@@ -1,9 +1,6 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { debounceTime, filter, skip, switchMap, take } from 'rxjs';
+import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import { untilDestroyed } from '@ngneat/until-destroy';
+import { catchError, debounceTime, EMPTY, filter, switchMap, take, tap } from 'rxjs';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
 import { TableSort } from '@shared/types/shared/table-sort.type';
@@ -11,11 +8,12 @@ import { sort } from '@shared/helpers/array.helper';
 import { SnarkWorkersTracesService } from './snark-workers-traces.service';
 import { SnarkWorkerTraceJob } from '@shared/types/explorer/snark-traces/snark-worker-trace-job.type';
 import {
-  SW_TRACES_CLOSE,
   SW_TRACES_GET_JOBS,
   SW_TRACES_INIT,
   SWTracesClose,
   SWTracesGetJobs,
+  SWTracesGetTraces,
+  SWTracesGetTracesSuccess,
   SWTracesInit,
 } from '@explorer/snark-workers-traces/snark-workers-traces.actions';
 import {
@@ -24,12 +22,10 @@ import {
   selectSWTracesSort,
   selectSWTracesWorkers,
 } from '@explorer/snark-workers-traces/snark-workers-traces.state';
-import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
-import { SnarkWorkersTracesTableComponent } from '@explorer/snark-workers-traces/snark-workers-traces-table/snark-workers-traces-table.component';
 import { SnarkWorkerTraceFilter } from '@shared/types/explorer/snark-traces/snark-worker-trace-filters.type';
 import { selectActiveNode } from '@app/app.state';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-snark-workers-traces',
   templateUrl: './snark-workers-traces.component.html',
@@ -37,20 +33,16 @@ import { selectActiveNode } from '@app/app.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-column h-100' },
 })
-export class SnarkWorkersTracesComponent extends ManualDetection implements OnInit, OnDestroy {
+export class SnarkWorkersTracesComponent extends StoreDispatcher implements OnInit, OnDestroy {
 
   data: { jobs: SnarkWorkerTraceJob[], workers: string[] } = { jobs: [], workers: [] };
   sort: TableSort<SnarkWorkerTraceJob>;
   isActiveRow: boolean;
-  removedClass: boolean;
-
-  @ViewChild(SnarkWorkersTracesTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
-  @ViewChild(HorizontalResizableContainerOldComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
 
   private destroyComponent: boolean;
 
   constructor(private swTracesService: SnarkWorkersTracesService,
-              private store: Store<MinaState>) { super(); }
+              public el: ElementRef<HTMLElement>) { super(); }
 
   ngOnInit(): void {
     this.listenToActiveNodeChange();
@@ -69,15 +61,6 @@ export class SnarkWorkersTracesComponent extends ManualDetection implements OnIn
       });
   }
 
-  toggleResizing(): void {
-    this.tableRef.nativeElement.classList.toggle('no-transition');
-  }
-
-  onWidthChange(width: number): void {
-    this.horizontalResizableContainer.nativeElement.style.right = (width * -1) + 'px';
-    this.tableRef.nativeElement.style.width = `calc(100% - ${width}px)`;
-  }
-
   private listenToSWTracesWorkersChange(): void {
     this.store.select(selectSWTracesWorkers)
       .pipe(untilDestroyed(this))
@@ -93,10 +76,6 @@ export class SnarkWorkersTracesComponent extends ManualDetection implements OnIn
       .subscribe((row: SnarkWorkerTraceJob) => {
         if (row && !this.isActiveRow) {
           this.isActiveRow = true;
-          if (!this.removedClass) {
-            this.removedClass = true;
-            this.horizontalResizableContainer.nativeElement.classList.remove('no-transition');
-          }
           this.detect();
         } else if (!row && this.isActiveRow) {
           this.isActiveRow = false;
@@ -134,7 +113,13 @@ export class SnarkWorkersTracesComponent extends ManualDetection implements OnIn
         untilDestroyed(this),
         debounceTime(300),
         filter(() => !this.destroyComponent),
+        tap(() => this.dispatch(SWTracesGetTraces)),
         switchMap((swFilter: SnarkWorkerTraceFilter) => this.swTracesService.getTraces(swFilter)),
+        tap(() => this.dispatch(SWTracesGetTracesSuccess)),
+        catchError(() => {
+          this.dispatch(SWTracesGetTracesSuccess);
+          return EMPTY;
+        }),
       )
       .subscribe((jobs: SnarkWorkerTraceJob[]) => {
         this.data = {
@@ -164,8 +149,9 @@ export class SnarkWorkersTracesComponent extends ManualDetection implements OnIn
     return sort<SnarkWorkerTraceJob>(jobs, tableSort, ['worker', 'kind']);
   }
 
-  ngOnDestroy(): void {
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
     this.destroyComponent = true;
-    this.store.dispatch<SWTracesClose>({ type: SW_TRACES_CLOSE });
+    this.dispatch(SWTracesClose);
   }
 }

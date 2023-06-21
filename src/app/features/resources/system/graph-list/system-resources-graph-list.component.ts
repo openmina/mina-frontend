@@ -79,8 +79,8 @@ export class SystemResourcesGraphListComponent extends StoreDispatcher implement
 
   private listenToActiveResourceChange(): void {
     this.select(selectSystemResourcesActivePoint, (point: SystemResourcesActivePoint) => {
-      this.activePointTitle = point.title;
+      this.activePointTitle = point?.title;
       this.detect();
-    }, filter(Boolean));
+    });
   }
 }

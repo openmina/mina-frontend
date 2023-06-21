@@ -21,7 +21,6 @@ import * as Sentry from '@sentry/angular';
 import { ServerStatusComponent } from './layout/server-status/server-status.component';
 import { CONFIG } from '@shared/constants/config';
 import { SubmenuTabsComponent } from './layout/submenu-tabs/submenu-tabs.component';
-import { INTERCEPTOR_PROVIDER } from '@core/interceptor/loading.interceptor';
 import { NodePickerComponent } from './layout/node-picker/node-picker.component';
 import { GlobalErrorHandlerService } from '@core/services/global-error-handler.service';
 import { Router } from '@angular/router';
@@ -31,8 +30,6 @@ import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import localeEn from '@angular/common/locales/en';
 import { HorizontalMenuComponent } from '@app/shared/components/horizontal-menu/horizontal-menu.component';
-import { GRAPH_QL_PROVIDER } from '@core/services/apollo.service';
-import { ApolloModule } from 'apollo-angular';
 
 registerLocaleData(localeFr, 'fr');
 registerLocaleData(localeEn, 'en');
@@ -69,7 +66,6 @@ export class AppGlobalErrorhandler implements ErrorHandler {
     BrowserModule,
     BrowserAnimationsModule,
     AppRouting,
-    ApolloModule,
     CONFIG.firebase ? AngularFireModule.initializeApp(CONFIG.firebase) : [],
     CONFIG.firebase ? AngularFireAnalyticsModule : [],
     StoreModule.forRoot(reducers, {
@@ -83,7 +79,7 @@ export class AppGlobalErrorhandler implements ErrorHandler {
     }),
     EffectsModule.forRoot([AppEffects]),
     NgrxRouterStoreModule,
-    !CONFIG.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : [],
+    !CONFIG.production ? StoreDevtoolsModule.instrument({ maxAge: 150 }) : [],
     HttpClientModule,
     EagerSharedModule,
     HorizontalMenuComponent,
@@ -100,9 +96,7 @@ export class AppGlobalErrorhandler implements ErrorHandler {
       deps: [Sentry.TraceService],
       multi: true,
     },
-    INTERCEPTOR_PROVIDER,
     THEME_PROVIDER,
-    GRAPH_QL_PROVIDER,
     { provide: ErrorHandler, useClass: AppGlobalErrorhandler, deps: [GlobalErrorHandlerService] },
     { provide: LOCALE_ID, useValue: 'en' },
   ],

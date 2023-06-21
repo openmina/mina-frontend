@@ -4,8 +4,8 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaBaseEffect } from '@shared/base-classes/mina-base.effect';
 import { Effect } from '@shared/types/store/effect.type';
-import { catchError, EMPTY, filter, finalize, map, mergeMap, repeat, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { addErrorObservable } from '@shared/constants/store-functions';
+import { catchError, debounceTime, EMPTY, filter, finalize, map, mergeMap, Subject, switchMap, takeUntil } from 'rxjs';
+import { addErrorObservable, catchErrorAndRepeat } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import {
   DASHBOARD_NODES_CLOSE,
@@ -15,6 +15,7 @@ import {
   DASHBOARD_NODES_GET_NODE,
   DASHBOARD_NODES_GET_NODE_SUCCESS,
   DASHBOARD_NODES_GET_NODES,
+  DASHBOARD_NODES_GET_TRACES,
   DASHBOARD_NODES_GET_TRACES_SUCCESS,
   DASHBOARD_NODES_INIT,
   DASHBOARD_NODES_INIT_SUCCESS,
@@ -27,6 +28,8 @@ import {
   DashboardNodesGetForks,
   DashboardNodesGetNode,
   DashboardNodesGetNodes,
+  DashboardNodesGetTraces,
+  DashboardNodesInit,
   DashboardNodesInitSuccess,
   DashboardNodesSetActiveBlock,
   DashboardNodesSetActiveNode,
@@ -35,9 +38,9 @@ import { DashboardNodesService } from '@dashboard/nodes/dashboard-nodes.service'
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
 import { Router } from '@angular/router';
-import { LoadingService } from '@core/services/loading.service';
 import { Routes } from '@shared/enums/routes.enum';
 import { DashboardFork } from '@shared/types/dashboard/node-list/dashboard-fork.type';
+import { DashboardNodesState } from '@dashboard/nodes/dashboard-nodes.state';
 
 @Injectable({
   providedIn: 'root',
@@ -47,6 +50,7 @@ export class DashboardNodesEffects extends MinaBaseEffect<DashboardNodesActions>
   readonly init$: Effect;
   readonly earliestBlock$: Effect;
   readonly setActiveBlock$: Effect;
+  readonly setActiveNode$: Effect;
   readonly getNodes$: Effect;
   readonly getNode$: Effect;
   readonly getTraceDetails$: Effect;
@@ -55,16 +59,19 @@ export class DashboardNodesEffects extends MinaBaseEffect<DashboardNodesActions>
   constructor(private router: Router,
               private actions$: Actions,
               private nodesService: DashboardNodesService,
-              private loadingService: LoadingService,
               store: Store<MinaState>) {
-
     super(store, selectMinaState);
 
     this.init$ = createEffect(() => this.actions$.pipe(
       ofType(DASHBOARD_NODES_INIT),
-      this.latestActionState<DashboardNodesGetEarliestBlock>(),
-      switchMap(({ state }) => this.nodesService.getNodes()),
-      map((nodes: any[]) => ({ type: DASHBOARD_NODES_INIT_SUCCESS, payload: { nodes } })),
+      this.latestActionState<DashboardNodesInit | DashboardNodesClose>(),
+      switchMap(({ action }) =>
+        action.type === DASHBOARD_NODES_CLOSE
+          ? EMPTY
+          : this.nodesService.getNodes(),
+      ),
+      map((nodes: DashboardNode[]) => ({ type: DASHBOARD_NODES_INIT_SUCCESS, payload: { nodes } })),
+      catchErrorAndRepeat(MinaErrorType.GRAPH_QL, DASHBOARD_NODES_INIT_SUCCESS, { nodes: [] }),
     ));
 
     this.earliestBlock$ = createEffect(() => this.actions$.pipe(
@@ -90,43 +97,51 @@ export class DashboardNodesEffects extends MinaBaseEffect<DashboardNodesActions>
 
     this.setActiveBlock$ = createEffect(() => this.actions$.pipe(
       ofType(DASHBOARD_NODES_SET_ACTIVE_BLOCK),
+      debounceTime(100),
       this.latestActionState<DashboardNodesSetActiveBlock>(),
       map(({ action }) => ({ type: DASHBOARD_NODES_GET_NODES, payload: { height: action.payload.height } })),
     ));
 
     this.getNodes$ = createEffect(() => this.actions$.pipe(
       ofType(DASHBOARD_NODES_GET_NODES, DASHBOARD_NODES_INIT_SUCCESS),
-      this.latestActionState<DashboardNodesGetNodes | DashboardNodesInitSuccess>(),
-      filter(({ state }) => !!state.dashboard.nodes.nodes.length),
-      switchMap(({ action, state }) => state.dashboard.nodes.nodes.map(node =>
-        ({ type: DASHBOARD_NODES_GET_NODE, payload: { node, height: state.dashboard.nodes.activeBlock } }),
+      this.latestStateSlice<DashboardNodesState, DashboardNodesGetNodes | DashboardNodesInitSuccess>('dashboard.nodes'),
+      filter(state => !!state.nodes.length),
+      switchMap(state => state.nodes.map(node =>
+        ({ type: DASHBOARD_NODES_GET_NODE, payload: { node, height: state.activeBlock } }),
       )),
     ));
 
     this.getNode$ = createEffect(() => this.actions$.pipe(
       ofType(DASHBOARD_NODES_GET_NODE),
       this.latestActionState<DashboardNodesGetNode>(),
-      tap(() => this.loadingService.addURL()),
+      filter(({ state }) => !!state.dashboard.nodes.activeBlock),
       mergeMap(({ action }) => {
         const cancel$ = new Subject<void>();
         return this.nodesService.getNode(action.payload.node, action.payload.height).pipe(
           takeUntil(cancel$),
           takeUntil(this.actions$.pipe(ofType(DASHBOARD_NODES_CLOSE))),
-          finalize(() => cancel$.complete()),
+          finalize(() => {
+            cancel$.complete();
+          }),
         );
       }),
       map((payload: DashboardNode[]) => ({ type: DASHBOARD_NODES_GET_NODE_SUCCESS, payload })),
       catchError((error: Error) => addErrorObservable(error, MinaErrorType.GRAPH_QL)),
     ));
 
-    this.getTraceDetails$ = createEffect(() => this.actions$.pipe(
+    this.setActiveNode$ = createEffect(() => this.actions$.pipe(
       ofType(DASHBOARD_NODES_SET_ACTIVE_NODE),
-      this.latestActionState<DashboardNodesSetActiveNode>(),
-      filter(({ action }) => !!action.payload.node),
-      switchMap(({ action }) => this.nodesService.getBlockTraceGroups(action.payload.node)),
+      this.latestStateSlice<DashboardNodesState, DashboardNodesSetActiveNode>('dashboard.nodes'),
+      filter(state => !!state.activeNode),
+      map(() => ({ type: DASHBOARD_NODES_GET_TRACES })),
+    ));
+
+    this.getTraceDetails$ = createEffect(() => this.actions$.pipe(
+      ofType(DASHBOARD_NODES_GET_TRACES),
+      this.latestStateSlice<DashboardNodesState, DashboardNodesGetTraces>('dashboard.nodes'),
+      switchMap(state => this.nodesService.getBlockTraceGroups(state.activeNode)),
       map((payload: TracingTraceGroup[]) => ({ type: DASHBOARD_NODES_GET_TRACES_SUCCESS, payload })),
-      catchError((error: Error) => addErrorObservable(error, MinaErrorType.GRAPH_QL)),
-      repeat(),
+      catchErrorAndRepeat(MinaErrorType.GRAPH_QL, DASHBOARD_NODES_GET_TRACES_SUCCESS, []),
     ));
 
     this.getForks$ = createEffect(() => this.actions$.pipe(
@@ -134,6 +149,7 @@ export class DashboardNodesEffects extends MinaBaseEffect<DashboardNodesActions>
       this.latestActionState<DashboardNodesGetForks>(),
       switchMap(({ state }) => this.nodesService.getForks(state.dashboard.nodes.nodes)),
       map((payload: DashboardFork[]) => ({ type: DASHBOARD_NODES_GET_FORKS_SUCCESS, payload })),
+      catchErrorAndRepeat(MinaErrorType.GRAPH_QL, DASHBOARD_NODES_GET_FORKS_SUCCESS, []),
     ));
   }
 }

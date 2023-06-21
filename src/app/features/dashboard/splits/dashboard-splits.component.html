@@ -1,5 +1,3 @@
-<!--todo: fix this-->
-
 <div class="flex-row w-100 h-100" #parent>
   <mina-horizontal-resizable-container [leftTemplate]="left"
                                        [rightTemplate]="right"
@@ -12,7 +10,7 @@
 <ng-template #left>
   <div class="flex-column h-100 w-100">
     <mina-dashboard-splits-toolbar></mina-dashboard-splits-toolbar>
-    <mina-dashboard-splits-graph [parentWidth]="parent.offsetWidth"></mina-dashboard-splits-graph>
+    <mina-dashboard-splits-graph></mina-dashboard-splits-graph>
   </div>
 </ng-template>
 

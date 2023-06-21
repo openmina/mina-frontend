@@ -1,18 +1,9 @@
 import { Injectable } from '@angular/core';
-import { catchError, finalize, map, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { getURL } from '@shared/constants/config';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
-import { LoadingService } from '@core/services/loading.service';
 import { HttpClient } from '@angular/common/http';
 
-
-const SKIPPED_GRAPHQL_NAMES: string[] = [
-  'blockStatus',
-  'pooledUserCommands',
-  'transactionStatus',
-  'getAccount',
-  'getTransactions',
-];
 
 @Injectable({
   providedIn: 'root',
@@ -21,8 +12,7 @@ export class GraphQLService {
 
   private url: string;
 
-  constructor(private loadingService: LoadingService,
-              private http: HttpClient) { }
+  constructor(private http: HttpClient) { }
 
   changeGraphQlProvider(node: MinaNode): void {
     this.url = getURL(node.graphql + '/graphql');
@@ -30,20 +20,15 @@ export class GraphQLService {
 
   query<T>(queryName: string, query: string, variables?: { [key: string]: any }): Observable<T> {
     query = `query ${queryName} ${query}`;
-    return this.performGqlRequest(queryName, query, variables);
+    return this.performGqlRequest(query, variables);
   }
 
   mutation<T>(queryName: string, query: string, variables?: { [key: string]: any }): Observable<T> {
     query = `mutation ${queryName} ${query}`;
-    return this.performGqlRequest(queryName, query, variables);
+    return this.performGqlRequest(query, variables);
   }
 
-  private performGqlRequest<T>(queryName: string, query: string, variables: { [key: string]: any }): Observable<T> {
-    const skipLoadingIndication: boolean = SKIPPED_GRAPHQL_NAMES.some(opName => opName === queryName);
-    if (!skipLoadingIndication) {
-      this.loadingService.addURL();
-    }
-
+  private performGqlRequest<T>(query: string, variables: { [key: string]: any }): Observable<T> {
     return this.http
       .post<{ data: T }>(
         this.url,
@@ -59,17 +44,12 @@ export class GraphQLService {
             return response.data;
           }
           try {
-            (response as any).errors[0].message
+            (response as any).errors[0].message;
           } catch (e) {
             throw new Error(response as any);
           }
           throw new Error((response as any).errors[0].message);
         }),
-        finalize(() => {
-          if (!skipLoadingIndication) {
-            this.loadingService.removeURL();
-          }
-        })
       );
   }
 }

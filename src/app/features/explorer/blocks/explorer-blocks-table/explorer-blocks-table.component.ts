@@ -11,6 +11,7 @@ import { untilDestroyed } from '@ngneat/until-destroy';
 import { filter, take } from 'rxjs';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
+import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class';
 
 @Component({
   selector: 'mina-explorer-blocks-table',
@@ -19,9 +20,9 @@ import { MergedRoute } from '@shared/router/merged-route';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-column h-100' },
 })
-export class ExplorerBlocksTableComponent extends StoreDispatcher implements OnInit {
+export class ExplorerBlocksTableComponent extends MinaTableWrapper<ExplorerBlock> implements OnInit {
 
-  private readonly tableHeads: TableColumnList<ExplorerBlock> = [
+  protected readonly tableHeads: TableColumnList<ExplorerBlock> = [
     { name: 'date', sort: 'timestamp' },
     { name: 'hash' },
     { name: 'height' },
@@ -34,29 +35,22 @@ export class ExplorerBlocksTableComponent extends StoreDispatcher implements OnI
     { name: 'snarked ledger hash', sort: 'snarkedLedgerHash' },
   ];
 
-  @ViewChild('rowTemplate') private rowTemplate: TemplateRef<ExplorerBlock>;
-  @ViewChild('minaTable', { read: ViewContainerRef }) private containerRef: ViewContainerRef;
-
-  private table: MinaTableComponent<ExplorerBlock>;
   private activeBlock: ExplorerBlock;
   private hashFromRoute: string;
 
   constructor(private router: Router) { super(); }
 
-  async ngOnInit(): Promise<void> {
-    await import('@shared/components/mina-table/mina-table.component').then(c => {
-      this.table = this.containerRef.createComponent(c.MinaTableComponent<ExplorerBlock>).instance;
-      this.table.tableHeads = this.tableHeads;
-      this.table.rowTemplate = this.rowTemplate;
-      this.table.gridTemplateColumns = [175, 140, 95, 100, 135, 115, 170, 115, 160, 163];
-      this.table.rowClickEmitter.pipe(untilDestroyed(this)).subscribe((row: ExplorerBlock) => this.onRowClick(row));
-      this.table.sortClz = ExplorerBlocksSort;
-      this.table.sortSelector = selectExplorerBlocksSorting;
-      this.table.init();
-    });
+  override async ngOnInit(): Promise<void> {
+    await super.ngOnInit();
     this.listenToRouteChange();
     this.listenToBlocks();
     this.listenToActiveTraceChange();
+  }
+
+  protected override setupTable(): void {
+    this.table.gridTemplateColumns = [175, 140, 95, 100, 135, 115, 170, 115, 160, 163];
+    this.table.sortClz = ExplorerBlocksSort;
+    this.table.sortSelector = selectExplorerBlocksSorting;
   }
 
   private listenToRouteChange(): void {
@@ -90,16 +84,21 @@ export class ExplorerBlocksTableComponent extends StoreDispatcher implements OnI
     const i = this.table.rows.findIndex(finder);
     this.table.scrollToElement(finder);
     delete this.hashFromRoute;
-    this.onRowClick(this.table.rows[i]);
+    this.onRowClick(this.table.rows[i], true);
   }
 
   goToScanState(height: number): void {
-    this.router.navigate([Routes.EXPLORER, Routes.SCAN_STATE, height]);
+    this.router.navigate([Routes.EXPLORER, Routes.SCAN_STATE, height], { queryParamsHandling: 'preserve' });
   }
 
-  private onRowClick(block: ExplorerBlock): void {
+  protected override onRowClick(block: ExplorerBlock, skipZkApp: boolean = false): void {
     if (this.activeBlock?.hash !== block?.hash) {
-      this.router.navigate([Routes.EXPLORER, Routes.BLOCKS, block.hash]);
+      this.router.navigate([Routes.EXPLORER, Routes.BLOCKS, block.hash], {
+        queryParams: skipZkApp ? undefined : {
+          activeZkApp: null,
+        },
+        queryParamsHandling: 'merge',
+      });
       this.dispatch(ExplorerBlocksSetActiveBlock, block);
     }
   }

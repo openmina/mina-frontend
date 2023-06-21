@@ -8,12 +8,14 @@ import { noMillisFormat, toReadableDate } from '@shared/helpers/date.helper';
 import { Router } from '@angular/router';
 import { SystemResourcesPoint } from '@shared/types/resources/system/system-resources-point.type';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { MIN_WIDTH_1200, MIN_WIDTH_1600, MAX_WIDTH_700 } from '@shared/constants/breakpoint-observer';
+import { MAX_WIDTH_700, MIN_WIDTH_1200, MIN_WIDTH_1600 } from '@shared/constants/breakpoint-observer';
 import { debounceTime, delay, distinctUntilChanged, fromEvent, skip } from 'rxjs';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { selectAppMenu } from '@app/app.state';
 import { Routes } from '@shared/enums/routes.enum';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
+import { selectSystemResourcesRedrawCharts } from '@resources/system/system-resources.state';
+import { isMobile } from '@shared/helpers/values.helper';
 
 @Component({
   selector: 'mina-system-resources-graph',
@@ -233,7 +235,7 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
   }
 
   private onMouseMove(evt: PointerEvent, points: SystemResourcesPoint[]): void {
-    if (!points) {
+    if (!points || isMobile()) {
       return;
     }
     const point = this.getPointFromMousePosition(evt, points);
@@ -423,65 +425,68 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
   }
 
   private listenToWindowResizing(): void {
-    const redrawChart = (): void => {
-      this.width = this.chart.nativeElement.offsetWidth - this.margin.left - this.margin.right;
-      this.svg.attr('width', this.width + this.margin.left + this.margin.right);
-
-      this.xScale.range([0, this.width]);
-
-      const currTicks = SystemResourcesGraphComponent.getXTicks();
-      this.xAxis.ticks(currTicks);
-      this.xAxis.scale(this.xScale);
-      this.xAxisElement.call(this.xAxis);
-
-      if (this.xAxisTicks !== currTicks) {
-        this.xAxisElement.selectAll('g.tick line').remove();
-        d3.selectAll('g.xAxis g.tick')
-          .append('line')
-          .attr('class', 'gridline')
-          .attr('x1', 0)
-          .attr('y1', -this.height)
-          .attr('x2', 0)
-          .attr('y2', 0)
-          .attr('stroke', 'var(--base-divider)');
-      }
-      this.xAxisTicks = currTicks;
-
-      d3.selectAll('g.yAxis g.tick line.gridline')
-        .attr('x2', this.width);
-
-      this.clickableRect
-        .attr('width', this.width)
-        .attr('height', this.height);
-      if (this.clickerLocationPercentage) {
-        this.showClicker(this.width * this.clickerLocationPercentage / 100, this.timestampFromRoute);
-      }
-
-      this.lines.forEach((line: any, i: number) => {
-        line.attr('d', d3.line<SystemResourcesPoint>()
-          .x((d: SystemResourcesPoint) => this.xScale(d.timestamp))
-          .y((d: SystemResourcesPoint) => this.yScale(d.pathPoints[this.paths[i]].value))
-          .curve(curveLinear),
-        );
-      });
-    };
-
     this.breakpointObserver.observe([MIN_WIDTH_1600, MIN_WIDTH_1200, MAX_WIDTH_700])
       .pipe(untilDestroyed(this), skip(1))
       .subscribe(() => {
-        redrawChart();
+        this.redrawChart();
       });
 
     fromEvent(window, 'resize')
       .pipe(untilDestroyed(this), debounceTime(200))
-      .subscribe(redrawChart);
+      .subscribe(() => this.redrawChart());
 
-    this.select(selectAppMenu, redrawChart,
+    this.select(selectAppMenu, () => this.redrawChart(),
       delay(400),
       distinctUntilChanged(),
       skip(1),
     );
+    this.select(selectSystemResourcesRedrawCharts, () => this.redrawChart(),
+      skip(1)
+    );
   }
+
+  public redrawChart(): void {
+    this.width = this.chart.nativeElement.offsetWidth - this.margin.left - this.margin.right;
+    this.svg.attr('width', this.width + this.margin.left + this.margin.right);
+
+    this.xScale.range([0, this.width]);
+
+    const currTicks = SystemResourcesGraphComponent.getXTicks();
+    this.xAxis.ticks(currTicks);
+    this.xAxis.scale(this.xScale);
+    this.xAxisElement.call(this.xAxis);
+
+    if (this.xAxisTicks !== currTicks) {
+      this.xAxisElement.selectAll('g.tick line').remove();
+      d3.selectAll('g.xAxis g.tick')
+        .append('line')
+        .attr('class', 'gridline')
+        .attr('x1', 0)
+        .attr('y1', -this.height)
+        .attr('x2', 0)
+        .attr('y2', 0)
+        .attr('stroke', 'var(--base-divider)');
+    }
+    this.xAxisTicks = currTicks;
+
+    d3.selectAll('g.yAxis g.tick line.gridline')
+      .attr('x2', this.width);
+
+    this.clickableRect
+      .attr('width', this.width)
+      .attr('height', this.height);
+    if (this.clickerLocationPercentage) {
+      this.showClicker(this.width * this.clickerLocationPercentage / 100, this.timestampFromRoute);
+    }
+
+    this.lines.forEach((line: any, i: number) => {
+      line.attr('d', d3.line<SystemResourcesPoint>()
+        .x((d: SystemResourcesPoint) => this.xScale(d.timestamp))
+        .y((d: SystemResourcesPoint) => this.yScale(d.pathPoints[this.paths[i]].value))
+        .curve(curveLinear),
+      );
+    });
+  };
 
   private createActivePoint(point: SystemResourcesPoint): SystemResourcesActivePoint {
     return {

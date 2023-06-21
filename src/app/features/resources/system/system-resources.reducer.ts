@@ -1,7 +1,6 @@
 import {
   SYSTEM_RESOURCES_CLOSE,
-  SYSTEM_RESOURCES_GET_RESOURCES,
-  SYSTEM_RESOURCES_GET_RESOURCES_SUCCESS,
+  SYSTEM_RESOURCES_GET_RESOURCES_SUCCESS, SYSTEM_RESOURCES_REDRAW_CHARTS,
   SYSTEM_RESOURCES_SET_ACTIVE_POINT,
   SYSTEM_RESOURCES_SET_ACTIVE_TIME,
   SYSTEM_RESOURCES_SET_SIDE_PANEL_ACTIVE_PATH,
@@ -43,7 +42,7 @@ const initialState: SystemResourcesState = {
     ioUm: 'MB/s',
     networkUm: 'MB/s',
   },
-  sidePanelOpen: true,
+  sidePanelOpen: window.innerWidth > 700,
   colorMapping,
   activePoint: undefined,
   activeTime: undefined,
@@ -53,13 +52,16 @@ const initialState: SystemResourcesState = {
     sortDirection: SortDirection.DSC,
   },
   sidePanelActivePath: undefined,
-  closed: true,
+  redrawCharts: false,
 };
 
 
 export function reducer(state: SystemResourcesState = initialState, action: SystemResourcesActions): SystemResourcesState {
   switch (action.type) {
     case SYSTEM_RESOURCES_GET_RESOURCES_SUCCESS: {
+      if (!action.payload) {
+        return state;
+      }
       let pointFromRoute: SystemResourcesPoint;
       if (state.activeTime) {
         pointFromRoute = getClosestPoint(action.payload[state.activeResource], state.activeTime);
@@ -106,6 +108,7 @@ export function reducer(state: SystemResourcesState = initialState, action: Syst
         ...state,
         activeTime: action.payload.timestamp,
         activeResource: action.payload.resource,
+        sidePanelOpen: true,
       };
     }
 
@@ -113,6 +116,10 @@ export function reducer(state: SystemResourcesState = initialState, action: Syst
       return {
         ...state,
         sidePanelOpen: !state.sidePanelOpen,
+        activeResource: state.sidePanelOpen ? undefined : state.activeResource,
+        activePoint: state.sidePanelOpen ? undefined : state.activePoint,
+        activeTime: state.sidePanelOpen ? undefined : state.activeTime,
+        sidePanelActivePath: state.sidePanelOpen ? undefined : state.sidePanelActivePath,
       };
     }
 
@@ -153,11 +160,11 @@ export function reducer(state: SystemResourcesState = initialState, action: Syst
       };
     }
 
-    case SYSTEM_RESOURCES_GET_RESOURCES: {
+    case SYSTEM_RESOURCES_REDRAW_CHARTS: {
       return {
         ...state,
-        closed: false,
-      };
+        redrawCharts: !state.redrawCharts,
+      }
     }
 
     case SYSTEM_RESOURCES_CLOSE:
@@ -183,7 +190,7 @@ function sortThreadsInPoint(point: SystemResourcesPoint, sort: TableSort<SystemR
 
 function getClosestPoint(points: SystemResourcesPoint[], goal: number): SystemResourcesPoint {
   return points.reduce((prev: SystemResourcesPoint, curr: SystemResourcesPoint) =>
-    Math.abs(curr.timestamp - goal) < Math.abs(prev.timestamp - goal) ? curr : prev
+    Math.abs(curr.timestamp - goal) < Math.abs(prev.timestamp - goal) ? curr : prev,
   );
 }
 

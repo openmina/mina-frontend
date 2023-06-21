@@ -10,7 +10,7 @@
   <a *ngFor="let item of menuItems"
      [routerLink]="'/' + item.name.toLowerCase().split(' ').join('-')"
      [queryParams]="activeNode ? { node: activeNode.name } : null"
-     [tooltip]="item.name"
+     [tooltip]="item.tooltip || item.name"
      [tooltipDisabled]="!menu.collapsed || menu.isMobile"
      [class.active]="activeRoute === item.name.toLowerCase().split(' ').join('-')"
      (click)="showHideMenu()"

@@ -1,4 +1,9 @@
-<div class="flex-row p-12 h-xl secondary f-600">Details</div>
+<div class="flex-row flex-between p-12 h-xl">
+  <span class="secondary f-600">Nodes</span>
+  <span class="mina-icon pointer tertiary primary-hover f-18"
+        (click)="closeSidePanel()">close
+  </span>
+</div>
 <div class="overflow-y-auto h-minus-xl">
   <div class="flex-column h-100 w-100">
     <div *ngFor="let set of sets; let i = index"

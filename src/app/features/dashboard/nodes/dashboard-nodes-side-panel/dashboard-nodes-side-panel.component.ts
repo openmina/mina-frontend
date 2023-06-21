@@ -1,16 +1,12 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { BlockStructuredTraceComponent } from '@shared/components/block-structured-trace/block-structured-trace.component';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
 import { selectDashboardNodesActiveNode, selectDashboardNodesBlockTraces } from '@dashboard/nodes/dashboard-nodes.state';
-import { DASHBOARD_NODES_SET_ACTIVE_NODE, DashboardNodesSetActiveNode } from '@dashboard/nodes/dashboard-nodes.actions';
+import { DashboardNodesSetActiveNode } from '@dashboard/nodes/dashboard-nodes.actions';
 import { filter } from 'rxjs';
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
+import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-dashboard-nodes-side-panel',
   templateUrl: './dashboard-nodes-side-panel.component.html',
@@ -18,15 +14,13 @@ import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-column h-100' },
 })
-export class DashboardNodesSidePanelComponent extends ManualDetection implements OnInit {
+export class DashboardNodesSidePanelComponent extends StoreDispatcher implements OnInit {
 
   title: string;
 
   @ViewChild('traces', { read: ViewContainerRef })
   private blockStructuredTrace: ViewContainerRef;
   private component: BlockStructuredTraceComponent;
-
-  constructor(private store: Store<MinaState>) { super(); }
 
   async ngOnInit(): Promise<void> {
     await import('@shared/components/block-structured-trace/block-structured-trace.component').then(c => {
@@ -36,28 +30,21 @@ export class DashboardNodesSidePanelComponent extends ManualDetection implements
   }
 
   private listenToActiveTraceChange(): void {
-    this.store.select(selectDashboardNodesActiveNode)
-      .pipe(
-        untilDestroyed(this),
-        filter(Boolean),
-      )
-      .subscribe((activeNode: DashboardNode) => {
-        this.title = `${activeNode.source} Transition ${activeNode.blockchainLength} - ${activeNode.traceStatus}`;
-        this.component.detect();
-        this.detect();
-      });
-    this.store.select(selectDashboardNodesBlockTraces)
-      .pipe(untilDestroyed(this))
-      .subscribe((groups: TracingTraceGroup[]) => {
-        this.component.checkpoints = groups[0]?.checkpoints;
-        if (this.component.allExpanded) {
-          this.component.expandAll();
-        }
-        this.component.detect();
-      });
+    this.select(selectDashboardNodesActiveNode, (activeNode: DashboardNode) => {
+      this.title = `${activeNode.source} Transition ${activeNode.blockchainLength} - ${activeNode.traceStatus}`;
+      this.component.detect();
+      this.detect();
+    }, filter(Boolean));
+    this.select(selectDashboardNodesBlockTraces, (groups: TracingTraceGroup[]) => {
+      this.component.checkpoints = groups[0]?.checkpoints;
+      if (this.component.allExpanded) {
+        this.component.expandAll();
+      }
+      this.component.detect();
+    });
   }
 
   closeSidePanel(): void {
-    this.store.dispatch<DashboardNodesSetActiveNode>({ type: DASHBOARD_NODES_SET_ACTIVE_NODE, payload: { node: undefined } });
+    this.dispatch(DashboardNodesSetActiveNode);
   }
 }

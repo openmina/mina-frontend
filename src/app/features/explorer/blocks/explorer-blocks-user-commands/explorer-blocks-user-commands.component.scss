@@ -1,0 +1,52 @@
+@import 'variables';
+
+.tx-row {
+	height: 36px;
+	line-height: 36px;
+	display: grid;
+	grid-template-columns: 150px 150px 120px;
+	color: $base-tertiary;
+
+	&.head span:last-child {
+		padding-right: 24px;
+	}
+
+	span mina-copy .cpy {
+		opacity: 0;
+	}
+
+	span:hover mina-copy .cpy {
+		opacity: 1;
+	}
+
+	&:not(.head) {
+		cursor: pointer;
+
+		&:hover {
+			background-color: $base-container;
+		}
+	}
+}
+
+:host div.open {
+	margin-bottom: 2px;
+	background-color: $selected-container !important;
+	border-radius: 6px;
+
+	.tx-row {
+		border-top-right-radius: 6px;
+		border-top-left-radius: 6px;
+
+		span {
+			color: $selected-primary !important;
+
+			.mina-icon {
+				rotate: 90deg;
+			}
+		}
+	}
+
+	::ng-deep mina-copy .p-relative .cpy .mina-icon {
+		color: $selected-primary !important;
+	}
+}

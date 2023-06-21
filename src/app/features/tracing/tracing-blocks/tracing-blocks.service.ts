@@ -18,16 +18,15 @@ export class TracingBlocksService {
     return this.tracingGQL.query<any>('getTraces', `{ blockTraces }`)
       .pipe(
         map((response: any) =>
-          response.blockTraces.traces.reverse().map((trace: any, id: number) => ({
+          response.blockTraces.traces.reverse().map((trace: any) => ({
             height: Number(trace.blockchain_length),
             source: trace.source,
             hash: trace.state_hash,
             status: trace.status,
             totalTime: trace.total_time,
-            globalSlot: trace.metadata?.global_slot ? Number(trace.metadata.global_slot) : undefined,
+            globalSlot: trace.global_slot,
             creator: trace.metadata?.creator,
             metadata: trace.metadata,
-            id,
           } as TracingBlockTrace)),
         ));
   }

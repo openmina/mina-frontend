@@ -9,9 +9,11 @@ import { ExplorerBlocksTableComponent } from '@explorer/blocks/explorer-blocks-t
 import { CopyComponent } from '@shared/components/copy/copy.component';
 import { HorizontalMenuComponent } from '@app/shared/components/horizontal-menu/horizontal-menu.component';
 import { ExplorerBlocksSidePanelComponent } from './explorer-blocks-side-panel/explorer-blocks-side-panel.component';
-import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
 import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
+import { ExplorerBlocksZkAppsTableComponent } from './explorer-blocks-zk-apps-table/explorer-blocks-zk-apps-table.component';
+import { ExplorerBlocksZkAppDetailComponent } from './explorer-blocks-zk-app-detail/explorer-blocks-zk-app-detail.component';
+import { ExplorerBlocksUserCommandsComponent } from './explorer-blocks-user-commands/explorer-blocks-user-commands.component';
 
 
 @NgModule({
@@ -19,6 +21,9 @@ import { HorizontalResizableContainerComponent } from '@shared/components/horizo
     ExplorerBlocksComponent,
     ExplorerBlocksTableComponent,
     ExplorerBlocksSidePanelComponent,
+    ExplorerBlocksZkAppsTableComponent,
+    ExplorerBlocksZkAppDetailComponent,
+    ExplorerBlocksUserCommandsComponent,
   ],
   imports: [
     SharedModule,
@@ -26,7 +31,6 @@ import { HorizontalResizableContainerComponent } from '@shared/components/horizo
     ExplorerBlocksRouting,
     EffectsModule.forFeature(ExplorerBlocksEffects),
     HorizontalMenuComponent,
-    HorizontalResizableContainerOldComponent,
     MinaJsonViewerComponent,
     HorizontalResizableContainerComponent,
   ],
