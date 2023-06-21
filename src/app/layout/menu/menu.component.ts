@@ -39,7 +39,7 @@ const MENU_ITEMS: MenuItem[] = [
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'flex-column flex-between h-100 pb-12' },
+  host: { class: 'flex-column flex-between h-100 pb-5' },
 })
 export class MenuComponent extends ManualDetection implements OnInit {
 

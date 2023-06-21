@@ -3,6 +3,8 @@
 
 .tab-group {
 	@include flexRowVertCenter();
+	width: 576px;
+	max-width: 100%;
 
 	.tab {
 		min-width: 90px;
@@ -25,22 +27,29 @@
 	}
 }
 
-textarea {
-	height: 600px;
-	max-height: 80vh;
+form {
 	width: 576px;
-	max-width: 95vw;
-	font-family: $mono-font !important;
+	max-width: 100%;
+	max-height: 600px;
 
-	&::-webkit-input-placeholder {
-		font-size: 12px;
-	}
+	textarea {
+		font-family: $mono-font !important;
 
-	&:-moz-placeholder {
-		font-size: 12px;
+		&::-webkit-input-placeholder {
+			font-size: 12px;
+		}
+
+		&:-moz-placeholder {
+			font-size: 12px;
+		}
 	}
 }
 
-.actions button {
-	width: 82px;
+.actions {
+	width: 576px;
+	max-width: 100%;
+
+	button {
+		width: 82px;
+	}
 }

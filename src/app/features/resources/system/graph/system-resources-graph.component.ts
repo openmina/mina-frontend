@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { SystemResourcesPoint } from '@shared/types/resources/system/system-resources-point.type';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MAX_WIDTH_700, MIN_WIDTH_1200, MIN_WIDTH_1600 } from '@shared/constants/breakpoint-observer';
-import { debounceTime, delay, distinctUntilChanged, fromEvent, skip } from 'rxjs';
+import { debounceTime, delay, distinctUntilChanged, filter, fromEvent, skip } from 'rxjs';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { selectAppMenu } from '@app/app.state';
 import { Routes } from '@shared/enums/routes.enum';
@@ -439,6 +439,7 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
       delay(400),
       distinctUntilChanged(),
       skip(1),
+      filter(() => !isMobile()),
     );
     this.select(selectSystemResourcesRedrawCharts, () => this.redrawChart(),
       skip(1)
@@ -506,8 +507,8 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
 
   private static getXTicks(): number {
     const width = window.innerWidth;
-    if (width < 700) {
-      return 3;
+    if (isMobile()) {
+      return 2.5;
     } else if (width < 1200) {
       return 5;
     } else if (width < 1600) {

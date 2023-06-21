@@ -60,10 +60,10 @@ export class TracingBlocksEffects extends MinaBaseEffect<TracingBlocksActions> {
       ofType(TRACING_BLOCKS_GET_DETAILS, TRACING_BLOCKS_CLOSE),
       this.latestActionState<TracingBlocksSelectRow | TracingBlocksClose>(),
       filter(({ state }) => !!state.tracing.blocks.activeTrace),
-      switchMap(({ action }) =>
+      switchMap(({ state, action }) =>
         action.type === TRACING_BLOCKS_CLOSE
           ? EMPTY
-          : this.tracingBlocksService.getBlockTraceGroups(action.payload.hash),
+          : this.tracingBlocksService.getBlockTraceGroups(state.tracing.blocks.activeTrace.hash),
       ),
       map((payload: TracingTraceGroup[]) => ({ type: TRACING_BLOCKS_GET_DETAILS_SUCCESS, payload })),
       catchErrorAndRepeat(MinaErrorType.GRAPH_QL, TRACING_BLOCKS_GET_DETAILS_SUCCESS, []),

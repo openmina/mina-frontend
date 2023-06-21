@@ -1,5 +1,4 @@
 import { FeatureAction } from '@shared/types/store/feature-action.type';
-import { ExplorerScanStateTree } from '@shared/types/explorer/scan-state/explorer-scan-state-tree.type';
 import { ExplorerScanStateResponse } from '@shared/types/explorer/scan-state/explorer-scan-state-response.type';
 
 enum ExplorerScanStateActionTypes {

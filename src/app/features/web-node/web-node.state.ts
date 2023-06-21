@@ -29,7 +29,6 @@ export const selectWebNodeState = createFeatureSelector<WebNodeState>('webNode')
 export const selectWebNodeLogsState = select((state: WebNodeState): WebNodeLogsState => state.log);
 export const selectWebNodePeersState = select((state: WebNodeState): WebNodePeersState => state.peers);
 export const selectWebNodeWalletState = select((state: WebNodeState): WebNodeWalletState => state.wallet);
-export const selectWebNodeSharedState = select((state: WebNodeState): WebNodeSharedState => state.shared);
 
 export const selectWebNodePeers = (state: MinaState): WebNodeLog[] => state.webNode.shared.peers;
 export const selectWebNodeLogs = (state: MinaState): WebNodeLog[] => state.webNode.shared.logs;

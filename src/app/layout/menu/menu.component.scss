@@ -105,18 +105,6 @@
 	}
 }
 
-.identifier {
-	transition: 0.3s ease-in-out;
-	left: 30px;
-	top: 4px;
-
-	&.collapsed {
-		transform: translate(-70px, -68px) rotate(-90deg);
-		left: 24px;
-		top: -8px;
-	}
-}
-
 .switcher {
 	background-color: $base-container;
 
@@ -131,5 +119,39 @@
 		.mina-icon {
 			color: $base-primary;
 		}
+	}
+}
+
+.identifier {
+	left: 47px;
+	top: 0;
+	transition: 0.3s ease-in-out;
+	transform: translate(0) rotate(0);
+	animation: rottWithOpc 0.3s linear;
+
+	@media (min-width: 769px) {
+		left: 42px;
+		&.collapsed {
+			transform: translate(-75px, -79px) rotate(-90deg);
+			animation-name: rottWithOpc2;
+		}
+	}
+}
+
+@keyframes rottWithOpc {
+	0%, 100% {
+		opacity: 1;
+	}
+	20%, 80% {
+		opacity: 0;
+	}
+}
+
+@keyframes rottWithOpc2 {
+	0%, 100% {
+		opacity: 1;
+	}
+	20%, 80% {
+		opacity: 0;
 	}
 }

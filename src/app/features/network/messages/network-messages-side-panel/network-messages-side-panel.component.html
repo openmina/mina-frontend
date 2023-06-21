@@ -15,17 +15,22 @@
           (click)="selectTab(3)">Connection
   </button>
 </div>
-<div class="h-lg flex-row pl-12 pb-10">
-  <ng-container *ngIf="selectedTabIndex === 1 && !jsonTooBig">
-    <button class="btn-primary mr-8" (click)="expandEntireJSON()">Expand All</button>
-    <button class="btn-primary mr-8" (click)="collapseEntireJSON()">Collapse All</button>
-  </ng-container>
-  <button *ngIf="(selectedTabIndex === 1 && !jsonTooBig) || selectedTabIndex !== 1"
-          class="btn-primary mr-8" [copyToClipboard]="toCopy">Copy
-  </button>
-  <button class="btn-primary mr-8" (click)="downloadJson()" #saveButton>Save JSON</button>
-  <button class="btn-primary mr-8" (click)="downloadBinary()">Save Bin</button>
-  <button class="btn-primary" (click)="copyToClipboard()">Copy Link</button>
+<div class="h-lg flex-row pb-10">
+  <mina-horizontal-menu [template]="buttons" [clz]="'pl-12 pr-12'"></mina-horizontal-menu>
+  <ng-template #buttons>
+    <button class="btn-primary mr-8 shrink-0"
+            [disabled]="!(selectedTabIndex === 1 && !jsonTooBig)"
+            (click)="expandEntireJSON()">Expand All</button>
+    <button class="btn-primary mr-8 shrink-0"
+            [disabled]="!(selectedTabIndex === 1 && !jsonTooBig)"
+            (click)="collapseEntireJSON()">Collapse All</button>
+    <button *ngIf="(selectedTabIndex === 1 && !jsonTooBig) || selectedTabIndex !== 1"
+            class="btn-primary mr-8" [copyToClipboard]="toCopy">Copy
+    </button>
+    <button class="btn-primary mr-8 shrink-0" (click)="downloadJson()" #saveButton>Save JSON</button>
+    <button class="btn-primary mr-8 shrink-0" (click)="downloadBinary()">Save Bin</button>
+    <button class="btn-primary shrink-0" (click)="copyToClipboard()">Copy Link</button>
+  </ng-template>
 </div>
 <div class="flex-column overflow-auto flex-1">
   <ng-container [ngSwitch]="selectedTabIndex">

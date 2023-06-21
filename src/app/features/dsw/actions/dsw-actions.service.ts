@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { delay, map, Observable, of } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { DswActionGroup } from '@shared/types/dsw/actions/dsw-action-group.type';
 import { DswActionGroupAction } from '@shared/types/dsw/actions/dsw-action-group-action.type';
 import { DswActionColumn } from '@shared/types/dsw/actions/dsw-action-column.type';

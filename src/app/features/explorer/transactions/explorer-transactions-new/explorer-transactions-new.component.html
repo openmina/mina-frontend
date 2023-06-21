@@ -2,8 +2,8 @@
   <span class="mina-icon tertiary primary-hover pointer mr-10" (click)="back()">arrow_back</span>
   New Transaction
 </div>
-<div class="flex-row flex-center h-minus-xl">
-  <div class="flex-column">
+<div class="flex-row flex-center h-minus-xl pl-12 pr-12">
+  <div class="flex-column w-100 align-center">
     <div class="h-lg tab-group pb-10">
       <button class="tab mr-10" [class.selected]="txType === 'tx'"
               (click)="selectTab('tx')">Signed Tx
@@ -12,20 +12,22 @@
               (click)="selectTab('zk')">ZKApp Tx
       </button>
     </div>
-    <form [formGroup]="formGroup" class="p-12 border-rad-6 border">
-      <textarea class="mina-input border-rad-4 p-10 border-remove transparent-scrollbar-track"
-                [class.input-error]="error"
-                placeholder="Transaction JSON here..."
-                [formControl]="formGroup.get(txType)"></textarea>
-    </form>
-    <div class="actions fx-row-vert-cent flex-between h-xl w-100 mt-16">
-      <button class="btn-secondary h-md"
-              (click)="back()">Back</button>
-      <div class="fx-row-vert-cent">
-        <div class="warn-primary monospace mr-16" *ngIf="error">Invalid JSON</div>
-        <button class="btn-selected h-md"
-                [disabled]="error"
-                (click)="submit()">Submit</button>
+    <div class="flex-column h-minus-lg w-100 align-center">
+      <form [formGroup]="formGroup" class="p-12 border-rad-6 border flex-grow flex-column">
+        <textarea class="mina-input border-rad-4 h-100 p-10 border-remove transparent-scrollbar-track w-100"
+                  [class.input-error]="error"
+                  placeholder="Transaction JSON here..."
+                  [formControl]="formGroup.get(txType)"></textarea>
+      </form>
+      <div class="actions fx-row-vert-cent flex-between h-xl mt-16 mb-16">
+        <button class="btn-secondary h-md"
+                (click)="back()">Back</button>
+        <div class="fx-row-vert-cent">
+          <div class="warn-primary monospace mr-16" *ngIf="error">Invalid JSON</div>
+          <button class="btn-selected h-md"
+                  [disabled]="error"
+                  (click)="submit()">Submit</button>
+        </div>
       </div>
     </div>
   </div>

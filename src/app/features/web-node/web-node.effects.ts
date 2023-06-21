@@ -4,7 +4,7 @@ import { Effect } from '@shared/types/store/effect.type';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaState, selectMinaState } from '@app/app.setup';
-import { catchError, filter, map, Subject, switchMap, takeUntil, timer } from 'rxjs';
+import { filter, map, Subject, switchMap, takeUntil, timer } from 'rxjs';
 import { WebNodeService } from '@web-node/web-node.service';
 import {
   WEB_NODE_SHARED_GET_LOGS,
@@ -13,7 +13,9 @@ import {
   WEB_NODE_SHARED_GET_PEERS_SUCCESS,
   WEB_NODE_SHARED_INIT,
   WEB_NODE_SHARED_MARK_AS_OPENED,
-  WebNodeSharedActions, WebNodeSharedGetLogs, WebNodeSharedGetPeers,
+  WebNodeSharedActions,
+  WebNodeSharedGetLogs,
+  WebNodeSharedGetPeers,
   WebNodeSharedInit,
 } from '@web-node/web-node.actions';
 import { WebNodeLog } from '@shared/types/web-node/logs/web-node-log.type';

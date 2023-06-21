@@ -25,6 +25,5 @@ export const selectAppState = (state: MinaState): AppState => state.app;
 export const selectAppMenu = select((state: AppState): AppMenu => state.menu);
 export const selectAppNodeStatus = select((state: AppState): NodeStatus => state.nodeStatus);
 export const selectAppDebuggerStatus = select((state: AppState): DebuggerStatus => state.debuggerStatus);
-export const selectAppSubMenus = select((state: AppState): string[] => state.subMenus);
 export const selectNodes: MinaSelector<MinaNode[]> = select(state => state.nodes);
 export const selectActiveNode: MinaSelector<MinaNode> = select(state => state.activeNode);

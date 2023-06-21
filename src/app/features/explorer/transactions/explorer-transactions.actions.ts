@@ -1,7 +1,6 @@
 import { FeatureAction } from '@shared/types/store/feature-action.type';
 import { TableSort } from '@shared/types/shared/table-sort.type';
 import { ExplorerTransaction } from '@shared/types/explorer/transactions/explorer-transaction.type';
-import { BenchmarksWalletTransaction } from '@shared/types/benchmarks/wallets/benchmarks-wallet-transaction.type';
 import { ExplorerSignedTransaction } from '@shared/types/explorer/transactions/explorer-signed-transaction.type';
 import { ExplorerZkAppTransaction } from '@shared/types/explorer/transactions/explorer-zk-app-transaction.type';
 

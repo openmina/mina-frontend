@@ -40,12 +40,11 @@ import {
 import { Effect, NonDispatchableEffect } from '@shared/types/store/effect.type';
 import { catchError, EMPTY, filter, forkJoin, map, mergeMap, of, repeat, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
 import { NetworkMessage } from '@shared/types/network/messages/network-message.type';
-import { addErrorObservable, catchErrorAndRepeat, createNonDispatchableEffect } from '@shared/constants/store-functions';
+import { catchErrorAndRepeat, createNonDispatchableEffect } from '@shared/constants/store-functions';
 import { NetworkMessageConnection } from '@shared/types/network/messages/network-messages-connection.type';
 import { NetworkMessagesDirection } from '@shared/types/network/messages/network-messages-direction.enum';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import { NetworkMessagesState } from '@network/messages/network-messages.state';
-import { WeekDay } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',

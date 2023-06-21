@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, of } from 'rxjs';
-import { toReadableDate } from '@shared/helpers/date.helper';
+import { map, Observable } from 'rxjs';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 import { HttpClient } from '@angular/common/http';
 import { ConfigService } from '@core/services/config.service';
@@ -37,7 +36,7 @@ export class SnarkWorkersTracesService {
 
   private mapTraces(response: any): SnarkWorkerTraceJob[] {
     const workers: string[] = Object.keys(response);
-    return workers.reduce((acc: SnarkWorkerTraceJob[], key: string, i: number) =>
+    return workers.reduce((acc: SnarkWorkerTraceJob[], key: string) =>
         [
           ...acc,
           ...response[key].map((work: any, i2: number) => ({

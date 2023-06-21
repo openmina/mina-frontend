@@ -11,12 +11,14 @@ import { ExplorerBlock } from '@shared/types/explorer/blocks/explorer-block.type
 import {
   EXPLORER_BLOCKS_CLOSE,
   EXPLORER_BLOCKS_GET_BLOCKS,
-  EXPLORER_BLOCKS_GET_BLOCKS_SUCCESS, EXPLORER_BLOCKS_GET_TXS,
+  EXPLORER_BLOCKS_GET_BLOCKS_SUCCESS,
+  EXPLORER_BLOCKS_GET_TXS,
   EXPLORER_BLOCKS_GET_TXS_SUCCESS,
   EXPLORER_BLOCKS_SET_ACTIVE_BLOCK,
   ExplorerBlocksActions,
   ExplorerBlocksClose,
-  ExplorerBlocksGetBlocks, ExplorerBlocksGetTxs,
+  ExplorerBlocksGetBlocks,
+  ExplorerBlocksGetTxs,
   ExplorerBlocksSetActiveBlock,
 } from '@explorer/blocks/explorer-blocks.actions';
 import { ExplorerBlocksService } from '@explorer/blocks/explorer-blocks.service';
@@ -50,7 +52,7 @@ export class ExplorerBlocksEffects extends MinaBaseEffect<ExplorerBlocksActions>
       catchErrorAndRepeat(MinaErrorType.GRAPH_QL, EXPLORER_BLOCKS_GET_BLOCKS_SUCCESS, []),
     ));
 
-    this.getTxs$ = createEffect(() => this.actions$.pipe(
+    this.setActiveBlock$ = createEffect(() => this.actions$.pipe(
       ofType(EXPLORER_BLOCKS_SET_ACTIVE_BLOCK),
       this.latestActionState<ExplorerBlocksSetActiveBlock>(),
       filter(({ action }) => !!action.payload),

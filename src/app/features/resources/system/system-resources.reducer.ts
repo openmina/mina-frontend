@@ -13,6 +13,7 @@ import { SystemResourcesPoint } from '@shared/types/resources/system/system-reso
 import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
 import { sort } from '@shared/helpers/array.helper';
 import { SystemResourcesPointThread } from '@shared/types/resources/system/system-resources-sub-point.type';
+import { isMobile } from '@shared/helpers/values.helper';
 
 const totals = ['var(--success-primary)', '#59bfb5'];
 const colors = ['#8a3ffc', '#ff7eb6', '#d2a106', '#ba4e00', '#33b1ff', '#fa4d56', '#4589ff', '#08bdba', '#d4bbff', '#007d79', '#fff1f1', '#d12771'];
@@ -42,7 +43,7 @@ const initialState: SystemResourcesState = {
     ioUm: 'MB/s',
     networkUm: 'MB/s',
   },
-  sidePanelOpen: window.innerWidth > 700,
+  sidePanelOpen: !isMobile(),
   colorMapping,
   activePoint: undefined,
   activeTime: undefined,
@@ -108,7 +109,7 @@ export function reducer(state: SystemResourcesState = initialState, action: Syst
         ...state,
         activeTime: action.payload.timestamp,
         activeResource: action.payload.resource,
-        sidePanelOpen: true,
+        sidePanelOpen: !!action.payload.timestamp,
       };
     }
 

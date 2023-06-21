@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { SharedModule } from '@shared/shared.module';
 

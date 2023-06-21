@@ -4,7 +4,7 @@ import { Effect, NonDispatchableEffect } from '@shared/types/store/effect.type';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaState, selectMinaState } from '@app/app.setup';
-import { catchError, filter, map, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
+import { filter, map, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
 import {
   WEB_NODE_WALLET_CLOSE,
   WEB_NODE_WALLET_CREATE_TRANSACTION,
@@ -21,7 +21,7 @@ import {
 import { WebNodeWalletService } from '@web-node/web-node-wallet/web-node-wallet.service';
 import { WebNodeWallet } from '@shared/types/web-node/wallet/web-node-wallet.type';
 import { WebNodeTransaction } from '@shared/types/web-node/wallet/web-node-transaction.type';
-import { addError, addErrorObservable, catchErrorAndRepeat, createNonDispatchableEffect } from '@shared/constants/store-functions';
+import { addError, catchErrorAndRepeat, createNonDispatchableEffect } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import { HttpErrorResponse } from '@angular/common/http';
 

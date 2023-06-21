@@ -12,6 +12,7 @@ import { NetworkMessagesTableFooterComponent } from './network-messages-table-fo
 import { CommonModule, DatePipe } from '@angular/common';
 import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
 import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
+import { HorizontalMenuComponent } from '@shared/components/horizontal-menu/horizontal-menu.component';
 
 
 @NgModule({
@@ -29,6 +30,7 @@ import { HorizontalResizableContainerComponent } from '@shared/components/horizo
     CommonModule,
     EffectsModule.forFeature([NetworkMessagesEffects]),
     HorizontalResizableContainerComponent,
+    HorizontalMenuComponent,
   ],
   providers: [
     DatePipe,

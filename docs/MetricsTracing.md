@@ -59,9 +59,9 @@ In this screen, we can see that there are **8 Nodes** altogether. Among them are
 
 We can select to **Show latency from fastest** and **Show latency from second fastest**. With this, you can choose from which point to measure latencies.
 
-Showing latency from fastest shows the time when the block producer started producing a block, or block slot time. This equals block production time plus broadcasting latency. 
+Showing latency from the fastest shows the time when the block producer started producing a block, or block slot time. This equals block production time plus broadcasting latency. 
 
-Showing latency from second fastest displays the time the block was already produced and reached the peer. This shows pure network latency.
+Showing latency from the second-fastest displays the time the block was already produced and reached the peer. This shows pure network latency.
 
 ![1-1-Dashboard Sidebar](https://user-images.githubusercontent.com/1679939/220898968-85c714b4-9049-41c7-96be-ee2e93659038.png)
 
@@ -140,7 +140,7 @@ Next, click on the **Snark Pool** tab.
 ### Snark pool
 
 <!---
-Why (I actually asked someone about this but they said its just a way to view the internal state of the node/the Snark pool)
+Why (I actually asked someone about this, but they said it's just a way to view the internal state of the node/the Snark pool)
 -->
 
 On this tab, we can inspect the contents of the internal state of the node, specifically the node's SNARK pool.

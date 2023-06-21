@@ -23,15 +23,16 @@
 </div>
 
 <div class="flex-row align-center p-relative">
-  <button class="switcher icon-btn p-0 ml-10"
+  <button class="switcher fx-row-full-cent w-md h-md p-0 ml-5"
           (click)="changeTheme()">
     <span class="mina-icon f-18">{{ currentTheme === 'light' ? 'dark_mode' : 'wb_sunny' }}</span>
   </button>
   <div *ngIf="appIdentifier"
-       [class.collapsed]="menu.collapsed"
-       [class.truncate]="!menu.collapsed"
-       [style.width.px]="menu.isMobile ? 185 : 115"
-       class="identifier tertiary ml-10 p-absolute">
-    <span class="border border-rad-4 p-5">{{ appIdentifier }}</span>
+       [class.collapsed]="menu.collapsed && !menu.isMobile"
+       [style.width.px]="menu.isMobile ? 170 : 110"
+       class="identifier tertiary p-absolute flex-row align-stretch h-md">
+    <span class="border border-rad-4 pl-5 pr-5 fx-row-vert-cent">
+      <span class="truncate">{{ appIdentifier }}</span>
+    </span>
   </div>
 </div>

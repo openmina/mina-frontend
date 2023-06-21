@@ -17,6 +17,5 @@ const select = <T>(selector: (state: DswDashboardState) => T): MemoizedSelector<
 );
 
 export const selectDswDashboardNodes = select((state: DswDashboardState): DswDashboardNode[] => state.nodes);
-export const selectDswDashboardOpenSidePanel = select((state: DswDashboardState): boolean => state.openSidePanel);
 export const selectDswDashboardSort = select((state: DswDashboardState): TableSort<DswDashboardNode> => state.sort);
 export const selectDswDashboardActiveNode = select((state: DswDashboardState): DswDashboardNode => state.activeNode);

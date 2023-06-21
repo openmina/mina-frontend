@@ -29,7 +29,6 @@ import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { map, Subscription } from 'rxjs';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
-import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { NodeStatus } from '@shared/types/app/node-status.type';
 
 declare global {

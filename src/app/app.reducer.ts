@@ -3,7 +3,8 @@ import {
   APP_CHANGE_ACTIVE_NODE,
   APP_CHANGE_MENU_COLLAPSING,
   APP_CHANGE_SUB_MENUS,
-  APP_GET_NODE_STATUS_SUCCESS, APP_INIT,
+  APP_GET_NODE_STATUS_SUCCESS,
+  APP_INIT,
   APP_INIT_SUCCESS,
   APP_TOGGLE_MENU_OPENING,
   APP_TOGGLE_MOBILE,
@@ -11,7 +12,6 @@ import {
 } from '@app/app.actions';
 import { AppState } from '@app/app.state';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
-import { CONFIG } from '@shared/constants/config';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 
 

@@ -4,7 +4,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaBaseEffect } from '@shared/base-classes/mina-base.effect';
 import { Effect, NonDispatchableEffect } from '@shared/types/store/effect.type';
-import { catchError, filter, map, mergeMap, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
+import { catchError, filter, map, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
 import { addErrorObservable, createNonDispatchableEffect } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import { Routes } from '@shared/enums/routes.enum';
