@@ -1,13 +1,15 @@
-<div #parent class="h-100 w-100 flex-row p-relative">
-  <mina-tracing-blocks-table [class.shrink]="isActiveTrace"></mina-tracing-blocks-table>
-  <mina-horizontal-resizable-container-old (endResizing)="toggleResizing()"
-                                       (startResizing)="toggleResizing()"
-                                       (widthChange)="onWidthChange($event)"
-                                       [class.show]="isActiveTrace"
-                                       [maxWidthElement]="parent"
-                                       [minWidth]="420"
-                                       class="no-transition"
-                                       localStorageKey="tracing-side-panel-width">
-    <mina-tracing-blocks-side-panel></mina-tracing-blocks-side-panel>
-  </mina-horizontal-resizable-container-old>
-</div>
+<mina-horizontal-resizable-container *ngIf="el" [leftTemplate]="left"
+                                     [rightTemplate]="right"
+                                     [show]="isActiveTrace"
+                                     [minWidth]="420"
+                                     [maxWidthElement]="el.nativeElement"
+                                     localStorageKey="tracing-side-panel-width">
+</mina-horizontal-resizable-container>
+
+<ng-template #left>
+  <mina-tracing-blocks-table></mina-tracing-blocks-table>
+</ng-template>
+
+<ng-template #right>
+  <mina-tracing-blocks-side-panel></mina-tracing-blocks-side-panel>
+</ng-template>

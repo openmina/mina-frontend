@@ -24,6 +24,8 @@ import { BenchmarksWalletsService } from '@benchmarks/wallets/benchmarks-wallets
 import { BenchmarksWallet } from '@shared/types/benchmarks/wallets/benchmarks-wallet.type';
 import { BenchmarksMempoolTx } from '@shared/types/benchmarks/wallets/benchmarks-mempool-tx.type';
 import { BenchmarksWalletTransaction } from '@shared/types/benchmarks/wallets/benchmarks-wallet-transaction.type';
+import { catchErrorAndRepeat } from '@shared/constants/store-functions';
+import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -48,6 +50,7 @@ export class BenchmarksWalletsEffects extends MinaBaseEffect<BenchmarksWalletsAc
       ofType(BENCHMARKS_WALLETS_GET_WALLETS),
       switchMap(() => this.benchmarksService.getAccounts()),
       map((payload: BenchmarksWallet[]) => ({ type: BENCHMARKS_WALLETS_GET_WALLETS_SUCCESS, payload })),
+      catchErrorAndRepeat(MinaErrorType.GRAPH_QL, BENCHMARKS_WALLETS_GET_WALLETS_SUCCESS, []),
     ));
 
     this.sendTxs$ = createEffect(() => this.actions$.pipe(
@@ -86,6 +89,7 @@ export class BenchmarksWalletsEffects extends MinaBaseEffect<BenchmarksWalletsAc
       ofType(BENCHMARKS_WALLETS_GET_MEMPOOL_TRANSACTIONS, BENCHMARKS_WALLETS_GET_WALLETS_SUCCESS),
       switchMap(() => this.benchmarksService.getMempoolTransactions()),
       map((payload: BenchmarksMempoolTx[]) => ({ type: BENCHMARKS_WALLETS_GET_MEMPOOL_TRANSACTIONS_SUCCESS, payload })),
+      catchErrorAndRepeat(MinaErrorType.GRAPH_QL, BENCHMARKS_WALLETS_GET_MEMPOOL_TRANSACTIONS_SUCCESS, []),
     ));
   }
 }

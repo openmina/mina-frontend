@@ -1,0 +1,13 @@
+@import 'variables';
+
+:host ::ng-deep .mina-table {
+	.row:not(.head) {
+		&.row-even:not(:hover) {
+			background-color: initial !important;
+		}
+
+		&:hover .mina-icon {
+			color: $base-primary !important;
+		}
+	}
+}

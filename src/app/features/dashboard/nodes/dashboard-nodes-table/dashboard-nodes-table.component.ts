@@ -1,12 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
 import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
 import { DashboardNode } from '@app/shared/types/dashboard/node-list/dashboard-node.type';
-import { TableSort } from '@shared/types/shared/table-sort.type';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
-import { MinaState } from '@app/app.setup';
-import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import {
   selectDashboardNodes,
   selectDashboardNodesActiveBlockLevel,
@@ -14,21 +9,14 @@ import {
   selectDashboardNodesEarliestBlockLevel,
   selectDashboardNodesSorting,
 } from '@dashboard/nodes/dashboard-nodes.state';
-import {
-  DASHBOARD_NODES_SET_ACTIVE_BLOCK,
-  DASHBOARD_NODES_SET_ACTIVE_NODE,
-  DashboardNodesSetActiveBlock,
-  DashboardNodesSetActiveNode,
-  DashboardNodesSort,
-} from '@dashboard/nodes/dashboard-nodes.actions';
+import { DashboardNodesSetActiveBlock, DashboardNodesSetActiveNode, DashboardNodesSort } from '@dashboard/nodes/dashboard-nodes.actions';
 import { filter } from 'rxjs';
 import { toggleItem } from '@shared/helpers/array.helper';
 import { Routes } from '@shared/enums/routes.enum';
 import { Router } from '@angular/router';
-import { MinaTableComponent } from '@shared/components/mina-table/mina-table.component';
 import { CONFIG } from '@shared/constants/config';
+import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-dashboard-nodes-table',
   templateUrl: './dashboard-nodes-table.component.html',
@@ -36,12 +24,13 @@ import { CONFIG } from '@shared/constants/config';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-column h-100' },
 })
-export class DashboardNodesTableComponent extends ManualDetection implements OnInit {
+export class DashboardNodesTableComponent extends MinaTableWrapper<DashboardNode> implements OnInit {
 
   readonly secConfig: SecDurationConfig = { color: true, yellow: 0.5, orange: 0.75, red: 1, undefinedAlternative: '-' };
-  private readonly tableHeads: TableColumnList<DashboardNode> = CONFIG.nodeLister
+  protected readonly tableHeads: TableColumnList<DashboardNode> = CONFIG.nodeLister
     ? [
       { name: 'name' },
+      { name: 'status' },
       { name: 'candidate', sort: 'hash' },
       { name: 'height', sort: 'blockchainLength' },
       { name: 'datetime', sort: 'timestamp' },
@@ -69,68 +58,47 @@ export class DashboardNodesTableComponent extends ManualDetection implements OnI
       { name: 'logs', sort: 'name' },
     ];
 
-  nodes: DashboardNode[] = [];
-  currentSort: TableSort<DashboardNode>;
-  activeNode: DashboardNode;
   downloadingNodes: number[] = [];
   currentHeightIsTooBig: boolean;
   latestHeight: number;
 
+  private activeNode: DashboardNode;
   private activeHeight: number;
 
-  @ViewChild('rowTemplate') private rowTemplate: TemplateRef<DashboardNode>;
   @ViewChild('minimalRowTemplate') private minimalRowTemplate: TemplateRef<DashboardNode>;
-  private containerRef: ViewContainerRef;
 
-  @ViewChild('minaTable', { read: ViewContainerRef }) set minaTable(containerRef: ViewContainerRef) {
-    this.containerRef = containerRef;
-  }
+  constructor(private router: Router) { super(); }
 
-  private table: MinaTableComponent<DashboardNode>;
-
-  constructor(private store: Store<MinaState>,
-              private router: Router) { super(); }
-
-  async ngOnInit(): Promise<void> {
-    await this.createTableComponent();
+  override async ngOnInit(): Promise<void> {
+    await super.ngOnInit();
     this.listenToNodeList();
     this.listenToActiveDashboardNodeChange();
     this.listenToLatestLevelChange();
     this.listenToActiveLevelChange();
   }
 
-  private async createTableComponent(): Promise<void> {
-    await import('@shared/components/mina-table/mina-table.component').then(c => {
-      this.table = this.containerRef.createComponent(c.MinaTableComponent<DashboardNode>).instance;
-      this.table.tableHeads = this.tableHeads;
-      this.table.rowTemplate = CONFIG.nodeLister ? this.minimalRowTemplate : this.rowTemplate;
-      this.table.propertyForActiveCheck = 'index';
-      this.table.gridTemplateColumns = CONFIG.nodeLister
-        ? [200, 145, 80, 160, 90, 140, 100, 110, 100]
-        : [200, 105, 145, 75, 140, 80, 135, 160, 90, 140, 100, 110, 90, 100, 100];
-      this.table.sortClz = DashboardNodesSort;
-      this.table.sortSelector = selectDashboardNodesSorting;
-      this.table.rowClickEmitter.pipe(untilDestroyed(this)).subscribe(node => this.onRowClick(node));
-      this.table.init();
-    });
+  protected override setupTable(): void {
+    this.table.rowTemplate = CONFIG.nodeLister ? this.minimalRowTemplate : this.rowTemplate;
+    this.table.propertyForActiveCheck = 'index';
+    this.table.gridTemplateColumns = CONFIG.nodeLister
+      ? [200, 105, 145, 80, 160, 90, 140, 100, 110, 110]
+      : [200, 105, 145, 75, 140, 80, 135, 160, 90, 140, 100, 110, 90, 100, 110];
+    this.table.sortClz = DashboardNodesSort;
+    this.table.sortSelector = selectDashboardNodesSorting;
   }
 
   private listenToActiveLevelChange(): void {
-    this.store.select(selectDashboardNodesActiveBlockLevel)
-      .pipe(untilDestroyed(this))
-      .subscribe((height: number) => {
-        this.activeHeight = height;
-        this.toggleHeightMismatching();
-      });
+    this.select(selectDashboardNodesActiveBlockLevel, (height: number) => {
+      this.activeHeight = height;
+      this.toggleHeightMismatching();
+    });
   }
 
   private listenToLatestLevelChange(): void {
-    this.store.select(selectDashboardNodesEarliestBlockLevel)
-      .pipe(untilDestroyed(this))
-      .subscribe((height: number) => {
-        this.latestHeight = height;
-        this.toggleHeightMismatching();
-      });
+    this.select(selectDashboardNodesEarliestBlockLevel, (height: number) => {
+      this.latestHeight = height;
+      this.toggleHeightMismatching();
+    });
   }
 
   private toggleHeightMismatching(): void {
@@ -140,40 +108,31 @@ export class DashboardNodesTableComponent extends ManualDetection implements OnI
     } else if (this.currentHeightIsTooBig) {
       if (this.activeHeight <= this.latestHeight) {
         this.currentHeightIsTooBig = false;
-        this.createTableComponent();
       }
       this.detect();
     }
   }
 
   private listenToNodeList(): void {
-    this.store.select(selectDashboardNodes)
-      .pipe(untilDestroyed(this))
-      .subscribe((nodes: DashboardNode[]) => {
-        this.nodes = nodes;
-        this.table.rows = nodes;
-        this.table.detect();
-        this.detect();
-      });
+    this.select(selectDashboardNodes, (nodes: DashboardNode[]) => {
+      this.table.rows = nodes;
+      this.table.detect();
+      this.detect();
+    });
   }
 
   private listenToActiveDashboardNodeChange(): void {
-    this.store.select(selectDashboardNodesActiveNode)
-      .pipe(
-        untilDestroyed(this),
-        filter(node => node !== this.activeNode),
-      )
-      .subscribe((node: DashboardNode) => {
-        this.activeNode = node;
-        this.table.activeRow = node;
-        this.table.detect();
-        this.detect();
-      });
+    this.select(selectDashboardNodesActiveNode, (node: DashboardNode) => {
+      this.activeNode = node;
+      this.table.activeRow = node;
+      this.table.detect();
+      this.detect();
+    }, filter(node => node !== this.activeNode));
   }
 
-  onRowClick(node: DashboardNode): void {
+  protected override onRowClick(node: DashboardNode): void {
     if (this.activeNode?.index !== node.index && node.hash) {
-      this.store.dispatch<DashboardNodesSetActiveNode>({ type: DASHBOARD_NODES_SET_ACTIVE_NODE, payload: { node } });
+      this.dispatch(DashboardNodesSetActiveNode, node);
     }
   }
 
@@ -194,7 +153,7 @@ export class DashboardNodesTableComponent extends ManualDetection implements OnI
   }
 
   setActiveBlock(): void {
-    this.store.dispatch<DashboardNodesSetActiveBlock>({ type: DASHBOARD_NODES_SET_ACTIVE_BLOCK, payload: { height: this.latestHeight, fetchNew: true } });
+    this.dispatch(DashboardNodesSetActiveBlock, { height: this.latestHeight });
     this.router.navigate([Routes.DASHBOARD, Routes.NODES, this.latestHeight], { queryParamsHandling: 'merge' });
   }
 }

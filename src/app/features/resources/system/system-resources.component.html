@@ -1,4 +1,16 @@
-<div class="flex-row h-100">
+<mina-horizontal-resizable-container [rightTemplate]="right"
+                                     [leftTemplate]="left"
+                                     [show]="showSidePanel"
+                                     [maxWidthElement]="el?.nativeElement"
+                                     [minWidth]="320"
+                                     (endResizing)="onEndResizing()"
+                                     localStorageKey="sys-res-spw">
+</mina-horizontal-resizable-container>
+
+<ng-template #left>
   <mina-system-resources-graph-list></mina-system-resources-graph-list>
+</ng-template>
+
+<ng-template #right>
   <mina-system-resources-side-panel></mina-system-resources-side-panel>
-</div>
+</ng-template>

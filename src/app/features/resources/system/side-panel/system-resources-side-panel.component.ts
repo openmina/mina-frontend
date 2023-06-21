@@ -6,18 +6,24 @@ import {
 } from '@resources/system/system-resources.state';
 import { SystemResourcesActivePoint } from '@shared/types/resources/system/system-resources-active-point.type';
 import { filter } from 'rxjs';
-import { SystemResourcesSetSidePanelActivePath, SystemResourcesSortThreads } from '@resources/system/system-resources.actions';
+import {
+  SystemResourcesRedrawCharts,
+  SystemResourcesSetSidePanelActivePath,
+  SystemResourcesSortThreads,
+  SystemResourcesToggleSidePanel,
+} from '@resources/system/system-resources.actions';
 import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
 import { SystemResourcesPointThread } from '@shared/types/resources/system/system-resources-sub-point.type';
 import { TableHeadSorting } from '@shared/types/shared/table-head-sorting.type';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'mina-system-resources-side-panel',
   templateUrl: './system-resources-side-panel.component.html',
   styleUrls: ['./system-resources-side-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'border-left' },
+  host: { class: 'border-left flex-column h-100' },
 })
 export class SystemResourcesSidePanelComponent extends StoreDispatcher implements OnInit {
 
@@ -26,10 +32,13 @@ export class SystemResourcesSidePanelComponent extends StoreDispatcher implement
   pathsMap: { name: string, value: number }[];
   activePath: string;
   currentSort: TableSort<SystemResourcesPointThread>;
+
   readonly tableHeads: TableHeadSorting<SystemResourcesPointThread>[] = [
     { name: 'task threads', sort: 'name' },
     { name: 'value' },
   ];
+
+  constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
     this.listenToActivePointChange();
@@ -70,5 +79,16 @@ export class SystemResourcesSidePanelComponent extends StoreDispatcher implement
 
   setActivePath(path: string): void {
     this.dispatch(SystemResourcesSetSidePanelActivePath, path);
+  }
+
+  closeSidePanel(): void {
+    this.dispatch(SystemResourcesToggleSidePanel);
+    this.router.navigate([], {
+      queryParamsHandling: 'merge',
+      queryParams: {
+        resource: null,
+        timestamp: null,
+      }
+    });
   }
 }

@@ -23,11 +23,12 @@
 
 .dropdown {
 	box-sizing: border-box;
-	max-height: 200px;
+	max-height: 300px;
 
 	.dropdown-item {
 		display: grid;
-		grid-template-columns: 30px 210px 1fr;
+		//grid-template-columns: 20px 165px 125px;
+		grid-template-columns: 20px 1fr 125px;
 		color: $base-tertiary;
 		box-sizing: border-box;
 
@@ -62,10 +63,10 @@
 
 	@media (max-width: 700px) {
 		width: 100vw;
-		max-height: 60vh;
+		max-height: calc(100vh - 44px - 44px - 56px);
 
 		.dropdown-item {
-			height: 48px;
+			height: 48px !important;
 		}
 	}
 }

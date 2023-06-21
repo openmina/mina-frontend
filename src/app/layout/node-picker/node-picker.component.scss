@@ -2,6 +2,7 @@
 
 :host {
 	max-height: 60vh;
+
 }
 
 .node-picker {
@@ -16,12 +17,20 @@
 		}
 	}
 
-	.names {
-		> span {
-			height: 50%;
+	.node {
+		.mina-icon {
+			width: 20px;
+		}
 
-			&:first-child {
-				padding-bottom: 3px;
+		.names {
+			width: calc(100% - 20px);
+
+			> span {
+				height: 50%;
+
+				&:first-child {
+					padding-bottom: 3px;
+				}
 			}
 		}
 	}

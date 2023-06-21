@@ -1,20 +1,17 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { untilDestroyed } from '@ngneat/until-destroy';
-import { DashboardNodesTableComponent } from '@dashboard/nodes/dashboard-nodes-table/dashboard-nodes-table.component';
 import {
   DashboardNodesClose,
   DashboardNodesGetEarliestBlock,
+  DashboardNodesGetNodesSuccess,
   DashboardNodesInit,
   DashboardNodesSetActiveBlock,
 } from '@dashboard/nodes/dashboard-nodes.actions';
-import { selectDashboardNodes, selectDashboardNodesActiveNode } from '@dashboard/nodes/dashboard-nodes.state';
+import { selectDashboardNodes, selectDashboardNodesActiveNode, selectDashboardNodesRemainingRequests } from '@dashboard/nodes/dashboard-nodes.state';
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
-import { filter, merge, take, tap, throttleTime, timer } from 'rxjs';
+import { filter, merge, take, throttleTime } from 'rxjs';
 import { MergedRoute } from '@shared/router/merged-route';
-import { selectAppNodeStatus } from '@app/app.state';
-import { NodeStatus } from '@shared/types/app/node-status.type';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
@@ -35,6 +32,7 @@ export class DashboardNodesComponent extends StoreDispatcher implements OnInit, 
     this.listenToRouteChange();
     this.listenToActiveRowChange();
     this.listenToActiveBlockChangeFromNode();
+    this.listenToRemainingNodesToFetch();
   }
 
   private listenToActiveRowChange(): void {
@@ -69,6 +67,14 @@ export class DashboardNodesComponent extends StoreDispatcher implements OnInit, 
       .subscribe(() => {
         this.dispatch(DashboardNodesGetEarliestBlock);
       });
+  }
+
+  private listenToRemainingNodesToFetch(): void {
+    this.select(selectDashboardNodesRemainingRequests, (remaining: number) => {
+      if (remaining === 0) {
+        this.dispatch(DashboardNodesGetNodesSuccess);
+      }
+    });
   }
 
   override ngOnDestroy(): void {

@@ -17,12 +17,14 @@ import { removeParamsFromURL } from '@shared/helpers/router.helper';
 interface MenuItem {
   name: string;
   icon: string;
+  tooltip?: string;
 }
 
 const MENU_ITEMS: MenuItem[] = [
   { name: 'Dashboard', icon: 'dashboard' },
   { name: 'Explorer', icon: 'explore' },
   { name: 'Resources', icon: 'analytics' },
+  { name: 'Snark Worker', icon: 'engineering', tooltip: 'Decentralised Snark Worker' },
   { name: 'Storage', icon: 'hard_drive' },
   // { name: 'Logs', icon: 'code_blocks' },
   { name: 'Network', icon: 'account_tree' },
@@ -41,7 +43,7 @@ const MENU_ITEMS: MenuItem[] = [
 })
 export class MenuComponent extends ManualDetection implements OnInit {
 
-  menuItems: MenuItem[] = MENU_ITEMS;
+  menuItems: MenuItem[] = this.allowedMenuItems;
   menu: AppMenu;
   currentTheme: ThemeType;
   appIdentifier: string = CONFIG.identifier;

@@ -21,14 +21,13 @@ import {
 import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
-import { CONFIG } from '@shared/constants/config';
-import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 import { DashboardForkFilter } from '@shared/types/dashboard/node-list/dashboard-fork-filter.type';
 
 const initialState: DashboardNodesState = {
   nodes: [],
   filteredNodes: [],
   nodeCount: {} as DashboardNodeCount,
+  numOfNodes: undefined,
   showOfflineNodes: true,
   latencyFromFastest: false,
   sort: {
@@ -58,6 +57,7 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
         filteredNodes: !state.showOfflineNodes ? getActiveNodes(nodes) : nodes,
         nodeCount,
         remainingOngoingRequests: nodes.length,
+        numOfNodes: nodes.length,
       };
     }
 
@@ -205,7 +205,7 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
     case DASHBOARD_NODES_SET_ACTIVE_NODE: {
       return {
         ...state,
-        activeNode: action.payload.node,
+        activeNode: action.payload,
       };
     }
 

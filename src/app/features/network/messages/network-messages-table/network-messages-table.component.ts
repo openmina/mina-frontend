@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { NetworkMessage } from '@shared/types/network/messages/network-message.type';
 import {
   NETWORK_GET_SPECIFIC_MESSAGE,
@@ -6,6 +6,7 @@ import {
   NETWORK_SET_ACTIVE_ROW,
   NETWORK_SET_TIMESTAMP_INTERVAL,
   NETWORK_TOGGLE_FILTER,
+  NetworkMessagesGetMessages,
   NetworkMessagesGetSpecificMessage,
   NetworkMessagesPause,
   NetworkMessagesSetActiveRow,
@@ -16,7 +17,7 @@ import { selectNetworkActiveFilters, selectNetworkActiveRow, selectNetworkMessag
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { NetworkMessagesFilter } from '@shared/types/network/messages/network-messages-filter.type';
 import { NetworkMessagesFilterTypes } from '@shared/types/network/messages/network-messages-filter-types.enum';
-import { filter, fromEvent, throttleTime } from 'rxjs';
+import { filter, fromEvent, take, throttleTime } from 'rxjs';
 import { NetworkMessagesFilterCategory } from '@shared/types/network/messages/network-messages-filter-group.type';
 import { networkAvailableFilters } from '@network/messages/network-messages-filters/network-messages-filters.component';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
@@ -27,9 +28,8 @@ import { TimestampInterval } from '@shared/types/shared/timestamp-interval.type'
 import { NetworkMessagesDirection } from '@shared/types/network/messages/network-messages-direction.enum';
 import { APP_UPDATE_DEBUGGER_STATUS, AppUpdateDebuggerStatus } from '@app/app.actions';
 import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
-import { MinaTableComponent } from '@shared/components/mina-table/mina-table.component';
-import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { lastItem } from '@shared/helpers/array.helper';
+import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class';
 
 @Component({
   selector: 'mina-network-messages-table',
@@ -38,9 +38,9 @@ import { lastItem } from '@shared/helpers/array.helper';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-column h-100' },
 })
-export class NetworkMessagesTableComponent extends StoreDispatcher implements OnInit {
+export class NetworkMessagesTableComponent extends MinaTableWrapper<NetworkMessage> implements OnInit {
 
-  private readonly tableHeads: TableColumnList<NetworkMessage> = [
+  protected readonly tableHeads: TableColumnList<NetworkMessage> = [
     { name: 'ID' },
     { name: 'datetime' },
     { name: 'remote address' },
@@ -54,31 +54,15 @@ export class NetworkMessagesTableComponent extends StoreDispatcher implements On
   activeFilters: NetworkMessagesFilter[] = [];
   attemptToGetMessagesFromRoute: boolean = true;
 
-  // @ViewChild(CdkVirtualScrollViewport)
-  // public scrollViewport: CdkVirtualScrollViewport;
-
   private idFromRoute: number;
   private activeRow: NetworkMessage;
   private stream: boolean;
   private queryParams: Params;
 
-  @ViewChild('rowTemplate') private rowTemplate: TemplateRef<NetworkMessage>;
-  @ViewChild('minaTable', { read: ViewContainerRef }) private containerRef: ViewContainerRef;
-
-  public table: MinaTableComponent<NetworkMessage>;
-
   constructor(private router: Router) { super(); }
 
-  async ngOnInit(): Promise<void> {
-    await import('@shared/components/mina-table/mina-table.component').then(c => {
-      this.table = this.containerRef.createComponent(c.MinaTableComponent<NetworkMessage>).instance;
-      this.table.tableHeads = this.tableHeads;
-      this.table.rowTemplate = this.rowTemplate;
-      this.table.gridTemplateColumns = [80, 170, 190, 100, 80, 140, 400];
-      this.table.rowClickEmitter.pipe(untilDestroyed(this)).subscribe((row: NetworkMessage) => this.onRowClick(row));
-      this.table.propertyForActiveCheck = 'id';
-      this.table.init();
-    });
+  override async ngOnInit(): Promise<void> {
+    await super.ngOnInit();
     this.listenToNetworkMessages();
     this.listenToActiveRowChange();
     this.listenToNetworkFilters();
@@ -87,9 +71,14 @@ export class NetworkMessagesTableComponent extends StoreDispatcher implements On
     this.listenToRouteChange();
   }
 
+  protected override setupTable(): void {
+    this.table.gridTemplateColumns = [80, 170, 190, 100, 80, 140, 400];
+    this.table.propertyForActiveCheck = 'id';
+  }
+
   private listenToRouteChange(): void {
     this.store.select(getMergedRoute)
-      .pipe(untilDestroyed(this))
+      .pipe(untilDestroyed(this), take(1))
       .subscribe((route: MergedRoute) => {
         this.queryParams = route.queryParams;
         const idFromRoute = Number(route.params['messageId']);
@@ -120,6 +109,8 @@ export class NetworkMessagesTableComponent extends StoreDispatcher implements On
               payload: { timestamp, direction },
             });
           }
+        } else {
+          this.dispatch(NetworkMessagesGetMessages);
         }
         this.attemptToGetMessagesFromRoute = false;
       });
@@ -138,7 +129,11 @@ export class NetworkMessagesTableComponent extends StoreDispatcher implements On
 
     const address = route.queryParams['addr'];
     if (address) {
-      filters.push({ type: NetworkMessagesFilterTypes.ADDRESS, value: address, display: address } as NetworkMessagesFilter);
+      filters.push({
+        type: NetworkMessagesFilterTypes.ADDRESS,
+        value: address,
+        display: address,
+      } as NetworkMessagesFilter);
     }
     filters.push(...streamKindFilters);
     filters.push(...messageKindFilters);
@@ -159,14 +154,6 @@ export class NetworkMessagesTableComponent extends StoreDispatcher implements On
   }
 
   private scrollToElement(): void {
-    // let scrollTo = this.messages.length;
-    // if (this.idFromRoute) {
-    //   const topElements = Math.floor(this.scrollViewport.elementRef.nativeElement.offsetHeight / 2 / this.itemSize);
-    //   scrollTo = this.messages.findIndex(m => m.id === this.idFromRoute) - topElements;
-    //   this.idFromRoute = undefined;
-    // }
-    // this.scrollViewport.scrollToIndex(scrollTo);
-
     let rowFinder = (r: NetworkMessage) => r.id === this.idFromRoute;
     if (!this.idFromRoute) {
       rowFinder = (r: NetworkMessage) => r.id === lastItem(this.table.rows).id;
@@ -217,7 +204,7 @@ export class NetworkMessagesTableComponent extends StoreDispatcher implements On
       .subscribe(() => this.pause());
   }
 
-  onRowClick(row: NetworkMessage): void {
+  protected override onRowClick(row: NetworkMessage): void {
     if (row.id !== this.activeRow?.id) {
       this.router.navigate([Routes.NETWORK, Routes.MESSAGES, row.id], { queryParamsHandling: 'merge' });
       this.store.dispatch<NetworkMessagesSetActiveRow>({ type: NETWORK_SET_ACTIVE_ROW, payload: row });

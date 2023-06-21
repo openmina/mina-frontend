@@ -8,11 +8,16 @@ export const environment: Readonly<MinaEnv> = {
   },
   configs: [
     {
-      graphql: 'https://debug.dev.openmina.com:3086',
-      debugger: 'https://debug.dev.openmina.com',
-      minaExplorer: 'https://berkeley.api.minaexplorer.com',
-      features: ['network', 'benchmarks'],
-      name: 'debug',
-    },
+      "graphql": "http://1.k8.openmina.com:31308/node1",
+      "tracing-graphql": "http://1.k8.openmina.com:31308/node1/internal-trace",
+      "debugger": "http://1.k8.openmina.com:31308/node1/bpf-debugger",
+      "name": "node1"
+    }
   ],
+  identifier: 'webrtc2',
+  globalConfig: {
+    features: {
+      'snark-worker': ['actions'],
+    },
+  },
 };

@@ -11,6 +11,8 @@ import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { MinaState } from '@app/app.setup';
 
+const DESKTOP_ROW_HEIGHT = 36;
+
 @Component({
   standalone: true,
   imports: [SharedModule],
@@ -20,9 +22,9 @@ import { MinaState } from '@app/app.setup';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'h-100 flex-column' },
 })
-export class MinaTableComponent<T = object> extends StoreDispatcher {
+export class MinaTableComponent<T extends object> extends StoreDispatcher {
 
-  rowSize: number = 36;
+  rowSize: number = DESKTOP_ROW_HEIGHT;
   isMobile: boolean;
 
   rows: T[] = [];
@@ -31,12 +33,13 @@ export class MinaTableComponent<T = object> extends StoreDispatcher {
   rowTemplate: TemplateRef<T>;
   currentSort: TableSort<T>;
   propertyForActiveCheck: keyof T;
-  gridTemplateColumns: Array<number | string> = [];
+  gridTemplateColumns: Array<number | 'auto' | '1fr'> = [];
   minWidth: number;
   sortClz: new (payload: TableSort<T>) => { type: string, payload: TableSort<T> };
   sortSelector: (state: MinaState) => TableSort<T>;
+  rowClickCallback: (row: T) => void;
 
-  readonly rowClickEmitter: EventEmitter<T> = new EventEmitter<T>();
+  tableLevel: number = 1;
 
   @ViewChild(CdkVirtualScrollViewport) private vs: CdkVirtualScrollViewport;
   @ViewChild('toTop') private toTop: ElementRef<HTMLDivElement>;
@@ -54,13 +57,9 @@ export class MinaTableComponent<T = object> extends StoreDispatcher {
   }
 
   private addGridTemplateColumnsInCssFile(): void {
-    let value = 'mina-table .mina-table .row{grid-template-columns:';
+    let value = `mina-table #table${this.tableLevel}.mina-table .row{grid-template-columns:`;
     this.gridTemplateColumns.forEach(v => value += typeof v === 'number' ? `${v}px ` : `${v} `);
-    this.document.getElementById('table-style').textContent = value + '}';
-  }
-
-  onRowClick(row: T): void {
-    this.rowClickEmitter.emit(row);
+    this.document.getElementById('table-style' + this.tableLevel).textContent = value + '}';
   }
 
   sortTable(sortBy: string | keyof T): void {
@@ -111,7 +110,7 @@ export class MinaTableComponent<T = object> extends StoreDispatcher {
       )
       .subscribe((menu: AppMenu) => {
         this.isMobile = menu.isMobile;
-        this.rowSize = menu.isMobile ? (26 * this.tableHeads.length + 10) : 36;
+        this.rowSize = menu.isMobile ? (26 * this.tableHeads.length + 10) : DESKTOP_ROW_HEIGHT;
         this.vs?.checkViewportSize();
         this.detect();
       });

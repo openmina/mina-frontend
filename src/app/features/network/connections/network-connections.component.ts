@@ -1,6 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
-import { NetworkConnectionsTableComponent } from '@network/connections/network-connections-table/network-connections-table.component';
+import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { NetworkConnectionsClose, NetworkConnectionsInit } from '@network/connections/network-connections.actions';
 import { selectNetworkConnectionsActiveConnection } from '@network/connections/network-connections.state';
 import { NetworkConnection } from '@shared/types/network/connections/network-connection.type';
@@ -19,10 +17,7 @@ export class NetworkConnectionsComponent extends StoreDispatcher implements OnIn
 
   isActiveRow: boolean = false;
 
-  private removedClass: boolean;
-
-  @ViewChild(NetworkConnectionsTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
-  @ViewChild(HorizontalResizableContainerOldComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
+  constructor(public el: ElementRef) { super(); }
 
   ngOnInit(): void {
     this.listenToActiveRowChange();
@@ -39,25 +34,12 @@ export class NetworkConnectionsComponent extends StoreDispatcher implements OnIn
     this.select(selectNetworkConnectionsActiveConnection, (row: NetworkConnection) => {
       if (row && !this.isActiveRow) {
         this.isActiveRow = true;
-        if (!this.removedClass) {
-          this.removedClass = true;
-          this.horizontalResizableContainer.nativeElement.classList.remove('no-transition');
-        }
         this.detect();
       } else if (!row && this.isActiveRow) {
         this.isActiveRow = false;
         this.detect();
       }
     });
-  }
-
-  onWidthChange(width: number): void {
-    this.horizontalResizableContainer.nativeElement.style.right = (width * -1) + 'px';
-    this.tableRef.nativeElement.style.width = `calc(100% - ${width}px)`;
-  }
-
-  toggleResizing(): void {
-    this.tableRef.nativeElement.classList.toggle('no-transition');
   }
 
   override ngOnDestroy(): void {

@@ -3,8 +3,11 @@
      [style.transition-delay.s]="0.1">
   <ng-container *ngIf="activePoint">
     <div class="flex-column">
-      <div class="h-xl fx-row-vert-cent flex-between f-600 primary pl-12 pr-12">
-        {{ activePoint.title }} {{ activePoint.point.timestamp | readableDate: 'HH:mm:ss, dd MMM yy' }}
+      <div class="h-xl fx-row-vert-cent flex-between pl-12 pr-12">
+        <span class="secondary f-600">{{ activePoint.title }} {{ activePoint.point.timestamp | readableDate: 'HH:mm:ss, dd MMM yy' }}</span>
+        <span class="mina-icon pointer tertiary primary-hover f-18"
+              (click)="closeSidePanel()">close
+        </span>
       </div>
       <div class="flex-column align-start f-600 pb-12 secondary pl-12 pr-12">
         Open this time in

@@ -8,8 +8,8 @@ import { TracingBlocksEffects } from '@tracing/tracing-blocks/tracing-blocks.eff
 import { TracingBlocksTableComponent } from '@tracing/tracing-blocks/tracing-blocks-table/tracing-blocks-table.component';
 import { TracingBlocksSidePanelComponent } from '@tracing/tracing-blocks/tracing-blocks-side-panel/tracing-blocks-side-panel.component';
 import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
-import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { CopyComponent } from '@shared/components/copy/copy.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 
 
 @NgModule({
@@ -22,9 +22,9 @@ import { CopyComponent } from '@shared/components/copy/copy.component';
     SharedModule,
     CopyComponent,
     MinaJsonViewerComponent,
-    HorizontalResizableContainerOldComponent,
     EffectsModule.forFeature([TracingBlocksEffects]),
     TracingBlocksRouting,
+    HorizontalResizableContainerComponent,
   ],
 })
 export class TracingBlocksModule {}

@@ -9,7 +9,7 @@ import { LogsTableComponent } from './logs-table/logs-table.component';
 import { LogsToolbarComponent } from './logs-toolbar/logs-toolbar.component';
 import { LogsSidePanelComponent } from './logs-side-panel/logs-side-panel.component';
 import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
-import { HorizontalResizableContainerOldComponent } from '../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 
 
 @NgModule({
@@ -22,9 +22,9 @@ import { HorizontalResizableContainerOldComponent } from '../../shared/component
   imports: [
     SharedModule,
     MinaJsonViewerComponent,
-    HorizontalResizableContainerOldComponent,
     LogsRouting,
     EffectsModule.forFeature([LogsEffects]),
+    HorizontalResizableContainerComponent,
   ],
 })
 export class LogsModule {}

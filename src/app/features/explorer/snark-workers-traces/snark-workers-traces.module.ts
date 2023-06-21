@@ -7,9 +7,9 @@ import { SnarkWorkersTracesRouting } from '@explorer/snark-workers-traces/snark-
 import { SnarkWorkersSidePanelComponent } from './snark-workers-side-panel/snark-workers-side-panel.component';
 import { EffectsModule } from '@ngrx/effects';
 import { SnarkWorkersTracesEffects } from '@explorer/snark-workers-traces/snark-workers-traces.effects';
-import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { CopyComponent } from '@shared/components/copy/copy.component';
 import { HorizontalMenuComponent } from '@shared/components/horizontal-menu/horizontal-menu.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 
 
 @NgModule({
@@ -23,9 +23,9 @@ import { HorizontalMenuComponent } from '@shared/components/horizontal-menu/hori
     SharedModule,
     CopyComponent,
     SnarkWorkersTracesRouting,
-    HorizontalResizableContainerOldComponent,
     EffectsModule.forFeature(SnarkWorkersTracesEffects),
     HorizontalMenuComponent,
+    HorizontalResizableContainerComponent,
   ],
 })
 export class SnarkWorkersTracesModule {}

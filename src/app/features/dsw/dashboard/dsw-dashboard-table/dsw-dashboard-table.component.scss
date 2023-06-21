@@ -1,0 +1,28 @@
+@import 'variables';
+
+.status {
+	padding: 2px 5px;
+	border-radius: 4px;
+
+	&.synced {
+		background-color: $success-container;
+		color: $success-primary;
+	}
+
+	&.connecting,
+	&.listening {
+		background-color: $base-container;
+		color: $base-primary;
+	}
+
+	&.bootstrap,
+	&.catchup {
+		background-color: $aware-container;
+		color: $aware-primary;
+	}
+
+	&.offline {
+		background-color: $warn-container;
+		color: $warn-primary;
+	}
+}

@@ -1,14 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { BenchmarksWallet } from '@shared/types/benchmarks/wallets/benchmarks-wallet.type';
 import { filter, skip } from 'rxjs';
 import { selectActiveNode, selectAppNodeStatus } from '@app/app.state';
 import { BenchmarksWalletsGetWallets } from '@benchmarks/wallets/benchmarks-wallets.actions';
 import { NodeStatus } from '@shared/types/app/node-status.type';
 import { selectBenchmarksWallets } from '@benchmarks/wallets/benchmarks-wallets.state';
-import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
-import { MinaTableComponent } from '@shared/components/mina-table/mina-table.component';
+import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class';
 
 @Component({
   selector: 'mina-benchmarks-wallets-table',
@@ -17,9 +15,9 @@ import { MinaTableComponent } from '@shared/components/mina-table/mina-table.com
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-column h-100' },
 })
-export class BenchmarksWalletsTableComponent extends StoreDispatcher implements OnInit {
+export class BenchmarksWalletsTableComponent extends MinaTableWrapper<BenchmarksWallet> implements OnInit {
 
-  private readonly tableHeads: TableColumnList<BenchmarksWallet> = [
+  protected readonly tableHeads: TableColumnList<BenchmarksWallet> = [
     { name: 'public key' },
     { name: 'balance' },
     { name: 'nonce' },
@@ -32,21 +30,14 @@ export class BenchmarksWalletsTableComponent extends StoreDispatcher implements 
 
   private blockLevel: number;
 
-  @ViewChild('rowTemplate') private rowTemplate: TemplateRef<BenchmarksWallet>;
-  @ViewChild('minaTable', { read: ViewContainerRef }) private containerRef: ViewContainerRef;
-
-  private table: MinaTableComponent<BenchmarksWallet>;
-
-  async ngOnInit(): Promise<void> {
-    await import('@shared/components/mina-table/mina-table.component').then(c => {
-      this.table = this.containerRef.createComponent(c.MinaTableComponent<BenchmarksWallet>).instance;
-      this.table.tableHeads = this.tableHeads;
-      this.table.rowTemplate = this.rowTemplate;
-      this.table.gridTemplateColumns = [220, 170, 100, 105, 170, 140, 125, 160];
-      this.table.init();
-    });
+  override async ngOnInit(): Promise<void> {
+    await super.ngOnInit();
     this.listenToActiveNodeChange();
     this.listenToWalletChanges();
+  }
+
+  protected override setupTable(): void {
+    this.table.gridTemplateColumns = [220, 170, 100, 105, 170, 140, 125, 160];
   }
 
   private listenToActiveNodeChange(): void {

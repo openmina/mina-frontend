@@ -1,7 +1,7 @@
 <mina-horizontal-menu [template]="template"></mina-horizontal-menu>
 <ng-template #template>
   <div class="fx-row-vert-cent flex-between w-100">
-    <form [formGroup]="formGroup" class="h-xl fx-row-vert-cent pl-12 pr-12 secondary border-bottom shrink-0">
+    <form [formGroup]="formGroup" class="h-xl fx-row-vert-cent pl-12 pr-12 secondary shrink-0">
       <button (click)="send()"
               class="live-button active"
               [class.disabled]="streamSending">Send

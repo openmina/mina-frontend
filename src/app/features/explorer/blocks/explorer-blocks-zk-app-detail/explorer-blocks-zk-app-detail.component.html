@@ -1,0 +1,42 @@
+<div class="flex-row flex-between p-12 h-xl">
+  <div class="fx-row-vert-cent">
+    <span class="mina-icon icon-200 mr-10 tertiary primary-hover pointer"
+          (click)="removeActiveZkApp()">arrow_back
+    </span>
+    <span class="secondary f-600">ZkApp command {{ zkApp?.id | truncateMid }}</span>
+  </div>
+  <span class="mina-icon pointer tertiary primary-hover f-18"
+        (click)="closeSidePanel()">close
+  </span>
+</div>
+<div class="flex-column h-minus-xl">
+  <div class="fx-row-vert-cent flex-between h-xl pl-12 pr-12">
+    <div class="f-600 tertiary">Updates</div>
+    <div class="fx-row-vert-cent">
+      <button class="btn-primary mr-8" [copyToClipboard]="zkApp?.id">Copy ID</button>
+      <button class="btn-primary" [copyToClipboard]="zkApp?.hash">Copy Hash</button>
+    </div>
+  </div>
+  <div class="flex-column h-minus-xl">
+    <div class="updates-table">
+      <ng-container #minaTable></ng-container>
+
+      <ng-template #rowTemplate let-row="row">
+        <span class="primary">{{ row.index }}</span>
+        <span>{{ row.balance }}</span>
+        <span [tooltip]="row.appState">
+          <mina-copy [value]="row.appState" [display]="(row.appState || '-') | truncateMid: 5: 0"></mina-copy>
+        </span>
+        <span class="warn-primary">{{ row.failure }}</span>
+      </ng-template>
+    </div>
+    <div class="zk-json border-top">
+      <div class="h-lg tertiary f-600 pl-12 pt-12">JSON</div>
+      <div class="h-minus-lg overflow-y-auto flex-column">
+        <mina-json-viewer [json]="zkApp?.zkAppFullData || {}"
+                          [expanded]="false"
+                          [expandTracking]="expandTracking"></mina-json-viewer>
+      </div>
+    </div>
+  </div>
+</div>

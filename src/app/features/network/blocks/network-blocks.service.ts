@@ -22,7 +22,12 @@ export class NetworkBlocksService {
 
   getEarliestBlockHeight(): Observable<number> {
     return this.http.get<any>(this.config.DEBUGGER + '/block/latest').pipe(
-      map((blocks: any) => blocks.height),
+      map((blocks: any) => {
+        if (!blocks) {
+          throw new Error('No blocks found!');
+        }
+        return blocks.height;
+      }),
     );
   }
 

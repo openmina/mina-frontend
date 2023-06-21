@@ -9,8 +9,8 @@ import { EffectsModule } from '@ngrx/effects';
 import { NetworkBlocksEffects } from '@network/blocks/network-blocks.effects';
 import { NetworkBlocksSidePanelComponent } from './network-blocks-side-panel/network-blocks-side-panel.component';
 import { NetworkBlocksToolbarComponent } from './network-blocks-toolbar/network-blocks-toolbar.component';
-import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { CopyComponent } from '@shared/components/copy/copy.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 
 
 @NgModule({
@@ -24,9 +24,9 @@ import { CopyComponent } from '@shared/components/copy/copy.component';
   imports: [
     SharedModule,
     CopyComponent,
-    HorizontalResizableContainerOldComponent,
     NetworkBlocksRouting,
     EffectsModule.forFeature([NetworkBlocksEffects]),
+    HorizontalResizableContainerComponent,
   ],
   exports: [
     NetworkBlocksGraphComponent,

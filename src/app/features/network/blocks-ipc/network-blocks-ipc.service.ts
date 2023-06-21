@@ -22,7 +22,12 @@ export class NetworkBlocksIpcService {
 
   getEarliestBlockHeight(): Observable<number> {
     return this.http.get<any>(this.config.DEBUGGER + '/libp2p_ipc/block/latest').pipe(
-      map((blocks: any) => blocks[0].events[0].msg.height),
+      map((blocks: any) => {
+        if (!blocks) {
+          throw new Error('No blocks found!');
+        }
+        return blocks[0].events[0].msg.height
+      }),
     );
   }
 

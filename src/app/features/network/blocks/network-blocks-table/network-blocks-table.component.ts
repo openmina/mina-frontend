@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Routes } from '@shared/enums/routes.enum';
 import { selectNetworkBlocks, selectNetworkBlocksSorting } from '@network/blocks/network-blocks.state';
@@ -6,8 +6,7 @@ import { NetworkBlock } from '@shared/types/network/blocks/network-block.type';
 import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
 import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
 import { NetworkBlocksSort } from '@network/blocks/network-blocks.actions';
-import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
-import { MinaTableComponent } from '@shared/components/mina-table/mina-table.component';
+import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class';
 
 @Component({
   selector: 'mina-network-blocks-table',
@@ -16,11 +15,11 @@ import { MinaTableComponent } from '@shared/components/mina-table/mina-table.com
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'h-100 flex-column' },
 })
-export class NetworkBlocksTableComponent extends StoreDispatcher implements OnInit {
+export class NetworkBlocksTableComponent extends MinaTableWrapper<NetworkBlock> implements OnInit {
 
   readonly secConfig: SecDurationConfig = { onlySeconds: true, undefinedAlternative: '-', color: true, red: 30, orange: 5 };
 
-  private readonly tableHeads: TableColumnList<NetworkBlock> = [
+  protected readonly tableHeads: TableColumnList<NetworkBlock> = [
     { name: 'ID', sort: 'messageId' },
     { name: 'datetime', sort: 'date' },
     { name: 'message hash', sort: 'hash' },
@@ -32,24 +31,17 @@ export class NetworkBlocksTableComponent extends StoreDispatcher implements OnIn
     { name: 'message kind', sort: 'messageKind' },
   ];
 
-  private table: MinaTableComponent<NetworkBlock>;
-
-  @ViewChild('rowTemplate') private rowTemplate: TemplateRef<NetworkBlock>;
-  @ViewChild('minaTable', { read: ViewContainerRef }) private containerRef: ViewContainerRef;
-
   constructor(private router: Router) { super(); }
 
-  async ngOnInit(): Promise<void> {
-    await import('@shared/components/mina-table/mina-table.component').then(c => {
-      this.table = this.containerRef.createComponent(c.MinaTableComponent<NetworkBlock>).instance;
-      this.table.tableHeads = this.tableHeads;
-      this.table.rowTemplate = this.rowTemplate;
-      this.table.gridTemplateColumns = [90, 165, 125, 80, 150, 150, 110, 110, 160, 40];
-      this.table.sortClz = NetworkBlocksSort;
-      this.table.sortSelector = selectNetworkBlocksSorting;
-      this.table.init();
-    });
+  override async ngOnInit(): Promise<void> {
+    await super.ngOnInit();
     this.listenToNetworkBlocks();
+  }
+
+  protected override setupTable(): void {
+    this.table.gridTemplateColumns = [90, 165, 125, 80, 150, 150, 110, 110, 160, 40];
+    this.table.sortClz = NetworkBlocksSort;
+    this.table.sortSelector = selectNetworkBlocksSorting;
   }
 
   seeMessageInMessages(messageId: number): void {

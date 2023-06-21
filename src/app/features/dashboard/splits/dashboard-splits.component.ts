@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { DashboardSplitsClose, DashboardSplitsGetSplits } from '@dashboard/splits/dashboard-splits.actions';
+import { selectDashboardSplitsOpenSidePanel } from '@dashboard/splits/dashboard-splits.state';
 
 @Component({
   selector: 'mina-splits',
@@ -11,14 +12,18 @@ import { DashboardSplitsClose, DashboardSplitsGetSplits } from '@dashboard/split
 })
 export class DashboardSplitsComponent extends StoreDispatcher implements OnInit, OnDestroy {
 
-  show: boolean;
+  show: boolean = true;
 
   ngOnInit(): void {
+    this.listenToSidePanelChanges();
     this.dispatch(DashboardSplitsGetSplits);
-    setTimeout(() => {
-      this.show = true;
+  }
+
+  private listenToSidePanelChanges(): void {
+    this.select(selectDashboardSplitsOpenSidePanel, (show: boolean) => {
+      this.show = show;
       this.detect();
-    }, 500);
+    });
   }
 
   override ngOnDestroy(): void {

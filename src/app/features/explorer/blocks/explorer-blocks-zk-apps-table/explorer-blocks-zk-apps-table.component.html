@@ -1,0 +1,15 @@
+<ng-container #minaTable></ng-container>
+
+<ng-template #rowTemplate let-row="row">
+  <span>
+    <mina-copy [value]="row.id" [display]="row.id | truncateMid: 5: 0"></mina-copy>
+  </span>
+  <span>
+    <mina-copy [value]="row.hash" [display]="row.hash | truncateMid: 5: 0"></mina-copy>
+  </span>
+  <span>{{ row.failures }}</span>
+  <span class="fx-row-vert-cent flex-end">
+    {{ row.updates }}
+    <span *ngIf="!isMobile" class="divider mina-icon icon-200 ml-8 f-20 mr-10">arrow_forward</span>
+  </span>
+</ng-template>

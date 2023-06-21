@@ -36,7 +36,6 @@ import { removeParamsFromURL } from '@shared/helpers/router.helper';
 import { AppService } from './app.service';
 import { getFirstFeature, isFeatureEnabled } from '@shared/constants/config';
 import { TracingGraphQlService } from '@core/services/tracing-graph-ql.service';
-import { ApolloService } from '@core/services/apollo.service';
 
 const INIT_EFFECTS = '@ngrx/effects/init';
 
@@ -63,7 +62,6 @@ export class AppEffects extends MinaBaseEffect<AppActions> {
               private appService: AppService,
               private graphQL: GraphQLService,
               private tracingGQL: TracingGraphQlService,
-              private apolloService: ApolloService,
               private blockService: BlockService,
               private router: Router,
               store: Store<MinaState>) {
@@ -176,7 +174,6 @@ export class AppEffects extends MinaBaseEffect<AppActions> {
   }
 
   private changeGqlProvider(node: MinaNode): void {
-    this.apolloService.changeGraphQlProvider(node);
     this.graphQL.changeGraphQlProvider(node);
     this.tracingGQL.changeGraphQlProvider(node);
   }

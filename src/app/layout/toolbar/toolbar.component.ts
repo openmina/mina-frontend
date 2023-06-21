@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { delay, filter, map } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { selectAppMenu } from '@app/app.state';
 import { TooltipService } from '@shared/services/tooltip.service';
-import { LoadingService } from '@core/services/loading.service';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
 import { LoadingEvent } from '@shared/types/core/loading/loading-event.type';
 import { AppMenu } from '@shared/types/app/app-menu.type';
 import { APP_TOGGLE_MENU_OPENING, AppToggleMenuOpening } from '@app/app.actions';
+import { selectLoadingStateLength } from '@app/layout/toolbar/loading.reducer';
 
 @Component({
   selector: 'mina-toolbar',
@@ -20,7 +20,7 @@ import { APP_TOGGLE_MENU_OPENING, AppToggleMenuOpening } from '@app/app.actions'
 })
 export class ToolbarComponent extends ManualDetection implements OnInit {
 
-  title: string;
+  title: string = 'Loading';
   definiteLoading: LoadingEvent;
   isMobile: boolean;
 
@@ -28,7 +28,6 @@ export class ToolbarComponent extends ManualDetection implements OnInit {
 
   constructor(private router: Router,
               private store: Store<MinaState>,
-              private loadingService: LoadingService,
               private tooltipService: TooltipService) { super(); }
 
   ngOnInit(): void {
@@ -41,36 +40,13 @@ export class ToolbarComponent extends ManualDetection implements OnInit {
     const displayNone: string = 'd-none';
     const classList = this.loadingRef.nativeElement.classList;
 
-    // this.loadingService.loadingSub$
-    //   .pipe(delay(0))
-    //   .subscribe((loading: boolean) => {
-    //     if (!document.hidden) {
-    //       loading ? classList.remove(displayNone) : classList.add(displayNone);
-    //     } else {
-    //       classList.add(displayNone);
-    //     }
-    //   });
-    this.loadingService.countSub$
-      .pipe(delay(0))
-      .subscribe((count: number) => {
-        if (count > 0) {
+    this.store.select(selectLoadingStateLength)
+      .subscribe((length: number) => {
+        if (length > 0) {
           classList.remove(displayNone);
         } else {
           classList.add(displayNone);
         }
-      });
-
-    this.loadingService.progressLoadingSub$
-      .pipe(delay(0))
-      .subscribe((event: LoadingEvent) => {
-        this.definiteLoading = event;
-        if (event.percentage === 100) {
-          this.loadingService.progressLoadingSub$.next({ percentage: 0 });
-          return;
-        } else if (event.percentage === 0) {
-          this.definiteLoading = null;
-        }
-        this.detect();
       });
   }
 

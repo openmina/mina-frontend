@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { ChangeDetectionStrategy, Component, HostBinding, OnInit } from '@angular/core';
 import {
   DashboardNodesGetForks,
   DashboardNodesSetActiveBlock,
@@ -16,19 +15,18 @@ import {
   selectDashboardNodesForks,
   selectDashboardNodesLatencyFromFastest,
   selectDashboardNodesNodeCount,
+  selectDashboardNodesNumOfNodes,
   selectDashboardNodesRemainingRequests,
   selectDashboardNodesShowOfflineNodes,
 } from '@dashboard/nodes/dashboard-nodes.state';
 import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs';
-import { LoadingService } from '@core/services/loading.service';
 import { Routes } from '@shared/enums/routes.enum';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { DashboardForkFilter } from '@shared/types/dashboard/node-list/dashboard-fork-filter.type';
 import { CONFIG } from '@shared/constants/config';
 
-@UntilDestroy()
 @Component({
   selector: 'mina-dashboard-nodes-toolbar',
   templateUrl: './dashboard-nodes-toolbar.component.html',
@@ -36,10 +34,11 @@ import { CONFIG } from '@shared/constants/config';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-column border-bottom' },
 })
-export class DashboardNodesToolbarComponent extends StoreDispatcher implements OnInit, OnDestroy {
+export class DashboardNodesToolbarComponent extends StoreDispatcher implements OnInit {
 
   readonly nodeLister = CONFIG.nodeLister;
   count: DashboardNodeCount = {} as DashboardNodeCount;
+  nodesLength: number;
   activeFilters: string[] = [];
   allFilters: string[] = [];
   activeBlock: number;
@@ -50,15 +49,11 @@ export class DashboardNodesToolbarComponent extends StoreDispatcher implements O
   forks: DashboardForkFilter[];
   activeForkFilter: { value: string, type: 'branch' | 'bestTip' };
 
-  private urlRemoved: boolean;
-
   // change height of host element
-
   @HostBinding('style.height.px')
   height: number = this.nodeLister ? 40 : 80;
 
-  constructor(private loadingService: LoadingService,
-              private router: Router) { super(); }
+  constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
     this.listenToNode();
@@ -67,12 +62,14 @@ export class DashboardNodesToolbarComponent extends StoreDispatcher implements O
   }
 
   private listenToNode(): void {
+    this.select(selectDashboardNodesNumOfNodes, (nodesLength: number) => {
+      this.nodesLength = nodesLength;
+    });
     this.select(selectDashboardNodesShowOfflineNodes, (show: boolean) => {
       this.showOffline = show;
       this.detect();
     });
     this.select(selectDashboardNodesRemainingRequests, (remaining: number) => {
-      this.urlRemoved = remaining === 0;
       if (this.isLoading && remaining === 0) {
         this.isLoading = false;
         this.dispatch(DashboardNodesGetForks);
@@ -136,14 +133,7 @@ export class DashboardNodesToolbarComponent extends StoreDispatcher implements O
   }
 
   getBlock(height: number): void {
-    this.dispatch(DashboardNodesSetActiveBlock, { height, fetchNew: true });
+    this.dispatch(DashboardNodesSetActiveBlock, { height });
     this.router.navigate([Routes.DASHBOARD, Routes.NODES, height], { queryParamsHandling: 'merge' });
-  }
-
-  override ngOnDestroy(): void {
-    super.ngOnDestroy();
-    if (!this.urlRemoved) {
-      this.loadingService.removeURL();
-    }
   }
 }

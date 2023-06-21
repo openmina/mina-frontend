@@ -1,0 +1,11 @@
+$h: calc(36px * 9) + 1px;
+
+.updates-table {
+	max-height: 50%;
+	height: $h;
+}
+
+.zk-json {
+	min-height: 50%;
+	height: calc(100% - #{$h});
+}

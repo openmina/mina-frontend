@@ -1,19 +1,23 @@
 <div class="flex-column h-100">
   <mina-storage-accounts-toolbar></mina-storage-accounts-toolbar>
   <div #parent class="flex-row p-relative h-minus-xl w-100">
-    <div #tableWrapper class="left-wrapper flex-column h-100" [class.shrink]="isActiveRow">
-      <mina-storage-accounts-filter></mina-storage-accounts-filter>
-      <mina-storage-accounts-table></mina-storage-accounts-table>
-    </div>
-    <mina-horizontal-resizable-container-old (endResizing)="toggleResizing()"
-                                         (startResizing)="toggleResizing()"
-                                         (widthChange)="onWidthChange($event)"
-                                         [class.show]="isActiveRow"
-                                         [maxWidthElement]="parent"
+    <mina-horizontal-resizable-container [leftTemplate]="left"
+                                         [rightTemplate]="right"
+                                         [show]="isActiveRow"
                                          [minWidth]="420"
-                                         class="no-transition"
-                                         localStorageKey="storage-accounts-side-panel-width">
-      <mina-storage-accounts-side-panel></mina-storage-accounts-side-panel>
-    </mina-horizontal-resizable-container-old>
+                                         [maxWidthElement]="parent"
+                                         localStorageKey="storage-accounts-spw">
+    </mina-horizontal-resizable-container>
   </div>
 </div>
+
+<ng-template #left>
+  <div class="flex-column h-100" [class.shrink]="isActiveRow">
+    <mina-storage-accounts-filter></mina-storage-accounts-filter>
+    <mina-storage-accounts-table></mina-storage-accounts-table>
+  </div>
+</ng-template>
+
+<ng-template #right>
+  <mina-storage-accounts-side-panel></mina-storage-accounts-side-panel>
+</ng-template>

@@ -15,6 +15,7 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { CONFIG, isFeatureEnabled } from '@shared/constants/config';
 import { NodePickerComponent } from '@app/layout/node-picker/node-picker.component';
+import { isMobile } from '@shared/helpers/values.helper';
 
 const TOOLTIP_MESSAGES: { [p: string]: string } = {
   [AppNodeStatusTypes.OFFLINE.toLowerCase()]: 'Is when the node has not received any messages for a while',
@@ -190,8 +191,9 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
 
     this.overlayRef = this.overlay.create({
       hasBackdrop: false,
-      width: 'auto',
-      minWidth: '220px',
+      width: '100%',
+      maxWidth: '300px',
+      minWidth: isMobile() ? '100%' : '220px',
       scrollStrategy: this.overlay.scrollStrategies.close(),
       positionStrategy: this.overlay.position()
         .flexibleConnectedTo(this.overlayOpener.nativeElement)
@@ -200,8 +202,8 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
           originY: 'bottom',
           overlayX: 'start',
           overlayY: 'top',
-          offsetY: 10,
-          offsetX: -10,
+          offsetY: 8,
+          offsetX: isMobile() ? 0 : -10,
         }]),
     });
 

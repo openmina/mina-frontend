@@ -4,24 +4,23 @@ import { TracingOverviewRouting } from '@tracing/tracing-overview/tracing-overvi
 import { SharedModule } from '@shared/shared.module';
 import { EffectsModule } from '@ngrx/effects';
 import { TracingOverviewEffects } from '@tracing/tracing-overview/tracing-overview.effects';
-import { TracingOverviewGraphComponent } from './tracing-overview-graph/tracing-overview-graph.component';
 import { TracingOverviewGraphListComponent } from './tracing-overview-graph-list/tracing-overview-graph-list.component';
 import { TracingOverviewToolbarComponent } from './tracing-overview-toolbar/tracing-overview-toolbar.component';
-import { TracingOverviewGraphTooltipComponent } from './tracing-overview-graph-tooltip/tracing-overview-graph-tooltip.component';
+import { FlameTimeGraphComponent } from '@shared/components/flame-time-graph/flame-time-graph/flame-time-graph.component';
 
 
 @NgModule({
   declarations: [
     TracingOverviewComponent,
-    TracingOverviewGraphComponent,
     TracingOverviewGraphListComponent,
     TracingOverviewToolbarComponent,
-    TracingOverviewGraphTooltipComponent,
   ],
   imports: [
     SharedModule,
     TracingOverviewRouting,
     EffectsModule.forFeature([TracingOverviewEffects]),
+    FlameTimeGraphComponent,
   ],
 })
 export class TracingOverviewModule {}
+

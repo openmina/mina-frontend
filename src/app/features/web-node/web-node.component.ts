@@ -6,7 +6,6 @@ import { MinaState } from '@app/app.setup';
 import { APP_CHANGE_SUB_MENUS, AppChangeSubMenus } from '@app/app.actions';
 import { Routes } from '@shared/enums/routes.enum';
 import { ManualDetection } from '@shared/base-classes/manual-detection.class';
-import { LoadingService } from '@core/services/loading.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WEB_NODE_SHARED_INIT, WebNodeSharedInit } from '@web-node/web-node.actions';
 import { DOCUMENT } from '@angular/common';
@@ -28,7 +27,6 @@ export class WebNodeComponent extends ManualDetection implements OnInit, AfterVi
   @ViewChild('remainingTime') private remainingTimeElement: ElementRef<HTMLDivElement>;
 
   constructor(private store: Store<MinaState>,
-              private loadingService: LoadingService,
               private webNodeService: WebNodeService,
               private renderer: Renderer2,
               @Inject(DOCUMENT) private document: Document) { super(); }

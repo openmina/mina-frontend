@@ -8,6 +8,7 @@ import { SystemResourcesEffects } from '@resources/system/system-resources.effec
 import { SystemResourcesGraphComponent } from './graph/system-resources-graph.component';
 import { SystemResourcesGraphListComponent } from '@resources/system/graph-list/system-resources-graph-list.component';
 import { SystemResourcesSidePanelComponent } from './side-panel/system-resources-side-panel.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { SystemResourcesSidePanelComponent } from './side-panel/system-resources
     SharedModule,
     SystemResourcesRouting,
     EffectsModule.forFeature([SystemResourcesEffects]),
+    HorizontalResizableContainerComponent,
   ],
 })
 export class SystemResourcesModule {}

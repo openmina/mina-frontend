@@ -7,6 +7,7 @@ import { toReadableDate } from '@shared/helpers/date.helper';
 import { BenchmarksMempoolTx } from '@shared/types/benchmarks/wallets/benchmarks-mempool-tx.type';
 import { BenchmarksWalletTransaction } from '@shared/types/benchmarks/wallets/benchmarks-wallet-transaction.type';
 import Client from 'mina-signer';
+import { ONE_MILLION } from '@shared/constants/unit-measurements';
 
 export const WALLETS: any[] = [
   {
@@ -622,8 +623,8 @@ export class BenchmarksWalletsService {
 
   private wallets = WALLETS;
   private client: Client = new Client({ network: 'testnet' });
-
   // client: any = null;
+
   constructor(private config: ConfigService,
               private graphQL: GraphQLService) {
     // this.createWalletAndAddFunds();
@@ -641,7 +642,7 @@ export class BenchmarksWalletsService {
       .pipe(
         map((gqlResponse: any) => Object.keys(gqlResponse).map((key: any, i: number) => ({
           ...this.wallets[i],
-          minaTokens: Number(gqlResponse[`account${i}`].balance.liquid),
+          minaTokens: Number(gqlResponse[`account${i}`].balance.liquid) / ONE_MILLION,
           nonce: Number(gqlResponse[`account${i}`].nonce),
           successTx: 0,
           failedTx: 0,

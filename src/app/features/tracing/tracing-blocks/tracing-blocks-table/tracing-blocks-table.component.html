@@ -6,8 +6,7 @@
        [tooltip]="'See block in network'"
        [showDelay]="500"
        [href]="origin + '/network/blocks/' + row.height + (activeNodeName ? '?node=' + activeNodeName : '')"
-       target="_blank"
-       (click)="seeBlockInNetwork(row.height)">{{ row.height }}</a>
+       target="_blank">{{ row.height }}</a>
   </span>
   <span>{{ row.globalSlot || '-' }}</span>
   <span class="secondary">

@@ -23,7 +23,7 @@ export class FeatureGuard implements CanActivate {
         filter((n: MinaNode | null) => !!n),
         switchMap((n: MinaNode | null) => {
           const node = n || {} as any;
-          const hasThisFeature = getAvailableFeatures(node).some((f: FeatureType | string) => f === route.routeConfig.path);
+          const hasThisFeature = getAvailableFeatures(node).some((f: FeatureType) => f === route.routeConfig.path);
           return hasThisFeature ? of(hasThisFeature) : this.router.navigateByUrl(getFirstFeature(node));
         }),
       );

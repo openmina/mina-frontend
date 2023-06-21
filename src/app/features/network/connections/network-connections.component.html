@@ -1,15 +1,15 @@
-<div class="flex-column h-100">
-  <div #table class="flex-row flex-grow overflow-hidden p-relative">
-    <mina-network-connections-table [class.shrink]="isActiveRow"></mina-network-connections-table>
-    <mina-horizontal-resizable-container-old (endResizing)="toggleResizing()"
-                                         (startResizing)="toggleResizing()"
-                                         (widthChange)="onWidthChange($event)"
-                                         [class.show]="isActiveRow"
-                                         [maxWidthElement]="table"
-                                         [minWidth]="320"
-                                         class="no-transition"
-                                         localStorageKey="network-connections-side-panel-width">
-      <mina-network-connections-side-panel></mina-network-connections-side-panel>
-    </mina-horizontal-resizable-container-old>
-  </div>
-</div>
+<mina-horizontal-resizable-container [leftTemplate]="left"
+                                     [rightTemplate]="right"
+                                     [show]="isActiveRow"
+                                     [minWidth]="320"
+                                     [maxWidthElement]="el.nativeElement"
+                                     localStorageKey="network-connections-side-panel-width">
+</mina-horizontal-resizable-container>
+
+<ng-template #left>
+  <mina-network-connections-table></mina-network-connections-table>
+</ng-template>
+
+<ng-template #right>
+  <mina-network-connections-side-panel></mina-network-connections-side-panel>
+</ng-template>

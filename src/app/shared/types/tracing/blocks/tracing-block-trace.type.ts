@@ -1,5 +1,4 @@
 export interface TracingBlockTrace {
-  id: number;
   source: string;
   height: number;
   hash: string;

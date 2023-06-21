@@ -12,6 +12,7 @@ enum ExplorerTransactionsActionTypes {
   EXPLORER_TRANSACTIONS_GET_TRANSACTIONS_SUCCESS = 'EXPLORER_TRANSACTIONS_GET_TRANSACTIONS_SUCCESS',
   EXPLORER_TRANSACTIONS_SORT = 'EXPLORER_TRANSACTIONS_SORT',
   EXPLORER_TRANSACTIONS_CREATE_TX = 'EXPLORER_TRANSACTIONS_CREATE_TX',
+  EXPLORER_TRANSACTIONS_CREATE_TX_SUCCESS = 'EXPLORER_TRANSACTIONS_CREATE_TX_SUCCESS',
 }
 
 export const EXPLORER_TRANSACTIONS_INIT = ExplorerTransactionsActionTypes.EXPLORER_TRANSACTIONS_INIT;
@@ -20,6 +21,7 @@ export const EXPLORER_TRANSACTIONS_GET_TRANSACTIONS = ExplorerTransactionsAction
 export const EXPLORER_TRANSACTIONS_GET_TRANSACTIONS_SUCCESS = ExplorerTransactionsActionTypes.EXPLORER_TRANSACTIONS_GET_TRANSACTIONS_SUCCESS;
 export const EXPLORER_TRANSACTIONS_SORT = ExplorerTransactionsActionTypes.EXPLORER_TRANSACTIONS_SORT;
 export const EXPLORER_TRANSACTIONS_CREATE_TX = ExplorerTransactionsActionTypes.EXPLORER_TRANSACTIONS_CREATE_TX;
+export const EXPLORER_TRANSACTIONS_CREATE_TX_SUCCESS = ExplorerTransactionsActionTypes.EXPLORER_TRANSACTIONS_CREATE_TX_SUCCESS;
 
 export interface ExplorerTransactionsAction extends FeatureAction<ExplorerTransactionsActionTypes> {
   readonly type: ExplorerTransactionsActionTypes;
@@ -57,6 +59,10 @@ export class ExplorerTransactionsCreateTx implements ExplorerTransactionsAction 
   constructor(public payload: { txType: 'tx' | 'zk', tx: ExplorerSignedTransaction | ExplorerZkAppTransaction }) { }
 }
 
+export class ExplorerTransactionsCreateTxSuccess implements ExplorerTransactionsAction {
+  readonly type = EXPLORER_TRANSACTIONS_CREATE_TX_SUCCESS;
+}
+
 export type ExplorerTransactionsActions =
   | ExplorerTransactionsInit
   | ExplorerTransactionsClose
@@ -64,4 +70,5 @@ export type ExplorerTransactionsActions =
   | ExplorerTransactionsGetTransactionsSuccess
   | ExplorerTransactionsSort
   | ExplorerTransactionsCreateTx
+  | ExplorerTransactionsCreateTxSuccess
   ;

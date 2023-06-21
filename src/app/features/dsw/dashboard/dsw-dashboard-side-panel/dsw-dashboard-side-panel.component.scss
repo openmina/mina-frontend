@@ -1,0 +1,60 @@
+@import 'variables';
+
+.h-minus-xl {
+	.fx-row-vert-cent {
+		.circle {
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+		}
+
+		&:nth-child(1) .circle {
+			background-color: $special-selected-alt-1-primary;
+		}
+
+		&:nth-child(2) .circle {
+			background-color: $warn-primary;
+		}
+
+		&:nth-child(3) .circle {
+			background-color: $aware-primary;
+		}
+
+		&:nth-child(4) .circle {
+			background-color: $selected-primary;
+		}
+
+		&:nth-child(5) .circle {
+			background-color: $success-primary;
+		}
+	}
+
+	.squares {
+		> div {
+			width: 16px;
+			height: 16px;
+			border: 1px solid $base-background;
+			background-color: white;
+
+			&.purple {
+				background-color: $special-selected-alt-1-primary;
+			}
+
+			&.red {
+				background-color: $warn-primary;
+			}
+
+			&.yellow {
+				background-color: $aware-primary;
+			}
+
+			&.blue {
+				background-color: $selected-primary;
+			}
+
+			&.green {
+				background-color: $success-primary;
+			}
+		}
+	}
+}

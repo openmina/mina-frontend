@@ -5,6 +5,8 @@ import { SnarkWorkerTraceJob } from '@shared/types/explorer/snark-traces/snark-w
 
 enum SWTracesActionTypes {
   SW_TRACES_INIT = 'SW_TRACES_INIT',
+  SW_TRACES_GET_TRACES = 'SW_TRACES_GET_TRACES',
+  SW_TRACES_GET_TRACES_SUCCESS = 'SW_TRACES_GET_TRACES_SUCCESS',
   SW_TRACES_GET_WORKERS_SUCCESS = 'SW_TRACES_GET_WORKERS_SUCCESS',
   SW_TRACES_GET_JOBS = 'SW_TRACES_GET_JOBS',
   SW_TRACES_GET_JOBS_SUCCESS = 'SW_TRACES_GET_JOBS_SUCCESS',
@@ -14,6 +16,8 @@ enum SWTracesActionTypes {
 }
 
 export const SW_TRACES_INIT = SWTracesActionTypes.SW_TRACES_INIT;
+export const SW_TRACES_GET_TRACES = SWTracesActionTypes.SW_TRACES_GET_TRACES;
+export const SW_TRACES_GET_TRACES_SUCCESS = SWTracesActionTypes.SW_TRACES_GET_TRACES_SUCCESS;
 export const SW_TRACES_GET_WORKERS_SUCCESS = SWTracesActionTypes.SW_TRACES_GET_WORKERS_SUCCESS;
 export const SW_TRACES_GET_JOBS = SWTracesActionTypes.SW_TRACES_GET_JOBS;
 export const SW_TRACES_GET_JOBS_SUCCESS = SWTracesActionTypes.SW_TRACES_GET_JOBS_SUCCESS;
@@ -27,6 +31,14 @@ export interface SWTracesAction extends FeatureAction<SWTracesActionTypes> {
 
 export class SWTracesInit implements SWTracesAction {
   readonly type = SW_TRACES_INIT;
+}
+
+export class SWTracesGetTraces implements SWTracesAction {
+  readonly type = SW_TRACES_GET_TRACES;
+}
+
+export class SWTracesGetTracesSuccess implements SWTracesAction {
+  readonly type = SW_TRACES_GET_TRACES_SUCCESS;
 }
 
 export class SWTracesGetWorkersSuccess implements SWTracesAction {
@@ -66,6 +78,8 @@ export class SWTracesClose implements SWTracesAction {
 
 export type SWTracesActions =
   | SWTracesInit
+  | SWTracesGetTraces
+  | SWTracesGetTracesSuccess
   | SWTracesGetWorkersSuccess
   | SWTracesGetJobs
   | SWTracesGetJobsSuccess

@@ -16,7 +16,7 @@ export interface SystemResourcesState {
   activeResource: string;
   threadsSort: TableSort<SystemResourcesPointThread>;
   sidePanelActivePath: string;
-  closed: boolean;
+  redrawCharts: boolean;
 }
 
 
@@ -25,11 +25,10 @@ const select = <T>(selector: (state: SystemResourcesState) => T): MemoizedSelect
   selector,
 );
 
-// export const selectSystemResourcesSidePanel = select((state: SystemResourcesState): boolean => state.sidePanelOpen);
 export const selectSystemResourcesColorMapping = select((state: SystemResourcesState): SystemResourcesColorMapping => state.colorMapping);
 export const selectSystemResourcesActivePoint = select((state: SystemResourcesState): SystemResourcesActivePoint => state.activePoint);
 export const selectSystemResourcesData = select((state: SystemResourcesState): SystemResourcesChartData => state.chartData);
 export const selectSystemResourcesThreadSort = select((state: SystemResourcesState): TableSort<SystemResourcesPointThread> => state.threadsSort);
 export const selectSystemResourcesSidePanelActivePath = select((state: SystemResourcesState): string => state.sidePanelActivePath);
-
-
+export const selectSystemResourcesSidePanel = select((state: SystemResourcesState): boolean => state.sidePanelOpen);
+export const selectSystemResourcesRedrawCharts = select((state: SystemResourcesState): boolean => state.redrawCharts);

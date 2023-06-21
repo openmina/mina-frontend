@@ -4,19 +4,22 @@ import { Effect } from '@shared/types/store/effect.type';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaState, selectMinaState } from '@app/app.setup';
-import { catchError, EMPTY, filter, map, repeat, switchMap, tap } from 'rxjs';
-import { addError } from '@shared/constants/store-functions';
+import { EMPTY, filter, map, switchMap, tap } from 'rxjs';
+import { catchErrorAndRepeat } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import {
   EXPLORER_SCAN_STATE_CLOSE,
   EXPLORER_SCAN_STATE_GET_SCAN_STATE,
   EXPLORER_SCAN_STATE_GET_SCAN_STATE_SUCCESS,
   EXPLORER_SCAN_STATE_SET_ACTIVE_BLOCK,
-  EXPLORER_SCAN_STATE_SET_EARLIEST_BLOCK, EXPLORER_SCAN_STATE_TOGGLE_LEAFS_MARKING,
-  ExplorerScanStateActions, ExplorerScanStateClose,
+  EXPLORER_SCAN_STATE_SET_EARLIEST_BLOCK,
+  EXPLORER_SCAN_STATE_TOGGLE_LEAFS_MARKING,
+  ExplorerScanStateActions,
+  ExplorerScanStateClose,
   ExplorerScanStateGetScanState,
   ExplorerScanStateSetActiveBlock,
-  ExplorerScanStateSetEarliestBlock, ExplorerScanStateToggleLeafsMarking,
+  ExplorerScanStateSetEarliestBlock,
+  ExplorerScanStateToggleLeafsMarking,
 } from '@explorer/scan-state/explorer-scan-state.actions';
 import { ExplorerScanStateService } from '@explorer/scan-state/explorer-scan-state.service';
 import { ExplorerScanStateTree } from '@shared/types/explorer/scan-state/explorer-scan-state-tree.type';
@@ -40,7 +43,6 @@ export class ExplorerScanStateEffects extends MinaBaseEffect<ExplorerScanStateAc
               private router: Router,
               private scanStateService: ExplorerScanStateService,
               store: Store<MinaState>) {
-
     super(store, selectMinaState);
 
     this.getEarliestBlock$ = createEffect(() => this.actions$.pipe(
@@ -72,11 +74,7 @@ export class ExplorerScanStateEffects extends MinaBaseEffect<ExplorerScanStateAc
         const scanState = this.addLeafMarkingToLeafs(state.explorer.snarks.snarks, response.scanState, state.explorer.scanState.leafsMarking);
         return ({ type: EXPLORER_SCAN_STATE_GET_SCAN_STATE_SUCCESS, payload: { ...response, scanState } });
       }),
-      catchError((error: Error) => [
-        addError(error, MinaErrorType.GRAPH_QL),
-        { type: EXPLORER_SCAN_STATE_GET_SCAN_STATE_SUCCESS, payload: { scanState: null, txCount: 0, snarksCount: 0 } },
-      ]),
-      repeat(),
+      catchErrorAndRepeat(MinaErrorType.GRAPH_QL, EXPLORER_SCAN_STATE_GET_SCAN_STATE_SUCCESS, { scanState: null, txCount: 0, snarksCount: 0 }),
     ));
 
     this.toggleLeafsMarking$ = createEffect(() => this.actions$.pipe(

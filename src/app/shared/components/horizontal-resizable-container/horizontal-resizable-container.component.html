@@ -3,14 +3,12 @@
 </main>
 <aside #aside
        class="no-transition h-100 p-absolute bg-surface">
-  <div class="p-relative w-100 h-100">
-    <ng-container *ngTemplateOutlet="rightTemplate"></ng-container>
-    <div class="bar"
-         (horizontalResize)="onResize($event)"
-         (startResizing)="onStartResizing()"
-         (endResizing)="onEndResizing()"
-         [minWidth]="minWidth"
-         [maxWidthElement]="maxWidthElement"
-         [localStorageKey]="localStorageKey"></div>
-  </div>
+  <ng-container *ngTemplateOutlet="rightTemplate"></ng-container>
+  <div class="bar"
+       (horizontalResize)="onResize($event)"
+       (startResizing)="onStartResizing()"
+       (endResizing)="onEndResizing()"
+       [minWidth]="minWidth"
+       [maxWidthElement]="maxWidthElement"
+       [localStorageKey]="localStorageKey"></div>
 </aside>

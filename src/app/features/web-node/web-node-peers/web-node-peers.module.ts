@@ -9,9 +9,9 @@ import { WebNodePeersListenComponent } from './web-node-peers-listen/web-node-pe
 import { SharedModule } from '@shared/shared.module';
 import { WebNodePeersSidePanelComponent } from './web-node-peers-side-panel/web-node-peers-side-panel.component';
 import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
-import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
 import { StepperComponent } from '@shared/components/stepper/stepper.component';
 import { CopyComponent } from '@shared/components/copy/copy.component';
+import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
 
 
 @NgModule({
@@ -28,8 +28,8 @@ import { CopyComponent } from '@shared/components/copy/copy.component';
     CopyComponent,
     StepperComponent,
     MinaJsonViewerComponent,
-    HorizontalResizableContainerOldComponent,
     WebNodePeersRouting,
+    HorizontalResizableContainerComponent,
   ],
 })
 export class WebNodePeersModule {}

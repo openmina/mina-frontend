@@ -4,8 +4,8 @@ import { Effect } from '@shared/types/store/effect.type';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaState, selectMinaState } from '@app/app.setup';
-import { catchError, EMPTY, map, repeat, switchMap } from 'rxjs';
-import { addError } from '@shared/constants/store-functions';
+import { EMPTY, map, switchMap } from 'rxjs';
+import { catchErrorAndRepeat } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import {
   SW_TRACES_CLOSE,
@@ -27,7 +27,6 @@ export class SnarkWorkersTracesEffects extends MinaBaseEffect<SWTracesActions> {
   constructor(private actions$: Actions,
               private snarksService: SnarkWorkersTracesService,
               store: Store<MinaState>) {
-
     super(store, selectMinaState);
 
     this.getWorkers$ = createEffect(() => this.actions$.pipe(
@@ -39,11 +38,7 @@ export class SnarkWorkersTracesEffects extends MinaBaseEffect<SWTracesActions> {
           : this.snarksService.getWorkers(),
       ),
       map((payload: string[]) => ({ type: SW_TRACES_GET_WORKERS_SUCCESS, payload })),
-      catchError((error: Error) => [
-        addError(error, MinaErrorType.GRAPH_QL),
-        { type: SW_TRACES_GET_WORKERS_SUCCESS, payload: [] },
-      ]),
-      repeat(),
+      catchErrorAndRepeat(MinaErrorType.GENERIC, SW_TRACES_GET_WORKERS_SUCCESS, []),
     ));
   }
 }

@@ -13,9 +13,9 @@ import {
   TracingOverviewClose,
   TracingOverviewGetCheckpoints,
 } from '@tracing/tracing-overview/tracing-overview.actions';
-import { catchError, EMPTY, map, repeat, switchMap } from 'rxjs';
+import { EMPTY, map, switchMap } from 'rxjs';
 import { TracingOverviewCheckpoint } from '@shared/types/tracing/overview/tracing-overview-checkpoint.type';
-import { addError } from '@shared/constants/store-functions';
+import { catchErrorAndRepeat } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 
 @Injectable({
@@ -40,11 +40,7 @@ export class TracingOverviewEffects extends MinaBaseEffect<TracingOverviewAction
           : this.tracingOverviewService.getStatistics(),
       ),
       map((payload: TracingOverviewCheckpoint[]) => ({ type: TRACING_OVERVIEW_GET_CHECKPOINTS_SUCCESS, payload })),
-      catchError((error: Error) => [
-        addError(error, MinaErrorType.GRAPH_QL),
-        { type: TRACING_OVERVIEW_GET_CHECKPOINTS_SUCCESS, payload: [] },
-      ]),
-      repeat(),
+      catchErrorAndRepeat(MinaErrorType.GRAPH_QL, TRACING_OVERVIEW_GET_CHECKPOINTS_SUCCESS, []),
     ));
   }
 }

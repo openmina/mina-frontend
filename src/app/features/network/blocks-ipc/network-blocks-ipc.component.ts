@@ -1,5 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { HorizontalResizableContainerOldComponent } from '../../../shared/components/horizontal-resizable-container-old/horizontal-resizable-container-old.component';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { filter, take } from 'rxjs';
@@ -9,7 +8,6 @@ import { NodeStatus } from '@shared/types/app/node-status.type';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { NetworkBlocksIpcClose, NetworkBlocksIpcGetEarliestBlock, NetworkBlocksIpcInit, NetworkBlocksIpcSetActiveBlock } from './network-blocks-ipc.actions';
 import { selectNetworkBlocksIpcSidePanelOpen } from './network-blocks-ipc.state';
-import { NetworkBlocksIpcTableComponent } from '@network/blocks-ipc/network-blocks-ipc-table/network-blocks-ipc-table.component';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
 @Component({
@@ -24,10 +22,8 @@ export class NetworkBlocksIpcComponent extends StoreDispatcher implements OnInit
   isSidePanelOpen: boolean;
 
   private blockHeight: number;
-  private removedClass: boolean;
 
-  @ViewChild(NetworkBlocksIpcTableComponent, { read: ElementRef }) private tableRef: ElementRef<HTMLElement>;
-  @ViewChild(HorizontalResizableContainerOldComponent, { read: ElementRef }) private horizontalResizableContainer: ElementRef<HTMLElement>;
+  constructor(public el: ElementRef) { super(); }
 
   ngOnInit(): void {
     this.listenToRouteChange();
@@ -36,15 +32,6 @@ export class NetworkBlocksIpcComponent extends StoreDispatcher implements OnInit
 
   ngAfterViewInit(): void {
     this.listenToSidePanelOpeningChange();
-  }
-
-  toggleResizing(): void {
-    this.tableRef.nativeElement.classList.toggle('no-transition');
-  }
-
-  onWidthChange(width: number): void {
-    this.horizontalResizableContainer.nativeElement.style.right = (width * -1) + 'px';
-    this.tableRef.nativeElement.style.width = `calc(100% - ${width}px)`;
   }
 
   private listenToRouteChange(): void {
@@ -66,10 +53,6 @@ export class NetworkBlocksIpcComponent extends StoreDispatcher implements OnInit
       .pipe(untilDestroyed(this))
       .subscribe((open: boolean) => {
         this.isSidePanelOpen = open;
-        if (!this.removedClass) {
-          this.removedClass = true;
-          this.horizontalResizableContainer.nativeElement.classList.remove('no-transition');
-        }
         this.detect();
       });
   }

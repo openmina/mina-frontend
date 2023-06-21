@@ -9,10 +9,12 @@ enum DashboardNodesActionTypes {
   DASHBOARD_NODES_INIT_SUCCESS = 'DASHBOARD_NODES_INIT_SUCCESS',
   DASHBOARD_NODES_CLOSE = 'DASHBOARD_NODES_CLOSE',
   DASHBOARD_NODES_GET_NODES = 'DASHBOARD_NODES_GET_NODES',
+  DASHBOARD_NODES_GET_NODES_SUCCESS = 'DASHBOARD_NODES_GET_NODES_SUCCESS',
   DASHBOARD_NODES_GET_NODE = 'DASHBOARD_NODES_GET_NODE',
   DASHBOARD_NODES_GET_NODE_SUCCESS = 'DASHBOARD_NODES_GET_NODE_SUCCESS',
   DASHBOARD_NODES_SORT = 'DASHBOARD_NODES_SORT',
   DASHBOARD_NODES_SET_ACTIVE_NODE = 'DASHBOARD_NODES_SET_ACTIVE_NODE',
+  DASHBOARD_NODES_GET_TRACES = 'DASHBOARD_NODES_GET_TRACES',
   DASHBOARD_NODES_GET_TRACES_SUCCESS = 'DASHBOARD_NODES_GET_TRACES_SUCCESS',
   DASHBOARD_NODES_SET_ACTIVE_BLOCK = 'DASHBOARD_NODES_SET_ACTIVE_BLOCK',
   DASHBOARD_NODES_GET_EARLIEST_BLOCK = 'DASHBOARD_NODES_GET_EARLIEST_BLOCK',
@@ -28,10 +30,12 @@ export const DASHBOARD_NODES_INIT = DashboardNodesActionTypes.DASHBOARD_NODES_IN
 export const DASHBOARD_NODES_INIT_SUCCESS = DashboardNodesActionTypes.DASHBOARD_NODES_INIT_SUCCESS;
 export const DASHBOARD_NODES_CLOSE = DashboardNodesActionTypes.DASHBOARD_NODES_CLOSE;
 export const DASHBOARD_NODES_GET_NODES = DashboardNodesActionTypes.DASHBOARD_NODES_GET_NODES;
+export const DASHBOARD_NODES_GET_NODES_SUCCESS = DashboardNodesActionTypes.DASHBOARD_NODES_GET_NODES_SUCCESS;
 export const DASHBOARD_NODES_GET_NODE = DashboardNodesActionTypes.DASHBOARD_NODES_GET_NODE;
 export const DASHBOARD_NODES_GET_NODE_SUCCESS = DashboardNodesActionTypes.DASHBOARD_NODES_GET_NODE_SUCCESS;
 export const DASHBOARD_NODES_SORT = DashboardNodesActionTypes.DASHBOARD_NODES_SORT;
 export const DASHBOARD_NODES_SET_ACTIVE_NODE = DashboardNodesActionTypes.DASHBOARD_NODES_SET_ACTIVE_NODE;
+export const DASHBOARD_NODES_GET_TRACES = DashboardNodesActionTypes.DASHBOARD_NODES_GET_TRACES;
 export const DASHBOARD_NODES_GET_TRACES_SUCCESS = DashboardNodesActionTypes.DASHBOARD_NODES_GET_TRACES_SUCCESS;
 export const DASHBOARD_NODES_SET_ACTIVE_BLOCK = DashboardNodesActionTypes.DASHBOARD_NODES_SET_ACTIVE_BLOCK;
 export const DASHBOARD_NODES_GET_EARLIEST_BLOCK = DashboardNodesActionTypes.DASHBOARD_NODES_GET_EARLIEST_BLOCK;
@@ -53,7 +57,7 @@ export class DashboardNodesInit implements DashboardNodesAction {
 export class DashboardNodesInitSuccess implements DashboardNodesAction {
   readonly type = DASHBOARD_NODES_INIT_SUCCESS;
 
-  constructor(public payload: { nodes: any[] }) { }
+  constructor(public payload: { nodes: DashboardNode[] }) { }
 }
 
 export class DashboardNodesClose implements DashboardNodesAction {
@@ -64,6 +68,10 @@ export class DashboardNodesGetNodes implements DashboardNodesAction {
   readonly type = DASHBOARD_NODES_GET_NODES;
 
   constructor(public payload?: { height: number }) { }
+}
+
+export class DashboardNodesGetNodesSuccess implements DashboardNodesAction {
+  readonly type = DASHBOARD_NODES_GET_NODES_SUCCESS;
 }
 
 export class DashboardNodesGetNode implements DashboardNodesAction {
@@ -87,7 +95,11 @@ export class DashboardNodesSort implements DashboardNodesAction {
 export class DashboardNodesSetActiveNode implements DashboardNodesAction {
   readonly type = DASHBOARD_NODES_SET_ACTIVE_NODE;
 
-  constructor(public payload: { node: DashboardNode }) { }
+  constructor(public payload: DashboardNode) { }
+}
+
+export class DashboardNodesGetTraces implements DashboardNodesAction {
+  readonly type = DASHBOARD_NODES_GET_TRACES;
 }
 
 export class DashboardNodesGetTracesSuccess implements DashboardNodesAction {
@@ -99,7 +111,7 @@ export class DashboardNodesGetTracesSuccess implements DashboardNodesAction {
 export class DashboardNodesSetActiveBlock implements DashboardNodesAction {
   readonly type = DASHBOARD_NODES_SET_ACTIVE_BLOCK;
 
-  constructor(public payload: { height: number, fetchNew?: boolean }) { }
+  constructor(public payload: { height: number }) { }
 }
 
 export class DashboardNodesGetEarliestBlock implements DashboardNodesAction {
@@ -141,10 +153,12 @@ export type DashboardNodesActions =
   | DashboardNodesInitSuccess
   | DashboardNodesClose
   | DashboardNodesGetNodes
+  | DashboardNodesGetNodesSuccess
   | DashboardNodesGetNode
   | DashboardNodesGetNodeSuccess
   | DashboardNodesSort
   | DashboardNodesSetActiveNode
+  | DashboardNodesGetTraces
   | DashboardNodesGetTracesSuccess
   | DashboardNodesSetActiveBlock
   | DashboardNodesGetEarliestBlock

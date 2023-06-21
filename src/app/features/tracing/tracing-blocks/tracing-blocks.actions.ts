@@ -9,6 +9,7 @@ enum TracingBlocksActionTypes {
   TRACING_BLOCKS_GET_TRACES = 'TRACING_BLOCKS_GET_TRACES',
   TRACING_BLOCKS_GET_TRACES_SUCCESS = 'TRACING_BLOCKS_GET_TRACES_SUCCESS',
   TRACING_BLOCKS_SELECT_ROW = 'TRACING_BLOCKS_SELECT_ROW',
+  TRACING_BLOCKS_GET_DETAILS = 'TRACING_BLOCKS_GET_DETAILS',
   TRACING_BLOCKS_GET_DETAILS_SUCCESS = 'TRACING_BLOCKS_GET_DETAILS_SUCCESS',
   TRACING_BLOCKS_SORT = 'TRACING_BLOCKS_SORT',
 }
@@ -18,6 +19,7 @@ export const TRACING_BLOCKS_CLOSE = TracingBlocksActionTypes.TRACING_BLOCKS_CLOS
 export const TRACING_BLOCKS_GET_TRACES = TracingBlocksActionTypes.TRACING_BLOCKS_GET_TRACES;
 export const TRACING_BLOCKS_GET_TRACES_SUCCESS = TracingBlocksActionTypes.TRACING_BLOCKS_GET_TRACES_SUCCESS;
 export const TRACING_BLOCKS_SELECT_ROW = TracingBlocksActionTypes.TRACING_BLOCKS_SELECT_ROW;
+export const TRACING_BLOCKS_GET_DETAILS = TracingBlocksActionTypes.TRACING_BLOCKS_GET_DETAILS;
 export const TRACING_BLOCKS_GET_DETAILS_SUCCESS = TracingBlocksActionTypes.TRACING_BLOCKS_GET_DETAILS_SUCCESS;
 export const TRACING_BLOCKS_SORT = TracingBlocksActionTypes.TRACING_BLOCKS_SORT;
 
@@ -45,8 +47,12 @@ export class TracingBlocksGetTracesSuccess implements TracingBlocksAction {
 
 export class TracingBlocksSelectRow implements TracingBlocksAction {
   readonly type = TRACING_BLOCKS_SELECT_ROW;
-  public payload: TracingBlockTrace;
-  constructor( payload: TracingBlockTrace) {this.payload = payload }
+
+  constructor(public payload: TracingBlockTrace) { }
+}
+
+export class TracingBlocksGetDetails implements TracingBlocksAction {
+  readonly type = TRACING_BLOCKS_GET_DETAILS;
 }
 
 export class TracingBlocksGetDetailsSuccess implements TracingBlocksAction {
@@ -67,6 +73,7 @@ export type TracingBlocksActions =
   | TracingBlocksGetTraces
   | TracingBlocksGetTracesSuccess
   | TracingBlocksSelectRow
+  | TracingBlocksGetDetails
   | TracingBlocksGetDetailsSuccess
   | TracingBlocksSort
   ;

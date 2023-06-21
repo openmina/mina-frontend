@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { MinaBaseEffect } from '@shared/base-classes/mina-base.effect';
 import { Effect, NonDispatchableEffect } from '@shared/types/store/effect.type';
 import { catchError, filter, map, repeat, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
-import { addErrorObservable, createNonDispatchableEffect } from '@shared/constants/store-functions';
+import { addErrorObservable, catchErrorAndRepeat, createNonDispatchableEffect } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import {
   NETWORK_CONNECTIONS_CLOSE,
@@ -21,6 +21,7 @@ import {
 } from '@network/connections/network-connections.actions';
 import { NetworkConnectionsService } from '@network/connections/network-connections.service';
 import { NetworkConnection } from '@shared/types/network/connections/network-connection.type';
+import { NetworkConnectionsState } from '@network/connections/network-connections.state';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +31,7 @@ export class NetworkConnectionsEffects extends MinaBaseEffect<NetworkConnections
   readonly init$: Effect;
   readonly getConnections$: Effect;
   readonly pause$: NonDispatchableEffect;
-  readonly goLive$: NonDispatchableEffect;
+  readonly goLive$: Effect;
   readonly close$: NonDispatchableEffect;
 
   private networkDestroy$: Subject<void> = new Subject<void>();
@@ -45,9 +46,9 @@ export class NetworkConnectionsEffects extends MinaBaseEffect<NetworkConnections
 
     this.init$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_CONNECTIONS_INIT),
-      this.latestActionState<NetworkConnectionsInit>(),
-      tap(({ action, state }) => this.streamActive = state.network.connections.stream),
-      switchMap(({ action, state }) =>
+      this.latestStateSlice<NetworkConnectionsState, NetworkConnectionsInit>('network.connections'),
+      tap(state => this.streamActive = state.stream),
+      switchMap(() =>
         timer(0, 10000).pipe(
           takeUntil(this.networkDestroy$),
           filter(() => this.streamActive && !this.waitingForServer),
@@ -70,8 +71,7 @@ export class NetworkConnectionsEffects extends MinaBaseEffect<NetworkConnections
       ),
       tap(() => this.waitingForServer = false),
       map((payload: NetworkConnection[]) => ({ type: NETWORK_CONNECTIONS_GET_CONNECTIONS_SUCCESS, payload })),
-      catchError((error: Error) => addErrorObservable(error, MinaErrorType.DEBUGGER)),
-      repeat(),
+      catchErrorAndRepeat(MinaErrorType.DEBUGGER, NETWORK_CONNECTIONS_GET_CONNECTIONS_SUCCESS, []),
     ));
 
     this.pause$ = createNonDispatchableEffect(() => this.actions$.pipe(
@@ -79,9 +79,10 @@ export class NetworkConnectionsEffects extends MinaBaseEffect<NetworkConnections
       tap(() => this.streamActive = false),
     ));
 
-    this.goLive$ = createNonDispatchableEffect(() => this.actions$.pipe(
+    this.goLive$ = createEffect(() => this.actions$.pipe(
       ofType(NETWORK_CONNECTIONS_GO_LIVE),
       tap(() => this.streamActive = true),
+      map(() => ({ type: NETWORK_CONNECTIONS_GET_CONNECTIONS })),
     ));
 
     this.close$ = createNonDispatchableEffect(() => this.actions$.pipe(

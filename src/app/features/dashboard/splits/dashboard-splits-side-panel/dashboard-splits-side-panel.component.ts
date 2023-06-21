@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { selectDashboardSplitsActivePeer, selectDashboardSplitsPeersAndSets, selectDashboardSplitsSort } from '@dashboard/splits/dashboard-splits.state';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { toggleItem } from '@shared/helpers/array.helper';
-import { DashboardSplitsSetActivePeer, DashboardSplitsSortPeers } from '@dashboard/splits/dashboard-splits.actions';
+import { DashboardSplitsSetActivePeer, DashboardSplitsSortPeers, DashboardSplitsToggleSidePanel } from '@dashboard/splits/dashboard-splits.actions';
 import { Router } from '@angular/router';
 import { Routes } from '@shared/enums/routes.enum';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
@@ -19,13 +19,13 @@ import { TableHeadSorting } from '@shared/types/shared/table-head-sorting.type';
   templateUrl: './dashboard-splits-side-panel.component.html',
   styleUrls: ['./dashboard-splits-side-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'flex-column border-left h-100 w-100' },
+  host: { class: 'flex-column h-100 w-100' },
 })
 export class DashboardSplitsSidePanelComponent extends StoreDispatcher implements OnInit {
 
   readonly tableHeads: TableHeadSorting<DashboardSplitsPeer>[] = [
     { name: 'address' },
-    { name: 'node' },
+    { name: 'name', sort: 'node' },
     { name: 'peer ID', sort: 'peerId' },
     { name: 'Conn. \nIn / Out', sort: 'outgoingConnections' },
   ];
@@ -126,5 +126,9 @@ export class DashboardSplitsSidePanelComponent extends StoreDispatcher implement
       return;
     }
     this.dispatch(DashboardSplitsSetActivePeer, peer);
+  }
+
+  closeSidePanel(): void {
+    this.dispatch(DashboardSplitsToggleSidePanel);
   }
 }
