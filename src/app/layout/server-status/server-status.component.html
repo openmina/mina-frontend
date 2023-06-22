@@ -1,16 +1,16 @@
-<div class="debugger-status mr-8 border-rad-4 flex-row align-center"
+<div class="debugger-status h-sm mr-8 border-rad-4 fx-row-full-cent"
      *ngIf="enabledDebugger && debuggerStatus"
      [tooltip]="debuggerTooltip"
      [class.failed]="debuggerStatus.failed"
      [class.offline]="!debuggerStatus.isOnline">
   <span class="mina-icon icon-200 f-20">code</span>
-  <span *ngIf="debuggerStatus.failed !== undefined" class="ml-5 mr-5">{{ debuggerStatus.failed | number: '1.1-1' }}%
-                                                                                                                   Failed
+  <span *ngIf="debuggerStatus.failed !== undefined" class="ml-5 mr-5">
+    {{ debuggerStatus.failed | number: '1.1-1' }}% Failed
   </span>
   <div *ngIf="!debuggerStatus.isOnline && !isMobile" class="ml-5 mr-5">Offline</div>
 </div>
 
-<div class="web-node-status mr-8 border-rad-4 flex-row align-center"
+<div class="web-node-status h-sm mr-8 border-rad-4 fx-row-vert-cent"
      *ngIf="enabledWebNode && webNodeStatus"
      [tooltip]="webNodeTooltip"
      [class.offline]="!webNodeStatus.peers && !webNodeStatus.messages">
@@ -22,14 +22,16 @@
 </div>
 
 <div class="node-status mr-8 border-rad-4 p-relative overflow-hidden">
-  <div *ngIf="status === 'catchup' || status === 'bootstrap'"
-       class="shining-border p-absolute overflow-hidden"></div>
-  <div class="bg-surface border-rad-4">
-    <div class="background-wrap border-rad-4 flex-row align-center"
+  <div class="shine-parent p-absolute z-0">
+    <div *ngIf="status === 'catchup' || status === 'bootstrap'"
+         class="shining-border p-absolute"></div>
+  </div>
+  <div class="bg-surface h-sm border-rad-4 p-relative z-1">
+    <div class="background-wrap border-rad-4 fx-row-vert-cent h-100"
          [ngClass]="status">
-      <div class="block-level flex-row align-center pl-5 pr-8"
+      <div class="block-level h-100 fx-row-vert-cent pl-5 pr-8"
            [tooltip]="(!isMobile || !blockLevel) ? nodeTooltip : ('Height ' + blockLevel + '\n' + nodeTooltip)">
-        <span class="strong-text text-capitalize flex-row align-center mr-5">
+        <span class="strong-text text-capitalize fx-row-vert-cent mr-5">
           <span class="mina-icon icon-200 f-20">dns</span>
           &nbsp;{{ status }}
         </span>
@@ -39,7 +41,7 @@
           <span class="p-absolute ago">ago</span>
         </span>
       </div>
-      <div class="node-switcher pointer flex-row align-center pl-5 pr-8"
+      <div class="node-switcher h-100 pointer fx-row-vert-cent pl-5 pr-8"
            #overlayOpener (click)="openNodePicker($event)">
         <span class="strong-text">{{ activeNode?.name }}</span>
         <span class="mina-icon icon-200">arrow_drop_down</span>

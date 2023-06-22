@@ -11,8 +11,11 @@
      [routerLink]="'/' + item.name.toLowerCase().split(' ').join('-')"
      [queryParams]="activeNode ? { node: activeNode.name } : null"
      [tooltip]="item.tooltip || item.name"
+     [globalTooltip]="false"
      [tooltipDisabled]="!menu.collapsed || menu.isMobile"
+     [position]="TooltipPosition.RIGHT"
      [class.active]="activeRoute === item.name.toLowerCase().split(' ').join('-')"
+     [class.border-bottom]="menu.isMobile"
      (click)="showHideMenu()"
      class="item h-lg">
     <span class="item-content h-sm">

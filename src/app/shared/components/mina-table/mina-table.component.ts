@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Inject, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Inject, TemplateRef, ViewChild } from '@angular/core';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { selectAppMenu } from '@app/app.state';
 import { untilDestroyed } from '@ngneat/until-destroy';
@@ -10,6 +10,7 @@ import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
 import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { MinaState } from '@app/app.setup';
+import { isMobile } from '@shared/helpers/values.helper';
 
 const DESKTOP_ROW_HEIGHT = 36;
 
@@ -22,7 +23,7 @@ const DESKTOP_ROW_HEIGHT = 36;
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'h-100 flex-column' },
 })
-export class MinaTableComponent<T extends object> extends StoreDispatcher {
+export class MinaTableComponent<T extends object> extends StoreDispatcher implements AfterViewInit {
 
   rowSize: number = DESKTOP_ROW_HEIGHT;
   isMobile: boolean;
@@ -45,7 +46,8 @@ export class MinaTableComponent<T extends object> extends StoreDispatcher {
   @ViewChild('toTop') private toTop: ElementRef<HTMLDivElement>;
   private hiddenToTop: boolean = true;
 
-  constructor(@Inject(DOCUMENT) private document: Document) { super(); }
+  constructor(@Inject(DOCUMENT) private document: Document,
+              private el: ElementRef) { super(); }
 
   init(): void {
     this.minWidth = this.minWidth || this.gridTemplateColumns.reduce((acc: number, curr: number | string) => acc + Number(curr), 0);
@@ -54,6 +56,10 @@ export class MinaTableComponent<T extends object> extends StoreDispatcher {
     this.listenToScrolling();
     this.listenToSortingChanges();
     this.detect();
+  }
+
+  ngAfterViewInit(): void {
+    this.positionToTop();
   }
 
   private addGridTemplateColumnsInCssFile(): void {
@@ -79,6 +85,10 @@ export class MinaTableComponent<T extends object> extends StoreDispatcher {
     const topElements = Math.round(this.vs.elementRef.nativeElement.offsetHeight / 2 / this.rowSize) - 3;
     const jobIndex = this.rows.findIndex(rowFinder);
     this.vs.scrollToIndex(jobIndex - topElements);
+  }
+
+  get virtualScroll(): CdkVirtualScrollViewport {
+    return this.vs;
   }
 
   private listenToScrolling(): void {
@@ -116,7 +126,13 @@ export class MinaTableComponent<T extends object> extends StoreDispatcher {
       });
   }
 
-  get virtualScroll(): CdkVirtualScrollViewport {
-    return this.vs;
+  private positionToTop(): void {
+    if (!isMobile()) {
+      return;
+    }
+    const rect = this.el.nativeElement.getBoundingClientRect();
+
+    this.toTop.nativeElement.style.top = `${rect.top + rect.height - 60}px`;
+    this.toTop.nativeElement.style.left = `${rect.left + rect.width - 60}px`;
   }
 }

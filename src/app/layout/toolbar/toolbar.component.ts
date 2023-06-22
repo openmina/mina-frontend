@@ -16,7 +16,7 @@ import { selectLoadingStateLength } from '@app/layout/toolbar/loading.reducer';
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'h-xl flex-row align-center border-bottom' },
+  host: { class: 'flex-row align-center border-bottom' },
 })
 export class ToolbarComponent extends ManualDetection implements OnInit {
 

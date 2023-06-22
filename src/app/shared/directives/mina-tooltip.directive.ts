@@ -2,8 +2,17 @@ import { Directive, ElementRef, HostListener, Inject, Input, OnDestroy, OnInit }
 import { DOCUMENT } from '@angular/common';
 import { TooltipService } from '@shared/services/tooltip.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { MatTooltipDefaultOptions } from '@angular/material/tooltip';
 
 const TOOLTIP_OFFSET = 8;
+const PX = 'px';
+
+export enum TooltipPosition {
+  TOP = 'top',
+  BOTTOM = 'bottom',
+  LEFT = 'left',
+  RIGHT = 'right',
+}
 
 @UntilDestroy()
 @Directive({
@@ -18,6 +27,7 @@ export class MinaTooltipDirective implements OnInit, OnDestroy {
   @Input() globalTooltip: boolean = true;
   @Input() cancelFormatting: boolean = false;
   @Input() maxWidth: number = 250;
+  @Input() position: TooltipPosition = TooltipPosition.BOTTOM;
 
   private popup: HTMLDivElement = this.document.getElementById('mina-tooltip') as HTMLDivElement;
   private timer: any;
@@ -45,7 +55,7 @@ export class MinaTooltipDirective implements OnInit, OnDestroy {
     }
     this.timer = setTimeout(() => {
       if (!this.cancelShowing) {
-        MinaTooltipDirective.showTooltip(this.popup, this.el.nativeElement, this.tooltip.toString(), this.maxWidth);
+        MinaTooltipDirective.showTooltip(this.popup, this.el.nativeElement, this.tooltip.toString(), this.maxWidth, this.position);
         if (this.cancelFormatting) {
           this.popup.classList.add('cancel-formatting');
         }
@@ -66,16 +76,52 @@ export class MinaTooltipDirective implements OnInit, OnDestroy {
     MinaTooltipDirective.hideTooltip(this.popup);
   }
 
-  static showTooltip(popup: HTMLDivElement, nativeElement: HTMLElement, message: string, maxWidth: number): void {
+  static showTooltip(popup: HTMLDivElement,
+                     nativeElement: HTMLElement,
+                     message: string,
+                     maxWidth: number,
+                     position: TooltipPosition): void {
     popup.innerHTML = message;
+
     const boundingClientRect = nativeElement.getBoundingClientRect();
     let x = boundingClientRect.left + (nativeElement.offsetWidth / 2) - (popup.offsetWidth / 2);
     let y = boundingClientRect.top + nativeElement.offsetHeight + TOOLTIP_OFFSET;
+    let animationName = '';
 
-    let pos: 'top' | 'bottom' = 'top';
-    if ((y + popup.offsetHeight) > window.innerHeight) {
-      y = boundingClientRect.top - popup.offsetHeight - TOOLTIP_OFFSET;
-      pos = 'bottom';
+    switch (position) {
+      case TooltipPosition.TOP:
+        animationName = TooltipPosition.BOTTOM;
+        y = boundingClientRect.top - popup.offsetHeight - TOOLTIP_OFFSET;
+        if (y < 0) {
+          y = boundingClientRect.top + nativeElement.offsetHeight + TOOLTIP_OFFSET;
+          animationName = TooltipPosition.TOP;
+        }
+        break;
+      case TooltipPosition.BOTTOM:
+        animationName = TooltipPosition.TOP;
+        if ((y + popup.offsetHeight) > window.innerHeight) {
+          y = boundingClientRect.top - popup.offsetHeight - TOOLTIP_OFFSET;
+          animationName = TooltipPosition.BOTTOM;
+        }
+        break;
+      case TooltipPosition.LEFT:
+        animationName = TooltipPosition.RIGHT;
+        x = boundingClientRect.left - popup.offsetWidth - TOOLTIP_OFFSET;
+        y = boundingClientRect.top + (nativeElement.offsetHeight / 2) - (popup.offsetHeight / 2);
+        if (x < 0) {
+          x = boundingClientRect.left + nativeElement.offsetWidth + TOOLTIP_OFFSET;
+          animationName = TooltipPosition.LEFT;
+        }
+        break;
+      case TooltipPosition.RIGHT:
+        animationName = TooltipPosition.LEFT;
+        x = boundingClientRect.left + nativeElement.offsetWidth + TOOLTIP_OFFSET;
+        y = boundingClientRect.top + (nativeElement.offsetHeight / 2) - (popup.offsetHeight / 2);
+        if ((x + popup.offsetWidth) > window.innerWidth) {
+          x = boundingClientRect.left - popup.offsetWidth - TOOLTIP_OFFSET;
+          animationName = TooltipPosition.RIGHT;
+        }
+        break;
     }
 
     if ((x + popup.offsetWidth) > window.innerWidth) {
@@ -84,10 +130,10 @@ export class MinaTooltipDirective implements OnInit, OnDestroy {
       x = TOOLTIP_OFFSET;
     }
 
-    popup.style.maxWidth = maxWidth + 'px';
-    popup.style.top = y.toString() + 'px';
-    popup.style.left = x.toString() + 'px';
-    popup.style.animationName = `tooltip-slide-${pos}`;
+    popup.style.maxWidth = maxWidth + PX;
+    popup.style.top = y + PX;
+    popup.style.left = x + PX;
+    popup.style.animationName = 'tooltip-slide-' + animationName;
   }
 
   static hideTooltip(popup: HTMLDivElement): void {

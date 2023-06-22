@@ -43,7 +43,7 @@
         {{ count.nodes }} Node{{ count.nodes | plural }} · {{ count.producers }} Producer{{ count.producers | plural }} · {{ count.snarkers }} Snarker{{ count.snarkers | plural }} · {{ count.seeders }} Seeder{{ count.seeders | plural }} · {{ count.transactionGenerators }} Generator{{ count.transactionGenerators | plural }}
       </div>
       <ng-template #nodesLengthRef>
-        <div class="pr-10 fx-row-vert-cent tertiary h-sm shrink-0 pl-5" *ngIf="nodesLength">{{ nodesLength }} Nodes</div>
+        <div class="pr-10 fx-row-vert-cent selected-primary h-sm shrink-0 pl-5" *ngIf="nodesLength">{{ nodesLength }} Nodes</div>
       </ng-template>
     </div>
   </ng-template>

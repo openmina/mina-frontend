@@ -18,7 +18,7 @@ mat-sidenav {
 	}
 
 	&.mobile {
-		width: 220px;
+		width: 75vw;
 		overflow: visible;
 
 		.backdrop {
@@ -63,7 +63,7 @@ mat-sidenav-content {
 	height: calc(100% - #{$toolbar});
 
 	&.mobile {
-		$toolbar: 44px;
+		$toolbar: 56px;
 		$subMenus: 56px;
 		height: calc(100% - #{$toolbar} - #{$subMenus});
 	}

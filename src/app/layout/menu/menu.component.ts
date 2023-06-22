@@ -13,6 +13,7 @@ import { filter, map, tap } from 'rxjs';
 import { CONFIG, getAvailableFeatures } from '@shared/constants/config';
 import { NavigationEnd, Router } from '@angular/router';
 import { removeParamsFromURL } from '@shared/helpers/router.helper';
+import { TooltipPosition } from '@shared/directives/mina-tooltip.directive';
 
 interface MenuItem {
   name: string;
@@ -129,4 +130,6 @@ export class MenuComponent extends ManualDetection implements OnInit {
   collapseMenu(): void {
     this.store.dispatch<AppChangeMenuCollapsing>({ type: APP_CHANGE_MENU_COLLAPSING, payload: !this.menu.collapsed });
   }
+
+  protected readonly TooltipPosition = TooltipPosition;
 }

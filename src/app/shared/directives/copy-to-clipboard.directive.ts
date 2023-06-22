@@ -1,7 +1,7 @@
 import { Directive, ElementRef, HostListener, Inject, Input } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { DOCUMENT } from '@angular/common';
-import { MinaTooltipDirective } from '@shared/directives/mina-tooltip.directive';
+import { MinaTooltipDirective, TooltipPosition } from '@shared/directives/mina-tooltip.directive';
 import { TooltipService } from '@shared/services/tooltip.service';
 
 @Directive({
@@ -23,7 +23,7 @@ export class CopyToClipboardDirective {
     event.stopPropagation();
     this.clipboard.copy(this.copyToClipboard);
     this.tooltipService.openTooltipsWithClipboardClick.push(0);
-    MinaTooltipDirective.showTooltip(this.popup, this.el.nativeElement, 'Copied to clipboard', 250);
+    MinaTooltipDirective.showTooltip(this.popup, this.el.nativeElement, 'Copied to clipboard', 250, TooltipPosition.BOTTOM);
 
     setTimeout(() => {
       this.tooltipService.openTooltipsWithClipboardClick.pop();

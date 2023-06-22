@@ -96,11 +96,23 @@
 	}
 }
 
-@media (max-width: 700px) {
+@media (max-width: 768px) {
 	.menu {
 		.menu-toggle {
-			height: 44px;
-			font-size: 16px;
+			height: 56px !important;
+			font-size: 20px !important;
+		}
+
+		.mina-icon {
+			font-size: 24px !important;
+		}
+
+		.item {
+			height: 54px !important;
+
+			.item-content {
+				font-size: 18px;
+			}
 		}
 	}
 }
@@ -132,7 +144,7 @@
 	@media (min-width: 769px) {
 		left: 42px;
 		&.collapsed {
-			transform: translate(-75px, -79px) rotate(-90deg);
+			transform: translate(-75px, -76px) rotate(-90deg);
 			animation-name: rottWithOpc2;
 		}
 	}

@@ -36,7 +36,7 @@ export class ExplorerBlocksZkAppDetailComponent extends MinaTableWrapper<ZkAppUp
     { name: 'Failure' },
   ];
 
-  constructor(private router: Router) { super() }
+  constructor(private router: Router) { super(); }
 
   override async ngOnInit(): Promise<void> {
     await super.ngOnInit();

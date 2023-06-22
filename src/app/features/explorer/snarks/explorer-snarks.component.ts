@@ -13,6 +13,7 @@ import { NodeStatus } from '@shared/types/app/node-status.type';
   templateUrl: './explorer-snarks.component.html',
   styleUrls: ['./explorer-snarks.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'h-100 flex-column' },
 })
 export class ExplorerSnarksComponent implements OnInit, OnDestroy {
 

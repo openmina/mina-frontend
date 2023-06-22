@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ComponentRef, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ComponentRef, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { selectActiveNode, selectAppDebuggerStatus, selectAppMenu, selectAppNodeStatus, selectNodes } from '@app/app.state';
 import { BehaviorSubject, filter, take } from 'rxjs';

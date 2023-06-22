@@ -508,7 +508,7 @@ export class SystemResourcesGraphComponent extends StoreDispatcher implements Af
   private static getXTicks(): number {
     const width = window.innerWidth;
     if (isMobile()) {
-      return 2.5;
+      return 2;
     } else if (width < 1200) {
       return 5;
     } else if (width < 1600) {

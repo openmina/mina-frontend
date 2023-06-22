@@ -62,12 +62,14 @@ form {
 
 	.p-absolute:first-child {
 		left: 5px;
-		top: 2px;
+		top: 50%;
+		transform: translateY(-50%);
 	}
 
 	.p-absolute:last-child {
 		right: 5px;
-		top: 0;
+		top: 50%;
+		transform: translateY(-50%);
 		display: none;
 	}
 

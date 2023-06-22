@@ -1,66 +1,69 @@
 @import 'variables';
 
 .mina-table {
-  .row {
-    color: $base-tertiary;
+	.row {
+		color: $base-tertiary;
 
-    &:not(.head) {
-      cursor: pointer;
-    }
-  }
+		&:not(.head) {
+			cursor: pointer;
+		}
+	}
 
-  .cdk-virtual-scroll-viewport {
-    overflow-x: hidden;
-    @media (max-width: 700px) {
-      padding-bottom: 70px;
-    }
-  }
+	.cdk-virtual-scroll-viewport {
+		overflow-x: hidden;
+		@media (max-width: 768px) {
+			padding-bottom: 80px;
+		}
+	}
 }
 
 .to-top {
-  display: none;
+	display: none;
 }
 
-@media (max-width: 700px) {
-  .to-top {
-    display: block;
-    position: fixed;
-    bottom: 76px;
-    right: 20px;
-    transform: rotate(-90deg);
-    color: $base-secondary;
+@media (max-width: 768px) {
+	.to-top {
+		display: block;
+		position: fixed;
+		rotate: -90deg;
+		color: $base-secondary;
 
-    &.hide {
-      bottom: -100px;
-      animation: bounceHide 0.5s cubic-bezier(0.5, 0.1, 0.5, 1.25) forwards;
-    }
+		&.hide {
+			animation: bounceHide 0.5s cubic-bezier(0.5, 0.1, 0.5, 1.25) forwards;
+		}
 
-    &:not(.hide) {
-      animation: bounceShow 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
-    }
-  }
+		&:not(.hide) {
+			animation: bounceShow 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
+		}
+	}
 }
 
 @keyframes bounceHide {
-  0% {
-    bottom: 76px;
-  }
-  50% {
-    bottom: 96px;
-  }
-  100% {
-    bottom: -100px;
-  }
+	0% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+	30% {
+		opacity: 0;
+		transform: translateX(-20px);
+	}
+	100% {
+		opacity: 0;
+		transform: translateX(-500px);
+	}
 }
 
 @keyframes bounceShow {
-  0% {
-    bottom: -100px;
-  }
-  50% {
-    bottom: 96px;
-  }
-  90% {
-    bottom: 76px;
-  }
+	0% {
+		opacity: 0;
+		transform: translateX(-500px);
+	}
+	70% {
+		opacity: 0;
+		transform: translateX(-20px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
 }

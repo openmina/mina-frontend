@@ -1,9 +1,9 @@
 <div class="h-xl tx-row f-600 head">
   <span class="pl-12">From</span>
   <span>To</span>
-  <span class="text-right">Amount</span>
+  <span class="text-right overflow-y-scroll">Amount</span>
 </div>
-<div class="h-minus-xl overflow-y-auto flex-column secondary">
+<div class="h-minus-xl overflow-y-scroll flex-column secondary">
   <div *ngFor="let tx of txs" class=""
        [class.open]="opened.includes(tx)">
     <div class="tx-row"
@@ -14,7 +14,7 @@
       <span>
         <mina-copy [value]="tx.to" [display]="tx.to | truncateMid:3: 3"></mina-copy>
       </span>
-      <span class="primary fx-row-vert-cent flex-end pr-12">
+      <span class="primary fx-row-vert-cent flex-end">
         {{ tx.amount }}
         <span class="mina-icon icon-300 ml-10 mr-5">chevron_right</span>
       </span>

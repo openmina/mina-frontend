@@ -48,13 +48,15 @@
     <span class="mina-icon f-18">arrow_upward</span>
   </button>
   <span class="tertiary mr-10 f-600 ml-16">Search</span>
-  <form [formGroup]="formGroup"
-        [class.active]="formGroup.get('search').value"
-        class="h-sm p-relative border-rad-4">
-    <span class="mina-icon icon-200 p-absolute f-20">search</span>
-    <input type="text" formControlName="search" placeholder="Action"
-           class="border-remove f-600 h-100 w-100 truncate">
-    <span class="mina-icon icon-200 p-absolute pointer"
-          (click)="formGroup.get('search').setValue('')">close</span>
-  </form>
+  <div>
+    <form [formGroup]="formGroup"
+          [class.active]="formGroup.get('search').value"
+          class="h-sm p-relative border-rad-4 mr-10">
+      <span class="mina-icon icon-200 p-absolute f-20">search</span>
+      <input type="text" formControlName="search" placeholder="Action"
+             class="border-remove f-600 h-100 w-100 truncate">
+      <span class="mina-icon icon-200 p-absolute pointer"
+            (click)="formGroup.get('search').setValue('')">close</span>
+    </form>
+  </div>
 </ng-template>

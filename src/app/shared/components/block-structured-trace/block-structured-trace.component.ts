@@ -12,7 +12,7 @@ import { SharedModule } from '@shared/shared.module';
   templateUrl: './block-structured-trace.component.html',
   styleUrls: ['./block-structured-trace.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'h-100 flex-column border-left' },
+  host: { class: 'h-100 flex-column' },
 })
 export class BlockStructuredTraceComponent extends ManualDetection {
 

@@ -1,6 +1,11 @@
 @import 'variables';
 @import 'dimensions';
-
+:host{
+	height: 40px;
+	@media (max-width: 768px) {
+		height: 56px;
+	}
+}
 .toolbar {
 	.mobile-toggle {
 		width: 46px;

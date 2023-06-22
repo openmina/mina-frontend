@@ -9,6 +9,7 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import { ErrorListComponent } from '@error-preview/error-list/error-list.component';
 import { MinaError } from '@shared/types/error-preview/mina-error.type';
 import { MARK_ERRORS_AS_SEEN, MarkErrorsAsSeen } from '@error-preview/error-preview.actions';
+import { isMobile } from '@shared/helpers/values.helper';
 
 @Component({
   selector: 'mina-error-preview',
@@ -75,7 +76,7 @@ export class ErrorPreviewComponent extends ManualDetection implements OnInit {
           originY: 'bottom',
           overlayX: 'start',
           overlayY: 'top',
-          offsetX: -10,
+          // offsetX: -10,
           offsetY: 14,
         }]),
     });
