@@ -14,6 +14,9 @@ steps:
   - name: push
     image: docker:latest
     commands:
+      # print the user name and password to check if they are set correctly
+      - echo $DOCKER_USERNAME
+      - echo $DOCKER_PASSWORD
       - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
       - docker push directcuteo/mina-frontend:latest
     volumes:
