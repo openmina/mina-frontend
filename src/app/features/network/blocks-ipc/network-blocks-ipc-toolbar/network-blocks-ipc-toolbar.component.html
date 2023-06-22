@@ -2,13 +2,13 @@
   <span class="tertiary mr-10 f-600">Height</span>
   <div class="pagination-group fx-row-vert-cent bg-selected-container ml-10 border-rad-4">
     <button class="h-sm w-sm fx-row-full-cent"
-            [class.disabled]="activeBlock === 1"
+            [class.disabled]="activeBlock === 1 || !activeBlock"
             [tooltip]="'Prev block'"
             [showDelay]="500"
             (click)="getBlock(activeBlock - 1)">
       <span class="mina-icon f-18">navigate_before</span>
     </button>
-    <span class="f-600 selected-primary pl-5 pr-5">{{ activeBlock }}</span>
+    <span class="f-600 selected-primary pl-5 pr-5">{{ activeBlock || '-' }}</span>
     <button class="h-sm w-sm fx-row-full-cent"
             [class.disabled]="earliestBlock === activeBlock"
             [tooltip]="'Next block'"
