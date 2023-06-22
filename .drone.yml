@@ -11,35 +11,51 @@ steps:
       - name: docker_sock
         path: /var/run/docker.sock
 
-  - name: frontend-server
-    image: directcuteo/mina-frontend:latest
-    pull: if-not-exists
-    detach: true
-    privileged: true
+  - name: push
+    image: docker:latest
+    commands:
+      - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+      - docker push directcuteo/mina-frontend:latest
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
     depends_on:
       - build
 
+#  - name: frontend-server
+#    image: directcuteo/mina-frontend:latest
+#    pull: if-not-exists
+#    detach: true
+#    privileged: true
+#    depends_on:
+#      - build
+#
 #  - name: prepare-tests
 #    image: cypress/included:12.6.0
 #    commands:
 #      - npm install
 #    depends_on:
 #      - build
-
+#
 #  - name: dashboard-nodes-table
 #    image: cypress/included:12.6.0
 #    commands:
 #      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/dashboard/nodes/dashboard-nodes-table.cy.ts"
 #    depends_on:
 #      - prepare-tests
-
+#
 #  - name: dashboard-nodes-toolbar
 #    image: cypress/included:12.6.0
 #    commands:
 #      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/dashboard/nodes/dashboard-nodes-toolbar.cy.ts"
 #    depends_on:
 #      - prepare-tests
-
+#
 #  - name: network-messages-table
 #    image: cypress/included:12.6.0
 #    commands:
