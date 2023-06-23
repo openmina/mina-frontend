@@ -12,6 +12,7 @@ import { DashboardSplitsComponent } from '@dashboard/splits/dashboard-splits.com
 import { CopyComponent } from '@shared/components/copy/copy.component';
 import { HorizontalMenuComponent } from '@shared/components/horizontal-menu/horizontal-menu.component';
 import { HorizontalResizableContainerComponent } from '@shared/components/horizontal-resizable-container/horizontal-resizable-container.component';
+import { DashboardSplitsSidePanelTableComponent } from './dashboard-splits-side-panel-table/dashboard-splits-side-panel-table.component';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { HorizontalResizableContainerComponent } from '@shared/components/horizo
     DashboardSplitsGraphComponent,
     DashboardSplitsToolbarComponent,
     DashboardSplitsSidePanelComponent,
+    DashboardSplitsSidePanelTableComponent,
   ],
   imports: [
     CommonModule,

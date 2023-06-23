@@ -4,7 +4,7 @@ import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-gr
 import { selectDashboardNodesActiveNode, selectDashboardNodesBlockTraces } from '@dashboard/nodes/dashboard-nodes.state';
 import { DashboardNodesSetActiveNode } from '@dashboard/nodes/dashboard-nodes.actions';
 import { filter } from 'rxjs';
-import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
+import { DashboardNode } from '@shared/types/dashboard/nodes/dashboard-node.type';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 
 @Component({

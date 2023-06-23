@@ -13,12 +13,13 @@ import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
 import { sort } from '@shared/helpers/array.helper';
 import { DswActionGroup } from '@shared/types/dsw/actions/dsw-action-group.type';
 import { DswActionsStats } from '@shared/types/dsw/actions/dsw-actions-stats.type';
+import { isMobile } from '@shared/helpers/values.helper';
 
 const initialState: DswActionsState = {
   groups: [],
   filteredGroups: [],
   stats: {} as DswActionsStats,
-  openSidePanel: window.innerWidth > 700,
+  openSidePanel: !isMobile(),
   activeSlot: undefined,
   earliestSlot: undefined,
   activeSearch: '',

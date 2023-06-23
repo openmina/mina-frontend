@@ -1,7 +1,7 @@
 import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
 import { sort } from '@shared/helpers/array.helper';
 import { DashboardNodesState } from '@dashboard/nodes/dashboard-nodes.state';
-import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
+import { DashboardNodeCount } from '@shared/types/dashboard/nodes/dashboard-node-count.type';
 import {
   DASHBOARD_NODES_CLOSE,
   DASHBOARD_NODES_GET_FORKS_SUCCESS,
@@ -18,10 +18,10 @@ import {
   DASHBOARD_NODES_TOGGLE_NODES_SHOWING,
   DashboardNodesActions,
 } from '@dashboard/nodes/dashboard-nodes.actions';
-import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
+import { DashboardNode } from '@shared/types/dashboard/nodes/dashboard-node.type';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
-import { DashboardForkFilter } from '@shared/types/dashboard/node-list/dashboard-fork-filter.type';
+import { DashboardForkFilter } from '@shared/types/dashboard/nodes/dashboard-fork-filter.type';
 
 const initialState: DashboardNodesState = {
   nodes: [],

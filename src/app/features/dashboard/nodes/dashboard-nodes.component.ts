@@ -8,7 +8,7 @@ import {
   DashboardNodesSetActiveBlock,
 } from '@dashboard/nodes/dashboard-nodes.actions';
 import { selectDashboardNodes, selectDashboardNodesActiveNode, selectDashboardNodesRemainingRequests } from '@dashboard/nodes/dashboard-nodes.state';
-import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
+import { DashboardNode } from '@shared/types/dashboard/nodes/dashboard-node.type';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { filter, merge, take, throttleTime } from 'rxjs';
 import { MergedRoute } from '@shared/router/merged-route';

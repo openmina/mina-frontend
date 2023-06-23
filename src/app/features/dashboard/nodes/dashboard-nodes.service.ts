@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
+import { DashboardNode } from '@shared/types/dashboard/nodes/dashboard-node.type';
 import { catchError, concatAll, EMPTY, filter, from, map, mergeMap, Observable, of, scan, switchMap, take, throwError, toArray } from 'rxjs';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
@@ -9,7 +9,7 @@ import { TracingBlocksService } from '@tracing/tracing-blocks/tracing-blocks.ser
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { lastItem } from '@shared/helpers/array.helper';
 import { CONFIG, isNotVanilla } from '@shared/constants/config';
-import { DashboardFork } from '@shared/types/dashboard/node-list/dashboard-fork.type';
+import { DashboardFork } from '@shared/types/dashboard/nodes/dashboard-fork.type';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 
 @Injectable({

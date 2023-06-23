@@ -8,16 +8,6 @@ const routes: Routes = [
     path: '',
     component: DashboardComponent,
     children: [
-      // {
-      //   path: 'block',
-      //   loadChildren: () => import('./aggregator/aggregator.module').then(m => m.AggregatorModule),
-      //   title: DASHBOARD_TITLE,
-      // },
-      // {
-      //   path: 'libp2p',
-      //   loadChildren: () => import('./aggregator-ipc/aggregator-ipc.module').then(m => m.AggregatorIpcModule),
-      //   title: DASHBOARD_TITLE,
-      // },
       {
         path: 'nodes',
         loadChildren: () => import('./nodes/dashboard-nodes.module').then(m => m.DashboardNodesModule),

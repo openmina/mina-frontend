@@ -19,12 +19,12 @@ import {
   selectDashboardNodesRemainingRequests,
   selectDashboardNodesShowOfflineNodes,
 } from '@dashboard/nodes/dashboard-nodes.state';
-import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
+import { DashboardNodeCount } from '@shared/types/dashboard/nodes/dashboard-node-count.type';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { Routes } from '@shared/enums/routes.enum';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
-import { DashboardForkFilter } from '@shared/types/dashboard/node-list/dashboard-fork-filter.type';
+import { DashboardForkFilter } from '@shared/types/dashboard/nodes/dashboard-fork-filter.type';
 import { CONFIG } from '@shared/constants/config';
 
 @Component({

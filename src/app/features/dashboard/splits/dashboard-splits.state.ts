@@ -4,7 +4,7 @@ import { selectDashboardSplitsState } from '@dashboard/dashboard.state';
 import { DashboardSplitsPeer } from '@shared/types/dashboard/splits/dashboard-splits-peer.type';
 import { DashboardSplitsLink } from '@shared/types/dashboard/splits/dashboard-splits-link.type';
 import { DashboardSplitsSet } from '@shared/types/dashboard/splits/dashboard-splits-set.type';
-import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
+import { DashboardNodeCount } from '@shared/types/dashboard/nodes/dashboard-node-count.type';
 import { TableSort } from '@shared/types/shared/table-sort.type';
 
 export interface DashboardSplitsState {

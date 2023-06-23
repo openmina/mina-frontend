@@ -8,7 +8,7 @@ import {
 } from '@dashboard/splits/dashboard-splits.state';
 import { DashboardSplitsSet } from '@shared/types/dashboard/splits/dashboard-splits-set.type';
 import { DashboardSplitsGetSplits, DashboardSplitsMergeNodes, DashboardSplitsSplitNodes } from '@dashboard/splits/dashboard-splits.actions';
-import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
+import { DashboardNodeCount } from '@shared/types/dashboard/nodes/dashboard-node-count.type';
 import { filter } from 'rxjs';
 import { selectLoadingStateLength } from '@app/layout/toolbar/loading.reducer';
 

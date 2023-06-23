@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
 import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
-import { DashboardNode } from '@app/shared/types/dashboard/node-list/dashboard-node.type';
+import { DashboardNode } from '@shared/types/dashboard/nodes/dashboard-node.type';
 import {
   selectDashboardNodes,
   selectDashboardNodesActiveBlockLevel,

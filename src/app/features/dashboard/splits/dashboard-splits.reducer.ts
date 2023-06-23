@@ -15,7 +15,8 @@ import { DashboardSplitsPeer } from '@shared/types/dashboard/splits/dashboard-sp
 import { DashboardSplitsLink } from '@shared/types/dashboard/splits/dashboard-splits-link.type';
 import { DashboardSplitsSet } from '@shared/types/dashboard/splits/dashboard-splits-set.type';
 import { noMillisFormat, toReadableDate } from '@shared/helpers/date.helper';
-import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
+import { DashboardNodeCount } from '@shared/types/dashboard/nodes/dashboard-node-count.type';
+import { isMobile } from '@shared/helpers/values.helper';
 
 const initialState: DashboardSplitsState = {
   peers: [],
@@ -30,7 +31,7 @@ const initialState: DashboardSplitsState = {
     sortBy: 'outgoingConnections',
     sortDirection: SortDirection.DSC,
   },
-  openSidePanel: true,
+  openSidePanel: !isMobile(),
 };
 
 export function reducer(state: DashboardSplitsState = initialState, action: DashboardSplitsActions): DashboardSplitsState {

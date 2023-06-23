@@ -1,8 +1,8 @@
 import { FeatureAction } from '@shared/types/store/feature-action.type';
 import { TableSort } from '@shared/types/shared/table-sort.type';
-import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
+import { DashboardNode } from '@shared/types/dashboard/nodes/dashboard-node.type';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
-import { DashboardFork } from '@shared/types/dashboard/node-list/dashboard-fork.type';
+import { DashboardFork } from '@shared/types/dashboard/nodes/dashboard-fork.type';
 
 enum DashboardNodesActionTypes {
   DASHBOARD_NODES_INIT = 'DASHBOARD_NODES_INIT',

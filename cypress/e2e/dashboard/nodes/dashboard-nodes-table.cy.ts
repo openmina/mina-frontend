@@ -3,7 +3,7 @@ import { MinaState } from '@app/app.setup';
 import { getNodes, stateSliceAsPromise } from '../../../support/commands';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 import { DashboardNodesState } from '@dashboard/nodes/dashboard-nodes.state';
-import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
+import { DashboardNode } from '@shared/types/dashboard/nodes/dashboard-node.type';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 

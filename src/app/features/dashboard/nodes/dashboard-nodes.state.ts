@@ -2,10 +2,10 @@ import { createSelector, MemoizedSelector } from '@ngrx/store';
 import { MinaState } from '@app/app.setup';
 import { TableSort } from '@shared/types/shared/table-sort.type';
 import { selectDashboardNodesState } from '@dashboard/dashboard.state';
-import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
-import { DashboardNodeCount } from '@shared/types/dashboard/node-list/dashboard-node-count.type';
+import { DashboardNode } from '@shared/types/dashboard/nodes/dashboard-node.type';
+import { DashboardNodeCount } from '@shared/types/dashboard/nodes/dashboard-node-count.type';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
-import { DashboardForkFilter } from '@shared/types/dashboard/node-list/dashboard-fork-filter.type';
+import { DashboardForkFilter } from '@shared/types/dashboard/nodes/dashboard-fork-filter.type';
 
 
 export interface DashboardNodesState {

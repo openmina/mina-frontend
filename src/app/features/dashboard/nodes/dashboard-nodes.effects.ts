@@ -35,11 +35,11 @@ import {
   DashboardNodesSetActiveNode,
 } from '@dashboard/nodes/dashboard-nodes.actions';
 import { DashboardNodesService } from '@dashboard/nodes/dashboard-nodes.service';
-import { DashboardNode } from '@shared/types/dashboard/node-list/dashboard-node.type';
+import { DashboardNode } from '@shared/types/dashboard/nodes/dashboard-node.type';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
 import { Router } from '@angular/router';
 import { Routes } from '@shared/enums/routes.enum';
-import { DashboardFork } from '@shared/types/dashboard/node-list/dashboard-fork.type';
+import { DashboardFork } from '@shared/types/dashboard/nodes/dashboard-fork.type';
 import { DashboardNodesState } from '@dashboard/nodes/dashboard-nodes.state';
 
 @Injectable({
