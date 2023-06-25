@@ -1,0 +1,9 @@
+<ng-container #minaTable></ng-container>
+
+<ng-template #rowTemplate let-row="row">
+  <span>{{ row.date }}</span>
+  <span>
+    <span [ngClass]="row.level" class="status">{{ row.level }}</span>
+  </span>
+  <span>{{ row.message }}</span>
+</ng-template>

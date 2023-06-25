@@ -19,6 +19,11 @@ const routes: Routes = [
         title: DSW_TITLE,
       },
       {
+        path: 'frontier',
+        loadChildren: () => import('./frontier/dsw-frontier.module').then(m => m.DswFrontierModule),
+        title: DSW_TITLE,
+      },
+      {
         path: '**',
         redirectTo: 'actions',
         pathMatch: 'full',

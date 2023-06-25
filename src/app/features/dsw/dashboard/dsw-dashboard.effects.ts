@@ -30,6 +30,7 @@ export class DswDashboardEffects extends MinaBaseEffect<DswDashboardActions> {
               store: Store<MinaState>) {
     super(store, selectMinaState);
 
+    //TODO: add to loading bar
     this.getNodes$ = createEffect(() => this.actions$.pipe(
       ofType(DSW_DASHBOARD_GET_NODES, DSW_DASHBOARD_CLOSE),
       this.latestActionState<DswDashboardGetNodes | DswDashboardClose>(),

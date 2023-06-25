@@ -1,0 +1,6 @@
+<span class="f-600 tertiary mr-10">Logs</span>
+<span class="status mr-8 f-600 pointer"
+      [ngClass]="level"
+      *ngFor="let level of availableLevels">
+  {{ level }}
+</span>

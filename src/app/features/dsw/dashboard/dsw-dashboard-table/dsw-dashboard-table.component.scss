@@ -1,5 +1,11 @@
 @import 'variables';
 
+.h-xl {
+	display: grid;
+	grid-template-columns: 240px 200px 200px;
+	border-bottom: 2px solid $base-divider;
+}
+
 .status {
 	padding: 2px 5px;
 	border-radius: 4px;

@@ -12,6 +12,6 @@ import { Routes } from '@shared/enums/routes.enum';
 export class DswComponent extends StoreDispatcher implements OnInit {
 
   ngOnInit(): void {
-    this.dispatch(AppChangeSubMenus, [Routes.DASHBOARD, Routes.ACTIONS]);
+    this.dispatch(AppChangeSubMenus, [Routes.DASHBOARD, Routes.ACTIONS, Routes.FRONTIER]);
   }
 }

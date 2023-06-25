@@ -1,0 +1,31 @@
+@import 'variables';
+
+.status {
+	padding: 4px 6px;
+	border-radius: 4px;
+
+	&.Best {
+		background-color: $special-selected-alt-1-container;
+		color: $special-selected-alt-1-primary;
+	}
+
+	&.Applied {
+		background-color: $success-container;
+		color: $success-primary;
+	}
+
+	&.Applying {
+		background-color: $selected-container;
+		color: $selected-primary;
+	}
+
+	&.Downloading {
+		background-color: $aware-container;
+		color: $aware-primary;
+	}
+
+	&.Missing {
+		background-color: $warn-container;
+		color: $warn-primary;
+	}
+}

@@ -12,11 +12,11 @@ export class DswDashboardService {
   constructor(private http: HttpClient) { }
 
   getNodes(): Observable<DswDashboardNode[]> {
-    return of(JSON.parse(JSON.stringify(mock))).pipe(delay(250));
+    return of(JSON.parse(JSON.stringify(mock()))).pipe(delay(250));
   }
 }
 
-const mockDetail = () => ({
+export const mockDetail = () => ({
   syncStakingLedger: '20/06/2023 19:43',
   syncEpochLedger: '20/06/2023 19:43',
   syncRootLedger: '20/06/2023 19:43',
@@ -27,7 +27,7 @@ const mockDetail = () => ({
   appliedBlocks: Math.floor(Math.random() * 100),
 });
 
-const mock: DswDashboardNode[] = [
+const mock = (): DswDashboardNode[] => [
   {
     status: AppNodeStatusTypes.SYNCED,
     name: 'Node 1',

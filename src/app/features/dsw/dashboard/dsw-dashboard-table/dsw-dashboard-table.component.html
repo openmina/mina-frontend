@@ -1,8 +1,18 @@
-<ng-container #minaTable></ng-container>
+<div class="flex-column h-100">
+  <div class="h-xl lh-xl border-top pl-12 tertiary f-600">
+    <span>Snarker Detail</span>
+    <span>Chain</span>
+    <span>Frontier</span>
+  </div>
+  <div class="h-minus-xl flex-column">
+    <ng-container #minaTable></ng-container>
+  </div>
+</div>
 
 <ng-template #rowTemplate let-row="row">
   <span>
-    <span class="status f-600" [ngClass]="row.status.toLowerCase()">{{ row.status }}</span>
+    <span class="status f-600 text-capitalize"
+          [ngClass]="row.status.toLowerCase()">{{ row.status.toLowerCase() }}</span>
   </span>
   <span>{{ row.name }}</span>
   <span>{{ row.bestTip }}</span>
