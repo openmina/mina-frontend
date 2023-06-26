@@ -59,15 +59,6 @@
 			background-color: $warn-container;
 			color: $warn-primary;
 
-			&.synced {
-				background-color: $success-container;
-				color: $success-secondary;
-
-				.strong-text {
-					color: $success-primary;
-				}
-			}
-
 			&.connecting,
 			&.listening {
 				background-color: $base-container;
@@ -75,6 +66,15 @@
 
 				.strong-text {
 					color: $base-primary;
+				}
+			}
+
+			&.synced {
+				background-color: $success-container;
+				color: $success-secondary;
+
+				.strong-text {
+					color: $success-primary;
 				}
 			}
 
@@ -106,14 +106,17 @@
 			}
 
 			.node-switcher {
-				border-left: 2px solid $base-surface;
+				&:not(.border-rad-4) {
+					border-left: 2px solid $base-surface;
+					cursor: pointer;
 
-				.mina-icon {
-					width: 16px;
-				}
+					.mina-icon {
+						width: 16px;
+					}
 
-				&:hover {
-					background-color: $base-container;
+					&:hover {
+						background-color: $base-container;
+					}
 				}
 			}
 		}

@@ -10,6 +10,10 @@ import { LoadingEvent } from '@shared/types/core/loading/loading-event.type';
 import { AppMenu } from '@shared/types/app/app-menu.type';
 import { APP_TOGGLE_MENU_OPENING, AppToggleMenuOpening } from '@app/app.actions';
 import { selectLoadingStateLength } from '@app/layout/toolbar/loading.reducer';
+import { getMergedRoute } from '@shared/router/router-state.selectors';
+import { MergedRoute } from '@shared/router/merged-route';
+import { removeParamsFromURL } from '@shared/helpers/router.helper';
+import { Routes } from '@shared/enums/routes.enum';
 
 @Component({
   selector: 'mina-toolbar',
@@ -23,8 +27,11 @@ export class ToolbarComponent extends ManualDetection implements OnInit {
   title: string = 'Loading';
   definiteLoading: LoadingEvent;
   isMobile: boolean;
+  switchForbidden: boolean;
 
   @ViewChild('loadingRef') private loadingRef: ElementRef<HTMLDivElement>;
+
+  private activeSubMenu: string;
 
   constructor(private router: Router,
               private store: Store<MinaState>,
@@ -34,6 +41,7 @@ export class ToolbarComponent extends ManualDetection implements OnInit {
     this.listenToTitleChange();
     this.listenToMenuChange();
     this.listenToLoading();
+    this.listenToRouterChange();
   }
 
   private listenToLoading(): void {
@@ -74,6 +82,7 @@ export class ToolbarComponent extends ManualDetection implements OnInit {
       .subscribe((title: string) => {
         if (title) {
           this.title = title.split('- ')[1];
+          this.buildSwitchForbidden();
           this.detect();
         }
       });
@@ -85,5 +94,19 @@ export class ToolbarComponent extends ManualDetection implements OnInit {
 
   toggleMenu(): void {
     this.store.dispatch<AppToggleMenuOpening>({ type: APP_TOGGLE_MENU_OPENING });
+  }
+
+  private listenToRouterChange(): void {
+    this.store.select(getMergedRoute)
+      .pipe(filter(Boolean))
+      .subscribe((route: MergedRoute) => {
+        this.activeSubMenu = removeParamsFromURL(route.url.split('/')[2]).toUpperCase();
+        this.buildSwitchForbidden();
+        this.detect();
+      });
+  }
+
+  private buildSwitchForbidden(): void {
+    this.switchForbidden = [this.title.toUpperCase(), this.activeSubMenu].includes(Routes.DASHBOARD.toUpperCase());
   }
 }

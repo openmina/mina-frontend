@@ -13,9 +13,7 @@
     <div class="percentage text-right flex-end pr-5 selected-primary flex-row align-center" *ngIf="definiteLoading">
       {{ definiteLoading.remaining }} remaining, <span>{{ definiteLoading.percentage }}</span>% completed
     </div>
-    <ng-container *ngIf="title !== 'Dashboard'">
-      <mina-server-status></mina-server-status>
-    </ng-container>
+    <mina-server-status [switchForbidden]="switchForbidden"></mina-server-status>
   </div>
   <div #loadingRef id="loadingRef" class="loading p-absolute" [class.opacity-0]="!!definiteLoading"></div>
 </div>

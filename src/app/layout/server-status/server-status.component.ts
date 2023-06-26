@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ComponentRef, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ComponentRef, ElementRef, Input, NgZone, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { selectActiveNode, selectAppDebuggerStatus, selectAppMenu, selectAppNodeStatus, selectNodes } from '@app/app.state';
 import { BehaviorSubject, filter, take } from 'rxjs';
@@ -33,7 +33,9 @@ const TOOLTIP_MESSAGES: { [p: string]: string } = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-row align-center' },
 })
-export class ServerStatusComponent extends ManualDetection implements OnInit {
+export class ServerStatusComponent extends ManualDetection implements OnInit, OnChanges {
+
+  @Input() switchForbidden: boolean = true;
 
   readonly elapsedTime$: BehaviorSubject<string> = new BehaviorSubject<string>('0s');
 
@@ -75,6 +77,10 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
     this.listenToNodeChanges();
   }
 
+  ngOnChanges(): void {
+    this.buildTooltipText();
+  }
+
   private createTimer(): void {
     this.zone.run(() => {
       this.interval = setInterval(() => {
@@ -102,9 +108,16 @@ export class ServerStatusComponent extends ManualDetection implements OnInit {
 
         this.blockLevel = node.blockLevel;
         this.status = node.status.toLowerCase();
-        this.nodeTooltip = TOOLTIP_MESSAGES[this.status];
+        this.buildTooltipText();
         this.detect();
       });
+  }
+
+  private buildTooltipText(): void {
+    this.nodeTooltip = TOOLTIP_MESSAGES[this.status];
+    if (this.switchForbidden) {
+      this.nodeTooltip = 'This page shows statistics about multiple nodes';
+    }
   }
 
   private listenToDebuggerStatusChange(): void {

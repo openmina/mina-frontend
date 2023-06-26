@@ -16,8 +16,7 @@
      [class.offline]="!webNodeStatus.peers && !webNodeStatus.messages">
   <span class="mina-icon icon-300 f-20">language</span>
   <div class="ml-5 mr-5">
-    {{ webNodeStatus.peers }} peer{{ webNodeStatus.peers === 1 ? '' : 's' }} , {{ webNodeStatus.messages }}
-                              message{{ webNodeStatus.messages === 1 ? '' : 's' }}
+    {{ webNodeStatus.peers }} peer{{ webNodeStatus.peers === 1 ? '' : 's' }} , {{ webNodeStatus.messages }} message{{ webNodeStatus.messages === 1 ? '' : 's' }}
   </div>
 </div>
 
@@ -28,9 +27,10 @@
   </div>
   <div class="bg-surface h-sm border-rad-4 p-relative z-1">
     <div class="background-wrap border-rad-4 fx-row-vert-cent h-100"
-         [ngClass]="status">
-      <div class="block-level h-100 fx-row-vert-cent pl-5 pr-8"
-           [tooltip]="(!isMobile || !blockLevel) ? nodeTooltip : ('Height ' + blockLevel + '\n' + nodeTooltip)">
+         [ngClass]="[status, switchForbidden ? 'synced' : '']"
+         [tooltip]="nodeTooltip">
+      <div *ngIf="!switchForbidden"
+           class="block-level h-100 fx-row-vert-cent pl-5 pr-8">
         <span class="strong-text text-capitalize fx-row-vert-cent mr-5">
           <span class="mina-icon icon-200 f-20">dns</span>
           &nbsp;{{ status }}
@@ -41,10 +41,11 @@
           <span class="p-absolute ago">ago</span>
         </span>
       </div>
-      <div class="node-switcher h-100 pointer fx-row-vert-cent pl-5 pr-8"
+      <div class="node-switcher h-100 fx-row-vert-cent pl-5 pr-8"
+           [class.border-rad-4]="switchForbidden"
            #overlayOpener (click)="openNodePicker($event)">
-        <span class="strong-text">{{ activeNode?.name }}</span>
-        <span class="mina-icon icon-200">arrow_drop_down</span>
+        <span class="strong-text">{{ !switchForbidden ? activeNode?.name : 'All Nodes' }}</span>
+        <span class="mina-icon icon-200" *ngIf="!switchForbidden">arrow_drop_down</span>
       </div>
     </div>
   </div>
