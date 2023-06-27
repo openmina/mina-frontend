@@ -47,7 +47,7 @@ export class ServerStatusComponent extends ManualDetection implements OnInit, On
 
   activeNode: MinaNode;
 
-  enabledDebugger: boolean = CONFIG.configs.some(n => n.debugger);
+  enabledDebugger: boolean;
   debuggerStatus: DebuggerStatus;
   debuggerTooltip: string;
 
@@ -125,6 +125,7 @@ export class ServerStatusComponent extends ManualDetection implements OnInit, On
       .subscribe((debuggerStatus: DebuggerStatus) => {
         this.debuggerStatus = debuggerStatus;
         this.debuggerTooltip = 'Debugger is ' + (debuggerStatus.isOnline ? 'online' : 'offline');
+        this.enabledDebugger = CONFIG.configs.some(n => n.debugger);
         this.detect();
       });
   }

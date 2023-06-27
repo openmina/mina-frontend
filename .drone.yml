@@ -7,7 +7,7 @@ steps:
     image: docker:latest
     commands:
       - COMMIT_SHORT_SHA=$(echo $DRONE_COMMIT_SHA | cut -c 1-7)
-      - docker build --no-cache -t directcuteo/mina-frontend:$COMMIT_SHORT_SHA -f Dockerfile .
+      - docker build --no-cache -t directcuteo/mina-frontend:$COMMIT_SHORT_SHA -f Dockerfile2 .
     volumes:
       - name: docker_sock
         path: /var/run/docker.sock
@@ -29,28 +29,30 @@ steps:
     depends_on:
       - build
 
-#  - name: frontend-server
-#    image: directcuteo/mina-frontend:latest
-#    pull: if-not-exists
-#    detach: true
-#    privileged: true
-#    depends_on:
-#      - build
-#
-#  - name: prepare-tests
-#    image: cypress/included:12.6.0
-#    commands:
-#      - npm install
-#    depends_on:
-#      - build
-#
-#  - name: dashboard-nodes-table
-#    image: cypress/included:12.6.0
-#    commands:
-#      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/dashboard/nodes/dashboard-nodes-table.cy.ts"
-#    depends_on:
-#      - prepare-tests
-#
+  - name: frontend-server
+    commands:
+      - COMMIT_SHORT_SHA=$(echo $DRONE_COMMIT_SHA | cut -c 1-7)
+    image: directcuteo/mina-frontend:$COMMIT_SHORT_SHA
+    pull: if-not-exists
+    detach: true
+    privileged: true
+    depends_on:
+      - build
+
+  - name: prepare-tests
+    image: cypress/included:12.6.0
+    commands:
+      - npm install
+    depends_on:
+      - build
+
+  - name: dashboard-nodes-table
+    image: cypress/included:12.6.0
+    commands:
+      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/dashboard/nodes/dashboard-nodes-table.cy.ts"
+    depends_on:
+      - prepare-tests
+
 #  - name: dashboard-nodes-toolbar
 #    image: cypress/included:12.6.0
 #    commands:

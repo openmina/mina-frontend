@@ -22,7 +22,7 @@ const initialState: AppState = {
     timestamp: 0,
   },
   debuggerStatus: {
-    isOnline: false,
+    isOnline: true,
     failed: undefined,
   },
   menu: {
@@ -70,7 +70,7 @@ export function reducer(state: AppState = initialState, action: any): AppState {
       return {
         ...state,
         debuggerStatus: {
-          isOnline: action.payload.isOnline !== undefined ? action.payload.isOnline : state.debuggerStatus.isOnline,
+          isOnline: action.payload.isOnline !== undefined ? action.payload.isOnline : false,
           failed: action.payload.failed !== undefined ? action.payload.failed : state.debuggerStatus.failed,
         },
       };

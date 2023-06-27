@@ -1,5 +1,5 @@
 <div class="debugger-status h-sm mr-8 border-rad-4 fx-row-full-cent"
-     *ngIf="enabledDebugger && debuggerStatus"
+     *ngIf="enabledDebugger && debuggerStatus && !switchForbidden"
      [tooltip]="debuggerTooltip"
      [class.failed]="debuggerStatus.failed"
      [class.offline]="!debuggerStatus.isOnline">
@@ -41,7 +41,7 @@
           <span class="p-absolute ago">ago</span>
         </span>
       </div>
-      <div class="node-switcher h-100 fx-row-vert-cent pl-5 pr-8"
+      <div class="node-switcher h-100 fx-row-vert-cent pl-8 pr-8"
            [class.border-rad-4]="switchForbidden"
            #overlayOpener (click)="openNodePicker($event)">
         <span class="strong-text">{{ !switchForbidden ? activeNode?.name : 'All Nodes' }}</span>

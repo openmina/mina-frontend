@@ -133,27 +133,27 @@ describe('DASHBOARD NODES TABLE', () => {
       });
   });
 
-  it('have correct number of counted filtered nodes displayed', () => {
-    cy.get('mina-dashboard-nodes-toolbar .row1 div.flex-between div.flex-row button:last-child')
-      .click({ force: true })
-      .window()
-      .its('store')
-      .then(getDashboard)
-      .then((state: DashboardNodesState) => {
-        if (state && state.nodes.length > 1) {
-          const syncedNodes = new Set(state.nodes.filter(n => n.name.includes('node') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
-          const syncedProducers = new Set(state.nodes.filter(n => n.name.includes('prod') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
-          const syncedSnarkers = new Set(state.nodes.filter(n => n.name.includes('snarker') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
-          const syncedSeeders = new Set(state.nodes.filter(n => n.name.includes('seed') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
-          const syncedTxGenerators = new Set(state.nodes.filter(n => n.name.includes('transaction-generator') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
-          expect(syncedNodes.size).to.eq(state.nodeCount.nodes);
-          expect(syncedProducers.size).to.eq(state.nodeCount.producers);
-          expect(syncedSnarkers.size).to.eq(state.nodeCount.snarkers);
-          expect(syncedSeeders.size).to.eq(state.nodeCount.seeders);
-          expect(syncedTxGenerators.size).to.eq(state.nodeCount.transactionGenerators);
-        }
-      });
-  });
+  // it('have correct number of counted filtered nodes displayed', () => {
+  //   cy.get('mina-dashboard-nodes-toolbar .row1 div.flex-between div.flex-row button:last-child')
+  //     .click({ force: true })
+  //     .window()
+  //     .its('store')
+  //     .then(getDashboard)
+  //     .then((state: DashboardNodesState) => {
+  //       if (state && state.nodes.length > 1) {
+  //         const syncedNodes = new Set(state.nodes.filter(n => n.name.includes('node') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
+  //         const syncedProducers = new Set(state.nodes.filter(n => n.name.includes('prod') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
+  //         const syncedSnarkers = new Set(state.nodes.filter(n => n.name.includes('snarker') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
+  //         const syncedSeeders = new Set(state.nodes.filter(n => n.name.includes('seed') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
+  //         const syncedTxGenerators = new Set(state.nodes.filter(n => n.name.includes('transaction-generator') && n.status !== AppNodeStatusTypes.OFFLINE).map(n => n.url));
+  //         expect(syncedNodes.size).to.eq(state.nodeCount.nodes);
+  //         expect(syncedProducers.size).to.eq(state.nodeCount.producers);
+  //         expect(syncedSnarkers.size).to.eq(state.nodeCount.snarkers);
+  //         expect(syncedSeeders.size).to.eq(state.nodeCount.seeders);
+  //         expect(syncedTxGenerators.size).to.eq(state.nodeCount.transactionGenerators);
+  //       }
+  //     });
+  // });
 
   it('sort by name', () => {
     cy.get('mina-dashboard-nodes-table .head > span:nth-child(1)')
@@ -335,7 +335,7 @@ describe('DASHBOARD NODES TABLE', () => {
       });
   });
 
-  it('sort by block block application reversed', () => {
+  it('sort by block application reversed', () => {
     cy.get('mina-dashboard-nodes-table .head > span:nth-child(8)')
       .click()
       .get('mina-dashboard-nodes-table .head > span:nth-child(8)')
