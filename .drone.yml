@@ -15,9 +15,7 @@ steps:
   - name: push
     image: docker:latest
     commands:
-      - COMMIT_SHORT_SHA=$(echo $DRONE_COMMIT_SHA | cut -c 1-7)
       - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-      - echo ${DRONE_COMMIT_SHA:0:8}
       - docker push directcuteo/mina-frontend:${DRONE_COMMIT_SHA:0:7}
     volumes:
       - name: docker_sock
