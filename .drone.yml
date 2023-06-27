@@ -32,6 +32,7 @@ steps:
   - name: frontend-server
     commands:
       - COMMIT_SHORT_SHA=$(echo $DRONE_COMMIT_SHA | cut -c 1-7)
+      - echo "COMMIT_SHORT_SHA: $COMMIT_SHORT_SHA"
     image: directcuteo/mina-frontend:$COMMIT_SHORT_SHA
     pull: if-not-exists
     detach: true
