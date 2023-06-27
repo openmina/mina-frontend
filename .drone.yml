@@ -38,7 +38,7 @@ steps:
     detach: true
     privileged: true
     depends_on:
-      - build
+      - push
 
   - name: prepare-tests
     image: cypress/included:12.6.0
