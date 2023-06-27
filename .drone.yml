@@ -45,7 +45,7 @@ steps:
     commands:
       - npm install
     depends_on:
-      - build
+      - push
 
   - name: dashboard-nodes-table
     image: cypress/included:12.6.0
