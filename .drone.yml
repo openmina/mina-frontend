@@ -30,7 +30,7 @@ steps:
       - build
 
   - name: frontend-server
-    image: docker:latest
+    image: directcuteo/mina-frontend:$COMMIT_SHORT_SHA
     pull: if-not-exists
     detach: true
     privileged: true
@@ -44,26 +44,19 @@ steps:
     depends_on:
       - push
 
-  - name: wait-startup
-    image: alpine
-    commands:
-      - sleep 30s
-    depends_on:
-      - prepare-tests
-
   - name: verify
     image: appropriate/curl
     commands:
       - curl -I http://frontend-server:80
     depends_on:
-      - wait-startup
+      - prepare-tests
 
   - name: dashboard-nodes-table
     image: cypress/included:12.6.0
     commands:
       - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/dashboard/nodes/dashboard-nodes-table.cy.ts"
     depends_on:
-      - verify
+      - prepare-tests
 
 #  - name: dashboard-nodes-toolbar
 #    image: cypress/included:12.6.0
