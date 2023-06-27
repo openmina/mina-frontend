@@ -30,11 +30,11 @@ steps:
       - build
 
   - name: frontend-server
+    image: docker:latest
     commands:
       - COMMIT_SHORT_SHA=$(echo $DRONE_COMMIT_SHA | cut -c 1-7)
       - echo $COMMIT_SHORT_SHA
       - docker run -d -p 8080:80 --name frontend-server directcuteo/mina-frontend:COMMIT_SHORT_SHA
-    image: directcuteo/mina-frontend:COMMIT_SHORT_SHA
     pull: if-not-exists
     detach: true
     privileged: true
