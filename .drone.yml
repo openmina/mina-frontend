@@ -17,7 +17,8 @@ steps:
     commands:
       - COMMIT_SHORT_SHA=$(echo $DRONE_COMMIT_SHA | cut -c 1-7)
       - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-      - docker push directcuteo/mina-frontend:$COMMIT_SHORT_SHA
+      - echo ${DRONE_COMMIT_SHA:0:8}
+      - docker push directcuteo/mina-frontend:${DRONE_COMMIT_SHA:0:8}
     volumes:
       - name: docker_sock
         path: /var/run/docker.sock
@@ -30,7 +31,7 @@ steps:
       - build
 
   - name: frontend-server
-    image: directcuteo/mina-frontend:$COMMIT_SHORT_SHA
+    image: directcuteo/mina-frontend:${DRONE_COMMIT_SHA:0:8}
     pull: if-not-exists
     detach: true
     privileged: true
