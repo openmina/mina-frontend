@@ -33,7 +33,7 @@ steps:
     commands:
       - COMMIT_SHORT_SHA=$(echo $DRONE_COMMIT_SHA | cut -c 1-7)
       - echo $COMMIT_SHORT_SHA
-    image: directcuteo/mina-frontend:COMMIT_SHORT_SHA
+    image: directcuteo/mina-frontend:latest
     pull: if-not-exists
     detach: true
     privileged: true
