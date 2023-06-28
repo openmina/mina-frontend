@@ -18,7 +18,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        const SLOTS_TO_CHECK = 10;
+        const SLOTS_TO_CHECK = 100;
         const slotsToCheck = (state && state.activeBlock > SLOTS_TO_CHECK) ? SLOTS_TO_CHECK : state.activeBlock - 1;
         type NodeStatsPerPage = {
           globalSlot: number;
