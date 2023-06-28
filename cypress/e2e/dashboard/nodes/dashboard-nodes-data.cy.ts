@@ -54,7 +54,7 @@ describe('DASHBOARD NODES TABLE', () => {
                   };
                   data.push(statsOfThisPage);
                   if (count === 1) {
-                    cy.log(JSON.stringify(data));
+                    cy.log(JSON.stringify(data, null, 2));
                     expect(data.length).to.eq(SLOTS_TO_CHECK);
                   }
                   checkSlots(count - 1);
