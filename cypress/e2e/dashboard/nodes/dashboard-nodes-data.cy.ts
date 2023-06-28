@@ -36,7 +36,7 @@ describe('DASHBOARD NODES TABLE', () => {
             .then((el: any) => {
               if (el.hasClass('disabled')) {
                 cy.log('Frontend asked for global slot ' + data[data.length - 1].globalSlot + ' but it was not available.');
-                cy.log(JSON.stringify(data));
+                cy.log(JSON.stringify(data, null, 2));
                 return;
               }
               cy.get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:first-child')
