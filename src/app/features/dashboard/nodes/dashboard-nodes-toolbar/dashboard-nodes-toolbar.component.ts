@@ -41,15 +41,15 @@ export class DashboardNodesToolbarComponent extends StoreDispatcher implements O
   nodesLength: number;
   activeFilters: string[] = [];
   allFilters: string[] = [];
-  activeBlock: number;
-  earliestBlock: number;
+  activeSlot: number;
+  earliestSlot: number;
   showOffline: boolean = true;
   latencyFromFastest: boolean = true;
   isLoading: boolean = true;
   forks: DashboardForkFilter[];
   activeForkFilter: { value: string, type: 'branch' | 'bestTip' };
+  currentSlotIsTooBig: boolean = false;
 
-  // change height of host element
   @HostBinding('style.height.px')
   height: number = this.nodeLister ? 40 : 80;
 
@@ -117,15 +117,29 @@ export class DashboardNodesToolbarComponent extends StoreDispatcher implements O
   }
 
   private listenToActiveBlockChanges(): void {
-    this.select(selectDashboardNodesActiveBlockLevel, (block: number) => {
-      this.activeBlock = block;
+    this.select(selectDashboardNodesActiveBlockLevel, (slot: number) => {
+      this.activeSlot = slot;
+      this.toggleHeightMismatching();
       this.detect();
     });
 
-    this.select(selectDashboardNodesEarliestBlockLevel, (earliestBlock: number) => {
-      this.earliestBlock = earliestBlock;
+    this.select(selectDashboardNodesEarliestBlockLevel, (earliestSlot: number) => {
+      this.earliestSlot = earliestSlot;
+      this.toggleHeightMismatching();
       this.detect();
-    }, filter(Boolean), filter(earliestBlock => this.earliestBlock !== earliestBlock));
+    }, filter(Boolean), filter(earliestSlot => this.earliestSlot !== earliestSlot));
+  }
+
+  private toggleHeightMismatching(): void {
+    if (this.activeSlot > this.earliestSlot && !this.currentSlotIsTooBig) {
+      this.currentSlotIsTooBig = true;
+      this.detect();
+    } else if (this.currentSlotIsTooBig) {
+      if (this.activeSlot <= this.earliestSlot) {
+        this.currentSlotIsTooBig = false;
+      }
+      this.detect();
+    }
   }
 
   toggleFilter(filter: { value: string, type: 'branch' | 'bestTip' }): void {

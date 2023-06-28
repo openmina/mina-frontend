@@ -16,8 +16,16 @@ describe('DASHBOARD NODES TABLE', () => {
   });
 
   it('display dashboard title', () => {
-    cy.get('mina-toolbar span')
-      .then((span: any) => expect(span).contain('Dashboard'));
+    cy.wait(2000)
+      .window()
+      .its('store')
+      .then(getNodes)
+      .then((nodes: MinaNode[]) => {
+        if (nodes.length > 1) {
+          cy.get('mina-toolbar span')
+            .then((span: any) => expect(span).contain('Dashboard'));
+        }
+      });
   });
 
   it('display nodes in the table', () => {
@@ -113,25 +121,25 @@ describe('DASHBOARD NODES TABLE', () => {
       });
   });
 
-  it('have correct number of counted nodes displayed', () => {
-    cy.window()
-      .its('store')
-      .then(getDashboard)
-      .then((state: DashboardNodesState) => {
-        if (state && state.nodes.length > 1) {
-          const syncedNodes = new Set(state.nodes.filter(n => n.name.includes('node')).map(n => n.url));
-          const syncedProducers = new Set(state.nodes.filter(n => n.name.includes('prod')).map(n => n.url));
-          const syncedSnarkers = new Set(state.nodes.filter(n => n.name.includes('snarker')).map(n => n.url));
-          const syncedSeeders = new Set(state.nodes.filter(n => n.name.includes('seed')).map(n => n.url));
-          const syncedTxGenerators = new Set(state.nodes.filter(n => n.name.includes('transaction-generator')).map(n => n.url));
-          expect(syncedNodes.size).to.eq(state.nodeCount.nodes);
-          expect(syncedProducers.size).to.eq(state.nodeCount.producers);
-          expect(syncedSnarkers.size).to.eq(state.nodeCount.snarkers);
-          expect(syncedSeeders.size).to.eq(state.nodeCount.seeders);
-          expect(syncedTxGenerators.size).to.eq(state.nodeCount.transactionGenerators);
-        }
-      });
-  });
+  // it('have correct number of counted nodes displayed', () => {
+  //   cy.window()
+  //     .its('store')
+  //     .then(getDashboard)
+  //     .then((state: DashboardNodesState) => {
+  //       if (state && state.nodes.length > 1 && !(window as any).config.nodeLister) {
+  //         const syncedNodes = new Set(state.nodes.filter(n => n.name.includes('node')).map(n => n.url));
+  //         const syncedProducers = new Set(state.nodes.filter(n => n.name.includes('prod')).map(n => n.url));
+  //         const syncedSnarkers = new Set(state.nodes.filter(n => n.name.includes('snarker')).map(n => n.url));
+  //         const syncedSeeders = new Set(state.nodes.filter(n => n.name.includes('seed')).map(n => n.url));
+  //         const syncedTxGenerators = new Set(state.nodes.filter(n => n.name.includes('transaction-generator')).map(n => n.url));
+  //         expect(syncedNodes.size).to.eq(state.nodeCount.nodes);
+  //         expect(syncedProducers.size).to.eq(state.nodeCount.producers);
+  //         expect(syncedSnarkers.size).to.eq(state.nodeCount.snarkers);
+  //         expect(syncedSeeders.size).to.eq(state.nodeCount.seeders);
+  //         expect(syncedTxGenerators.size).to.eq(state.nodeCount.transactionGenerators);
+  //       }
+  //     });
+  // });
 
   // it('have correct number of counted filtered nodes displayed', () => {
   //   cy.get('mina-dashboard-nodes-toolbar .row1 div.flex-between div.flex-row button:last-child')

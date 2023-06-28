@@ -66,7 +66,7 @@
   </span>
 </ng-template>
 
-<ng-container *ngIf="currentHeightIsTooBig">
+<ng-container *ngIf="currentSlotIsTooBig">
   <div class="no-results bg-surface p-absolute w-100 h-100 z-1 fx-col-full-cent">
     <span class="mina-icon mb-16 icon-100 f-40">error</span>
     <span class="f-600 f-big">No results</span>
@@ -76,7 +76,7 @@
     <button class="btn-selected fx-row-vert-cent pl-12 pr-12 mt-16 h-lg"
             (click)="setActiveBlock()">
       <span class="mr-5 mina-icon icon-200 f-20">arrow_right_alt</span>
-      See latest height ({{ latestHeight }})
+      See latest height ({{ earliestSlot }})
     </button>
   </div>
 </ng-container>

@@ -7,26 +7,26 @@
         <span class="tertiary mr-10 f-600 shrink-0">Global Slot</span>
         <div class="pagination-group shrink-0 fx-row-vert-cent bg-selected-container ml-10 border-rad-4">
           <button class="h-sm w-sm fx-row-full-cent"
-                  [class.disabled]="!earliestBlock || activeBlock === 1"
+                  [class.disabled]="!earliestSlot || activeSlot === 1 || currentSlotIsTooBig"
                   [tooltip]="'Prev block'"
                   [showDelay]="500"
-                  (click)="getBlock(activeBlock - 1)">
+                  (click)="getBlock(activeSlot - 1)">
             <span class="mina-icon f-18">navigate_before</span>
           </button>
-          <span class="selected-primary pl-5 pr-5 f-600">{{ activeBlock ?? '-' }}</span>
+          <span class="selected-primary pl-5 pr-5 f-600">{{ activeSlot ?? '-' }}</span>
           <button class="h-sm w-sm fx-row-full-cent"
-                  [class.disabled]="!earliestBlock || earliestBlock === activeBlock"
+                  [class.disabled]="!earliestSlot || earliestSlot === activeSlot || currentSlotIsTooBig"
                   [tooltip]="'Next block'"
                   [showDelay]="500"
-                  (click)="getBlock(activeBlock + 1)">
+                  (click)="getBlock(activeSlot + 1)">
             <span class="mina-icon f-18">navigate_next</span>
           </button>
         </div>
         <button class="btn-secondary h-sm w-sm mr-10 ml-5 fx-row-full-cent"
-                [class.disabled]="!earliestBlock || earliestBlock === activeBlock"
+                [class.disabled]="!earliestSlot || earliestSlot === activeSlot"
                 [tooltip]="'Last block'"
                 [showDelay]="500"
-                (click)="getBlock(earliestBlock)">
+                (click)="getBlock(earliestSlot)">
           <span class="mina-icon f-18">last_page</span>
         </button>
         <div class="flex-row shrink-0">

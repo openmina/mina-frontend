@@ -59,11 +59,11 @@ export class DashboardNodesTableComponent extends MinaTableWrapper<DashboardNode
     ];
 
   downloadingNodes: number[] = [];
-  currentHeightIsTooBig: boolean;
-  latestHeight: number;
+  currentSlotIsTooBig: boolean;
+  earliestSlot: number;
 
   private activeNode: DashboardNode;
-  private activeHeight: number;
+  private activeSlot: number;
 
   @ViewChild('minimalRowTemplate') private minimalRowTemplate: TemplateRef<DashboardNode>;
 
@@ -88,26 +88,26 @@ export class DashboardNodesTableComponent extends MinaTableWrapper<DashboardNode
   }
 
   private listenToActiveLevelChange(): void {
-    this.select(selectDashboardNodesActiveBlockLevel, (height: number) => {
-      this.activeHeight = height;
+    this.select(selectDashboardNodesActiveBlockLevel, (slot: number) => {
+      this.activeSlot = slot;
       this.toggleHeightMismatching();
     });
   }
 
   private listenToLatestLevelChange(): void {
-    this.select(selectDashboardNodesEarliestBlockLevel, (height: number) => {
-      this.latestHeight = height;
+    this.select(selectDashboardNodesEarliestBlockLevel, (slot: number) => {
+      this.earliestSlot = slot;
       this.toggleHeightMismatching();
     });
   }
 
   private toggleHeightMismatching(): void {
-    if (this.activeHeight > this.latestHeight && !this.currentHeightIsTooBig) {
-      this.currentHeightIsTooBig = true;
+    if (this.activeSlot > this.earliestSlot && !this.currentSlotIsTooBig) {
+      this.currentSlotIsTooBig = true;
       this.detect();
-    } else if (this.currentHeightIsTooBig) {
-      if (this.activeHeight <= this.latestHeight) {
-        this.currentHeightIsTooBig = false;
+    } else if (this.currentSlotIsTooBig) {
+      if (this.activeSlot <= this.earliestSlot) {
+        this.currentSlotIsTooBig = false;
       }
       this.detect();
     }
@@ -153,7 +153,7 @@ export class DashboardNodesTableComponent extends MinaTableWrapper<DashboardNode
   }
 
   setActiveBlock(): void {
-    this.dispatch(DashboardNodesSetActiveBlock, { height: this.latestHeight });
-    this.router.navigate([Routes.DASHBOARD, Routes.NODES, this.latestHeight], { queryParamsHandling: 'merge' });
+    this.dispatch(DashboardNodesSetActiveBlock, { height: this.earliestSlot });
+    this.router.navigate([Routes.DASHBOARD, Routes.NODES, this.earliestSlot], { queryParamsHandling: 'merge' });
   }
 }
