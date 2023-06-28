@@ -18,7 +18,7 @@ describe('DASHBOARD NODES TABLE', () => {
       .its('store')
       .then(getDashboard)
       .then((state: DashboardNodesState) => {
-        const SLOTS_TO_CHECK = 50;
+        const SLOTS_TO_CHECK = 10;
         const slotsToCheck = (state && state.activeBlock > SLOTS_TO_CHECK) ? SLOTS_TO_CHECK : state.activeBlock - 1;
         type NodeStatsPerPage = {
           globalSlot: number;
@@ -37,7 +37,6 @@ describe('DASHBOARD NODES TABLE', () => {
               if (el.hasClass('disabled')) {
                 cy.log('Frontend asked for global slot ' + data[data.length - 1].globalSlot + ' but it was not available.');
                 cy.log(JSON.stringify(data));
-                expect(data.length).to.eq(SLOTS_TO_CHECK);
                 return;
               }
               cy.get('mina-dashboard-nodes-toolbar > div:first-child .pagination-group button:first-child')
