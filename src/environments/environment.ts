@@ -23,24 +23,24 @@ export const environment: Readonly<MinaEnv> = {
     },
   },
   configs: [
-    // {
-    //   "graphql": "http://1.k8.openmina.com:31308/node1",
-    //   "tracing-graphql": "http://1.k8.openmina.com:31308/node1/internal-trace",
-    //   "debugger": "http://1.k8.openmina.com:31308/node1/bpf-debugger",
-    //   "name": "node1"
-    // },
-    // {
-    //   "graphql": "http://1.k8.openmina.com:31308/node2",
-    //   "tracing-graphql": "http://1.k8.openmina.com:31308/node2/internal-trace",
-    //   "debugger": "http://1.k8.openmina.com:31308/node2/bpf-debugger",
-    //   "name": "node2"
-    // },
-    // {
-    //   "graphql": "http://1.k8.openmina.com:31308/node3",
-    //   "tracing-graphql": "http://1.k8.openmina.com:31308/node3/internal-trace",
-    //   "debugger": "http://1.k8.openmina.com:31308/node3/bpf-debugger",
-    //   "name": "node3"
-    // },
+    {
+      "graphql": "http://1.k8.openmina.com:31308/node1",
+      "tracing-graphql": "http://1.k8.openmina.com:31308/node1/internal-trace",
+      "debugger": "http://1.k8.openmina.com:31308/node1/bpf-debugger",
+      "name": "node1"
+    },
+    {
+      "graphql": "http://1.k8.openmina.com:31308/node2",
+      "tracing-graphql": "http://1.k8.openmina.com:31308/node2/internal-trace",
+      "debugger": "http://1.k8.openmina.com:31308/node2/bpf-debugger",
+      "name": "node2"
+    },
+    {
+      "graphql": "http://1.k8.openmina.com:31308/node3",
+      "tracing-graphql": "http://1.k8.openmina.com:31308/node3/internal-trace",
+      "debugger": "http://1.k8.openmina.com:31308/node3/bpf-debugger",
+      "name": "node3"
+    },
     {
       "graphql": "http://1.k8.openmina.com:31308/node4",
       "tracing-graphql": "http://1.k8.openmina.com:31308/node4/internal-trace",

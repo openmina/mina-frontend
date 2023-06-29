@@ -56,14 +56,6 @@
   <span class="secondary" [innerHTML]="row.blockApplication | secDuration: secConfig"></span>
   <span class="secondary">{{ row.source || '-' }}</span>
   <span [ngClass]="row.traceStatus">{{ row.traceStatus || '-' }}</span>
-  <span class="fx-row-vert-cent">
-    <button class="btn-transparent tertiary fx-row-full-cent primary-hover pr-0 f-400 ml--5 mr--5 bg-container-hover pl-5"
-            [disabled]="downloadingNodes.includes(i)"
-            (click)="downloadLogs(row, i, $event)">
-      Download
-      <span class="mina-icon icon-200 f-20 ml-5">{{ downloadingNodes.includes(i) ? 'more_horiz' : 'download' }}</span>
-    </button>
-  </span>
 </ng-template>
 
 <ng-container *ngIf="currentSlotIsTooBig">

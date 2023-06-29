@@ -38,7 +38,6 @@ export class DashboardNodesTableComponent extends MinaTableWrapper<DashboardNode
       { name: 'block application', sort: 'blockApplication' },
       { name: 'source' },
       { name: 'trace status', sort: 'traceStatus' },
-      { name: 'logs', sort: 'name' },
     ]
     : [
       { name: 'name' },
@@ -81,7 +80,7 @@ export class DashboardNodesTableComponent extends MinaTableWrapper<DashboardNode
     this.table.rowTemplate = CONFIG.nodeLister ? this.minimalRowTemplate : this.rowTemplate;
     this.table.propertyForActiveCheck = 'index';
     this.table.gridTemplateColumns = CONFIG.nodeLister
-      ? [200, 105, 145, 80, 160, 90, 140, 100, 110, 110]
+      ? [200, 105, 145, 80, 160, 90, 140, 100, 110]
       : [200, 105, 145, 75, 140, 80, 135, 160, 90, 140, 100, 110, 90, 100, 110];
     this.table.sortClz = DashboardNodesSort;
     this.table.sortSelector = selectDashboardNodesSorting;

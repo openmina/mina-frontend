@@ -36,6 +36,8 @@ declare global {
     interface Chainable {
       then(store: Store<MinaState> | any): Chainable<any>;
 
+      then(store: Store<MinaState> | any, { timeout }: { timeout: number }): Chainable<any>;
+
       its(store: 'store'): Chainable<Store<MinaState>>;
     }
   }

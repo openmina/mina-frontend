@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DashboardNode } from '@shared/types/dashboard/nodes/dashboard-node.type';
-import { catchError, concatAll, EMPTY, filter, from, map, mergeMap, Observable, of, scan, switchMap, take, throwError, toArray } from 'rxjs';
+import { catchError, concatAll, EMPTY, forkJoin, from, map, mergeMap, Observable, of, scan, switchMap, tap, throwError, toArray } from 'rxjs';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 import { TracingTraceGroup } from '@shared/types/tracing/blocks/tracing-trace-group.type';
@@ -38,15 +38,15 @@ export class DashboardNodesService {
     if (CONFIG.nodeLister) {
       return this.http.get<any[]>(`${CONFIG.nodeLister.domain}:${CONFIG.nodeLister.port}/nodes`).pipe(
         map((response: any[]) => {
-          return response.map((node: any) => {
+          return response.slice(0,10).map((node: any) => {
             return ({
               ...{} as any,
               name: `${node.ip}:${node.graphql_port}`,
-              url: `${CONFIG.nodeLister.domain}:${node.graphql_port}/graphql`,
+              url: `${node.ip}:${node.graphql_port}/graphql`,
               tracingUrl: `${CONFIG.nodeLister.domain}:${node.internal_trace_port}/graphql`,
               status: AppNodeStatusTypes.SYNCED,
               forks: [],
-            } );
+            });
           });
         }),
       );
@@ -65,34 +65,30 @@ export class DashboardNodesService {
 
   getLatestGlobalSlot(nodes: DashboardNode[]): Observable<number> {
     if (CONFIG.nodeLister) {
-      return from(
-        nodes.map(node =>
+      return forkJoin(
+        nodes.map((node) =>
           this.http
             .post(node.tracingUrl, { query: latestGlobalSlotFromTrace }, this.options)
             .pipe(
-              map((response: any) => Number(lastItem(response.data.blockTraces.traces).global_slot)),
-              catchError(() => EMPTY),
+              map((response: any) => Number(response.data.blockTraces.traces[0].global_slot)),
+              catchError(() => of(0)),
             ),
         ),
       ).pipe(
-        concatAll(),
-        filter(Boolean),
-        take(1),
+        map((slots: number[]) => Math.max(...slots)),
       );
     }
-    return from(
+    return forkJoin(
       nodes.map(node =>
         this.http
           .post(node.url, { query: latestGlobalSlot }, this.options)
           .pipe(
             map((response: any) => Number(lastItem(response.data.bestChain).protocolState.consensusState.slotSinceGenesis)),
-            catchError(() => EMPTY),
+            catchError(() => of(0)),
           ),
       ),
     ).pipe(
-      concatAll(),
-      filter(Boolean),
-      take(1),
+      map((slots: number[]) => Math.max(...slots)),
     );
   }
 
@@ -423,7 +419,7 @@ const latestGlobalSlot = `
   }
 `;
 
-const latestGlobalSlotFromTrace = `query latestBlockHeight { blockTraces }`;
+const latestGlobalSlotFromTrace = `query latestBlockHeight { blockTraces(maxLength: 1, order: Descending) }`;
 
 const bestChain = (maxLength: number = 10) => `
   query BestChain {
