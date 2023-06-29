@@ -38,7 +38,7 @@ export class DashboardNodesService {
     if (CONFIG.nodeLister) {
       return this.http.get<any[]>(`${CONFIG.nodeLister.domain}:${CONFIG.nodeLister.port}/nodes`).pipe(
         map((response: any[]) => {
-          return response.slice(0,10).map((node: any) => {
+          return response.map((node: any) => {
             return ({
               ...{} as any,
               name: `${node.ip}:${node.graphql_port}`,
