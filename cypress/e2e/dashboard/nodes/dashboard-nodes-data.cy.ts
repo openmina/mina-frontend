@@ -62,7 +62,7 @@ describe('DASHBOARD NODES DATA CONSISTENCY', () => {
   });
 
   it.only('counts consistency of data 2', () => {
-    const SLOTS_TO_CHECK = 10;
+    const SLOTS_TO_CHECK = 50;
     type NodeStatsPerPage = {
       globalSlot: number;
       totalNodes: number;
