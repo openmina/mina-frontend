@@ -68,9 +68,10 @@ describe('DASHBOARD NODES DATA CONSISTENCY', () => {
         if (!nodeLister) return;
 
         cy.request('GET', nodeLister.domain + ':' + nodeLister.port + '/nodes')
+          .log('[')
           .then((response: any) => {
 
-            nodes = response.body.slice(0, 50).map((node: any) => ({
+            nodes = response.body.map((node: any) => ({
               name: `${node.ip}:${node.graphql_port}`,
               url: `${node.ip}:${node.graphql_port}/graphql`,
               tracingUrl: `${nodeLister.domain}:${node.internal_trace_port}/graphql`,
@@ -92,7 +93,6 @@ describe('DASHBOARD NODES DATA CONSISTENCY', () => {
                 }
 
                 return cy
-                  .log('[')
                   .wrap(Promise.all(globalSlotPromises))
                   .log(']')
                   // .log(
