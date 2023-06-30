@@ -4,7 +4,7 @@ import AUTWindow = Cypress.AUTWindow;
 
 describe('DASHBOARD NODES DATA CONSISTENCY', () => {
   it('counts consistency of data', () => {
-    const SLOTS_TO_CHECK = 50;
+    const SLOTS_TO_CHECK = 100;
     type NodeStatsPerPage = {
       globalSlot: number;
       totalNodes: number;
@@ -17,7 +17,7 @@ describe('DASHBOARD NODES DATA CONSISTENCY', () => {
 
     const getData = () => {
       return JSON.stringify(data, null, 2);
-    }
+    };
 
     function findLatestGlobalSlot(index: number) {
       if (index >= nodes.length) {
@@ -35,17 +35,19 @@ describe('DASHBOARD NODES DATA CONSISTENCY', () => {
 
     function checkNodesForGlobalSlot(index: number, globalSlot: number) {
       if (index >= nodes.length) {
-        return Cypress.Promise.resolve();
+        const dataIndex = data.findIndex(d => d.globalSlot === globalSlot);
+        return cy.log(JSON.stringify(data[dataIndex], null, 2) + ',') as any;
+        // return Cypress.Promise.resolve();
       }
       return new Cypress.Promise((resolve) => {
-        cy.request({
-          method: 'POST',
-          url: nodes[index].tracingUrl,
-          body: { query: `query traces { blockTraces(global_slot: ${globalSlot}) }` },
-          failOnStatusCode: false,
-        })
+        cy
+          .request({
+            method: 'POST',
+            url: nodes[index].tracingUrl,
+            body: { query: `query traces { blockTraces(global_slot: ${globalSlot}) }` },
+            failOnStatusCode: false,
+          })
           .then((response: Response) => {
-
             const dataIndex = data.findIndex(d => d.globalSlot === globalSlot);
             if (response.status !== 200) {
               data[dataIndex].nodesWithRpcError++;
@@ -90,16 +92,18 @@ describe('DASHBOARD NODES DATA CONSISTENCY', () => {
                 }
 
                 return cy
+                  .log('[')
                   .wrap(Promise.all(globalSlotPromises))
-                  .log(
-                    `
-                     |--------------------|
-                     |-------RESULT-------|
-                     |--------------------|`,
-                  )
-                  .then(() => {
-                    cy.log(getData());
-                  })
+                  .log(']')
+                  // .log(
+                  //   `
+                  //    |--------------------|
+                  //    |-------RESULT-------|
+                  //    |--------------------|`,
+                  // )
+                  // .then(() => {
+                  //   cy.log(getData());
+                  // });
               });
           });
       })
