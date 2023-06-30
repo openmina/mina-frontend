@@ -145,7 +145,8 @@ describe('DASHBOARD NODES DATA CONSISTENCY', () => {
 
                 return cy.wrap(Promise.all(globalSlotPromises))
                   .log(
-                    `|--------------------|
+                    `
+                     |--------------------|
                      |-------RESULT-------|
                      |--------------------|`,
                   )
