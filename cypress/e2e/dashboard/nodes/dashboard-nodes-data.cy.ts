@@ -67,8 +67,8 @@ describe('DASHBOARD NODES DATA CONSISTENCY', () => {
         const nodeLister = (window as any).config.nodeLister;
         if (!nodeLister) return;
 
-        cy.request('GET', nodeLister.domain + ':' + nodeLister.port + '/nodes')
-          .log('[')
+        cy.log('[')
+          .request('GET', nodeLister.domain + ':' + nodeLister.port + '/nodes')
           .then((response: any) => {
 
             nodes = response.body.map((node: any) => ({
@@ -94,16 +94,16 @@ describe('DASHBOARD NODES DATA CONSISTENCY', () => {
 
                 return cy
                   .wrap(Promise.all(globalSlotPromises))
-                  .log(']')
-                  // .log(
-                  //   `
-                  //    |--------------------|
-                  //    |-------RESULT-------|
-                  //    |--------------------|`,
-                  // )
-                  // .then(() => {
-                  //   cy.log(getData());
-                  // });
+                  .log(']');
+                // .log(
+                //   `
+                //    |--------------------|
+                //    |-------RESULT-------|
+                //    |--------------------|`,
+                // )
+                // .then(() => {
+                //   cy.log(getData());
+                // });
               });
           });
       })
