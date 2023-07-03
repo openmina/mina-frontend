@@ -4,7 +4,7 @@ import AUTWindow = Cypress.AUTWindow;
 import { last } from 'rxjs';
 
 let lastTestedGlobalSlot = 0;
-const SLOTS_PER_TEST = 10;
+const SLOTS_PER_TEST = 20;
 
 type NodeStatsPerPage = {
   globalSlot: number;
@@ -68,10 +68,10 @@ function mapNodesFromHttpResponse(response: any, nodeLister: { domain: string; p
 }
 
 describe('DASHBOARD NODES DATA CONSISTENCY', () => {
-  it('counts consistency of data - slice 1', test);
-  it('counts consistency of data - slice 2', test);
-  it('counts consistency of data - slice 3', test);
-  it('counts consistency of data - slice 4', test);
+  it('counts consistency of data - slice 1 (20 slots)', test);
+  it('counts consistency of data - slice 2 (20 slots)', test);
+  it('counts consistency of data - slice 3 (20 slots)', test);
+  it('counts consistency of data - slice 4 (20 slots)', test);
 });
 
 
