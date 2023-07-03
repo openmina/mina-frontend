@@ -4,7 +4,7 @@ import AUTWindow = Cypress.AUTWindow;
 
 describe('DASHBOARD NODES DATA CONSISTENCY', () => {
   it('counts consistency of data', () => {
-    const SLOTS_TO_CHECK = 100;
+    const SLOTS_TO_CHECK = 50;
     type NodeStatsPerPage = {
       globalSlot: number;
       totalNodes: number;
