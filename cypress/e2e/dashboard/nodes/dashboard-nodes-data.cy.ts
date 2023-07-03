@@ -4,7 +4,7 @@ import AUTWindow = Cypress.AUTWindow;
 import { last } from 'rxjs';
 
 let lastTestedGlobalSlot = 0;
-const SLOTS_TO_CHECK = 3;
+const SLOTS_PER_TEST = 10;
 
 type NodeStatsPerPage = {
   globalSlot: number;
@@ -68,90 +68,53 @@ function mapNodesFromHttpResponse(response: any, nodeLister: { domain: string; p
 }
 
 describe('DASHBOARD NODES DATA CONSISTENCY', () => {
-  it('counts consistency of data - slice 1', () => {
-    const data: NodeStatsPerPage[] = [];
-    let nodes: any[] = [];
-    let maxGlobalSlot: number = 0;
-
-    cy.visit(Cypress.config().baseUrl + '/tracing')
-      .wait(1000)
-      .window()
-      .then((window: AUTWindow) => {
-        const nodeLister = (window as any).config.nodeLister;
-        if (!nodeLister) return;
-
-        cy.log('[')
-          .request('GET', nodeLister.domain + ':' + nodeLister.port + '/nodes')
-          .then((response: any) => {
-            nodes = mapNodesFromHttpResponse(response, nodeLister);
-
-            let globalSlotPromises: Bluebird<any>[] = [];
-            findLatestGlobalSlot(0, 0, nodes)
-              .then((foundMaxGlobalSlot: number) => {
-                maxGlobalSlot = foundMaxGlobalSlot;
-                for (let i = 0; i < SLOTS_TO_CHECK; i++) {
-                  const newGlobalSlot = maxGlobalSlot - i;
-                  data.push({
-                    globalSlot: newGlobalSlot,
-                    totalNodes: nodes.length,
-                    nodesWithRpcError: 0,
-                    nodesMissingData: 0,
-                  });
-                  globalSlotPromises.push(checkNodesForGlobalSlot(0, newGlobalSlot, nodes, data));
-                }
-
-                return cy
-                  .wrap(Promise.all(globalSlotPromises))
-                  .log(']')
-                  .then(() => {
-                    lastTestedGlobalSlot = data[data.length - 1].globalSlot;
-                  });
-              });
-          });
-      })
-      .then(() => expect(data.length).to.eq(SLOTS_TO_CHECK));
-  });
-
-  it('counts consistency of data - slice 2', () => {
-    const data: NodeStatsPerPage[] = [];
-    let nodes: any[] = [];
-    let maxGlobalSlot: number = 0;
-
-    cy.visit(Cypress.config().baseUrl + '/tracing')
-      .wait(1000)
-      .window()
-      .then((window: AUTWindow) => {
-        const nodeLister = (window as any).config.nodeLister;
-        if (!nodeLister) return;
-
-        cy.log('[')
-          .request('GET', nodeLister.domain + ':' + nodeLister.port + '/nodes')
-          .then((response: any) => {
-            nodes = mapNodesFromHttpResponse(response, nodeLister);
-
-            let globalSlotPromises: Bluebird<any>[] = [];
-            findLatestGlobalSlot(0, 0, nodes)
-              .then((foundMaxGlobalSlot: number) => {
-                maxGlobalSlot = foundMaxGlobalSlot;
-                for (let i = 0; i < SLOTS_TO_CHECK; i++) {
-                  const newGlobalSlot = maxGlobalSlot - i;
-                  data.push({
-                    globalSlot: newGlobalSlot,
-                    totalNodes: nodes.length,
-                    nodesWithRpcError: 0,
-                    nodesMissingData: 0,
-                  });
-                  globalSlotPromises.push(checkNodesForGlobalSlot(0, newGlobalSlot, nodes, data));
-                }
-
-                return cy
-                  .wrap(Promise.all(globalSlotPromises))
-                  .log(']');
-              });
-          });
-      })
-      .then(() => expect(data.length).to.eq(SLOTS_TO_CHECK));
-  });
-
+  it('counts consistency of data - slice 1', test);
+  it('counts consistency of data - slice 2', test);
+  it('counts consistency of data - slice 3', test);
+  it('counts consistency of data - slice 4', test);
 });
 
+
+function test(): void {
+  const data: NodeStatsPerPage[] = [];
+  let nodes: any[] = [];
+  let maxGlobalSlot: number = 0;
+
+  cy.visit(Cypress.config().baseUrl + '/tracing')
+    .wait(1000)
+    .window()
+    .then((window: AUTWindow) => {
+      const nodeLister = (window as any).config.nodeLister;
+      if (!nodeLister) return;
+
+      cy.log('[')
+        .request('GET', nodeLister.domain + ':' + nodeLister.port + '/nodes')
+        .then((response: any) => {
+          nodes = mapNodesFromHttpResponse(response, nodeLister);
+
+          let globalSlotPromises: Bluebird<any>[] = [];
+          findLatestGlobalSlot(0, 0, nodes)
+            .then((foundMaxGlobalSlot: number) => {
+              maxGlobalSlot = foundMaxGlobalSlot;
+              for (let i = 0; i < SLOTS_PER_TEST; i++) {
+                const newGlobalSlot = maxGlobalSlot - i;
+                data.push({
+                  globalSlot: newGlobalSlot,
+                  totalNodes: nodes.length,
+                  nodesWithRpcError: 0,
+                  nodesMissingData: 0,
+                });
+                globalSlotPromises.push(checkNodesForGlobalSlot(0, newGlobalSlot, nodes, data));
+              }
+
+              return cy
+                .wrap(Promise.all(globalSlotPromises))
+                .log(']')
+                .then(() => {
+                  lastTestedGlobalSlot = data[data.length - 1].globalSlot;
+                });
+            });
+        });
+    })
+    .then(() => expect(data.length).to.eq(SLOTS_PER_TEST));
+}
