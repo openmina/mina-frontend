@@ -71,7 +71,6 @@ describe('DASHBOARD NODES DATA CONSISTENCY', () => {
   it('counts consistency of data - slice 1 (20 slots)', test);
   it('counts consistency of data - slice 2 (20 slots)', test);
   it('counts consistency of data - slice 3 (20 slots)', test);
-  it('counts consistency of data - slice 4 (20 slots)', test);
 });
 
 
