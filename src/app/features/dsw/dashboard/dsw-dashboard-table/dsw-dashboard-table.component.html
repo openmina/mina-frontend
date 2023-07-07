@@ -15,9 +15,11 @@
           [ngClass]="row.status.toLowerCase()">{{ row.status.toLowerCase() }}</span>
   </span>
   <span>{{ row.name }}</span>
-  <span>{{ row.bestTip }}</span>
-  <span>{{ row.fork }}</span>
-  <span>{{ row.blocksApplied }} / {{ row.blocksAppliedMax }}</span>
-  <span>{{ row.missingBlocks }} / {{ row.missingBlocksMax }}</span>
-  <span>{{ row.downloadingBlocks }} / {{ row.downloadingBlocksMax }}</span>
+  <span>
+    <mina-copy [display]="row.bestTip | truncateMid" [value]="row.bestTip"></mina-copy>
+  </span>
+  <span>{{ row.bestTipReceived }}</span>
+  <span>{{ row.blocksApplied }} / {{ row.blocks.length }}</span>
+  <span>{{ row.missingBlocks }} / {{ row.blocks.length }}</span>
+  <span>{{ row.downloadingBlocks }} / {{ row.blocks.length }}</span>
 </ng-template>

@@ -22,10 +22,10 @@ export class DswDashboardTableComponent extends MinaTableWrapper<DswDashboardNod
     { name: 'status' },
     { name: 'name' },
     { name: 'best tip', sort: 'bestTip' },
-    { name: 'fork' },
+    { name: 'datetime', sort: 'bestTipReceivedTimestamp' },
     { name: 'blocks applied', sort: 'blocksApplied' },
     { name: 'missing blocks', sort: 'missingBlocks' },
-    { name: 'downloading', sort: 'downloadingBlocks' },
+    { name: 'downloaded', sort: 'downloadingBlocks' },
   ];
 
   private nodeFromRoute: string;
@@ -40,7 +40,7 @@ export class DswDashboardTableComponent extends MinaTableWrapper<DswDashboardNod
   }
 
   protected override setupTable(): void {
-    this.table.gridTemplateColumns = [100, 140, 100, 100, 120, 120, 120];
+    this.table.gridTemplateColumns = [100, 120, 130, 165, 120, 120, 120];
     this.table.propertyForActiveCheck = 'name';
     this.table.sortClz = DswDashboardSortNodes;
     this.table.sortSelector = selectDswDashboardSort;

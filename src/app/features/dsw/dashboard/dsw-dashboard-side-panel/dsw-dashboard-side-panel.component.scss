@@ -31,29 +31,50 @@
 
 	.squares {
 		> div {
+			cursor: pointer;
 			width: 16px;
 			height: 16px;
 			border: 1px solid $base-background;
 			background-color: white;
 
 			&.purple {
-				background-color: $special-selected-alt-1-primary;
+				background-color: $special-selected-alt-1-secondary;
+
+				&:hover {
+					background-color: $special-selected-alt-1-primary;
+				}
 			}
 
 			&.red {
-				background-color: $warn-primary;
+				background-color: $warn-secondary;
+
+				&:hover {
+					background-color: $warn-primary;
+				}
 			}
 
 			&.yellow {
-				background-color: $aware-primary;
+				background-color: $aware-secondary;
+
+				&:hover {
+					background-color: $aware-primary;
+				}
 			}
 
 			&.blue {
-				background-color: $selected-primary;
+				background-color: $selected-secondary;
+
+				&:hover {
+					background-color: $selected-primary;
+				}
 			}
 
 			&.green {
-				background-color: $success-primary;
+				background-color: $success-secondary;
+
+				&:hover {
+					background-color: $success-primary;
+				}
 			}
 		}
 	}

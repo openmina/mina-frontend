@@ -1,56 +1,62 @@
 <div class="flex-row flex-between p-12 h-xl border-bottom">
-  <span class="secondary f-600">Node status</span>
+  <span class="secondary f-600">Applied Blocks in Frontier - ({{ node?.blocks.length}} / 290)</span>
   <span class="mina-icon pointer tertiary primary-hover f-18"
         (click)="closeSidePanel()">close
   </span>
 </div>
-<div class="h-minus-xl secondary overflow-y-auto" *ngIf="node">
+<div class="h-minus-xl secondary overflow-y-auto">
   <div class="fx-row-vert-cent flex-between h-lg pr-12 pl-12">
     <div class="fx-row-vert-cent">
       <span class="circle mr-8"></span>
       Best tip received
     </div>
-    {{ node.details.bestTipReceived }}
+    <span #bestTipRef></span>
   </div>
-  <div class="fx-row-vert-cent flex-between h-lg pr-12 pl-12">
-    <div class="fx-row-vert-cent">
-      <span class="circle mr-8"></span>
-      Missing blocks
+  <ng-container *ngIf="node">
+    <div class="fx-row-vert-cent flex-between h-lg pr-12 pl-12">
+      <div class="fx-row-vert-cent">
+        <span class="circle mr-8"></span>
+        Missing blocks
+      </div>
+      {{ node.missingBlocks }}
     </div>
-    {{ node.details.missingBlocks }}
-  </div>
-  <div class="fx-row-vert-cent flex-between h-lg pr-12 pl-12">
-    <div class="fx-row-vert-cent">
-      <span class="circle mr-8"></span>
-      Downloading
+    <div class="fx-row-vert-cent flex-between h-lg pr-12 pl-12">
+      <div class="fx-row-vert-cent">
+        <span class="circle mr-8"></span>
+        Downloading
+      </div>
+      {{ node.downloadingBlocks }}
     </div>
-    {{ node.details.downloadingBlocks }}
-  </div>
-  <div class="fx-row-vert-cent flex-between h-lg pr-12 pl-12">
-    <div class="fx-row-vert-cent">
-      <span class="circle mr-8"></span>
-      Applying
+    <div class="fx-row-vert-cent flex-between h-lg pr-12 pl-12">
+      <div class="fx-row-vert-cent">
+        <span class="circle mr-8"></span>
+        Applying
+      </div>
+      {{ node.applyingBlocks }}
     </div>
-    {{ node.details.applyingBlocks }}
-  </div>
-  <div class="fx-row-vert-cent flex-between h-lg pr-12 pl-12">
-    <div class="fx-row-vert-cent">
-      <span class="circle mr-8"></span>
-      Applied
+    <div class="fx-row-vert-cent flex-between h-lg pr-12 pl-12">
+      <div class="fx-row-vert-cent">
+        <span class="circle mr-8"></span>
+        Applied
+      </div>
+      {{ node.blocksApplied }}
     </div>
-    {{ node.details.appliedBlocks }}
-  </div>
-  <div class="h-xl lh-xl pl-12 border-top">Transition Frontier</div>
-  <div class="squares flex-row flex-wrap pl-12 pr-12">
-    <div *ngFor="let block of [].constructor(node.details.bestTipReceived)"
-         class="purple"></div>
-    <div *ngFor="let block of [].constructor(node.details.missingBlocks)"
-         class="red"></div>
-    <div *ngFor="let block of [].constructor(node.details.downloadingBlocks)"
-          class="yellow"></div>
-    <div *ngFor="let block of [].constructor(node.details.applyingBlocks)"
-          class="blue"></div>
-    <div *ngFor="let block of [].constructor(node.details.appliedBlocks)"
-          class="green"></div>
-  </div>
+    <div class="h-xl lh-xl pl-12 border-top">Transition Frontier</div>
+    <div class="squares flex-row flex-wrap pl-12 pr-12">
+      <div class="purple"
+           [tooltip]="'Best tip: ' + node.bestTip"></div>
+      <div *ngFor="let block of [].constructor(node.missingBlocks)"
+           [tooltip]="'Missing'"
+           class="red"></div>
+      <div *ngFor="let block of [].constructor(node.downloadingBlocks)"
+           [tooltip]="'Downloading'"
+           class="yellow"></div>
+      <div *ngFor="let block of [].constructor(node.applyingBlocks)"
+           [tooltip]="'Applying'"
+           class="blue"></div>
+      <div *ngFor="let block of [].constructor(greenBoxes)"
+           [tooltip]="'Applied'"
+           class="green"></div>
+    </div>
+  </ng-container>
 </div>

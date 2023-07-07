@@ -63,5 +63,5 @@ export function reducer(state: DswDashboardState = initialState, action: DswDash
 }
 
 function sortNodes(node: DswDashboardNode[], tableSort: TableSort<DswDashboardNode>): DswDashboardNode[] {
-  return sort<DswDashboardNode>(node, tableSort, ['status', 'name', 'bestTip', 'fork']);
+  return sort<DswDashboardNode>(node, tableSort, ['status', 'name', 'bestTip',]);
 }

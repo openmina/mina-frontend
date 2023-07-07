@@ -10,6 +10,7 @@ import { SharedModule } from '@shared/shared.module';
 import { EffectsModule } from '@ngrx/effects';
 import { DswDashboardEffects } from '@dsw/dashboard/dsw-dashboard.effects';
 import { HorizontalMenuComponent } from '@shared/components/horizontal-menu/horizontal-menu.component';
+import { CopyComponent } from '@shared/components/copy/copy.component';
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import { HorizontalMenuComponent } from '@shared/components/horizontal-menu/hori
     HorizontalResizableContainerComponent,
     EffectsModule.forFeature(DswDashboardEffects),
     HorizontalMenuComponent,
+    CopyComponent,
   ],
 })
 export class DswDashboardModule {}

@@ -1,16 +1,23 @@
-import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { DswDashboardNodeDetail } from '@shared/types/dsw/dashboard/dsw-dashboard-node-detail.type';
+import { DswDashboardBlock } from '@shared/types/dsw/dashboard/dsw-dashboard-block.type';
 
 export interface DswDashboardNode {
-  status: AppNodeStatusTypes;
   name: string;
+  status: DswDashboardNodeStatusType;
+  bestTipReceived: string;
+  bestTipReceivedTimestamp: number;
   bestTip: string;
   fork: string;
   blocksApplied: number;
-  blocksAppliedMax: number;
+  applyingBlocks: number;
   missingBlocks: number;
-  missingBlocksMax: number;
   downloadingBlocks: number;
-  downloadingBlocksMax: number;
+  blocks: DswDashboardBlock[];
   details: DswDashboardNodeDetail;
+}
+
+export enum DswDashboardNodeStatusType {
+  BOOTSTRAP = 'Bootstrap',
+  CATCHUP = 'Catchup',
+  SYNCED = 'Synced',
 }

@@ -4,10 +4,10 @@ export const environment: Readonly<MinaEnv> = {
   production: false,
   identifier: 'local',
   aggregator: 'http://1.k8.openmina.com:31308/aggregator',
-  nodeLister: {
-    domain: 'http://65.21.195.80',
-    port: 4000,
-  },
+  // nodeLister: {
+  //   domain: 'http://65.21.195.80',
+  //   port: 4000,
+  // },
   isVanilla: true,
   globalConfig: {
     features: {
