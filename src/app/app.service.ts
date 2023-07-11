@@ -10,7 +10,7 @@ import { CONFIG } from '@shared/constants/config';
 })
 export class AppService {
 
-  private readonly nodesHttpResponse$: Observable<any> = this.http.get<MinaNode[]>(`${CONFIG.nodeLister.domain}:${CONFIG.nodeLister.port}/nodes`).pipe(
+  private readonly nodesHttpResponse$: Observable<any> = this.http.get<MinaNode[]>(`${CONFIG.nodeLister?.domain}:${CONFIG.nodeLister?.port}/nodes`).pipe(
     shareReplay(),
   );
 
