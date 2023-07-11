@@ -41,8 +41,8 @@
 
 <ng-template #minimalRowTemplate let-row="row" let-i="i">
   <span class="fx-row-vert-cent">
-    <a [href]="row.url" target="_blank" class="underline secondary" (click)="$event.stopPropagation()">{{ row.name }}</a>
-    <mina-copy class="d-flex" [value]="row.url" [display]="' '"></mina-copy>
+    <a [href]="row.tracingUrl" target="_blank" class="underline secondary" (click)="$event.stopPropagation()">{{ row.name }}</a>
+    <mina-copy class="d-flex" [value]="row.tracingUrl" [display]="' '"></mina-copy>
   </span>
   <span>
     <span class="status f-600" [ngClass]="row.status.toLowerCase()">{{ row.status }}</span>

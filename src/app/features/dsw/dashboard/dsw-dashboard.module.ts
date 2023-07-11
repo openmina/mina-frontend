@@ -11,6 +11,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { DswDashboardEffects } from '@dsw/dashboard/dsw-dashboard.effects';
 import { HorizontalMenuComponent } from '@shared/components/horizontal-menu/horizontal-menu.component';
 import { CopyComponent } from '@shared/components/copy/copy.component';
+import { DswDashboardLedgersComponent } from './dsw-dashboard-ledgers/dsw-dashboard-ledgers.component';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { CopyComponent } from '@shared/components/copy/copy.component';
     DswDashboardTableComponent,
     DswDashboardSidePanelComponent,
     DswDashboardToolbarComponent,
+    DswDashboardLedgersComponent,
   ],
   imports: [
     SharedModule,

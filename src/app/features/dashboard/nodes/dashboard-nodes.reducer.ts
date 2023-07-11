@@ -22,6 +22,8 @@ import { DashboardNode } from '@shared/types/dashboard/nodes/dashboard-node.type
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 import { DashboardForkFilter } from '@shared/types/dashboard/nodes/dashboard-fork-filter.type';
+import { CONFIG } from '@shared/constants/config';
+import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 
 const initialState: DashboardNodesState = {
   nodes: [],
@@ -224,7 +226,13 @@ export function reducer(state: DashboardNodesState = initialState, action: Dashb
   }
 }
 
-function getNodeCount<T extends { url: string }>(nodes: T[]): DashboardNodeCount {
+function getNodeCount(nodes: DashboardNode[]): DashboardNodeCount {
+  if (CONFIG.nodeLister) {
+    return {
+      nodes: nodes.filter(node => !node.isBlockProducer).length,
+      producers: nodes.filter(node => node.isBlockProducer).length,
+    }
+  }
   return {
     nodes: new Set(nodes.filter(node => node.url.includes('node')).map(n => n.url)).size,
     producers: new Set(nodes.filter(node => node.url.includes('prod')).map(n => n.url)).size,

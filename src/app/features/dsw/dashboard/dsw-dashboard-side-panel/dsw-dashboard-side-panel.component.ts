@@ -84,5 +84,4 @@ export class DswDashboardSidePanelComponent extends StoreDispatcher implements O
     }
     return time + ' ago';
   }
-
 }

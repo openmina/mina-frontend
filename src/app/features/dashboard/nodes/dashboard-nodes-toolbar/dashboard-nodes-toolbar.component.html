@@ -38,13 +38,9 @@
                   (click)="toggleNodesShowing()">Show {{ showOffline ? 'active' : 'all' }} nodes</button>
         </div>
       </div>
-      <div class="pr-10 fx-row-vert-cent selected-primary h-sm shrink-0"
-           *ngIf="!nodeLister; else nodesLengthRef">
-        {{ count.nodes }} Node{{ count.nodes | plural }} · {{ count.producers }} Producer{{ count.producers | plural }} · {{ count.snarkers }} Snarker{{ count.snarkers | plural }} · {{ count.seeders }} Seeder{{ count.seeders | plural }} · {{ count.transactionGenerators }} Generator{{ count.transactionGenerators | plural }}
+      <div class="pr-10 fx-row-vert-cent selected-primary h-sm shrink-0">
+        {{ count.nodes }} Node{{ count.nodes | plural }} · {{ count.producers }} Producer{{ count.producers | plural }}<ng-container *ngIf="!nodeLister"> · {{ count.snarkers }} Snarker{{ count.snarkers | plural }} · {{ count.seeders }} Seeder{{ count.seeders | plural }} · {{ count.transactionGenerators }} Generator{{ count.transactionGenerators | plural }}</ng-container>
       </div>
-      <ng-template #nodesLengthRef>
-        <div class="pr-10 fx-row-vert-cent selected-primary h-sm shrink-0 pl-5" *ngIf="nodesLength">{{ nodesLength }} Nodes</div>
-      </ng-template>
     </div>
   </ng-template>
 </div>

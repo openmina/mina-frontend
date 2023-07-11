@@ -11,6 +11,7 @@ import { lastItem } from '@shared/helpers/array.helper';
 import { CONFIG, isNotVanilla } from '@shared/constants/config';
 import { DashboardFork } from '@shared/types/dashboard/nodes/dashboard-fork.type';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
+import { AppService } from '@app/app.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +21,8 @@ export class DashboardNodesService {
   // readonly API = 'http://116.202.128.230:8000'; // aggregator
   private readonly options = { headers: { 'Content-Type': 'application/json' } };
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+              private appService: AppService) { }
 
   getNodes(): Observable<DashboardNode[]> {
     const name = (node: string) => {
@@ -36,18 +38,17 @@ export class DashboardNodesService {
     };
 
     if (CONFIG.nodeLister) {
-      return this.http.get<any[]>(`${CONFIG.nodeLister.domain}:${CONFIG.nodeLister.port}/nodes`).pipe(
+      return this.appService.getNodesHttp().pipe(
         map((response: any[]) => {
-          return response.map((node: any) => {
-            return ({
-              ...{} as any,
-              name: `${node.ip}:${node.graphql_port}`,
-              url: `${node.ip}:${node.graphql_port}/graphql`,
-              tracingUrl: `${CONFIG.nodeLister.domain}:${node.internal_trace_port}/graphql`,
-              status: AppNodeStatusTypes.SYNCED,
-              forks: [],
-            });
-          });
+          return response.map((node: any) => ({
+            ...{} as any,
+            name: `${node.ip}:${node.graphql_port}`,
+            url: `${node.ip}:${node.graphql_port}/graphql`,
+            tracingUrl: `${CONFIG.nodeLister.domain}:${node.internal_trace_port}/graphql`,
+            status: AppNodeStatusTypes.SYNCED,
+            forks: [],
+            isBlockProducer: node.is_block_producer,
+          }));
         }),
       );
     }

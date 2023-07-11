@@ -27,4 +27,5 @@ export interface DashboardNode {
   traceStatus: TracingBlockTraceStatus;
   branch: string;
   bestTip: string;
+  isBlockProducer?: boolean;
 }

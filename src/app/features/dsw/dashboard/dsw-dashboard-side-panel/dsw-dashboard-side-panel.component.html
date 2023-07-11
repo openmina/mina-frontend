@@ -1,5 +1,5 @@
 <div class="flex-row flex-between p-12 h-xl border-bottom">
-  <span class="secondary f-600">Applied Blocks in Frontier - ({{ node?.blocks.length}} / 290)</span>
+  <span class="secondary f-600">Blocks in Transition Frontier</span>
   <span class="mina-icon pointer tertiary primary-hover f-18"
         (click)="closeSidePanel()">close
   </span>
@@ -41,22 +41,24 @@
       </div>
       {{ node.blocksApplied }}
     </div>
-    <div class="h-xl lh-xl pl-12 border-top">Transition Frontier</div>
-    <div class="squares flex-row flex-wrap pl-12 pr-12">
+    <div class="h-xl lh-xl pl-12 border-top f-600 secondary">Transition Frontier</div>
+    <div class="squares flex-row flex-wrap pl-12 pr-12 pb-12">
       <div class="purple"
-           [tooltip]="'Best tip: ' + node.bestTip"></div>
+           [tooltip]="'Best tip: ' + node.bestTip" [showDelay]="300"></div>
       <div *ngFor="let block of [].constructor(node.missingBlocks)"
-           [tooltip]="'Missing'"
+           [tooltip]="'Missing'" [showDelay]="300"
            class="red"></div>
       <div *ngFor="let block of [].constructor(node.downloadingBlocks)"
-           [tooltip]="'Downloading'"
+           [tooltip]="'Downloading'" [showDelay]="300"
            class="yellow"></div>
       <div *ngFor="let block of [].constructor(node.applyingBlocks)"
-           [tooltip]="'Applying'"
+           [tooltip]="'Applying'" [showDelay]="300"
            class="blue"></div>
       <div *ngFor="let block of [].constructor(greenBoxes)"
-           [tooltip]="'Applied'"
+           [tooltip]="'Applied'" [showDelay]="300"
            class="green"></div>
     </div>
+
+    <mina-dsw-dashboard-ledgers [ledgers]="node.ledgers"></mina-dsw-dashboard-ledgers>
   </ng-container>
 </div>

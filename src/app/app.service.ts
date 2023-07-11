@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GraphQLService } from '@core/services/graph-ql.service';
 import { HttpClient } from '@angular/common/http';
-import { catchError, concatAll, defaultIfEmpty, EMPTY, from, map, Observable, of, switchMap, take } from 'rxjs';
+import { catchError, concatAll, defaultIfEmpty, EMPTY, from, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 import { CONFIG } from '@shared/constants/config';
 
@@ -9,6 +9,10 @@ import { CONFIG } from '@shared/constants/config';
   providedIn: 'root',
 })
 export class AppService {
+
+  private readonly nodesHttpResponse$: Observable<any> = this.http.get<MinaNode[]>(`${CONFIG.nodeLister.domain}:${CONFIG.nodeLister.port}/nodes`).pipe(
+    shareReplay(),
+  );
 
   constructor(private graphQL: GraphQLService,
               private http: HttpClient) { }
@@ -58,7 +62,7 @@ export class AppService {
 
   getNodes(): Observable<MinaNode[]> {
     if (CONFIG.nodeLister) {
-      return this.http.get<MinaNode[]>(CONFIG.nodeLister.domain + ':' + CONFIG.nodeLister.port + '/nodes').pipe(
+      return this.getNodesHttp().pipe(
         map((response: any[]) => {
           return response.map((node: any) => ({
             name: node.ip,
@@ -69,6 +73,11 @@ export class AppService {
       );
     }
     return of(CONFIG.configs);
+  }
+
+  /* this method is called from 2 places at pretty much the same time. We will not trigger 2 requests, but only 1 and share the response */
+  getNodesHttp(): Observable<any[]> {
+    return this.nodesHttpResponse$;
   }
 }
 
