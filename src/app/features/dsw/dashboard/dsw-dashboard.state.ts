@@ -7,7 +7,6 @@ import { TableSort } from '@shared/types/shared/table-sort.type';
 export interface DswDashboardState {
   nodes: DswDashboardNode[];
   activeNode: DswDashboardNode;
-  openSidePanel: boolean;
   sort: TableSort<DswDashboardNode>;
 }
 

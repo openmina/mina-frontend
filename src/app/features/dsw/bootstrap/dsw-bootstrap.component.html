@@ -1,1 +1,15 @@
-<p>dsw-bootstrap works!</p>
+<mina-horizontal-resizable-container [leftTemplate]="left"
+                                     [rightTemplate]="right"
+                                     [show]="isActiveRow"
+                                     [minWidth]="360"
+                                     [maxWidthElement]="el.nativeElement"
+                                     localStorageKey="dsw-bootstrap-spw">
+</mina-horizontal-resizable-container>
+
+<ng-template #left>
+  <mina-dsw-bootstrap-table></mina-dsw-bootstrap-table>
+</ng-template>
+
+<ng-template #right>
+  <mina-dsw-bootstrap-side-panel></mina-dsw-bootstrap-side-panel>
+</ng-template>

@@ -29,4 +29,5 @@ export enum Routes {
   ACTIONS = 'actions',
   SNARK_WORKER = 'snark-worker',
   FRONTIER = 'frontier',
+  BOOTSTRAP = 'bootstrap',
 }

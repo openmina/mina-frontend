@@ -14,6 +14,11 @@ const routes: Routes = [
         title: DSW_TITLE,
       },
       {
+        path: 'bootstrap',
+        loadChildren: () => import('./bootstrap/dsw-bootstrap.module').then(m => m.DswBootstrapModule),
+        title: DSW_TITLE,
+      },
+      {
         path: 'actions',
         loadChildren: () => import('./actions/dsw-actions.module').then(m => m.DswActionsModule),
         title: DSW_TITLE,

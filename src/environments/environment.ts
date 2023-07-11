@@ -18,7 +18,7 @@ export const environment: Readonly<MinaEnv> = {
       tracing: ['overview', 'blocks'],
       benchmarks: ['wallets', 'transactions'],
       storage: ['accounts'],
-      'snark-worker': ['dashboard', 'actions', 'frontier'],
+      'snark-worker': ['dashboard', 'bootstrap', 'actions', 'frontier'],
       'web-node': ['wallet', 'peers', 'logs', 'state'],
     },
   },
