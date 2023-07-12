@@ -223,6 +223,9 @@ export class BarGraphComponent extends ManualDetection implements OnInit, AfterV
     for (let i = Math.max(yMaxTick, this.yTicksLength); i >= 0; i -= Math.max(1, ySpacing)) {
       yTicks.push(i);
     }
+    if (yTicks.length === 0) {
+      yTicks.push(6,5,4,3,2,1,0);
+    }
 
     return yTicks;
   }
