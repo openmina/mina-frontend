@@ -11,7 +11,7 @@ import {
 } from '@dsw/bootstrap/dsw-bootstrap.state';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
-import { delay, delayWhen, filter, mergeMap, of, take } from 'rxjs';
+import { delay, filter, mergeMap, of, take } from 'rxjs';
 import { Routes } from '@shared/enums/routes.enum';
 import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node.type';
 import { hasValue } from '@shared/helpers/values.helper';

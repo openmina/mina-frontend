@@ -67,8 +67,8 @@ function mapNodesFromHttpResponse(response: any, nodeLister: { domain: string; p
 }
 
 describe('DASHBOARD NODES DATA CONSISTENCY', () => {
-  it('counts consistency of data - slice 1 (25 slots)', test);
-  it('counts consistency of data - slice 2 (25 slots)', test);
+  it('counts consistency of data - slice 1 (10 slots)', test);
+  it('counts consistency of data - slice 2 (10 slots)', test);
 });
 
 
