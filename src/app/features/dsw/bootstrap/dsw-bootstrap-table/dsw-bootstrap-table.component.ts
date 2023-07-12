@@ -2,13 +2,19 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class';
 import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
 import { Router } from '@angular/router';
-import { DswBootstrapSetActiveBlock, DswBootstrapSortBlocks } from '@dsw/bootstrap/dsw-bootstrap.actions';
-import { selectDswBootstrapActiveNode, selectDswBootstrapNodes, selectDswBootstrapSort } from '@dsw/bootstrap/dsw-bootstrap.state';
+import { DswBootstrapSetActiveBlock, DswBootstrapSortBlocks, DswBootstrapToggleSidePanel } from '@dsw/bootstrap/dsw-bootstrap.actions';
+import {
+  selectDswBootstrapActiveNode,
+  selectDswBootstrapNodes,
+  selectDswBootstrapOpenSidePanel,
+  selectDswBootstrapSort,
+} from '@dsw/bootstrap/dsw-bootstrap.state';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
-import { filter, take } from 'rxjs';
+import { delay, delayWhen, filter, mergeMap, of, take } from 'rxjs';
 import { Routes } from '@shared/enums/routes.enum';
 import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node.type';
+import { hasValue } from '@shared/helpers/values.helper';
 
 @Component({
   selector: 'mina-dsw-bootstrap-table',
@@ -18,18 +24,20 @@ import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node
 })
 export class DswBootstrapTableComponent extends MinaTableWrapper<DswBootstrapNode> implements OnInit {
 
+  openSidePanel: boolean = true;
+
   protected readonly tableHeads: TableColumnList<DswBootstrapNode> = [
     { name: 'global slot', sort: 'globalSlot' },
     { name: 'height' },
     { name: 'best tip', sort: 'bestTip' },
-    { name: 'amount', sort: 'appliedBlocks' },
-    { name: 'min', sort: 'appliedBlocksMin' },
-    { name: 'max', sort: 'appliedBlocksMax' },
-    { name: 'avg', sort: 'appliedBlocksAvg' },
     { name: 'amount', sort: 'fetchedBlocks' },
     { name: 'min', sort: 'fetchedBlocksMin' },
     { name: 'max', sort: 'fetchedBlocksMax' },
     { name: 'avg', sort: 'fetchedBlocksAvg' },
+    { name: 'amount', sort: 'appliedBlocks' },
+    { name: 'min', sort: 'appliedBlocksMin' },
+    { name: 'max', sort: 'appliedBlocksMax' },
+    { name: 'avg', sort: 'appliedBlocksAvg' },
   ];
 
   private indexFromRoute: number;
@@ -41,10 +49,11 @@ export class DswBootstrapTableComponent extends MinaTableWrapper<DswBootstrapNod
     this.listenToRouteChange();
     this.listenToNodesChanges();
     this.listenToActiveNodeChange();
+    this.listenToSidePanelOpening();
   }
 
   protected override setupTable(): void {
-    this.table.gridTemplateColumns = [100, 80, 130, 80, 50, 50, 50, 80, 50, 50, 50];
+    this.table.gridTemplateColumns = [100, 80, 130, 80, 50, 50, 80, 80, 50, 50, 80];
     this.table.propertyForActiveCheck = 'index';
     this.table.sortClz = DswBootstrapSortBlocks;
     this.table.sortSelector = selectDswBootstrapSort;
@@ -62,7 +71,7 @@ export class DswBootstrapTableComponent extends MinaTableWrapper<DswBootstrapNod
     this.select(selectDswBootstrapNodes, (nodes: DswBootstrapNode[]) => {
       this.table.rows = nodes;
       this.table.detect();
-      if (this.indexFromRoute) {
+      if (hasValue(this.indexFromRoute)) {
         this.scrollToElement();
       }
       this.detect();
@@ -90,5 +99,16 @@ export class DswBootstrapTableComponent extends MinaTableWrapper<DswBootstrapNod
       this.dispatch(DswBootstrapSetActiveBlock, row);
       this.router.navigate([Routes.SNARK_WORKER, Routes.BOOTSTRAP, row.index], { queryParamsHandling: 'merge' });
     }
+  }
+
+  toggleSidePanel(): void {
+    this.dispatch(DswBootstrapToggleSidePanel);
+  }
+
+  private listenToSidePanelOpening(): void {
+    this.select(selectDswBootstrapOpenSidePanel, (open: boolean) => {
+      this.openSidePanel = !!open;
+      this.detect();
+    }, mergeMap((open: boolean) => of(open).pipe(delay(open ? 0 : 250))));
   }
 }

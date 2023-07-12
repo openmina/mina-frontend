@@ -14,20 +14,21 @@
            [style.width.%]="100 / xTicksLength"
            class="histo-col">
         <div class="histo-bar"
+             [style.background-color]="color"
              [style.height.px]="maxHeight * column.value / yAxisValues[0] || 0"></div>
       </div>
     </div>
   </div>
   <div class="h-sm flex-row secondary pt-10 f-small" [style.width]="'calc(100% - 40px)'">
-    <div *ngFor="let tick of ticks | async"
+    <div *ngFor="let tick of ticks | async; let i=index"
          [style.width.%]="100 / xTicksLength">
-      {{ tick }}
+      {{ i % xTicksSkipper === 0 ? tick : '' }}
     </div>
   </div>
 </div>
 
 <ng-template #tooltipTemplate let-range="range" let-count="count">
-  <div class="p-8 bg-surface-top popup-box-shadow-weak border-rad-6 border">
+  <div class="p-8 bg-surface-top popup-box-shadow-weak border-rad-6 border mr-10">
     <div class="secondary text-nowrap">
       <div class="pb-10">
         <span class="tertiary">Range:</span>

@@ -50,6 +50,8 @@ export class BarGraphComponent extends ManualDetection implements OnInit, AfterV
   @Input() yAxisLabel: string;
   @Input() decimals: number = 1;
   @Input() responsive: boolean = true;
+  @Input() color: string = 'var(--base-secondary)';
+  @Input() xTicksSkipper: number = 1;
 
   chartColumns: ChartColumn[];
   ticks: Observable<string[]>;

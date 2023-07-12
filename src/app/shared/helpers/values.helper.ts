@@ -3,4 +3,4 @@ export const hasValue = (value: any): boolean => {
 }
 
 export const isMobile = (): boolean => window.innerWidth <= 768;
-export const isDekstop = (): boolean => !isMobile();
+export const isDesktop = (): boolean => !isMobile();

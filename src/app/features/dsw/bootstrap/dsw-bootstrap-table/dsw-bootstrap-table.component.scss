@@ -2,18 +2,18 @@
 
 .h-xl {
 	display: grid;
-	grid-template-columns: 310px 230px 230px;
+	grid-template-columns: 310px 260px 260px 1fr;
 
-	span:nth-child(1) {
+	> span:nth-child(1) {
 		border-bottom: 1px solid $base-tertiary;
 	}
 
-	span:nth-child(2) {
+	> span:nth-child(2) {
 		color: $special-selected-alt-3-primary;
 		border-bottom: 1px solid $special-selected-alt-3-primary;
 	}
 
-	span:nth-child(3) {
+	> span:nth-child(3) {
 		color: $special-selected-alt-1-primary;
 		border-bottom: 1px solid $special-selected-alt-1-primary;
 	}

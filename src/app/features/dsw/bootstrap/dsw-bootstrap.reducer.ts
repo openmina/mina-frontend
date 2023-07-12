@@ -9,12 +9,12 @@ import {
   DswBootstrapActions,
 } from '@dsw/bootstrap/dsw-bootstrap.actions';
 import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node.type';
-import { isDekstop } from '@shared/helpers/values.helper';
+import { isDesktop } from '@shared/helpers/values.helper';
 
 const initialState: DswBootstrapState = {
   nodes: [],
   activeNode: undefined,
-  openSidePanel: isDekstop(),
+  openSidePanel: isDesktop(),
   sort: {
     sortBy: 'index',
     sortDirection: SortDirection.DSC,
@@ -51,6 +51,7 @@ export function reducer(state: DswBootstrapState = initialState, action: DswBoot
       return {
         ...state,
         openSidePanel: !state.openSidePanel,
+        activeNode: state.openSidePanel ? undefined : state.activeNode,
       }
     }
 

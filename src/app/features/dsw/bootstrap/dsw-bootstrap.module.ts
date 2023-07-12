@@ -10,6 +10,8 @@ import { EffectsModule } from '@ngrx/effects';
 import { DswBootstrapEffects } from '@dsw/bootstrap/dsw-bootstrap.effects';
 import { CopyComponent } from '@shared/components/copy/copy.component';
 import { DswBootstrapOverviewComponent } from './dsw-bootstrap-overview/dsw-bootstrap-overview.component';
+import { DswBootstrapBlocksComponent } from './dsw-bootstrap-blocks/dsw-bootstrap-blocks.component';
+import { MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
 
 
 @NgModule({
@@ -18,6 +20,7 @@ import { DswBootstrapOverviewComponent } from './dsw-bootstrap-overview/dsw-boot
     DswBootstrapTableComponent,
     DswBootstrapSidePanelComponent,
     DswBootstrapOverviewComponent,
+    DswBootstrapBlocksComponent,
   ],
   imports: [
     SharedModule,
@@ -25,6 +28,7 @@ import { DswBootstrapOverviewComponent } from './dsw-bootstrap-overview/dsw-boot
     HorizontalResizableContainerComponent,
     EffectsModule.forFeature(DswBootstrapEffects),
     CopyComponent,
+    MinaJsonViewerComponent,
   ],
 })
 export class DswBootstrapModule {}

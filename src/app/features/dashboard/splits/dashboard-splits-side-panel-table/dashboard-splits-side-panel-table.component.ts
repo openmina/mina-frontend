@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { DashboardSplitsSetActivePeer, DashboardSplitsSortPeers } from '@dashboard/splits/dashboard-splits.actions';
 import { selectDashboardSplitsActivePeer, selectDashboardSplitsSort } from '@dashboard/splits/dashboard-splits.state';
 import { Routes } from '@shared/enums/routes.enum';
-import { isDekstop, isMobile } from '@shared/helpers/values.helper';
+import { isDesktop, isMobile } from '@shared/helpers/values.helper';
 
 @Component({
   selector: 'mina-dashboard-splits-side-panel-table',
@@ -31,7 +31,7 @@ export class DashboardSplitsSidePanelTableComponent extends MinaTableWrapper<Das
   constructor(private router: Router) { super(); }
 
   override async ngOnInit(): Promise<void> {
-    this.height = isDekstop() ? (this.peers.length + 1) * 36 : ((this.peers.length) * 104) + 90;
+    this.height = isDesktop() ? (this.peers.length + 1) * 36 : ((this.peers.length) * 104) + 90;
     await super.ngOnInit();
     this.listenToActivePeerChanges();
   }

@@ -17,7 +17,6 @@ export class DswBootstrapService {
       map((nodes: DswDashboardNode[]) => nodes.map((node: DswDashboardNode, index: number) => {
         const appliedBlocks = node.blocks.filter((block) => block.status === DswDashboardNodeBlockStatus.APPLIED);
         const fetchedBlocks = node.blocks.filter((block) => block.status === DswDashboardNodeBlockStatus.FETCHED);
-        console.log(appliedBlocks.map((block) => block.applyDuration));
         return ({
           ...node,
           index,

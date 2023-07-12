@@ -3,6 +3,13 @@
     <span class="pl-12">Chain</span>
     <span class="pl-12">Fetched Blocks</span>
     <span class="pl-12">Applied Blocks</span>
+    <span class="fx-row-vert-cent flex-end">
+      <button *ngIf="!openSidePanel"
+              class="h-sm w-sm fx-row-full-cent btn-selected p-0 mr-10"
+              (click)="toggleSidePanel()">
+        <span class="mina-icon f-20">view_sidebar</span>
+      </button>
+    </span>
   </div>
   <div class="h-minus-xl flex-column">
     <ng-container #minaTable></ng-container>
@@ -15,12 +22,12 @@
   <span>
     <mina-copy [display]="row.bestTip | truncateMid" [value]="row.bestTip"></mina-copy>
   </span>
-  <span class="secondary">{{ row.appliedBlocks }}</span>
-  <span>{{ row.appliedBlocksMin | secDuration }}</span>
-  <span>{{ row.appliedBlocksMax | secDuration }}</span>
-  <span>{{ row.appliedBlocksAvg | secDuration }}</span>
   <span class="secondary">{{ row.fetchedBlocks }}</span>
   <span>{{ row.fetchedBlocksMin | secDuration }}</span>
   <span>{{ row.fetchedBlocksMax | secDuration }}</span>
   <span>{{ row.fetchedBlocksAvg | secDuration }}</span>
+  <span class="secondary">{{ row.appliedBlocks }}</span>
+  <span>{{ row.appliedBlocksMin | secDuration }}</span>
+  <span>{{ row.appliedBlocksMax | secDuration }}</span>
+  <span>{{ row.appliedBlocksAvg | secDuration }}</span>
 </ng-template>
