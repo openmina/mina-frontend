@@ -55,7 +55,7 @@ FROM node:18 AS BUILD_IMAGE
 WORKDIR /app
 COPY . .
 RUN npm install
-RUN node_modules/.bin/ng build --configuration production
+RUN node_modules/.bin/ng build --configuration webnode
 RUN npm prune --production
 FROM nginx:alpine
 RUN pwd
