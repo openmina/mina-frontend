@@ -1,1 +1,26 @@
-<p>dsw-bootstrap-table works!</p>
+<div class="flex-column h-100">
+  <div class="h-xl lh-xl border-top tertiary f-600">
+    <span class="pl-12">Chain</span>
+    <span class="pl-12">Fetched Blocks</span>
+    <span class="pl-12">Applied Blocks</span>
+  </div>
+  <div class="h-minus-xl flex-column">
+    <ng-container #minaTable></ng-container>
+  </div>
+</div>
+
+<ng-template #rowTemplate let-row="row">
+  <span class="secondary">{{ row.globalSlot }}</span>
+  <span class="secondary">{{ row.height }}</span>
+  <span>
+    <mina-copy [display]="row.bestTip | truncateMid" [value]="row.bestTip"></mina-copy>
+  </span>
+  <span class="secondary">{{ row.appliedBlocks }}</span>
+  <span>{{ row.appliedBlocksMin | secDuration }}</span>
+  <span>{{ row.appliedBlocksMax | secDuration }}</span>
+  <span>{{ row.appliedBlocksAvg | secDuration }}</span>
+  <span class="secondary">{{ row.fetchedBlocks }}</span>
+  <span>{{ row.fetchedBlocksMin | secDuration }}</span>
+  <span>{{ row.fetchedBlocksMax | secDuration }}</span>
+  <span>{{ row.fetchedBlocksAvg | secDuration }}</span>
+</ng-template>

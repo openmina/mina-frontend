@@ -3,31 +3,25 @@
 .h-xl {
 	display: grid;
 	grid-template-columns: 220px 295px 200px;
-	border-bottom: 2px solid $base-divider;
+	border-bottom: 1px solid $base-tertiary;
 }
 
 .status {
 	padding: 2px 5px;
 	border-radius: 4px;
 
-	&.synced {
+	&.Synced {
 		background-color: $success-container;
 		color: $success-primary;
 	}
 
-	&.connecting,
-	&.listening {
-		background-color: $base-container;
-		color: $base-primary;
-	}
-
-	&.bootstrap,
-	&.catchup {
+	&.Bootstrap,
+	&.Catchup {
 		background-color: $aware-container;
 		color: $aware-primary;
 	}
 
-	&.offline {
+	&.Offline {
 		background-color: $warn-container;
 		color: $warn-primary;
 	}

@@ -157,13 +157,13 @@
 
 <ng-template #tooltipRef let-start="start" let-end="end">
   <div class="bg-surface-top popup-box-shadow-weak border pl-10 pr-10 pt-5 pb-5 border-rad-6">
-    <div class="tertiary lh-sm h-sm">
+    <div class="tooltip-row tertiary lh-sm h-sm">
       Start:
-      <span class="primary"> {{ start | readableDate }}</span>
+      <span class="primary">{{ start | readableDate }}</span>
     </div>
-    <div class="tertiary lh-sm h-sm flex-row flex-between">
+    <div class="tooltip-row tertiary lh-sm h-sm">
       End:
-      <span class="primary"> {{ end | readableDate }}</span>
+      <span class="primary">{{ end | readableDate }}</span>
     </div>
   </div>
 </ng-template>

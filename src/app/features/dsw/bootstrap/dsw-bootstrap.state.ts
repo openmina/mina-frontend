@@ -4,11 +4,13 @@ import { selectDswBootstrapState, selectDswDashboardState } from '@dsw/dsw.state
 import { DswDashboardNode } from '@shared/types/dsw/dashboard/dsw-dashboard-node.type';
 import { TableSort } from '@shared/types/shared/table-sort.type';
 import { DswDashboardBlock } from '@shared/types/dsw/dashboard/dsw-dashboard-block.type';
+import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node.type';
 
 export interface DswBootstrapState {
-  node: DswDashboardNode;
-  activeBlock: DswDashboardBlock;
-  sort: TableSort<DswDashboardBlock>;
+  nodes: DswBootstrapNode[];
+  activeNode: DswBootstrapNode;
+  sort: TableSort<DswBootstrapNode>;
+  openSidePanel: boolean;
 }
 
 const select = <T>(selector: (state: DswBootstrapState) => T): MemoizedSelector<MinaState, T> => createSelector(
@@ -16,7 +18,7 @@ const select = <T>(selector: (state: DswBootstrapState) => T): MemoizedSelector<
   selector,
 );
 
-export const selectDswBootstrapNode = select((state: DswBootstrapState): DswDashboardNode => state.node);
-export const selectDswBootstrapBlocks = select((state: DswBootstrapState): DswDashboardBlock[] => state.node?.blocks || []);
-export const selectDswBootstrapSort = select((state: DswBootstrapState): TableSort<DswDashboardBlock> => state.sort);
-export const selectDswBootstrapActiveBlock = select((state: DswBootstrapState): DswDashboardBlock => state.activeBlock);
+export const selectDswBootstrapNodes = select((state: DswBootstrapState): DswBootstrapNode[] => state.nodes);
+export const selectDswBootstrapSort = select((state: DswBootstrapState): TableSort<DswBootstrapNode> => state.sort);
+export const selectDswBootstrapActiveNode = select((state: DswBootstrapState): DswBootstrapNode => state.activeNode);
+export const selectDswBootstrapOpenSidePanel = select((state: DswBootstrapState): boolean => state.openSidePanel);

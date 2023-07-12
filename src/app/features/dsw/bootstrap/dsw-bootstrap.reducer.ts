@@ -5,16 +5,18 @@ import {
   DSW_BOOTSTRAP_CLOSE,
   DSW_BOOTSTRAP_GET_BLOCKS_SUCCESS,
   DSW_BOOTSTRAP_SET_ACTIVE_BLOCK,
-  DSW_BOOTSTRAP_SORT_BLOCKS,
+  DSW_BOOTSTRAP_SORT_BLOCKS, DSW_BOOTSTRAP_TOGGLE_SIDE_PANEL,
   DswBootstrapActions,
 } from '@dsw/bootstrap/dsw-bootstrap.actions';
-import { DswDashboardBlock } from '@shared/types/dsw/dashboard/dsw-dashboard-block.type';
+import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node.type';
+import { isDekstop } from '@shared/helpers/values.helper';
 
 const initialState: DswBootstrapState = {
-  node: undefined,
-  activeBlock: undefined,
+  nodes: [],
+  activeNode: undefined,
+  openSidePanel: isDekstop(),
   sort: {
-    sortBy: 'height',
+    sortBy: 'index',
     sortDirection: SortDirection.DSC,
   },
 };
@@ -25,17 +27,15 @@ export function reducer(state: DswBootstrapState = initialState, action: DswBoot
     case DSW_BOOTSTRAP_GET_BLOCKS_SUCCESS: {
       return {
         ...state,
-        node: {
-          ...action.payload,
-          blocks: sortBlocks(action.payload.blocks, state.sort),
-        },
+        nodes: sortNodes(action.payload, state.sort),
       };
     }
 
     case DSW_BOOTSTRAP_SET_ACTIVE_BLOCK: {
       return {
         ...state,
-        activeBlock: action.payload,
+        activeNode: action.payload,
+        openSidePanel: action.payload ? true : state.openSidePanel,
       };
     }
 
@@ -43,11 +43,15 @@ export function reducer(state: DswBootstrapState = initialState, action: DswBoot
       return {
         ...state,
         sort: action.payload,
-        node: {
-          ...state.node,
-          blocks: sortBlocks(state.node.blocks, action.payload),
-        },
+        nodes: sortNodes(state.nodes, action.payload),
       };
+    }
+
+    case DSW_BOOTSTRAP_TOGGLE_SIDE_PANEL: {
+      return {
+        ...state,
+        openSidePanel: !state.openSidePanel,
+      }
     }
 
     case DSW_BOOTSTRAP_CLOSE:
@@ -58,6 +62,6 @@ export function reducer(state: DswBootstrapState = initialState, action: DswBoot
   }
 }
 
-function sortBlocks(node: DswDashboardBlock[], tableSort: TableSort<DswDashboardBlock>): DswDashboardBlock[] {
-  return sort<DswDashboardBlock>(node, tableSort, ['status']);
+function sortNodes(node: DswBootstrapNode[], tableSort: TableSort<DswBootstrapNode>): DswBootstrapNode[] {
+  return sort<DswBootstrapNode>(node, tableSort, ['kind']); //todo: add strings
 }

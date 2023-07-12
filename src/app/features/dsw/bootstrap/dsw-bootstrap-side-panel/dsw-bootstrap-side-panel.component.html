@@ -1,1 +1,21 @@
-<p>dsw-bootstrap-side-panel works!</p>
+<div class="side-panel-stepper h-100 p-relative overflow-hidden flex-column">
+  <div class="step p-absolute w-100 h-100 flex-column"
+       [class.active]="activeScreen === 0"
+       [class.before]="activeScreen !== 0">
+    <ng-container *ngTemplateOutlet="step1"></ng-container>
+  </div>
+  <div class="step p-absolute w-100 h-100 flex-column"
+       [class.after]="activeScreen < 1"
+       [class.active]="activeScreen === 1">
+    <ng-container *ngTemplateOutlet="step2"></ng-container>
+  </div>
+</div>
+
+
+<ng-template #step1>
+  <mina-dsw-bootstrap-overview></mina-dsw-bootstrap-overview>
+</ng-template>
+
+<ng-template #step2>
+  some blocks will be here
+</ng-template>

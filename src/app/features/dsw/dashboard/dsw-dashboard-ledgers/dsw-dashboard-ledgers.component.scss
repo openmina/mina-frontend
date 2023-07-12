@@ -80,3 +80,8 @@
 		transform: rotate(360deg);
 	}
 }
+
+.tooltip-row {
+	display: grid;
+	grid-template-columns: 40px 1fr;
+}

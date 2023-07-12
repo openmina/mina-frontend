@@ -5,7 +5,6 @@ import { DswDashboardNode } from '@shared/types/dsw/dashboard/dsw-dashboard-node
 import { DswDashboardSetActiveNode } from '@dsw/dashboard/dsw-dashboard.actions';
 import { Router } from '@angular/router';
 import { Routes } from '@shared/enums/routes.enum';
-import { lastItem } from '@shared/helpers/array.helper';
 import { filter } from 'rxjs';
 
 @Component({
@@ -17,7 +16,6 @@ import { filter } from 'rxjs';
 export class DswDashboardSidePanelComponent extends StoreDispatcher implements OnInit {
 
   node: DswDashboardNode;
-  greenBoxes: number = 0;
 
   @ViewChild('bestTipRef') private bestTipRef: ElementRef<HTMLSpanElement>;
   private interval: any;
@@ -38,13 +36,8 @@ export class DswDashboardSidePanelComponent extends StoreDispatcher implements O
       this.timeReference = node.bestTipReceivedTimestamp;
       this.secondsPassed = (Date.now() - this.timeReference) / 1000;
       this.updateTimeInView();
-      this.getGreenBoxes();
       this.detect();
     }, filter(node => !!node));
-  }
-
-  private getGreenBoxes(): void {
-    this.greenBoxes = Math.min(lastItem(this.node.blocks).height, 290);
   }
 
   closeSidePanel(): void {

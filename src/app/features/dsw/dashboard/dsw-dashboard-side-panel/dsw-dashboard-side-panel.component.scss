@@ -9,7 +9,7 @@
 		}
 
 		&:nth-child(1) .circle {
-			background-color: $special-selected-alt-1-primary;
+			background-color: $base-primary;
 		}
 
 		&:nth-child(2) .circle {
@@ -21,10 +21,14 @@
 		}
 
 		&:nth-child(4) .circle {
-			background-color: $selected-primary;
+			background-color: $special-selected-alt-1-primary;
 		}
 
 		&:nth-child(5) .circle {
+			background-color: $selected-primary;
+		}
+
+		&:nth-child(6) .circle {
 			background-color: $success-primary;
 		}
 	}
@@ -37,11 +41,11 @@
 			border: 1px solid $base-background;
 			background-color: white;
 
-			&.purple {
-				background-color: $special-selected-alt-1-secondary;
+			&.white {
+				background-color: $base-secondary;
 
 				&:hover {
-					background-color: $special-selected-alt-1-primary;
+					background-color: $base-primary;
 				}
 			}
 
@@ -58,6 +62,14 @@
 
 				&:hover {
 					background-color: $aware-primary;
+				}
+			}
+
+			&.purple {
+				background-color: $special-selected-alt-1-secondary;
+
+				&:hover {
+					background-color: $special-selected-alt-1-primary;
 				}
 			}
 

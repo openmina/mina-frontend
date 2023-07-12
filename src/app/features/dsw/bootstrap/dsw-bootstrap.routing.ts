@@ -9,7 +9,7 @@ const routes: Routes = [
     component: DswBootstrapComponent,
     children: [
       {
-        path: ':block',
+        path: ':index',
         component: DswBootstrapComponent,
         title: DSW_TITLE,
       },

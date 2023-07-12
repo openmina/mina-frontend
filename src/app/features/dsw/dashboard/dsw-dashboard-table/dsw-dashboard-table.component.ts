@@ -19,13 +19,15 @@ import { filter, take } from 'rxjs';
 export class DswDashboardTableComponent extends MinaTableWrapper<DswDashboardNode> implements OnInit {
 
   protected readonly tableHeads: TableColumnList<DswDashboardNode> = [
-    { name: 'status' },
+    { name: 'kind' },
     { name: 'name' },
     { name: 'best tip', sort: 'bestTip' },
     { name: 'datetime', sort: 'bestTipReceivedTimestamp' },
-    { name: 'blocks applied', sort: 'blocksApplied' },
+    { name: 'applied', sort: 'appliedBlocks' },
+    { name: 'applying', sort: 'applyingBlocks' },
+    { name: 'fetching', sort: 'fetchingBlocks' },
+    { name: 'fetched', sort: 'fetchedBlocks' },
     { name: 'missing blocks', sort: 'missingBlocks' },
-    { name: 'downloaded', sort: 'downloadingBlocks' },
   ];
 
   private nodeFromRoute: string;
@@ -40,7 +42,7 @@ export class DswDashboardTableComponent extends MinaTableWrapper<DswDashboardNod
   }
 
   protected override setupTable(): void {
-    this.table.gridTemplateColumns = [100, 120, 130, 165, 120, 120, 120];
+    this.table.gridTemplateColumns = [100, 120, 130, 165, 120, 120, 120, 120, 120];
     this.table.propertyForActiveCheck = 'name';
     this.table.sortClz = DswDashboardSortNodes;
     this.table.sortSelector = selectDswDashboardSort;

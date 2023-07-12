@@ -7,7 +7,6 @@ import { MinaState, selectMinaState } from '@app/app.setup';
 import { EMPTY, map, switchMap } from 'rxjs';
 import { catchErrorAndRepeat } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
-import { DswDashboardNode } from '@shared/types/dsw/dashboard/dsw-dashboard-node.type';
 import {
   DSW_BOOTSTRAP_CLOSE,
   DSW_BOOTSTRAP_GET_BLOCKS,
@@ -17,6 +16,7 @@ import {
   DswBootstrapGetBlocks,
 } from '@dsw/bootstrap/dsw-bootstrap.actions';
 import { DswBootstrapService } from '@dsw/bootstrap/dsw-bootstrap.service';
+import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node.type';
 
 @Injectable({
   providedIn: 'root',
@@ -37,9 +37,9 @@ export class DswBootstrapEffects extends MinaBaseEffect<DswBootstrapActions> {
       switchMap(({ action, state }) =>
         action.type === DSW_BOOTSTRAP_CLOSE
           ? EMPTY
-          : this.dswBootstrapService.getBlocks(),
+          : this.dswBootstrapService.getBootstrapNodeTips(),
       ),
-      map((payload: DswDashboardNode) => ({ type: DSW_BOOTSTRAP_GET_BLOCKS_SUCCESS, payload })),
+      map((payload: DswBootstrapNode[]) => ({ type: DSW_BOOTSTRAP_GET_BLOCKS_SUCCESS, payload })),
       catchErrorAndRepeat(MinaErrorType.GENERIC, DSW_BOOTSTRAP_GET_BLOCKS_SUCCESS, { blocks: [] }),
     ));
   }

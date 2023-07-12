@@ -1,7 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DswDashboardNode } from '@shared/types/dsw/dashboard/dsw-dashboard-node.type';
-import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
-import { mockDetail } from '@dsw/dashboard/dsw-dashboard.service';
 
 @Component({
   selector: 'mina-dsw-frontier-side-panel',

@@ -8,6 +8,8 @@ export interface DswDashboardBlock {
   fetchEnd: number;
   applyStart: number;
   applyEnd: number;
+  fetchDuration: number;
+  applyDuration: number;
 }
 
 export enum DswDashboardNodeBlockStatus {

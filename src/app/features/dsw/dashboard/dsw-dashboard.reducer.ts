@@ -14,7 +14,7 @@ const initialState: DswDashboardState = {
   nodes: [],
   activeNode: undefined,
   sort: {
-    sortBy: 'status',
+    sortBy: 'kind',
     sortDirection: SortDirection.DSC,
   },
 };
@@ -53,5 +53,5 @@ export function reducer(state: DswDashboardState = initialState, action: DswDash
 }
 
 function sortNodes(node: DswDashboardNode[], tableSort: TableSort<DswDashboardNode>): DswDashboardNode[] {
-  return sort<DswDashboardNode>(node, tableSort, ['status', 'name', 'bestTip',]);
+  return sort<DswDashboardNode>(node, tableSort, ['kind', 'name', 'bestTip',]);
 }

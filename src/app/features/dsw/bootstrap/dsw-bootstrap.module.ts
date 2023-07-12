@@ -8,6 +8,8 @@ import { HorizontalResizableContainerComponent } from '@shared/components/horizo
 import { SharedModule } from '@shared/shared.module';
 import { EffectsModule } from '@ngrx/effects';
 import { DswBootstrapEffects } from '@dsw/bootstrap/dsw-bootstrap.effects';
+import { CopyComponent } from '@shared/components/copy/copy.component';
+import { DswBootstrapOverviewComponent } from './dsw-bootstrap-overview/dsw-bootstrap-overview.component';
 
 
 @NgModule({
@@ -15,12 +17,14 @@ import { DswBootstrapEffects } from '@dsw/bootstrap/dsw-bootstrap.effects';
     DswBootstrapComponent,
     DswBootstrapTableComponent,
     DswBootstrapSidePanelComponent,
+    DswBootstrapOverviewComponent,
   ],
   imports: [
     SharedModule,
     DswBootstrapRouting,
     HorizontalResizableContainerComponent,
     EffectsModule.forFeature(DswBootstrapEffects),
+    CopyComponent,
   ],
 })
 export class DswBootstrapModule {}
