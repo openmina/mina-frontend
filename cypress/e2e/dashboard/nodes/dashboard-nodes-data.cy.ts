@@ -1,10 +1,9 @@
 import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum';
 import Bluebird from 'cypress/types/bluebird';
 import AUTWindow = Cypress.AUTWindow;
-import { last } from 'rxjs';
 
 let lastTestedGlobalSlot = 0;
-const SLOTS_PER_TEST = 25;
+const SLOTS_PER_TEST = 10;
 
 type NodeStatsPerPage = {
   globalSlot: number;
