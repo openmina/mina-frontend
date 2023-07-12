@@ -17,6 +17,7 @@
 </div>
 
 <ng-template #rowTemplate let-row="row">
+  <span class="tertiary">{{ row.index + 1 }}</span>
   <span class="secondary">{{ row.globalSlot }}</span>
   <span class="secondary">{{ row.height }}</span>
   <span>

@@ -17,7 +17,7 @@ const initialState: DswBootstrapState = {
   openSidePanel: isDesktop(),
   sort: {
     sortBy: 'index',
-    sortDirection: SortDirection.DSC,
+    sortDirection: SortDirection.ASC,
   },
 };
 

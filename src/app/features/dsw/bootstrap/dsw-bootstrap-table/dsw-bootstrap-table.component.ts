@@ -27,6 +27,7 @@ export class DswBootstrapTableComponent extends MinaTableWrapper<DswBootstrapNod
   openSidePanel: boolean = true;
 
   protected readonly tableHeads: TableColumnList<DswBootstrapNode> = [
+    { name: '#', sort: 'index' },
     { name: 'global slot', sort: 'globalSlot' },
     { name: 'height' },
     { name: 'best tip', sort: 'bestTip' },
@@ -53,7 +54,7 @@ export class DswBootstrapTableComponent extends MinaTableWrapper<DswBootstrapNod
   }
 
   protected override setupTable(): void {
-    this.table.gridTemplateColumns = [100, 80, 130, 80, 50, 50, 80, 80, 50, 50, 80];
+    this.table.gridTemplateColumns = [50, 100, 80, 130, 80, 50, 50, 80, 80, 50, 50, 80];
     this.table.propertyForActiveCheck = 'index';
     this.table.sortClz = DswBootstrapSortBlocks;
     this.table.sortSelector = selectDswBootstrapSort;
