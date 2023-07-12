@@ -26,6 +26,7 @@ export function reducer(state: DswDashboardState = initialState, action: DswDash
       return {
         ...state,
         nodes: sortNodes(action.payload, state.sort),
+        activeNode: state.activeNode ? action.payload.find(node => node.name === state.activeNode.name) : undefined,
       };
     }
 

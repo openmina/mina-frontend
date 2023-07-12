@@ -28,6 +28,7 @@ export function reducer(state: DswBootstrapState = initialState, action: DswBoot
       return {
         ...state,
         nodes: sortNodes(action.payload, state.sort),
+        activeNode: state.activeNode ? action.payload.find(node => node.index === state.activeNode.index) : undefined,
       };
     }
 
