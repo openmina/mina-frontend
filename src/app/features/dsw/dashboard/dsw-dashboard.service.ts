@@ -37,6 +37,7 @@ export class DswDashboardService {
               bestTipReceived: toReadableDate(node.best_tip_received / ONE_MILLION),
               bestTipReceivedTimestamp: node.best_tip_received / ONE_MILLION,
               bestTip: node.blocks[0]?.hash,
+              height: node.blocks[0]?.height,
               fork: '', //todo: remove if not needed
               appliedBlocks: node.blocks.filter((block: any) => block.status === DswDashboardNodeBlockStatus.APPLIED).length,
               applyingBlocks: node.blocks.filter((block: any) => block.status === DswDashboardNodeBlockStatus.APPLYING).length,

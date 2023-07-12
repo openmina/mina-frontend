@@ -21,6 +21,7 @@ export class DswDashboardTableComponent extends MinaTableWrapper<DswDashboardNod
   protected readonly tableHeads: TableColumnList<DswDashboardNode> = [
     { name: 'kind' },
     { name: 'name' },
+    { name: 'height' },
     { name: 'best tip', sort: 'bestTip' },
     { name: 'datetime', sort: 'bestTipReceivedTimestamp' },
     { name: 'applied', sort: 'appliedBlocks' },
@@ -42,7 +43,7 @@ export class DswDashboardTableComponent extends MinaTableWrapper<DswDashboardNod
   }
 
   protected override setupTable(): void {
-    this.table.gridTemplateColumns = [100, 120, 130, 165, 120, 120, 120, 120, 120];
+    this.table.gridTemplateColumns = [100, 120, 80, 130, 165, 120, 120, 120, 120, 120];
     this.table.propertyForActiveCheck = 'name';
     this.table.sortClz = DswDashboardSortNodes;
     this.table.sortSelector = selectDswDashboardSort;

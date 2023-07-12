@@ -64,5 +64,5 @@ export function reducer(state: DswBootstrapState = initialState, action: DswBoot
 }
 
 function sortNodes(node: DswBootstrapNode[], tableSort: TableSort<DswBootstrapNode>): DswBootstrapNode[] {
-  return sort<DswBootstrapNode>(node, tableSort, ['kind']); //todo: add strings
+  return sort<DswBootstrapNode>(node, tableSort, ['bestTip']);
 }

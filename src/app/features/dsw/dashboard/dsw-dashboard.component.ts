@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit } fro
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { selectDswDashboardActiveNode } from '@dsw/dashboard/dsw-dashboard.state';
 import { DswDashboardClose, DswDashboardGetNodes } from '@dsw/dashboard/dsw-dashboard.actions';
+import { timer } from 'rxjs';
+import { untilDestroyed } from '@ngneat/until-destroy';
 
 @Component({
   selector: 'mina-dsw-dashboard',
@@ -17,8 +19,11 @@ export class DswDashboardComponent extends StoreDispatcher implements OnInit, On
   constructor(public el: ElementRef) { super(); }
 
   ngOnInit(): void {
-    // this.checkEarliestSlot();
-    this.dispatch(DswDashboardGetNodes);
+    timer(0, 10000).pipe(
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.dispatch(DswDashboardGetNodes)
+    });
     this.listenToSidePanelChange();
   }
 

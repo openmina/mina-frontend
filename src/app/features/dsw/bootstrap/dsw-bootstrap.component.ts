@@ -2,6 +2,9 @@ import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit } fro
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { DswBootstrapClose, DswBootstrapGetBlocks } from '@dsw/bootstrap/dsw-bootstrap.actions';
 import { selectDswBootstrapOpenSidePanel } from '@dsw/bootstrap/dsw-bootstrap.state';
+import { timer } from 'rxjs';
+import { untilDestroyed } from '@ngneat/until-destroy';
+import { DswDashboardGetNodes } from '@dsw/dashboard/dsw-dashboard.actions';
 
 @Component({
   selector: 'mina-dsw-bootstrap',
@@ -16,7 +19,11 @@ export class DswBootstrapComponent extends StoreDispatcher implements OnInit, On
   constructor(public el: ElementRef<HTMLElement>) { super(); }
 
   ngOnInit(): void {
-    this.dispatch(DswBootstrapGetBlocks);
+    timer(0, 10000).pipe(
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.dispatch(DswBootstrapGetBlocks);
+    });
     this.listenToSidePanelOpening();
   }
 
