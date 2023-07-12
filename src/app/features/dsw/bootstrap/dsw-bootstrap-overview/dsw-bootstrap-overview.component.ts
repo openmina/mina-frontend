@@ -70,10 +70,10 @@ export class DswBootstrapOverviewComponent extends StoreDispatcher implements On
       this.appliedBlocksAvg = nodes.reduce((acc, n) => acc + n.appliedBlocksAvg, 0) / nodes.length;
       this.appliedBlocksMax = nodes.reduce((acc, n) => acc > n.appliedBlocksMax ? acc : n.appliedBlocksMax, 0);
       this.appliedBlocksMin = nodes.reduce((acc, n) => acc < n.appliedBlocksMin ? acc : n.appliedBlocksMin, 0);
-      this.component1.values = nodes.map(n => n.fetchedBlocksAvg);
+      this.component1.values = nodes.map(n => n.fetchedBlocksAvg).filter(Boolean);
       this.component1.update();
       this.component1.detect();
-      this.component2.values = nodes.map(n => n.appliedBlocksAvg);
+      this.component2.values = nodes.map(n => n.appliedBlocksAvg).filter(Boolean);
       this.component2.update();
       this.component2.detect();
       this.detect();

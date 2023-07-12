@@ -20,11 +20,11 @@
   </div>
   <div class="stats lh-xl h-xl mb-5 pl-12">
     <span>Min</span>
-    <span>{{ fetchedBlocksMin | secDuration }}</span>
+    <span>{{ appliedBlocksMin | secDuration }}</span>
     <span>Max</span>
-    <span>{{ fetchedBlocksMax | secDuration }}</span>
+    <span>{{ appliedBlocksMax | secDuration }}</span>
     <span>Avg</span>
-    <span>{{ fetchedBlocksAvg | secDuration }}</span>
+    <span>{{ appliedBlocksAvg | secDuration }}</span>
   </div>
   <div [style.height.%]="25">
     <ng-container #minaBarGraph2></ng-container>
