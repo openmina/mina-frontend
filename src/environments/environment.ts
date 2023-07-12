@@ -4,10 +4,10 @@ export const environment: Readonly<MinaEnv> = {
   production: false,
   identifier: 'local',
   aggregator: 'http://1.k8.openmina.com:31308/aggregator',
-  nodeLister: {
-    domain: 'http://65.21.195.80',
-    port: 4000,
-  },
+  // nodeLister: {
+  //   domain: 'http://65.21.195.80',
+  //   port: 4000,
+  // },
   isVanilla: true,
   globalConfig: {
     features: {
@@ -27,32 +27,38 @@ export const environment: Readonly<MinaEnv> = {
       "graphql": "http://1.k8.openmina.com:31308/node1",
       "tracing-graphql": "http://1.k8.openmina.com:31308/node1/internal-trace",
       "debugger": "http://1.k8.openmina.com:31308/node1/bpf-debugger",
-      "name": "node1"
+      "name": "Hardcoded Webrtc2 Node"
     },
-    {
-      "graphql": "http://1.k8.openmina.com:31308/node2",
-      "tracing-graphql": "http://1.k8.openmina.com:31308/node2/internal-trace",
-      "debugger": "http://1.k8.openmina.com:31308/node2/bpf-debugger",
-      "name": "node2"
-    },
-    {
-      "graphql": "http://1.k8.openmina.com:31308/node3",
-      "tracing-graphql": "http://1.k8.openmina.com:31308/node3/internal-trace",
-      "debugger": "http://1.k8.openmina.com:31308/node3/bpf-debugger",
-      "name": "node3"
-    },
-    {
-      "graphql": "http://1.k8.openmina.com:31308/node4",
-      "tracing-graphql": "http://1.k8.openmina.com:31308/node4/internal-trace",
-      "debugger": "http://1.k8.openmina.com:31308/node4/bpf-debugger",
-      "name": "node4"
-    },
-    {
-      "graphql": "http://1.k8.openmina.com:31308/node5",
-      "tracing-graphql": "http://1.k8.openmina.com:31308/node5/internal-trace",
-      "debugger": "http://1.k8.openmina.com:31308/node5/bpf-debugger",
-      "name": "node5"
-    },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31308/node1",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31308/node1/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31308/node1/bpf-debugger",
+    //   "name": "node1"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31308/node2",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31308/node2/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31308/node2/bpf-debugger",
+    //   "name": "node2"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31308/node3",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31308/node3/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31308/node3/bpf-debugger",
+    //   "name": "node3"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31308/node4",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31308/node4/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31308/node4/bpf-debugger",
+    //   "name": "node4"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31308/node5",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31308/node5/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31308/node5/bpf-debugger",
+    //   "name": "node5"
+    // },
     // {
     //   "graphql": "http://1.k8.openmina.com:31308/node6",
     //   "tracing-graphql": "http://1.k8.openmina.com:31308/node6/internal-trace",
@@ -149,36 +155,36 @@ export const environment: Readonly<MinaEnv> = {
     //   "debugger": "http://1.k8.openmina.com:31308/snarker006/bpf-debugger",
     //   "name": "snarker006"
     // },
-    {
-      "graphql": "http://1.k8.openmina.com:31308/snarker007",
-      "tracing-graphql": "http://1.k8.openmina.com:31308/snarker007/internal-trace",
-      "debugger": "http://1.k8.openmina.com:31308/snarker007/bpf-debugger",
-      "name": "snarker007"
-    },
-    {
-      "graphql": "http://1.k8.openmina.com:31308/snarker008",
-      "tracing-graphql": "http://1.k8.openmina.com:31308/snarker008/internal-trace",
-      "debugger": "http://1.k8.openmina.com:31308/snarker008/bpf-debugger",
-      "name": "snarker008"
-    },
-    {
-      "graphql": "http://1.k8.openmina.com:31308/snarker009",
-      "tracing-graphql": "http://1.k8.openmina.com:31308/snarker009/internal-trace",
-      "debugger": "http://1.k8.openmina.com:31308/snarker009/bpf-debugger",
-      "name": "snarker009"
-    },
-    {
-      "graphql": "http://1.k8.openmina.com:31308/snarker010",
-      "tracing-graphql": "http://1.k8.openmina.com:31308/snarker010/internal-trace",
-      "debugger": "http://1.k8.openmina.com:31308/snarker010/bpf-debugger",
-      "name": "snarker010"
-    },
-    {
-      "graphql": "http://1.k8.openmina.com:31308/snarker011",
-      "tracing-graphql": "http://1.k8.openmina.com:31308/snarker011/internal-trace",
-      "debugger": "http://1.k8.openmina.com:31308/snarker011/bpf-debugger",
-      "name": "snarker011"
-    },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31308/snarker007",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31308/snarker007/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31308/snarker007/bpf-debugger",
+    //   "name": "snarker007"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31308/snarker008",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31308/snarker008/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31308/snarker008/bpf-debugger",
+    //   "name": "snarker008"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31308/snarker009",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31308/snarker009/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31308/snarker009/bpf-debugger",
+    //   "name": "snarker009"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31308/snarker010",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31308/snarker010/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31308/snarker010/bpf-debugger",
+    //   "name": "snarker010"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31308/snarker011",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31308/snarker011/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31308/snarker011/bpf-debugger",
+    //   "name": "snarker011"
+    // },
     // {
     //   "graphql": "http://1.k8.openmina.com:31308/snarker012",
     //   "tracing-graphql": "http://1.k8.openmina.com:31308/snarker012/internal-trace",
