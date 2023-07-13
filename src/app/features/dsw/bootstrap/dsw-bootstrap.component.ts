@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
-import { DswBootstrapClose, DswBootstrapGetBlocks } from '@dsw/bootstrap/dsw-bootstrap.actions';
+import { DswBootstrapClose, DswBootstrapGetNodes, DswBootstrapInit } from '@dsw/bootstrap/dsw-bootstrap.actions';
 import { selectDswBootstrapOpenSidePanel } from '@dsw/bootstrap/dsw-bootstrap.state';
 import { timer } from 'rxjs';
 import { untilDestroyed } from '@ngneat/until-destroy';
@@ -19,10 +19,11 @@ export class DswBootstrapComponent extends StoreDispatcher implements OnInit, On
   constructor(public el: ElementRef<HTMLElement>) { super(); }
 
   ngOnInit(): void {
+    this.dispatch(DswBootstrapInit);
     timer(0, 10000).pipe(
       untilDestroyed(this),
     ).subscribe(() => {
-      this.dispatch(DswBootstrapGetBlocks);
+      this.dispatch(DswBootstrapGetNodes);
     });
     this.listenToSidePanelOpening();
   }

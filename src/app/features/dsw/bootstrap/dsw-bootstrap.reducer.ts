@@ -3,9 +3,10 @@ import { sort } from '@shared/helpers/array.helper';
 import { DswBootstrapState } from '@dsw/bootstrap/dsw-bootstrap.state';
 import {
   DSW_BOOTSTRAP_CLOSE,
-  DSW_BOOTSTRAP_GET_BLOCKS_SUCCESS,
+  DSW_BOOTSTRAP_GET_NODES_SUCCESS,
   DSW_BOOTSTRAP_SET_ACTIVE_BLOCK,
-  DSW_BOOTSTRAP_SORT_BLOCKS, DSW_BOOTSTRAP_TOGGLE_SIDE_PANEL,
+  DSW_BOOTSTRAP_SORT_NODES,
+  DSW_BOOTSTRAP_TOGGLE_SIDE_PANEL,
   DswBootstrapActions,
 } from '@dsw/bootstrap/dsw-bootstrap.actions';
 import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node.type';
@@ -24,7 +25,7 @@ const initialState: DswBootstrapState = {
 export function reducer(state: DswBootstrapState = initialState, action: DswBootstrapActions): DswBootstrapState {
   switch (action.type) {
 
-    case DSW_BOOTSTRAP_GET_BLOCKS_SUCCESS: {
+    case DSW_BOOTSTRAP_GET_NODES_SUCCESS: {
       return {
         ...state,
         nodes: sortNodes(action.payload, state.sort),
@@ -40,7 +41,7 @@ export function reducer(state: DswBootstrapState = initialState, action: DswBoot
       };
     }
 
-    case DSW_BOOTSTRAP_SORT_BLOCKS: {
+    case DSW_BOOTSTRAP_SORT_NODES: {
       return {
         ...state,
         sort: action.payload,
@@ -53,7 +54,7 @@ export function reducer(state: DswBootstrapState = initialState, action: DswBoot
         ...state,
         openSidePanel: !state.openSidePanel,
         activeNode: state.openSidePanel ? undefined : state.activeNode,
-      }
+      };
     }
 
     case DSW_BOOTSTRAP_CLOSE:

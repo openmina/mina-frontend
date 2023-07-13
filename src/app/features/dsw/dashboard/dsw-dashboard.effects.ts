@@ -4,7 +4,7 @@ import { Effect } from '@shared/types/store/effect.type';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaState, selectMinaState } from '@app/app.setup';
-import { EMPTY, map, switchMap } from 'rxjs';
+import { EMPTY, filter, map, switchMap, tap } from 'rxjs';
 import { catchErrorAndRepeat } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import {
@@ -25,15 +25,22 @@ export class DswDashboardEffects extends MinaBaseEffect<DswDashboardActions> {
 
   readonly getNodes$: Effect;
 
+  private pendingRequest: boolean;
+
   constructor(private actions$: Actions,
               private dswDashboardService: DswDashboardService,
               store: Store<MinaState>) {
     super(store, selectMinaState);
 
-    //TODO: add to loading bar
     this.getNodes$ = createEffect(() => this.actions$.pipe(
       ofType(DSW_DASHBOARD_GET_NODES, DSW_DASHBOARD_CLOSE),
       this.latestActionState<DswDashboardGetNodes | DswDashboardClose>(),
+      filter(() => !this.pendingRequest),
+      tap(({ action }) => {
+        if (action.type === DSW_DASHBOARD_GET_NODES) {
+          this.pendingRequest = true;
+        }
+      }),
       switchMap(({ action, state }) =>
         action.type === DSW_DASHBOARD_CLOSE
           ? EMPTY
@@ -41,6 +48,7 @@ export class DswDashboardEffects extends MinaBaseEffect<DswDashboardActions> {
       ),
       map((payload: DswDashboardNode[]) => ({ type: DSW_DASHBOARD_GET_NODES_SUCCESS, payload })),
       catchErrorAndRepeat(MinaErrorType.GENERIC, DSW_DASHBOARD_GET_NODES_SUCCESS, []),
+      tap(() => this.pendingRequest = false),
     ));
   }
 }

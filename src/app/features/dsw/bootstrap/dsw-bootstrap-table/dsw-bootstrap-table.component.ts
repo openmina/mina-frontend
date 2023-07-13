@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class';
 import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
 import { Router } from '@angular/router';
-import { DswBootstrapSetActiveBlock, DswBootstrapSortBlocks, DswBootstrapToggleSidePanel } from '@dsw/bootstrap/dsw-bootstrap.actions';
+import { DswBootstrapSetActiveBlock, DswBootstrapSortNodes, DswBootstrapToggleSidePanel } from '@dsw/bootstrap/dsw-bootstrap.actions';
 import {
   selectDswBootstrapActiveNode,
   selectDswBootstrapNodes,
@@ -54,9 +54,9 @@ export class DswBootstrapTableComponent extends MinaTableWrapper<DswBootstrapNod
   }
 
   protected override setupTable(): void {
-    this.table.gridTemplateColumns = [50, 100, 80, 130, 80, 50, 50, 80, 80, 50, 50, 80];
+    this.table.gridTemplateColumns = [50, 100, 80, 130, 80, 60, 60, 80, 80, 60, 60, 80];
     this.table.propertyForActiveCheck = 'index';
-    this.table.sortClz = DswBootstrapSortBlocks;
+    this.table.sortClz = DswBootstrapSortNodes;
     this.table.sortSelector = selectDswBootstrapSort;
   }
 

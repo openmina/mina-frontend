@@ -4,6 +4,8 @@ import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node
 import { selectDswBootstrapActiveNode } from '@dsw/bootstrap/dsw-bootstrap.state';
 import { DswDashboardBlock, DswDashboardNodeBlockStatus } from '@shared/types/dsw/dashboard/dsw-dashboard-block.type';
 import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
+import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
+import { sort } from '@shared/helpers/array.helper';
 
 @Component({
   selector: 'mina-dsw-bootstrap-blocks',
@@ -26,8 +28,14 @@ export class DswBootstrapBlocksComponent extends StoreDispatcher implements OnIn
   private listenToActiveNode(): void {
     this.select(selectDswBootstrapActiveNode, (activeNode: DswBootstrapNode) => {
       this.activeNode = activeNode;
-      this.fetchedBlocks = activeNode?.blocks.filter(b => b.status === DswDashboardNodeBlockStatus.FETCHED) || [];
-      this.appliedBlocks = activeNode?.blocks.filter(b => b.status === DswDashboardNodeBlockStatus.APPLIED) || [];
+      this.fetchedBlocks = sortBlocks(
+        activeNode?.blocks.filter(b => b.status === DswDashboardNodeBlockStatus.FETCHED || b.fetchDuration > 0) || [],
+        { sortBy: 'fetchDuration', sortDirection: SortDirection.DSC },
+      );
+      this.appliedBlocks = sortBlocks(
+        activeNode?.blocks.filter(b => b.status === DswDashboardNodeBlockStatus.APPLIED) || [],
+        { sortBy: 'applyDuration', sortDirection: SortDirection.DSC },
+      );
       this.detect();
     });
   }
@@ -35,4 +43,8 @@ export class DswBootstrapBlocksComponent extends StoreDispatcher implements OnIn
   selectTab(tab: number): void {
     this.activeTab = tab;
   }
+}
+
+function sortBlocks(blocks: DswDashboardBlock[], tableSort: TableSort<DswDashboardBlock>): DswDashboardBlock[] {
+  return sort<DswDashboardBlock>(blocks, tableSort, ['hash']);
 }

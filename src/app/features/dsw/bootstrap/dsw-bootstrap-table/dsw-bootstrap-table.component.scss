@@ -2,7 +2,7 @@
 
 .h-xl {
 	display: grid;
-	grid-template-columns: 360px 260px 260px 1fr;
+	grid-template-columns: 360px 280px 280px 1fr;
 
 	> span:nth-child(1) {
 		border-bottom: 1px solid $base-tertiary;

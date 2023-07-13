@@ -4,16 +4,16 @@ import { Effect } from '@shared/types/store/effect.type';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MinaState, selectMinaState } from '@app/app.setup';
-import { EMPTY, map, switchMap } from 'rxjs';
+import { EMPTY, filter, map, switchMap, tap } from 'rxjs';
 import { catchErrorAndRepeat } from '@shared/constants/store-functions';
 import { MinaErrorType } from '@shared/types/error-preview/mina-error-type.enum';
 import {
   DSW_BOOTSTRAP_CLOSE,
-  DSW_BOOTSTRAP_GET_BLOCKS,
-  DSW_BOOTSTRAP_GET_BLOCKS_SUCCESS,
+  DSW_BOOTSTRAP_GET_NODES,
+  DSW_BOOTSTRAP_GET_NODES_SUCCESS,
   DswBootstrapActions,
   DswBootstrapClose,
-  DswBootstrapGetBlocks,
+  DswBootstrapGetNodes,
 } from '@dsw/bootstrap/dsw-bootstrap.actions';
 import { DswBootstrapService } from '@dsw/bootstrap/dsw-bootstrap.service';
 import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node.type';
@@ -23,24 +23,32 @@ import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node
 })
 export class DswBootstrapEffects extends MinaBaseEffect<DswBootstrapActions> {
 
-  readonly getBlocks$: Effect;
+  readonly getNodes$: Effect;
+
+  private pendingRequest: boolean;
 
   constructor(private actions$: Actions,
               private dswBootstrapService: DswBootstrapService,
               store: Store<MinaState>) {
     super(store, selectMinaState);
 
-    //TODO: add to loading bar
-    this.getBlocks$ = createEffect(() => this.actions$.pipe(
-      ofType(DSW_BOOTSTRAP_GET_BLOCKS, DSW_BOOTSTRAP_CLOSE),
-      this.latestActionState<DswBootstrapGetBlocks | DswBootstrapClose>(),
+    this.getNodes$ = createEffect(() => this.actions$.pipe(
+      ofType(DSW_BOOTSTRAP_GET_NODES, DSW_BOOTSTRAP_CLOSE),
+      this.latestActionState<DswBootstrapGetNodes | DswBootstrapClose>(),
+      filter(() => !this.pendingRequest),
+      tap(({ action }) => {
+        if (action.type === DSW_BOOTSTRAP_GET_NODES) {
+          this.pendingRequest = true;
+        }
+      }),
       switchMap(({ action, state }) =>
         action.type === DSW_BOOTSTRAP_CLOSE
           ? EMPTY
           : this.dswBootstrapService.getBootstrapNodeTips(),
       ),
-      map((payload: DswBootstrapNode[]) => ({ type: DSW_BOOTSTRAP_GET_BLOCKS_SUCCESS, payload })),
-      catchErrorAndRepeat(MinaErrorType.GENERIC, DSW_BOOTSTRAP_GET_BLOCKS_SUCCESS, { blocks: [] }),
+      map((payload: DswBootstrapNode[]) => ({ type: DSW_BOOTSTRAP_GET_NODES_SUCCESS, payload })),
+      catchErrorAndRepeat(MinaErrorType.GENERIC, DSW_BOOTSTRAP_GET_NODES_SUCCESS, { blocks: [] }),
+      tap(() => this.pendingRequest = false),
     ));
   }
 }
