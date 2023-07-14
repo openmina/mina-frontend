@@ -17,7 +17,7 @@ import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class'
 })
 export class NetworkBlocksTableComponent extends MinaTableWrapper<NetworkBlock> implements OnInit {
 
-  readonly secConfig: SecDurationConfig = { onlySeconds: true, undefinedAlternative: '-', color: true, red: 30, orange: 5 };
+  readonly secConfig: SecDurationConfig = { onlySeconds: true, undefinedAlternative: '-', color: true, severe: 30, warn: 5 };
 
   protected readonly tableHeads: TableColumnList<NetworkBlock> = [
     { name: 'ID', sort: 'messageId' },

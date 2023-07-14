@@ -59,6 +59,10 @@
 			background-color: $warn-container;
 			color: $warn-primary;
 
+			.strong-text {
+				max-width: 125px;
+			}
+
 			&.connecting,
 			&.listening {
 				background-color: $base-container;

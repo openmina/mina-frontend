@@ -44,7 +44,7 @@
       <div class="node-switcher h-100 fx-row-vert-cent pl-8 pr-8"
            [class.border-rad-4]="switchForbidden"
            #overlayOpener (click)="openNodePicker($event)">
-        <span class="strong-text">{{ !switchForbidden ? activeNode?.name : 'All Nodes' }}</span>
+        <span class="strong-text truncate">{{ !switchForbidden ? activeNode?.name : 'All Nodes' }}</span>
         <span class="mina-icon icon-200" *ngIf="!switchForbidden">arrow_drop_down</span>
       </div>
     </div>

@@ -13,7 +13,7 @@ import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 })
 export class NetworkBlocksSidePanelComponent extends StoreDispatcher implements OnInit {
 
-  readonly secConfig: SecDurationConfig = { onlySeconds: true, undefinedAlternative: '-', color: true, red: 30, orange: 5 };
+  readonly secConfig: SecDurationConfig = { onlySeconds: true, undefinedAlternative: '-', color: true, severe: 30, warn: 5 };
 
   firstSentTime: number;
 

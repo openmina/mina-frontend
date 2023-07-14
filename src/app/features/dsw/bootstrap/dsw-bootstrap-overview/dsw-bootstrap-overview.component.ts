@@ -33,26 +33,26 @@ export class DswBootstrapOverviewComponent extends StoreDispatcher implements On
     await import('@shared/components/bar-graph/bar-graph.component').then(c => {
       this.component1 = this.minaBarGraphRef1.createComponent<BarGraphComponent>(c.BarGraphComponent).instance;
       this.component1.xStep = 0.01;
-      this.component1.xTicksLength = 40;
+      this.component1.xTicksLength = 55;
       this.component1.yTicksLength = 6;
       this.component1.um = 's';
       this.component1.yAxisLabel = 'Count';
       this.component1.decimals = 2;
       this.component1.responsive = false;
-      this.component1.xTicksSkipper = 5;
+      this.component1.xTicksSkipper = 7;
       this.component1.color = 'var(--special-selected-alt-3-primary)';
       this.component1.ngOnInit();
     });
     await import('@shared/components/bar-graph/bar-graph.component').then(c => {
       this.component2 = this.minaBarGraphRef2.createComponent<BarGraphComponent>(c.BarGraphComponent).instance;
       this.component2.xStep = 0.01;
-      this.component2.xTicksLength = 40;
+      this.component2.xTicksLength = 55;
       this.component2.yTicksLength = 6;
       this.component2.um = 's';
       this.component2.yAxisLabel = 'Count';
       this.component2.decimals = 2;
       this.component2.responsive = false;
-      this.component2.xTicksSkipper = 5;
+      this.component2.xTicksSkipper = 7;
       this.component2.color = 'var(--special-selected-alt-1-primary)';
       this.component2.ngOnInit();
     });

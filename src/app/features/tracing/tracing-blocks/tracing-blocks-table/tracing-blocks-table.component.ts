@@ -14,9 +14,9 @@ import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class';
 
 const secDurationConfig: SecDurationConfig = {
-  red: 50,
-  orange: 30,
-  yellow: 10,
+  severe: 50,
+  warn: 30,
+  default: 10,
   color: true,
   onlySeconds: true,
 };

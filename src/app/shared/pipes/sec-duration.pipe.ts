@@ -1,24 +1,29 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { MICROSEC_IN_1_SEC, MILLISEC_IN_1_SEC, NANOSEC_IN_1_SEC } from '@shared/constants/unit-measurements';
 import { formatNumber } from '@angular/common';
+import { hasValue } from '@shared/helpers/values.helper';
 
 interface SecDurationConfigDefinition {
-  red: number;
-  orange: number;
-  yellow: number;
+  severe: number;
+  warn: number;
+  default: number;
   color: boolean;
   onlySeconds: boolean;
   undefinedAlternative: string | number | undefined;
+  colors: [string, string, string];
 }
 
 export type SecDurationConfig = Partial<SecDurationConfigDefinition>;
+export const SEC_CONFIG_DEFAULT_PALETTE: [string, string, string] = ['warn', 'orange', 'error'];
+export const SEC_CONFIG_GRAY_PALETTE: [string, string, string] = ['tertiary', 'secondary', 'primary'];
 
 const baseConfig: SecDurationConfig = {
-  red: 1,
-  orange: 0.3,
-  yellow: 0.1,
+  severe: 1,
+  warn: 0.3,
+  default: 0.1,
   color: false,
   onlySeconds: false,
+  colors: SEC_CONFIG_DEFAULT_PALETTE,
 };
 
 @Pipe({
@@ -45,14 +50,16 @@ export class SecDurationPipe implements PipeTransform {
 
     if (!config.color) {
       return response;
+    } else if (!hasValue(config.colors)) {
+      config.colors = SEC_CONFIG_DEFAULT_PALETTE;
     }
 
-    if (value >= config.red) {
-      return `<span class="error">${response}</span>`;
-    } else if (value >= config.orange) {
-      return `<span class="orange">${response}</span>`;
-    } else if (value >= config.yellow) {
-      return `<span class="warn">${response}</span>`;
+    if (value >= config.severe) {
+      return `<span class="${config.colors[2]}">${response}</span>`;
+    } else if (value >= config.warn) {
+      return `<span class="${config.colors[1]}">${response}</span>`;
+    } else if (value >= config.default) {
+      return `<span class="${config.colors[0]}">${response}</span>`;
     }
     return response;
   }

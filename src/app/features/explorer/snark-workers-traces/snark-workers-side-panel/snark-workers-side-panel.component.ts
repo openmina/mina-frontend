@@ -18,7 +18,7 @@ import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
 })
 export class SnarkWorkersSidePanelComponent extends ManualDetection implements OnInit {
 
-  readonly secConfig: SecDurationConfig = { color: true, yellow: 0.5, orange: 0.75, red: 1, undefinedAlternative: '-' };
+  readonly secConfig: SecDurationConfig = { color: true, default: 0.5, warn: 0.75, severe: 1, undefinedAlternative: '-' };
 
   activeRow: SnarkWorkerTraceJob;
 

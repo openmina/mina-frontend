@@ -15,6 +15,7 @@ import { delay, filter, mergeMap, of, take } from 'rxjs';
 import { Routes } from '@shared/enums/routes.enum';
 import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node.type';
 import { hasValue } from '@shared/helpers/values.helper';
+import { SEC_CONFIG_GRAY_PALETTE, SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
 
 @Component({
   selector: 'mina-dsw-bootstrap-table',
@@ -23,6 +24,8 @@ import { hasValue } from '@shared/helpers/values.helper';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DswBootstrapTableComponent extends MinaTableWrapper<DswBootstrapNode> implements OnInit {
+
+  readonly secConfig: SecDurationConfig = { color: true, onlySeconds: false, colors: SEC_CONFIG_GRAY_PALETTE, severe: 10, warn: 1, default: 0.01};
 
   openSidePanel: boolean = true;
 
@@ -54,7 +57,7 @@ export class DswBootstrapTableComponent extends MinaTableWrapper<DswBootstrapNod
   }
 
   protected override setupTable(): void {
-    this.table.gridTemplateColumns = [50, 100, 80, 130, 80, 60, 60, 80, 80, 60, 60, 80];
+    this.table.gridTemplateColumns = [50, 100, 80, 140, 80, 65, 65, 80, 80, 65, 65, 80];
     this.table.propertyForActiveCheck = 'index';
     this.table.sortClz = DswBootstrapSortNodes;
     this.table.sortSelector = selectDswBootstrapSort;

@@ -24,11 +24,11 @@
     <mina-copy [display]="row.bestTip | truncateMid" [value]="row.bestTip"></mina-copy>
   </span>
   <span class="secondary">{{ row.fetchedBlocks }}</span>
-  <span>{{ row.fetchedBlocksMin | secDuration }}</span>
-  <span>{{ row.fetchedBlocksMax | secDuration }}</span>
-  <span>{{ row.fetchedBlocksAvg | secDuration }}</span>
+  <span [innerHTML]="row.fetchedBlocksMin | secDuration: secConfig"></span>
+  <span [innerHTML]="row.fetchedBlocksMax | secDuration: secConfig"></span>
+  <span [innerHTML]="row.fetchedBlocksAvg | secDuration: secConfig"></span>
   <span class="secondary">{{ row.appliedBlocks }}</span>
-  <span>{{ row.appliedBlocksMin | secDuration }}</span>
-  <span>{{ row.appliedBlocksMax | secDuration }}</span>
-  <span>{{ row.appliedBlocksAvg | secDuration }}</span>
+  <span [innerHTML]="row.appliedBlocksMin | secDuration: secConfig"></span>
+  <span [innerHTML]="row.appliedBlocksMax | secDuration: secConfig"></span>
+  <span [innerHTML]="row.appliedBlocksAvg | secDuration: secConfig"></span>
 </ng-template>

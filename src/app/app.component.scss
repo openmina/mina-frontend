@@ -53,7 +53,7 @@ mat-sidenav-content {
 	color: inherit;
 	background-color: $base-surface;
 
-	@media (max-width: 700px) {
+	@media (max-width: 768px) {
 		background-color: $base-background;
 	}
 }

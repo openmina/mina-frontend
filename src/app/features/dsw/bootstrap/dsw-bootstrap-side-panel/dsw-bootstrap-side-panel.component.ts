@@ -57,6 +57,7 @@ export class DswBootstrapSidePanelComponent extends StoreDispatcher implements O
   }
 
   toggleSidePanel(): void {
+    this.router.navigate([Routes.SNARK_WORKER, Routes.BOOTSTRAP], { queryParamsHandling: 'merge' });
     this.dispatch(DswBootstrapToggleSidePanel);
   }
 

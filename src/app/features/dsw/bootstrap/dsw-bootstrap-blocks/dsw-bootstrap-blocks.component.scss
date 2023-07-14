@@ -28,7 +28,7 @@
 :host {
 	.row {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: 150px 50px 1fr;
 		color: $base-tertiary;
 
 		span {
@@ -36,7 +36,7 @@
 			line-height: 36px;
 		}
 
-		span:nth-child(2) {
+		span:nth-child(3) {
 			text-align: right;
 		}
 
@@ -50,4 +50,7 @@
 			}
 		}
 	}
+}
+
+.overflow-y-scroll {
 }

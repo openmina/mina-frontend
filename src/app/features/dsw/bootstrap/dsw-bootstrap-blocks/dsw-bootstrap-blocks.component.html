@@ -17,16 +17,16 @@
 <ng-template #blocks let-blockList="blocks" let-type="type">
   <div class="row h-xl f-600 pl-12 pr-12">
     <span>Hash</span>
-    <span class="pr-5">Time&nbsp;</span>
+    <span>Height</span>
+    <span class="pr-12">Time&nbsp;</span>
   </div>
-  <div class="overflow-y-scroll flex-column pl-12 pr-5 h-minus-xl">
+  <div class="overflow-y-scroll flex-column pl-12 pr-12 pr-5 h-minus-xl">
     <div class="row" *ngFor="let block of blockList">
       <span>
         <mina-copy [display]="block.hash | truncateMid" [value]="block.hash"></mina-copy>
       </span>
-      <span class="primary">
-        {{ block[type === 'fetch' ? 'fetchDuration' : 'applyDuration'] | secDuration: secConfig }}
-      </span>
+      <span>{{ block.height }}</span>
+      <span class="tertiary" [innerHTML]="block[type === 'fetch' ? 'fetchDuration' : 'applyDuration'] | secDuration: secConfig"></span>
     </div>
   </div>
 </ng-template>

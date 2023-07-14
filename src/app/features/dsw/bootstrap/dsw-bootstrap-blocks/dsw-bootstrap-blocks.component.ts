@@ -3,7 +3,7 @@ import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node.type';
 import { selectDswBootstrapActiveNode } from '@dsw/bootstrap/dsw-bootstrap.state';
 import { DswDashboardBlock, DswDashboardNodeBlockStatus } from '@shared/types/dsw/dashboard/dsw-dashboard-block.type';
-import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
+import { SEC_CONFIG_GRAY_PALETTE, SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
 import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
 import { sort } from '@shared/helpers/array.helper';
 
@@ -15,7 +15,7 @@ import { sort } from '@shared/helpers/array.helper';
 })
 export class DswBootstrapBlocksComponent extends StoreDispatcher implements OnInit {
 
-  readonly secConfig: SecDurationConfig = { onlySeconds: false, color: false, undefinedAlternative: '-' };
+  readonly secConfig: SecDurationConfig = { color: true, onlySeconds: false, colors: SEC_CONFIG_GRAY_PALETTE, severe: 10, warn: 1, default: 0.01, undefinedAlternative: '-'};
   activeNode: DswBootstrapNode;
   fetchedBlocks: DswDashboardBlock[] = [];
   appliedBlocks: DswDashboardBlock[] = [];

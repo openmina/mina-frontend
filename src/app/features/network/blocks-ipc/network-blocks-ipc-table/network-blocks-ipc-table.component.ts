@@ -18,7 +18,7 @@ import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class'
 })
 export class NetworkBlocksIpcTableComponent extends MinaTableWrapper<NetworkBlockIpc> implements OnInit {
 
-  readonly secConfig: SecDurationConfig = { color: true, yellow: 0.5, orange: 0.75, red: 1, undefinedAlternative: '-' };
+  readonly secConfig: SecDurationConfig = { color: true, default: 0.5, warn: 0.75, severe: 1, undefinedAlternative: '-' };
 
   protected readonly tableHeads: TableHeadSorting<NetworkBlockIpc>[] = [
     { name: 'datetime', sort: 'timestamp' },

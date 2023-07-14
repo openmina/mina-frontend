@@ -20,7 +20,7 @@ import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class'
 })
 export class SnarkWorkersTracesTableComponent extends MinaTableWrapper<SnarkWorkerTraceJob> implements OnChanges {
 
-  readonly config: SecDurationConfig = { color: true, yellow: 0.5, orange: 0.75, red: 1, undefinedAlternative: '-' };
+  readonly config: SecDurationConfig = { color: true, default: 0.5, warn: 0.75, severe: 1, undefinedAlternative: '-' };
   protected readonly tableHeads: TableColumnList<SnarkWorkerTraceJob> = [
     { name: 'worker' },
     { name: 'work IDs', sort: 'ids' },
