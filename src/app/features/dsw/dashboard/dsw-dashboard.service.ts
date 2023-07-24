@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, map, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { DswDashboardNode } from '@shared/types/dsw/dashboard/dsw-dashboard-node.type';
+import { DswDashboardNode, DswDashboardNodeKindType } from '@shared/types/dsw/dashboard/dsw-dashboard-node.type';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { DswDashboardBlock, DswDashboardNodeBlockStatus } from '@shared/types/dsw/dashboard/dsw-dashboard-block.type';
 import { ONE_BILLION, ONE_MILLION } from '@shared/constants/unit-measurements';
 import { DswDashboardLedger, DswDashboardLedgerStep, DswDashboardLedgerStepState } from '@shared/types/dsw/dashboard/dsw-dashboard-ledger.type';
+import { hasValue } from '@shared/helpers/values.helper';
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +34,7 @@ export class DswDashboardService {
           return response.map((node: any) => {
             return {
               name: nodeName,
-              kind: node.kind,
+              kind: hasValue(node.synced) ? DswDashboardNodeKindType.SYNCED : node.kind,
               bestTipReceived: toReadableDate(node.best_tip_received / ONE_MILLION),
               bestTipReceivedTimestamp: node.best_tip_received / ONE_MILLION,
               bestTip: node.blocks[0]?.hash,
@@ -42,7 +43,7 @@ export class DswDashboardService {
               appliedBlocks: node.blocks.filter((block: any) => block.status === DswDashboardNodeBlockStatus.APPLIED).length,
               applyingBlocks: node.blocks.filter((block: any) => block.status === DswDashboardNodeBlockStatus.APPLYING).length,
               missingBlocks: node.blocks.filter((block: any) => block.status === DswDashboardNodeBlockStatus.MISSING).length,
-              fetchedBlocks: node.blocks.filter((block: any) => block.status === DswDashboardNodeBlockStatus.FETCHED || (block.fetch_start && block.fetch_end)).length,
+              fetchedBlocks: node.blocks.filter((block: any) => block.status === DswDashboardNodeBlockStatus.FETCHED).length,
               fetchingBlocks: node.blocks.filter((block: any) => block.status === DswDashboardNodeBlockStatus.FETCHING).length,
               ledgers: this.getLedgers(node.ledgers),
               blocks: node.blocks.map((block: any) => {

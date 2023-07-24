@@ -1,9 +1,16 @@
 @import 'variables';
 
-.h-xl {
+.th-group {
 	display: grid;
-	grid-template-columns: 300px 295px 200px;
-	border-bottom: 1px solid $base-tertiary;
+	grid-template-columns: 300px 295px 1fr;
+
+	> span {
+		border-bottom: 1px solid $base-tertiary;
+
+		&:last-child {
+			min-width: 600px;
+		}
+	}
 }
 
 .status {

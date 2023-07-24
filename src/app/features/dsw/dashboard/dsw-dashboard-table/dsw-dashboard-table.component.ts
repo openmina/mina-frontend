@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class';
 import { DswDashboardNode } from '@shared/types/dsw/dashboard/dsw-dashboard-node.type';
 import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
@@ -19,7 +19,7 @@ import { filter, take } from 'rxjs';
 export class DswDashboardTableComponent extends MinaTableWrapper<DswDashboardNode> implements OnInit {
 
   protected readonly tableHeads: TableColumnList<DswDashboardNode> = [
-    { name: 'kind' },
+    { name: 'status', sort: 'kind' },
     { name: 'name' },
     { name: 'height' },
     { name: 'best tip', sort: 'bestTip' },
@@ -32,6 +32,7 @@ export class DswDashboardTableComponent extends MinaTableWrapper<DswDashboardNod
   ];
 
   private nodeFromRoute: string;
+  @ViewChild('thGroupsTemplate') private thGroupsTemplate: TemplateRef<void>
 
   constructor(private router: Router) { super(); }
 
@@ -45,6 +46,7 @@ export class DswDashboardTableComponent extends MinaTableWrapper<DswDashboardNod
   protected override setupTable(): void {
     this.table.gridTemplateColumns = [100, 120, 80, 130, 165, 120, 120, 120, 120, 120];
     this.table.propertyForActiveCheck = 'name';
+    this.table.thGroupsTemplate = this.thGroupsTemplate;
     this.table.sortClz = DswDashboardSortNodes;
     this.table.sortSelector = selectDswDashboardSort;
   }

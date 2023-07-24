@@ -22,6 +22,7 @@ export class DswBootstrapService {
         return ({
           ...node,
           index,
+          fetchedBlocks: fetchedBlocks.length,
           appliedBlocksAvg: appliedBlocks.reduce((sum, block) => sum + block.applyDuration, 0) / (appliedBlocks.length || 1),
           appliedBlocksMin: applyBlocksDurations.length ? Math.min(...applyBlocksDurations) : 0,
           appliedBlocksMax: Math.max(...appliedBlocks.map((block) => block.applyDuration), 0),

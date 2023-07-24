@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class';
 import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
 import { Router } from '@angular/router';
@@ -46,6 +46,8 @@ export class DswBootstrapTableComponent extends MinaTableWrapper<DswBootstrapNod
 
   private indexFromRoute: number;
 
+  @ViewChild('thGroupsTemplate') private thGroupsTemplate: TemplateRef<void>
+
   constructor(private router: Router) { super(); }
 
   override async ngOnInit(): Promise<void> {
@@ -59,6 +61,7 @@ export class DswBootstrapTableComponent extends MinaTableWrapper<DswBootstrapNod
   protected override setupTable(): void {
     this.table.gridTemplateColumns = [50, 100, 80, 140, 80, 65, 65, 80, 80, 65, 65, 80];
     this.table.propertyForActiveCheck = 'index';
+    this.table.thGroupsTemplate = this.thGroupsTemplate;
     this.table.sortClz = DswBootstrapSortNodes;
     this.table.sortSelector = selectDswBootstrapSort;
   }

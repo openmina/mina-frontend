@@ -1,5 +1,6 @@
 <div [id]="'table' + tableLevel" class="mina-table overflow-x-auto h-100">
   <ng-container *ngIf="!isMobile">
+    <ng-container *ngTemplateOutlet="thGroupsTemplate"></ng-container>
     <div class="row head sorting pr-12" *ngIf="currentSort; else noSort">
       <span *ngFor="let th of tableHeads; let i=index"
             (click)="sortTable(th.sort ?? th.name)"
@@ -20,8 +21,9 @@
       </div>
     </ng-template>
   </ng-container>
-  <cdk-virtual-scroll-viewport *ngIf="!isMobile" class="border-bottom h-100 overflow-y-scroll h-minus-lg"
-                               [style.minWidth.px]="minWidth"
+  <cdk-virtual-scroll-viewport *ngIf="!isMobile" class="border-bottom overflow-y-scroll h-minus-lg"
+                               [ngClass]="'h-minus-lg' + (thGroupsTemplate ? '-doubled' : '')"
+                               [style.min-width.px]="minWidth"
                                [itemSize]="rowSize">
     <div *cdkVirtualFor="let row of rows; let i=index"
          (click)="rowClickCallback(row)"

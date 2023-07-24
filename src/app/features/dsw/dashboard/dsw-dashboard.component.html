@@ -1,13 +1,10 @@
-<!--<mina-dsw-dashboard-toolbar></mina-dsw-dashboard-toolbar>-->
-<!--<div class="h-minus-xl">-->
-  <mina-horizontal-resizable-container [leftTemplate]="left"
-                                       [rightTemplate]="right"
-                                       [show]="isActiveRow"
-                                       [minWidth]="360"
-                                       [maxWidthElement]="el.nativeElement"
-                                       localStorageKey="dsw-dashboard-spw">
-  </mina-horizontal-resizable-container>
-<!--</div>-->
+<mina-horizontal-resizable-container [leftTemplate]="left"
+                                     [rightTemplate]="right"
+                                     [show]="isActiveRow"
+                                     [minWidth]="360"
+                                     [maxWidthElement]="el.nativeElement"
+                                     localStorageKey="dsw-dashboard-spw">
+</mina-horizontal-resizable-container>
 
 <ng-template #left>
   <mina-dsw-dashboard-table></mina-dsw-dashboard-table>

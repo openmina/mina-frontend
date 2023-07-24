@@ -33,6 +33,7 @@ export class MinaTableComponent<T extends object> extends StoreDispatcher implem
   tableHeads: TableColumnList<T>;
   rowTemplate: TemplateRef<T>;
   currentSort: TableSort<T>;
+  thGroupsTemplate: TemplateRef<void>;
   propertyForActiveCheck: keyof T;
   gridTemplateColumns: Array<number | 'auto' | '1fr'> = [];
   minWidth: number;

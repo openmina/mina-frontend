@@ -1,5 +1,7 @@
-<div class="flex-column h-100">
-  <div class="h-xl lh-xl border-top tertiary f-600">
+<ng-container #minaTable></ng-container>
+
+<ng-template #thGroupsTemplate>
+  <div class="th-group h-lg lh-lg border-top tertiary f-600">
     <span class="pl-12">Chain</span>
     <span class="pl-12">Fetched Blocks</span>
     <span class="pl-12">Applied Blocks</span>
@@ -11,10 +13,7 @@
       </button>
     </span>
   </div>
-  <div class="h-minus-xl flex-column">
-    <ng-container #minaTable></ng-container>
-  </div>
-</div>
+</ng-template>
 
 <ng-template #rowTemplate let-row="row">
   <span class="tertiary">{{ row.index + 1 }}</span>

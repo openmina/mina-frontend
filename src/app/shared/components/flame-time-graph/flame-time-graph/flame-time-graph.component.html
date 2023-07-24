@@ -4,7 +4,7 @@
      (click)="expandCondensedGraph(graph, $event)"
      (clickOutside)="onOutsideClick()">
   <div class="title mb-5 f-600 truncate"
-       [tooltip]="checkpoint.title"
+       [tooltip]="checkpoint['fullTitle'] || checkpoint.title"
        [maxWidth]="500"
        [showDelay]="500">{{ checkpoint.title }}</div>
   <div class="big-graph flex-column">
