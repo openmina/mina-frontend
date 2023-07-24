@@ -57,7 +57,7 @@ export class DswActionsService {
             const totalCount = columns.reduce((acc: number, curr: DswActionColumn) => acc + curr.count, 0);
             const totalTime = columns.reduce((acc: number, curr: DswActionColumn) => acc + curr.totalTime, 0);
             return {
-              title: actionName !== groupName ? actionName.replace(groupName, '') : '-',
+              title: actionName !== groupName ? actionName.replace(groupName, '') : '',
               fullTitle: actionName,
               totalCount,
               totalTime,

@@ -32,6 +32,24 @@ export class DswDashboardService {
       .pipe(
         map((response: any[]) => {
           return response.map((node: any) => {
+            const blocks = node.blocks.map((block: any) => {
+              return {
+                globalSlot: block.global_slot,
+                height: block.height,
+                hash: block.hash,
+                predHash: block.pred_hash,
+                status: block.status,
+                fetchStart: block.fetch_start,
+                fetchEnd: block.fetch_end,
+                applyStart: block.apply_start,
+                applyEnd: block.apply_end,
+                fetchDuration: this.getDuration(block.fetch_start, block.fetch_end),
+                applyDuration: this.getDuration(block.apply_start, block.apply_end),
+              } as DswDashboardBlock;
+            });
+            if (blocks.length) {
+              blocks[0].isBestTip = true;
+            }
             return {
               name: nodeName,
               kind: hasValue(node.synced) ? DswDashboardNodeKindType.SYNCED : node.kind,
@@ -46,21 +64,7 @@ export class DswDashboardService {
               fetchedBlocks: node.blocks.filter((block: any) => block.status === DswDashboardNodeBlockStatus.FETCHED).length,
               fetchingBlocks: node.blocks.filter((block: any) => block.status === DswDashboardNodeBlockStatus.FETCHING).length,
               ledgers: this.getLedgers(node.ledgers),
-              blocks: node.blocks.map((block: any) => {
-                return {
-                  globalSlot: block.global_slot,
-                  height: block.height,
-                  hash: block.hash,
-                  predHash: block.pred_hash,
-                  status: block.status,
-                  fetchStart: block.fetch_start,
-                  fetchEnd: block.fetch_end,
-                  applyStart: block.apply_start,
-                  applyEnd: block.apply_end,
-                  fetchDuration: this.getDuration(block.fetch_start, block.fetch_end),
-                  applyDuration: this.getDuration(block.apply_start, block.apply_end),
-                } as DswDashboardBlock;
-              }),
+              blocks,
             } as DswDashboardNode;
           });
         }),
@@ -116,154 +120,3 @@ export class DswDashboardService {
     return !step.snarked.fetch_hashes_start && !step.snarked.fetch_accounts_start && !step.staged.fetch_parts_start && !step.staged.reconstruct_start;
   }
 }
-
-const mock2 = () => [
-  {
-    // "status": "Bootstrap" | "Catchup" | "Synced",
-    'kind': 'Bootstrap',
-    'best_tip_received': Date.now() * ONE_MILLION,
-    'ledgers': {
-      'root': {
-        'snarked': {
-          'fetch_hashes_start': null,
-          'fetch_hashes_end': null,
-          'fetch_accounts_start': null,
-          'fetch_accounts_end': null,
-        },
-        'staged': {
-          'fetch_parts_start': undefined,
-          'fetch_parts_end': null,
-          'reconstruct_start': null,
-          'reconstruct_end': null,
-        },
-      },
-      'staking_epoch': {
-        'snarked': {
-          'fetch_hashes_start': 1686818212777045000,
-          'fetch_hashes_end': 1686818212777045300,
-          'fetch_accounts_start': null,
-          'fetch_accounts_end': null,
-        },
-        'staged': {
-          'fetch_parts_start': 1686818212777045000,
-          'fetch_parts_end': 1686818212777045300,
-          'reconstruct_start': 1686818212777045000,
-          'reconstruct_end': 1686818212777045100,
-        },
-      },
-      'next_epoch': {
-        'snarked': {
-          'fetch_hashes_start': 1686818212777045000,
-          'fetch_hashes_end': 1686818212777045300,
-          'fetch_accounts_start': 1686818212777045000,
-          'fetch_accounts_end': 1686818212777045100,
-        },
-        'staged': {
-          'fetch_parts_start': 1686818212777045000,
-          'fetch_parts_end': 1686818212777045100,
-          'reconstruct_start': 1686818212777045000,
-          'reconstruct_end': 1686818212777045200,
-        },
-      },
-    },
-    'blocks': [
-      {
-        'global_slot': 316,
-        'height': 142,
-        'hash': '3NKrmbYnfDxjyFaHsK2Y7ux5RbMpDyop8Afej9cKgTw4KeGe48Ue',
-        'pred_hash': '3NLyY9SAnYG4LKhLe26ufHa2iRcG2R2kRo1YBfrmXpq8bPQnZQRp',
-        // "status": "Applied" | "Applying" | "Fetched" | "Fetching" | "Missing",
-        'status': 'Applied',
-        // below fields might not be set.
-        'fetch_start': 1686818212777045000,
-        'fetch_end': 1686818212777045000,
-        'apply_start': 1686818212777045000,
-        'apply_end': 1686818212777045000,
-      },
-      {
-        'global_slot': 317,
-        'height': 143,
-        'hash': '3NLyY9SAnYG4LKhLe26ufHa2iRcG2R2kRo1YBfrmXpq8bPQnZQRp',
-        'pred_hash': '3NQ1fefrdtgbdygrnhythyrthntdy',
-        'status': 'Applying',
-        'fetch_start': 1686818212777045000,
-        'fetch_end': 1686818212777045000,
-        'apply_start': 1686818212777045000,
-        'apply_end': 1686818212777045000,
-      },
-      {
-        'global_slot': 318,
-        'height': 144,
-        'hash': '3NQ1fefrdtgbdygrnhythyrthntdy',
-        'pred_hash': '3NQ1fefrdtgbdygrnhythyrthntdy',
-        'status': 'Fetching',
-        'fetch_start': 1686818212777045000,
-        'fetch_end': 1686818212777045000,
-        'apply_start': 1686818212777045000,
-        'apply_end': 1686818212777045000,
-      },
-      {
-        'global_slot': 319,
-        'height': 145,
-        'hash': '3NQ1fefrdtgbdygrnhythyrthntdy',
-        'pred_hash': '3NQ1fefrdtgbdygrnhythyrthntdy',
-        'status': 'Fetched',
-        'fetch_start': 1686818212777045000,
-        'fetch_end': 1686818212777045000,
-        'apply_start': 1686818212777045000,
-        'apply_end': 1686818212777045000,
-      },
-      {
-        'global_slot': 320,
-        'height': 146,
-        'hash': '3NQ1fefrdtgbdygrnhythyrthntdy',
-        'pred_hash': '3NQ1fefrdtgbdygrnhythyrthntdy',
-        'status': 'Missing',
-        'fetch_start': 1686818212777045000,
-        'fetch_end': 1686818212777045000,
-        'apply_start': 1686818212777045000,
-        'apply_end': 1686818212777045000,
-      },
-    ],
-  },
-  {
-    'kind': 'Catchup',
-    'best_tip_received': 1686818212777045000,
-    'ledgers': {},
-    'blocks': [
-      {
-        'global_slot': 316,
-        'height': 142,
-        'hash': '3NKrmbYnfDxjyFaHsK2Y7ux5RbMpDyop8Afej9cKgTw4KeGe48Ue',
-        'pred_hash': '3NLyY9SAnYG4LKhLe26ufHa2iRcG2R2kRo1YBfrmXpq8bPQnZQRp',
-        'status': 'Applied',
-        'fetch_start': 1686818212777045000,
-        'fetch_end': 1686818212777045000,
-        'apply_start': 1686818212777045000,
-        'apply_end': 1686818212777045000,
-      },
-      {
-        'global_slot': 317,
-        'height': 143,
-        'hash': '3NLyY9SAnYG4LKhLe26ufHa2iRcG2R2kRo1YBfrmXpq8bPQnZQRp',
-        'pred_hash': '3NQ1fefrdtgbdygrnhythyrthntdy',
-        'status': 'Applying',
-        'fetch_start': 1686818212777045000,
-        'fetch_end': 1686818212777045000,
-        'apply_start': 1686818212777045000,
-        'apply_end': 1686818212777045000,
-      },
-      {
-        'global_slot': 318,
-        'height': 144,
-        'hash': '3NQ1fefrdtgbdygrnhythyrthntdy',
-        'pred_hash': '3NQ1fefrdtgbdygrnhythyrthntdy',
-        'status': 'Fetching',
-        'fetch_start': 1686818212777045000,
-        'fetch_end': 1686818212777045000,
-        'apply_start': 1686818212777045000,
-        'apply_end': 1686818212777045000,
-      },
-    ],
-  },
-] as any;

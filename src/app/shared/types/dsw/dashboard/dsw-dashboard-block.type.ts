@@ -10,6 +10,7 @@ export interface DswDashboardBlock {
   applyEnd: number;
   fetchDuration: number;
   applyDuration: number;
+  isBestTip?: boolean;
 }
 
 export enum DswDashboardNodeBlockStatus {

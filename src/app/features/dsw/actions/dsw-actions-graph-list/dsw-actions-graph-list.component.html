@@ -5,6 +5,7 @@
 </button>
 <div class="overflow-y-auto flex-column h-100 w-100 pl-12">
   <div *ngFor="let group of groups; let i=index; trackBy: trackGroup"
+       class="mb-8"
        [class.d-none]="!group.display">
     <ng-container *ngTemplateOutlet="groupHeader; context: { group: group }"></ng-container>
     <div class="overflow-x-auto w-100 flex-row">
@@ -22,7 +23,7 @@
 </div>
 
 <ng-template #groupHeader let-group="group">
-  <div class="secondary flex-row lh-xl flex-column-sm">
+  <div class="secondary flex-row lh-lg flex-column-sm">
     <span class="f-600 mr-16">{{ group.groupName }}</span>
     <div>
       <span class="tertiary mr-5">total</span>{{ group.totalTime | secDuration }}
