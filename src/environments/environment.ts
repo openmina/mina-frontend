@@ -29,6 +29,12 @@ export const environment: Readonly<MinaEnv> = {
       "debugger": "http://1.k8.openmina.com:31308/node1/bpf-debugger",
       "name": "Hardcoded Webrtc2 Node"
     },
+    {
+      "graphql": "http://1.k8.openmina.com:31308/node2",
+      "tracing-graphql": "http://1.k8.openmina.com:31308/node1/internal-trace",
+      "debugger": "http://1.k8.openmina.com:31308/node1/bpf-debugger",
+      "name": "2Hardcoded Webrtc2 Node"
+    },
     // {
     //   "graphql": "http://1.k8.openmina.com:31308/node1",
     //   "tracing-graphql": "http://1.k8.openmina.com:31308/node1/internal-trace",

@@ -7,7 +7,6 @@ export interface DswDashboardNode {
   bestTipReceived: string;
   bestTipReceivedTimestamp: number;
   bestTip: string;
-  fork: string;
   appliedBlocks: number;
   applyingBlocks: number;
   missingBlocks: number;

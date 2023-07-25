@@ -36,6 +36,8 @@ export class DswBootstrapInitSuccess implements DswBootstrapAction {
 
 export class DswBootstrapGetNodes implements DswBootstrapAction {
   readonly type = DSW_BOOTSTRAP_GET_NODES;
+
+  constructor(public payload?: { force?: boolean }) { }
 }
 
 export class DswBootstrapGetNodesSuccess implements DswBootstrapAction {

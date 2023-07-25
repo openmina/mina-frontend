@@ -13,7 +13,7 @@ import {
   DSW_BOOTSTRAP_GET_NODES_SUCCESS,
   DswBootstrapActions,
   DswBootstrapClose,
-  DswBootstrapGetNodes,
+  DswBootstrapGetNodes, DswBootstrapGetNodesSuccess,
 } from '@dsw/bootstrap/dsw-bootstrap.actions';
 import { DswBootstrapService } from '@dsw/bootstrap/dsw-bootstrap.service';
 import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node.type';
@@ -35,7 +35,7 @@ export class DswBootstrapEffects extends MinaBaseEffect<DswBootstrapActions> {
     this.getNodes$ = createEffect(() => this.actions$.pipe(
       ofType(DSW_BOOTSTRAP_GET_NODES, DSW_BOOTSTRAP_CLOSE),
       this.latestActionState<DswBootstrapGetNodes | DswBootstrapClose>(),
-      filter(() => !this.pendingRequest),
+      filter(({ action }) => (action as any).payload?.force || !this.pendingRequest),
       tap(({ action }) => {
         if (action.type === DSW_BOOTSTRAP_GET_NODES) {
           this.pendingRequest = true;

@@ -6,7 +6,6 @@ import { DswDashboardSetActiveNode } from '@dsw/dashboard/dsw-dashboard.actions'
 import { Router } from '@angular/router';
 import { Routes } from '@shared/enums/routes.enum';
 import { filter } from 'rxjs';
-import { DswDashboardBlock, DswDashboardNodeBlockStatus } from '@shared/types/dsw/dashboard/dsw-dashboard-block.type';
 
 @Component({
   selector: 'mina-dsw-dashboard-side-panel',
@@ -17,11 +16,6 @@ import { DswDashboardBlock, DswDashboardNodeBlockStatus } from '@shared/types/ds
 export class DswDashboardSidePanelComponent extends StoreDispatcher implements OnInit {
 
   node: DswDashboardNode;
-  missingBlocks: DswDashboardBlock[] = [];
-  fetchingBlocks: DswDashboardBlock[] = [];
-  fetchedBlocks: DswDashboardBlock[] = [];
-  applyingBlocks: DswDashboardBlock[] = [];
-  appliedBlocks: DswDashboardBlock[] = [];
 
   @ViewChild('bestTipRef') private bestTipRef: ElementRef<HTMLSpanElement>;
   private interval: any;
@@ -39,11 +33,6 @@ export class DswDashboardSidePanelComponent extends StoreDispatcher implements O
   private listenToActiveDswDashboardNode(): void {
     this.select(selectDswDashboardActiveNode, (node: DswDashboardNode) => {
       this.node = node;
-      this.missingBlocks = node.blocks.filter(block => block.status === DswDashboardNodeBlockStatus.MISSING);
-      this.fetchingBlocks = node.blocks.filter(block => block.status === DswDashboardNodeBlockStatus.FETCHING);
-      this.fetchedBlocks = node.blocks.filter(block => block.status === DswDashboardNodeBlockStatus.FETCHED);
-      this.applyingBlocks = node.blocks.filter(block => block.status === DswDashboardNodeBlockStatus.APPLYING);
-      this.appliedBlocks = node.blocks.filter(block => block.status === DswDashboardNodeBlockStatus.APPLIED);
       this.timeReference = node.bestTipReceivedTimestamp;
       this.secondsPassed = (Date.now() - this.timeReference) / 1000;
       this.updateTimeInView();
