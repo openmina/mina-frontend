@@ -4,7 +4,6 @@ import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node
 
 enum DswBootstrapActionTypes {
   DSW_BOOTSTRAP_INIT = 'DSW_BOOTSTRAP_INIT',
-  DSW_BOOTSTRAP_INIT_SUCCESS = 'DSW_BOOTSTRAP_INIT_SUCCESS',
   DSW_BOOTSTRAP_GET_NODES = 'DSW_BOOTSTRAP_GET_NODES',
   DSW_BOOTSTRAP_GET_NODES_SUCCESS = 'DSW_BOOTSTRAP_GET_NODES_SUCCESS',
   DSW_BOOTSTRAP_SORT_NODES = 'DSW_BOOTSTRAP_SORT_NODES',
@@ -14,7 +13,6 @@ enum DswBootstrapActionTypes {
 }
 
 export const DSW_BOOTSTRAP_INIT = DswBootstrapActionTypes.DSW_BOOTSTRAP_INIT;
-export const DSW_BOOTSTRAP_INIT_SUCCESS = DswBootstrapActionTypes.DSW_BOOTSTRAP_INIT_SUCCESS;
 export const DSW_BOOTSTRAP_GET_NODES = DswBootstrapActionTypes.DSW_BOOTSTRAP_GET_NODES;
 export const DSW_BOOTSTRAP_GET_NODES_SUCCESS = DswBootstrapActionTypes.DSW_BOOTSTRAP_GET_NODES_SUCCESS;
 export const DSW_BOOTSTRAP_SORT_NODES = DswBootstrapActionTypes.DSW_BOOTSTRAP_SORT_NODES;
@@ -28,10 +26,6 @@ export interface DswBootstrapAction extends FeatureAction<DswBootstrapActionType
 
 export class DswBootstrapInit implements DswBootstrapAction {
   readonly type = DSW_BOOTSTRAP_INIT;
-}
-
-export class DswBootstrapInitSuccess implements DswBootstrapAction {
-  readonly type = DSW_BOOTSTRAP_INIT_SUCCESS;
 }
 
 export class DswBootstrapGetNodes implements DswBootstrapAction {
@@ -68,7 +62,6 @@ export class DswBootstrapClose implements DswBootstrapAction {
 
 export type DswBootstrapActions =
   | DswBootstrapInit
-  | DswBootstrapInitSuccess
   | DswBootstrapGetNodes
   | DswBootstrapGetNodesSuccess
   | DswBootstrapSortNodes

@@ -7,6 +7,8 @@ export interface DswDashboardNode {
   bestTipReceived: string;
   bestTipReceivedTimestamp: number;
   bestTip: string;
+  height: number;
+  globalSlot: number;
   appliedBlocks: number;
   applyingBlocks: number;
   missingBlocks: number;

@@ -74,11 +74,3 @@ $cta-container: var(--cta-container);
 $inter-font: 'Inter', sans-serif;
 $mono-font: "IBM Plex Mono", monospace;
 $raleway-font: 'Raleway', sans-serif;
-
-@function sum($list) {
-	$result: 0;
-	@each $item in $list {
-		$result: $result + $item;
-	}
-	@return $result;
-}

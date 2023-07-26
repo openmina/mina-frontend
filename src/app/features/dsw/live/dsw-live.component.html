@@ -1,0 +1,17 @@
+<mina-horizontal-resizable-container [leftTemplate]="left"
+                                     [rightTemplate]="right"
+                                     [show]="openSidePanel"
+                                     [minWidth]="halfWindow"
+                                     [maxWidthElement]="el.nativeElement"
+                                     localStorageKey="dsw-live-spw">
+</mina-horizontal-resizable-container>
+
+<ng-template #left>
+  <mina-dsw-live-toolbar></mina-dsw-live-toolbar>
+  <mina-dsw-live-blocks-map></mina-dsw-live-blocks-map>
+</ng-template>
+
+<ng-template #right>
+  <mina-dsw-live-filters></mina-dsw-live-filters>
+  <mina-dsw-live-events-table></mina-dsw-live-events-table>
+</ng-template>

@@ -30,4 +30,5 @@ export enum Routes {
   SNARK_WORKER = 'snark-worker',
   FRONTIER = 'frontier',
   BOOTSTRAP = 'bootstrap',
+  LIVE = 'live',
 }

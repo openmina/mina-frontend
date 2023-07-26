@@ -1,0 +1,6 @@
+<div class="flex-column">
+  <div class="block-list pl-12 flex-row align-center flex-wrap">
+    <div *ngFor="let block of blocks"
+         class="block bg-container">{{ block.height || '-' }}</div>
+  </div>
+</div>

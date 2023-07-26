@@ -1,0 +1,13 @@
+<div class="pagination-group fx-row-vert-cent ml-10 border-rad-4">
+  <button class="h-sm w-sm fx-row-full-cent btn-primary"
+          (click)="selectPreviousNode()">
+    <span class="mina-icon f-18">navigate_before</span>
+  </button>
+  <button class="h-sm w-sm fx-row-full-cent btn-primary"
+          (click)="selectNextNode()">
+    <span class="mina-icon f-18">navigate_next</span>
+  </button>
+</div>
+<span class="secondary pl-8 pr-5 f-600 flex-row flex-center">
+  Height {{ node?.height }} Best Tip {{ node?.bestTip | truncateMid }}
+</span>

@@ -29,6 +29,11 @@ const routes: Routes = [
         title: DSW_TITLE,
       },
       {
+        path: 'live',
+        loadChildren: () => import('./live/dsw-live.module').then(m => m.DswLiveModule),
+        title: DSW_TITLE,
+      },
+      {
         path: '**',
         redirectTo: 'dashboard',
         pathMatch: 'full',
