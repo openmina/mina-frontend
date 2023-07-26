@@ -95,13 +95,12 @@ function searchActionsInGroups(toSearch: string, groups: DswActionGroup[]): DswA
       return {
         ...group,
         actions: group.actions.map(action => {
-          if (action.title.toLowerCase().includes(toSearch.toLowerCase())) {
+          if (action.fullTitle.toLowerCase().includes(toSearch.toLowerCase())) {
             return { ...action, display: true };
           }
           return { ...action, display: false };
         }),
       };
-      // }).filter(group => group.actions.length > 0);
     }).map(group => {
       if (group.actions.some(action => action.display)) {
         return { ...group, display: true };
