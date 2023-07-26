@@ -21,18 +21,18 @@ export class DswDashboardTableComponent extends MinaTableWrapper<DswDashboardNod
   protected readonly tableHeads: TableColumnList<DswDashboardNode> = [
     { name: 'status', sort: 'kind' },
     { name: 'name' },
-    { name: 'height' },
-    { name: 'best tip', sort: 'bestTip' },
-    { name: 'datetime', sort: 'bestTipReceivedTimestamp' },
-    { name: 'applied', sort: 'appliedBlocks' },
-    { name: 'applying', sort: 'applyingBlocks' },
-    { name: 'fetching', sort: 'fetchingBlocks' },
-    { name: 'fetched', sort: 'fetchedBlocks' },
-    { name: 'missing blocks', sort: 'missingBlocks' },
+    { name: 'height', tooltip: 'The block height on which the Snarker is currently working. ' },
+    { name: 'best tip', sort: 'bestTip', tooltip: 'The blockchain\'s latest block with the highest known chain strength.' },
+    { name: 'datetime', sort: 'bestTipReceivedTimestamp', tooltip: 'The date when the block was received.' },
+    { name: 'applied', sort: 'appliedBlocks', tooltip: 'Number of blocks that node has applied with the latest synchronization attempt.' },
+    { name: 'applying', sort: 'applyingBlocks', tooltip: 'Number of blocks that node is currently applying with the latest synchronization attempt.' },
+    { name: 'fetching', sort: 'fetchingBlocks', tooltip: 'Number of blocks that node is currently fetching with the latest synchronization attempt.' },
+    { name: 'fetched', sort: 'fetchedBlocks', tooltip: 'Number of blocks that node has fetched with the latest synchronization attempt.' },
+    { name: 'missing blocks', sort: 'missingBlocks', tooltip: 'Number of blocks that the node needs to fetch with the latest synchronization attempt.' },
   ];
 
   private nodeFromRoute: string;
-  @ViewChild('thGroupsTemplate') private thGroupsTemplate: TemplateRef<void>
+  @ViewChild('thGroupsTemplate') private thGroupsTemplate: TemplateRef<void>;
 
   constructor(private router: Router) { super(); }
 

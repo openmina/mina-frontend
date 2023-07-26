@@ -25,28 +25,28 @@ import { SEC_CONFIG_GRAY_PALETTE, SecDurationConfig } from '@shared/pipes/sec-du
 })
 export class DswBootstrapTableComponent extends MinaTableWrapper<DswBootstrapNode> implements OnInit {
 
-  readonly secConfig: SecDurationConfig = { color: true, onlySeconds: false, colors: SEC_CONFIG_GRAY_PALETTE, severe: 10, warn: 1, default: 0.01};
+  readonly secConfig: SecDurationConfig = { color: true, onlySeconds: false, colors: SEC_CONFIG_GRAY_PALETTE, severe: 10, warn: 1, default: 0.01 };
 
   openSidePanel: boolean = true;
 
   protected readonly tableHeads: TableColumnList<DswBootstrapNode> = [
     { name: '#', sort: 'index' },
-    { name: 'global slot', sort: 'globalSlot' },
-    { name: 'height' },
-    { name: 'best tip', sort: 'bestTip' },
-    { name: 'amount', sort: 'fetchedBlocks' },
-    { name: 'min', sort: 'fetchedBlocksMin' },
-    { name: 'max', sort: 'fetchedBlocksMax' },
-    { name: 'avg', sort: 'fetchedBlocksAvg' },
-    { name: 'amount', sort: 'appliedBlocks' },
-    { name: 'min', sort: 'appliedBlocksMin' },
-    { name: 'max', sort: 'appliedBlocksMax' },
-    { name: 'avg', sort: 'appliedBlocksAvg' },
+    { name: 'global slot', sort: 'globalSlot', tooltip: 'The block’s slot irrespective of Mina epochs.' },
+    { name: 'height', tooltip: 'The block height.' },
+    { name: 'best tip', sort: 'bestTip', tooltip: 'Best tip to which node tried to synchronize.' },
+    { name: 'amount', sort: 'fetchedBlocks', tooltip: 'Total amount of fetched blocks.' },
+    { name: 'min', sort: 'fetchedBlocksMin', tooltip: 'Minimum time it took to fetch a block.' },
+    { name: 'max', sort: 'fetchedBlocksMax', tooltip: 'Maximum time it took to fetch a block.' },
+    { name: 'avg', sort: 'fetchedBlocksAvg', tooltip: 'Average time it took to fetch a block.' },
+    { name: 'amount', sort: 'appliedBlocks', tooltip: 'Total amount of applied blocks.' },
+    { name: 'min', sort: 'appliedBlocksMin', tooltip: 'Minimum time it took to apply a block.' },
+    { name: 'max', sort: 'appliedBlocksMax', tooltip: 'Maximum time it took to apply a block.' },
+    { name: 'avg', sort: 'appliedBlocksAvg', tooltip: 'Average time it took to apply a block.' },
   ];
 
   private indexFromRoute: number;
 
-  @ViewChild('thGroupsTemplate') private thGroupsTemplate: TemplateRef<void>
+  @ViewChild('thGroupsTemplate') private thGroupsTemplate: TemplateRef<void>;
 
   constructor(private router: Router) { super(); }
 

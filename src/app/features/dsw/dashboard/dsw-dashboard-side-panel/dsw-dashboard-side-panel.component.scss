@@ -13,11 +13,11 @@
 		}
 
 		&:nth-child(3) .circle {
-			background-color: $aware-primary;
+			background-color: $base-tertiary;
 		}
 
 		&:nth-child(4) .circle {
-			background-color: $special-selected-alt-1-primary;
+			background-color: $base-secondary;
 		}
 
 		&:nth-child(5) .circle {
@@ -31,48 +31,64 @@
 
 	.squares {
 		> div {
+			position: relative;
 			cursor: pointer;
-			width: 16px;
-			height: 16px;
+			width: 18px;
+			height: 18px;
 			border: 1px solid $base-background;
-			background-color: white;
+
+			&::before {
+				position: absolute;
+				content: '';
+				width: 4px;
+				height: 4px;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				transition: all 0.1s ease-in-out;
+			}
+
+			&:hover::before {
+				width: 100%;
+				height: 100%;
+			}
 
 			&.Missing {
-				background-color: $warn-secondary;
+				background-color: $warn-container;
 
-				&:hover {
+				&::before {
 					background-color: $warn-primary;
 				}
 			}
 
 			&.Fetching {
-				background-color: $aware-secondary;
+				background-color: $base-container;
 
-				&:hover {
-					background-color: $aware-primary;
+				&::before {
+					background-color: $base-secondary;
 				}
 			}
 
 			&.Fetched {
-				background-color: $special-selected-alt-1-secondary;
+				background-color: $base-container;
 
-				&:hover {
-					background-color: $special-selected-alt-1-primary;
+				&::before {
+					background-color: $base-primary;
 				}
 			}
 
 			&.Applying {
-				background-color: $selected-secondary;
+				background-color: $selected-container;
 
-				&:hover {
+				&::before {
 					background-color: $selected-primary;
 				}
 			}
 
 			&.Applied {
-				background-color: $success-secondary;
+				background-color: $success-container;
 
-				&:hover {
+				&::before {
 					background-color: $success-primary;
 				}
 			}

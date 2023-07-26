@@ -40,7 +40,7 @@ export class DswBootstrapOverviewComponent extends StoreDispatcher implements On
       this.component1.decimals = 2;
       this.component1.responsive = false;
       this.component1.xTicksSkipper = 7;
-      this.component1.color = 'var(--special-selected-alt-3-primary)';
+      this.component1.color = 'var(--base-primary)';
       this.component1.ngOnInit();
     });
     await import('@shared/components/bar-graph/bar-graph.component').then(c => {
@@ -53,7 +53,7 @@ export class DswBootstrapOverviewComponent extends StoreDispatcher implements On
       this.component2.decimals = 2;
       this.component2.responsive = false;
       this.component2.xTicksSkipper = 7;
-      this.component2.color = 'var(--special-selected-alt-1-primary)';
+      this.component2.color = 'var(--success-primary)';
       this.component2.ngOnInit();
     });
     this.listenToNodes();

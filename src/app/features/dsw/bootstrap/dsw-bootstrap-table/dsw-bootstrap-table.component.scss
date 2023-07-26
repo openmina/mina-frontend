@@ -9,13 +9,13 @@
 	}
 
 	> span:nth-child(2) {
-		color: $special-selected-alt-3-primary;
-		border-bottom: 1px solid $special-selected-alt-3-primary;
+		color: $base-primary;
+		border-bottom: 1px solid $base-primary;
 	}
 
 	> span:nth-child(3) {
-		color: $special-selected-alt-1-primary;
-		border-bottom: 1px solid $special-selected-alt-1-primary;
+		color: $success-primary;
+		border-bottom: 1px solid $success-primary;
 	}
 
 	@media (max-width: 768px) {
@@ -26,13 +26,13 @@
 :host ::ng-deep .mina-table .row .th {
 	@for $i from 5 through 8 {
 		span:nth-child(#{$i}) {
-			color: $special-selected-alt-3-primary !important;
+			color: $base-primary !important;
 		}
 	}
 
 	@for $i from 9 through 12 {
 		span:nth-child(#{$i}) {
-			color: $special-selected-alt-1-primary !important;
+			color: $success-primary !important;
 		}
 	}
 }

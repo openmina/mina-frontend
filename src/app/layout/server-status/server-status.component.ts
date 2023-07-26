@@ -116,7 +116,7 @@ export class ServerStatusComponent extends ManualDetection implements OnInit, On
   private buildTooltipText(): void {
     this.nodeTooltip = TOOLTIP_MESSAGES[this.status];
     if (this.switchForbidden) {
-      this.nodeTooltip = 'This page shows statistics about multiple nodes';
+      this.nodeTooltip = 'This page shows the statistics of all nodes';
     }
   }
 

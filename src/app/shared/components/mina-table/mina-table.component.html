@@ -7,12 +7,12 @@
             [class.active]="currentSort.sortBy === (th.sort ?? th.name)"
             [class.p-relative]="th.tooltip"
             class="pointer">
-        <span *ngIf="th.tooltip" class="p-absolute w-100 h-100" [tooltip]="th.tooltip" [maxWidth]="400"></span>
         {{ th.name }}
         <span [class.flip]="currentSort.sortDirection === 'descending'"
               [class.show]="currentSort.sortBy === (th.sort ?? th.name)"
               class="mina-icon f-18 icon-200">arrow_upward
         </span>
+        <span *ngIf="th.tooltip" class="p-absolute w-100 h-100" [tooltip]="th.tooltip" [maxWidth]="400"></span>
       </span>
     </div>
     <ng-template #noSort>
