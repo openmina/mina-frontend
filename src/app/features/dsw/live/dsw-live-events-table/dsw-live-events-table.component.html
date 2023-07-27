@@ -1,1 +1,14 @@
-<p>dsw-live-events-table works!</p>
+<ng-container #minaTable></ng-container>
+
+<ng-template #rowTemplate let-row="row">
+  <span class="tertiary">{{ row.datetime }}</span>
+  <span class="secondary">{{ row.height }}</span>
+  <span class="fx-row-vert-cent">
+    <span class="best-tip" *ngIf="row.isBestTip">
+      <span>Best Tip</span>
+    </span>
+    {{ row.message }}
+  </span>
+  <span [ngClass]="row.status">{{ row.status }}</span>
+  <span [innerHTML]="row.elapsed | secDuration: secConfig"></span>
+</ng-template>

@@ -1,12 +1,12 @@
 import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
-import { lastItem, sort } from '@shared/helpers/array.helper';
+import { lastItem, sort, toggleItem } from '@shared/helpers/array.helper';
 import { isDesktop } from '@shared/helpers/values.helper';
 import { DswLiveState } from '@dsw/live/dsw-live.state';
 import {
   DSW_LIVE_CLOSE,
   DSW_LIVE_GET_NODES_SUCCESS,
   DSW_LIVE_SET_ACTIVE_NODE,
-  DSW_LIVE_SORT_EVENTS,
+  DSW_LIVE_SORT_EVENTS, DSW_LIVE_TOGGLE_FILTER,
   DSW_LIVE_TOGGLE_SIDE_PANEL,
   DswLiveActions,
 } from '@dsw/live/dsw-live.actions';
@@ -20,31 +20,37 @@ const initialState: DswLiveState = {
     sortBy: 'timestamp',
     sortDirection: SortDirection.DSC,
   },
+  filteredEvents: [],
+  filters: [],
 };
 
 export function reducer(state: DswLiveState = initialState, action: DswLiveActions): DswLiveState {
   switch (action.type) {
 
     case DSW_LIVE_GET_NODES_SUCCESS: {
+      let activeNode = state.activeNode ? action.payload.find(node => node.bestTip === state.activeNode.bestTip) : lastItem(action.payload);
       return {
         ...state,
         nodes: action.payload,
-        activeNode: state.activeNode ? action.payload.find(node => node.bestTip === state.activeNode.bestTip) : lastItem(action.payload),
+        activeNode,
+        filteredEvents: filterEvents(sortEvents(activeNode.events, state.sort), state.filters),
       };
     }
 
     case DSW_LIVE_SET_ACTIVE_NODE: {
+      let activeNode = state.nodes.find(node => node.bestTip === action.payload.hash);
       return {
         ...state,
-        activeNode: state.nodes.find(node => node.bestTip === action.payload.hash),
+        activeNode,
+        filteredEvents: filterEvents(sortEvents(activeNode.events, state.sort), state.filters),
       };
     }
 
     case DSW_LIVE_SORT_EVENTS: {
       return {
         ...state,
-        sort: action.payload, //todo: add sorting
-        // nodes: sortNodes(state.nodes, action.payload),
+        sort: action.payload,
+        filteredEvents: filterEvents(sortEvents(state.activeNode.events, action.payload), state.filters),
       };
     }
 
@@ -56,6 +62,15 @@ export function reducer(state: DswLiveState = initialState, action: DswLiveActio
       };
     }
 
+    case DSW_LIVE_TOGGLE_FILTER: {
+      const filters = toggleItem(state.filters, action.payload);
+      return {
+        ...state,
+        filters,
+        filteredEvents: filterEvents(sortEvents(state.activeNode.events, state.sort), filters),
+      }
+    }
+
     case DSW_LIVE_CLOSE:
       return initialState;
 
@@ -64,6 +79,17 @@ export function reducer(state: DswLiveState = initialState, action: DswLiveActio
   }
 }
 
-function sortEvents(event: DswLiveBlockEvent[], tableSort: TableSort<DswLiveBlockEvent>): DswLiveBlockEvent[] {
-  return sort<DswLiveBlockEvent>(event, tableSort, ['message', 'status']);
+function sortEvents(events: DswLiveBlockEvent[], tableSort: TableSort<DswLiveBlockEvent>): DswLiveBlockEvent[] {
+  return sort<DswLiveBlockEvent>(events, tableSort, ['message', 'status']);
+}
+
+function filterEvents(events: DswLiveBlockEvent[], filters: string[]): DswLiveBlockEvent[] {
+  if (!filters.length) {
+    return events;
+  }
+  if (filters.includes('best tip')) {
+    events = events.filter(event => event.isBestTip);
+  }
+
+  return events;
 }

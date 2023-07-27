@@ -1,0 +1,14 @@
+@import 'variables';
+
+.filter {
+
+	&:hover:not(.active) {
+		background-color: $base-divider;
+		color: $base-secondary !important;
+	}
+
+	&.active {
+		background-color: $selected-container;
+		color: $selected-primary !important;
+	}
+}

@@ -10,6 +10,7 @@ import { DswLiveToolbarComponent } from './dsw-live-toolbar/dsw-live-toolbar.com
 import { DswLiveFiltersComponent } from './dsw-live-filters/dsw-live-filters.component';
 import { DswLiveBlocksMapComponent } from './dsw-live-blocks-map/dsw-live-blocks-map.component';
 import { DswLiveEventsTableComponent } from './dsw-live-events-table/dsw-live-events-table.component';
+import { CopyComponent } from '@shared/components/copy/copy.component';
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import { DswLiveEventsTableComponent } from './dsw-live-events-table/dsw-live-ev
     DswLiveRouting,
     EffectsModule.forFeature(DswLiveEffects),
     HorizontalResizableContainerComponent,
+    CopyComponent,
   ],
 })
 export class DswLiveModule {}

@@ -11,6 +11,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 export class HorizontalResizeDirective implements OnInit {
 
   @Input() minWidth: number | null;
+  @Input() maxWidth: number | null;
   @Input() maxWidthElement: HTMLElement | null;
   @Input() localStorageKey: string;
 
@@ -24,7 +25,7 @@ export class HorizontalResizeDirective implements OnInit {
 
   private resizeInProgress: boolean;
   private windowResize$: Subject<number> = new Subject<number>();
-  private maxWidth: number;
+  private maxCalculatedWidth: number;
 
   constructor(@Inject(DOCUMENT) private readonly document: Document,
               @Inject(ElementRef) private readonly elementRef: ElementRef<HTMLElement>) {
@@ -45,8 +46,8 @@ export class HorizontalResizeDirective implements OnInit {
                 const newValue = left + width - clientX;
                 if (this.minWidth && this.minWidth > newValue) {
                   return this.minWidth;
-                } else if (this.maxWidth && this.maxWidth < newValue) {
-                  return this.maxWidth;
+                } else if (this.maxCalculatedWidth && this.maxCalculatedWidth < newValue) {
+                  return this.maxCalculatedWidth;
                 } else {
                   return newValue;
                 }
@@ -56,12 +57,12 @@ export class HorizontalResizeDirective implements OnInit {
             );
           }),
         ),
-      this.windowResize$.asObservable()
+      this.windowResize$.asObservable(),
     );
   }
 
   ngOnInit(): void {
-    this.maxWidth = this.maxWidthElement.offsetWidth - 50;
+    this.maxCalculatedWidth = this.getMaxCalculatedWidth();
 
     fromEvent(window, 'resize')
       .pipe(
@@ -70,14 +71,18 @@ export class HorizontalResizeDirective implements OnInit {
         distinctUntilChanged(),
       )
       .subscribe(() => {
-        this.maxWidth = this.maxWidthElement.offsetWidth - 50;
+        this.maxCalculatedWidth = this.getMaxCalculatedWidth();
         const currentWidth = Number(localStorage.getItem(this.localStorageKey));
-        if (this.maxWidth < this.minWidth) {
-          this.maxWidth = this.minWidth;
-          this.windowResize$.next(this.maxWidth);
-        } else if (this.maxWidth < currentWidth) {
-          this.windowResize$.next(this.maxWidth);
+        if (this.maxCalculatedWidth < this.minWidth) {
+          this.maxCalculatedWidth = this.minWidth;
+          this.windowResize$.next(this.maxCalculatedWidth);
+        } else if (this.maxCalculatedWidth < currentWidth) {
+          this.windowResize$.next(this.maxCalculatedWidth);
         }
       });
+  }
+
+  private getMaxCalculatedWidth(): number {
+    return this.maxWidth || (this.maxWidthElement.offsetWidth - 50);
   }
 }

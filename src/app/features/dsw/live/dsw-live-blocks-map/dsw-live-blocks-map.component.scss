@@ -1,6 +1,99 @@
 @import 'variables';
 
-.block-list {
+.circle {
+	width: 10px;
+	height: 10px;
+	border-radius: 12px;
+
+	&.red {
+		background-color: $warn-primary;
+	}
+
+	&.gray {
+		background-color: $base-tertiary;
+	}
+
+	&.white {
+		background-color: $base-primary;
+	}
+
+	&.blue {
+		background-color: $selected-primary;
+	}
+
+	&.green {
+		background-color: $success-primary;
+	}
+}
+
+.list-wrapper {
+	padding-bottom: 40px;
+	$leftPadding: 106px;
+
+	.fx-row-vert-cent {
+		height: 34px;
+		position: relative;
+
+		> span {
+			width: $leftPadding;
+		}
+
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 86px;
+			width: 1px;
+			height: 100%;
+			z-index: 1;
+		}
+
+		&:first-child::before {
+			background-color: $special-selected-alt-2-primary;
+		}
+
+		&:last-child::before {
+			background-color: $special-selected-alt-1-primary;
+		}
+	}
+
+	.root span {
+		color: $special-selected-alt-2-primary;
+		background-color: $special-selected-alt-2-container;
+	}
+
+	.best-tip span {
+		color: $special-selected-alt-1-primary;
+		background-color: $special-selected-alt-1-container;
+	}
+
+	.root span, .best-tip span {
+		margin-right: 5px;
+		border-radius: 6px;
+		padding: 5px;
+	}
+
+	.block-list {
+		height: calc(100% - 34px - 34px);
+		position: relative;
+		margin-left: $leftPadding;
+
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: -20px;
+			width: 1px;
+			height: 100%;
+			background-color: $base-tertiary;
+			z-index: 1;
+		}
+
+		> .p-absolute {
+			max-height: 100%;
+		}
+	}
+
 	.block {
 		width: 34px;
 		height: 34px;
@@ -9,5 +102,30 @@
 		font-size: 10px;
 		margin-right: 1px;
 		margin-bottom: 1px;
+
+		&.Missing {
+			background-color: $warn-container;
+			color: $warn-primary;
+		}
+
+		&.Fetching {
+			background-color: $base-container;
+			color: $base-tertiary;
+		}
+
+		&.Fetched {
+			background-color: $base-container;
+			color: $base-secondary;
+		}
+
+		&.Applying {
+			background-color: $selected-container;
+			color: $selected-primary;
+		}
+
+		&.Applied {
+			background-color: $success-container;
+			color: $success-primary;
+		}
 	}
 }

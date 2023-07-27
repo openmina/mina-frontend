@@ -1,0 +1,15 @@
+@import 'variables';
+
+span {
+	&.Completed {
+		color: $success-primary;
+	}
+
+	.best-tip span {
+		color: $special-selected-alt-1-primary;
+		background-color: $special-selected-alt-1-container;
+		margin-right: 5px;
+		border-radius: 4px;
+		padding: 3px;
+	}
+}

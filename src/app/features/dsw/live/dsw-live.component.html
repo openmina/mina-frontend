@@ -1,8 +1,9 @@
 <mina-horizontal-resizable-container [leftTemplate]="left"
                                      [rightTemplate]="right"
                                      [show]="openSidePanel"
-                                     [minWidth]="halfWindow"
+                                     [minWidth]="610"
                                      [maxWidthElement]="el.nativeElement"
+                                     [maxWidth]="el.nativeElement.offsetWidth - 650"
                                      localStorageKey="dsw-live-spw">
 </mina-horizontal-resizable-container>
 

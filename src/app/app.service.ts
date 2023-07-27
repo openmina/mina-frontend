@@ -31,6 +31,10 @@ export class AppService {
 
     let onlineNode: MinaNode = nodeFromURL;
 
+    if (configs[0].graphql.includes('mocked')) {
+      return of(configs[0]);
+    }
+
     return from(
       configs.map(node =>
         this.http

@@ -26,6 +26,7 @@ import { NgTemplateOutlet } from '@angular/common';
 export class HorizontalResizableContainerComponent implements OnInit, OnChanges {
 
   @Input() minWidth: number | null = null;
+  @Input() maxWidth: number | null = null;
   @Input() maxWidthElement: HTMLElement | null = null;
   @Input() localStorageKey: string;
   @Input() show: boolean;

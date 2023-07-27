@@ -24,7 +24,7 @@ export const environment: Readonly<MinaEnv> = {
   },
   configs: [
     {
-      "graphql": "http://1.k8.openmina.com:31308/node1",
+      "graphql": "mocked",
       "tracing-graphql": "http://1.k8.openmina.com:31308/node1/internal-trace",
       "debugger": "http://1.k8.openmina.com:31308/node1/bpf-debugger",
       "name": "Hardcoded Webrtc2 Node"
