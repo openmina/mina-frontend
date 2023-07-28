@@ -2,9 +2,11 @@
 
 <ng-template #rowTemplate let-row="row">
   <span class="tertiary">{{ row.datetime }}</span>
-  <span class="secondary">{{ row.height }}</span>
+  <span>
+    <span class="height f-600">{{ row.height }}</span>
+  </span>
   <span class="fx-row-vert-cent">
-    <span class="best-tip" *ngIf="row.isBestTip">
+    <span class="best-tip f-600" *ngIf="row.isBestTip">
       <span>Best Tip</span>
     </span>
     {{ row.message }}

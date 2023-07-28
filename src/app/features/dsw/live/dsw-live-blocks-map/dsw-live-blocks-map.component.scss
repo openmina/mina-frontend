@@ -48,12 +48,32 @@
 			z-index: 1;
 		}
 
-		&:first-child::before {
-			background-color: $special-selected-alt-2-primary;
-		}
+		&:first-child {
+			&::before {
+				background-color: $special-selected-alt-2-primary;
+			}
 
-		&:last-child::before {
-			background-color: $special-selected-alt-1-primary;
+			.arrow {
+				border: solid $special-selected-alt-2-primary;
+				border-width: 0 1px 1px 0;
+			}
+		}
+		&:last-child {
+			&::before {
+				background-color: $special-selected-alt-1-primary;
+			}
+			.arrow {
+				border: solid $special-selected-alt-1-primary;
+				border-width: 0 1px 1px 0;
+			}
+		}
+		.arrow {
+			display: inline-block;
+			padding: 3px;
+			position: absolute;
+			left: 83px;
+			top: 27px;
+			transform: rotate(45deg);
 		}
 	}
 

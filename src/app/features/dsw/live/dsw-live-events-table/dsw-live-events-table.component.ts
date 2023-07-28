@@ -5,8 +5,7 @@ import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
 import { filter } from 'rxjs';
 import { DswLiveBlockEvent } from '@shared/types/dsw/live/dsw-live-block-event.type';
 import { DswLiveSortEvents } from '@dsw/live/dsw-live.actions';
-import { selectDswLiveActiveNode, selectDswLiveFilteredEvents, selectDswLiveSort } from '@dsw/live/dsw-live.state';
-import { DswLiveNode } from '@shared/types/dsw/live/dsw-live-node.type';
+import { selectDswLiveFilteredEvents, selectDswLiveSort } from '@dsw/live/dsw-live.state';
 
 @Component({
   selector: 'mina-dsw-live-events-table',
@@ -17,7 +16,15 @@ import { DswLiveNode } from '@shared/types/dsw/live/dsw-live-node.type';
 })
 export class DswLiveEventsTableComponent extends MinaTableWrapper<DswLiveBlockEvent> implements OnInit {
 
-  readonly secConfig: SecDurationConfig = { color: true, onlySeconds: false, colors: SEC_CONFIG_GRAY_PALETTE, severe: 10, warn: 1, default: 0.01, undefinedAlternative: '-' };
+  readonly secConfig: SecDurationConfig = {
+    color: true,
+    onlySeconds: false,
+    colors: SEC_CONFIG_GRAY_PALETTE,
+    severe: 10,
+    warn: 1,
+    default: 0.01,
+    undefinedAlternative: '-',
+  };
 
   protected readonly tableHeads: TableColumnList<DswLiveBlockEvent> = [
     { name: 'datetime', sort: 'timestamp' },

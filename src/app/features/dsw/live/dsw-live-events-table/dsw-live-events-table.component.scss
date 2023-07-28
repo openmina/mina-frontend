@@ -5,9 +5,18 @@ span {
 		color: $success-primary;
 	}
 
+	.height {
+		color: $base-primary;
+		background-color: $base-container;
+	}
+
 	.best-tip span {
 		color: $special-selected-alt-1-primary;
 		background-color: $special-selected-alt-1-container;
+	}
+
+	.height,
+	.best-tip span {
 		margin-right: 5px;
 		border-radius: 4px;
 		padding: 3px;

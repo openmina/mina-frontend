@@ -29,6 +29,8 @@ export class DswLiveBlocksMapComponent extends StoreDispatcher implements OnInit
 
   private listenToBestTip(): void {
     this.select(selectDswLiveActiveNode, (node: DswLiveNode) => {
+      this.rootBlock = null;
+      this.bestTipBlock = null;
       this.blocks = (node?.blocks || []).slice().reverse();
       this.missing = node?.missingBlocks;
       this.fetching = node?.fetchingBlocks;
