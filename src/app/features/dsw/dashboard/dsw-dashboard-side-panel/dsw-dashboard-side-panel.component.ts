@@ -18,6 +18,7 @@ export class DswDashboardSidePanelComponent extends StoreDispatcher implements O
   node: DswDashboardNode;
 
   @ViewChild('bestTipRef') private bestTipRef: ElementRef<HTMLSpanElement>;
+
   private interval: any;
   private secondsPassed: number = 0;
   private timeReference: number = 0;
