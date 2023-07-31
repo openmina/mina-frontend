@@ -14,8 +14,7 @@ span {
 		color: $selected-primary;
 	}
 
-	&.Completed,
-	&.Applied {
+  &.Applied {
 		color: $success-primary;
 	}
 

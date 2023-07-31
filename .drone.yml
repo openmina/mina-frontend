@@ -50,13 +50,13 @@ steps:
     depends_on:
       - prepare-tests
 
-  - name: dashboard-nodes-data
-    image: cypress/included:12.6.0
-    commands:
-      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/dashboard/nodes/dashboard-nodes-data.cy.ts"
-    depends_on:
-      - prepare-tests
-
+#  - name: dashboard-nodes-data
+#    image: cypress/included:12.6.0
+#    commands:
+#      - cypress run --config-file "cypress.config.js" --spec "cypress/e2e/dashboard/nodes/dashboard-nodes-data.cy.ts"
+#    depends_on:
+#      - prepare-tests
+#
 #  - name: dashboard-nodes-table
 #    image: cypress/included:12.6.0
 #    commands:

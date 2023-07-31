@@ -6,6 +6,7 @@ export interface MinaEnv {
   identifier?: string;
   isVanilla?: boolean;
   aggregator?: string;
+  noServerStatus?: boolean;
   nodeLister?: {
     domain: string;
     port: number;

@@ -18,6 +18,9 @@ export class AppService {
               private http: HttpClient) { }
 
   getActiveNode(nodes: MinaNode[]): Observable<MinaNode | null> {
+    if (CONFIG.noServerStatus) {
+      return of({} as MinaNode);
+    }
     if (CONFIG.nodeLister) {
       return of(nodes[0]);
     }
@@ -30,10 +33,6 @@ export class AppService {
     configs.unshift(nodeFromURL);
 
     let onlineNode: MinaNode = nodeFromURL;
-
-    if (configs[0].graphql.includes('mocked')) {
-      return of(configs[0]);
-    }
 
     return from(
       configs.map(node =>

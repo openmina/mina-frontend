@@ -9,6 +9,7 @@ export const environment: Readonly<MinaEnv> = {
   //   port: 4000,
   // },
   isVanilla: true,
+  noServerStatus: true,
   globalConfig: {
     features: {
       dashboard: ['nodes', 'topology'],
@@ -23,18 +24,18 @@ export const environment: Readonly<MinaEnv> = {
     },
   },
   configs: [
-    {
-      "graphql": "mocked",
-      "tracing-graphql": "http://1.k8.openmina.com:31308/node1/internal-trace",
-      "debugger": "http://1.k8.openmina.com:31308/node1/bpf-debugger",
-      "name": "Hardcoded Webrtc2 Node"
-    },
-    {
-      "graphql": "http://1.k8.openmina.com:31308/node2",
-      "tracing-graphql": "http://1.k8.openmina.com:31308/node1/internal-trace",
-      "debugger": "http://1.k8.openmina.com:31308/node1/bpf-debugger",
-      "name": "2Hardcoded Webrtc2 Node"
-    },
+    // {
+    //   "graphql": "mocked",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31308/node1/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31308/node1/bpf-debugger",
+    //   "name": "Hardcoded Webrtc2 Node"
+    // },
+    // {
+    //   "graphql": "http://1.k8.openmina.com:31308/node2",
+    //   "tracing-graphql": "http://1.k8.openmina.com:31308/node1/internal-trace",
+    //   "debugger": "http://1.k8.openmina.com:31308/node1/bpf-debugger",
+    //   "name": "2Hardcoded Webrtc2 Node"
+    // },
     // {
     //   "graphql": "http://1.k8.openmina.com:31308/node1",
     //   "tracing-graphql": "http://1.k8.openmina.com:31308/node1/internal-trace",

@@ -6,7 +6,8 @@ export const environment: Readonly<MinaEnv> = {
   //   dsn: 'https://57619b6a7a1248bea1c65abdb2104a03@o4504056952127488.ingest.sentry.io/4504057101549568',
   //   tracingOrigins: ['https://openmina-webnode.web.app'],
   // },
-  identifier: 'webrtc2',
+  identifier: 'WebRtc2',
+  noServerStatus: true,
   // aggregator: 'http://1.k8.openmina.com:31308/aggregator',
   // nodeLister: {
   //   domain: 'http://65.21.195.80',
@@ -27,12 +28,6 @@ export const environment: Readonly<MinaEnv> = {
     },
   },
   configs: [
-    {
-      'graphql': 'http://1.k8.openmina.com:31308/node1',
-      'tracing-graphql': 'http://1.k8.openmina.com:31308/node1/internal-trace',
-      'debugger': 'http://1.k8.openmina.com:31308/node1/bpf-debugger',
-      'name': 'Hardcoded Webrtc2 Node',
-    },
   ],
 };
 

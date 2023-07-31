@@ -12,6 +12,7 @@ import { APP_TOGGLE_MENU_OPENING, AppToggleMenuOpening } from '@app/app.actions'
 import { selectLoadingStateLength } from '@app/layout/toolbar/loading.reducer';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { Routes } from '@shared/enums/routes.enum';
+import { CONFIG } from '@shared/constants/config';
 
 @Component({
   selector: 'mina-toolbar',
@@ -26,6 +27,7 @@ export class ToolbarComponent extends ManualDetection implements OnInit {
   definiteLoading: LoadingEvent;
   isMobile: boolean;
   switchForbidden: boolean;
+  noServerStatus: boolean = CONFIG.noServerStatus;
 
   @ViewChild('loadingRef') private loadingRef: ElementRef<HTMLDivElement>;
 
