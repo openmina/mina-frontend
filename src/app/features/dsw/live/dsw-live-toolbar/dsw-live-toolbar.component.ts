@@ -74,6 +74,7 @@ export class DswLiveToolbarComponent extends StoreDispatcher implements OnInit {
         this.selectNode(this.tipFromRoute);
         delete this.tipFromRoute;
       }
+      this.detect();
     }, filter(Boolean));
   }
 

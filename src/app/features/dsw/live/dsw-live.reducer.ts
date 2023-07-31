@@ -40,6 +40,9 @@ export function reducer(state: DswLiveState = initialState, action: DswLiveActio
 
     case DSW_LIVE_SET_ACTIVE_NODE: {
       let activeNode = state.nodes.find(node => node.bestTip === action.payload.hash);
+      if (!activeNode) {
+        return state;
+      }
       return {
         ...state,
         activeNode,
