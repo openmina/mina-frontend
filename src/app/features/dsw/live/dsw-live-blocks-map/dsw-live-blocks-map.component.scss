@@ -1,31 +1,5 @@
 @import 'variables';
 
-.circle {
-	width: 10px;
-	height: 10px;
-	border-radius: 12px;
-
-	&.red {
-		background-color: $warn-primary;
-	}
-
-	&.gray {
-		background-color: $base-tertiary;
-	}
-
-	&.white {
-		background-color: $base-primary;
-	}
-
-	&.blue {
-		background-color: $selected-primary;
-	}
-
-	&.green {
-		background-color: $success-primary;
-	}
-}
-
 .list-wrapper {
 	padding-bottom: 40px;
 	$leftPadding: 106px;
@@ -35,7 +9,7 @@
 		position: relative;
 
 		> span {
-			width: $leftPadding;
+			width: $leftPadding - 10px;
 		}
 
 		&::before {
@@ -58,15 +32,18 @@
 				border-width: 0 1px 1px 0;
 			}
 		}
+
 		&:last-child {
 			&::before {
 				background-color: $special-selected-alt-1-primary;
 			}
+
 			.arrow {
 				border: solid $special-selected-alt-1-primary;
 				border-width: 0 1px 1px 0;
 			}
 		}
+
 		.arrow {
 			display: inline-block;
 			padding: 3px;

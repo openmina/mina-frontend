@@ -46,7 +46,6 @@ export class DswDashboardSidePanelComponent extends StoreDispatcher implements O
     this.router.navigate([Routes.SNARK_WORKER, Routes.DASHBOARD], { queryParamsHandling: 'merge' });
   }
 
-
   private createTimer(): void {
     this.zone.run(() => {
       clearInterval(this.interval);

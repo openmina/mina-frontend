@@ -1,7 +1,21 @@
 @import 'variables';
 
 span {
-	&.Completed {
+
+	&.Fetching {
+		color: $base-tertiary;
+	}
+
+	&.Fetched {
+		color: $base-secondary;
+	}
+
+	&.Applying {
+		color: $selected-primary;
+	}
+
+	&.Completed,
+	&.Applied {
 		color: $success-primary;
 	}
 

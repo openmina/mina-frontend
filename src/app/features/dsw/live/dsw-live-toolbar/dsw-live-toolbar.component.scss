@@ -1,11 +1,12 @@
-.pagination-group {
-	button:first-child {
-		border-bottom-right-radius: 0;
-		border-top-right-radius: 0;
-	}
+@import 'variables';
 
-	button:last-child {
-		border-bottom-left-radius: 0;
-		border-top-left-radius: 0;
+.pagination-group {
+	button {
+		background-color: transparent;
+		color: $selected-primary;
+
+		&:hover {
+			background-color: $selected-container;
+		}
 	}
 }

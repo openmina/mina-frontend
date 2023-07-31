@@ -30,7 +30,7 @@ export class DswBootstrapComponent extends StoreDispatcher implements OnInit, On
       this.dispatch(DswBootstrapGetNodes, { force: true });
     }, skip(1));
 
-    timer(0, 10000)
+    timer(0, 2000)
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.dispatch(DswBootstrapGetNodes);

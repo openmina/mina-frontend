@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 import { DswDashboardNode } from '@shared/types/dsw/dashboard/dsw-dashboard-node.type';
 import { DswLiveNode } from '@shared/types/dsw/live/dsw-live-node.type';
 import { DswLiveBlockEvent } from '@shared/types/dsw/live/dsw-live-block-event.type';
-import { DswDashboardBlock } from '@shared/types/dsw/dashboard/dsw-dashboard-block.type';
+import { DswDashboardBlock, DswDashboardNodeBlockStatus } from '@shared/types/dsw/dashboard/dsw-dashboard-block.type';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { ONE_MILLION } from '@shared/constants/unit-measurements';
 
@@ -36,7 +36,7 @@ export class DswLiveService {
       if (block.fetchStart) {
         const event = {} as DswLiveBlockEvent;
         event.height = block.height;
-        event.message = 'Fetching block';
+        event.message = DswDashboardNodeBlockStatus.FETCHING;
         event.timestamp = block.fetchStart;
         event.datetime = toReadableDate(block.fetchStart / ONE_MILLION);
         event.status = STARTED;
@@ -46,7 +46,7 @@ export class DswLiveService {
       if (block.fetchEnd) {
         const event = {} as DswLiveBlockEvent;
         event.height = block.height;
-        event.message = 'Block fetched';
+        event.message = DswDashboardNodeBlockStatus.FETCHED;
         event.timestamp = block.fetchEnd;
         event.datetime = toReadableDate(block.fetchEnd / ONE_MILLION);
         event.elapsed = block.fetchDuration;
@@ -57,17 +57,17 @@ export class DswLiveService {
       if (block.applyStart) {
         const event = {} as DswLiveBlockEvent;
         event.height = block.height;
-        event.message = 'Applying block';
+        event.message = DswDashboardNodeBlockStatus.APPLYING;
         event.timestamp = block.applyStart;
         event.datetime = toReadableDate(block.applyStart / ONE_MILLION);
         event.status = STARTED;
         event.isBestTip = index === 0;
         events.push(event);
       }
-      if (block.applyStart) {
+      if (block.applyEnd) {
         const event = {} as DswLiveBlockEvent;
         event.height = block.height;
-        event.message = 'Block applied';
+        event.message = DswDashboardNodeBlockStatus.APPLIED;
         event.timestamp = block.applyEnd;
         event.datetime = toReadableDate(block.applyEnd / ONE_MILLION);
         event.elapsed = block.applyDuration;

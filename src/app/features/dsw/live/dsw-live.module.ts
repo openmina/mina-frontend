@@ -11,6 +11,7 @@ import { DswLiveFiltersComponent } from './dsw-live-filters/dsw-live-filters.com
 import { DswLiveBlocksMapComponent } from './dsw-live-blocks-map/dsw-live-blocks-map.component';
 import { DswLiveEventsTableComponent } from './dsw-live-events-table/dsw-live-events-table.component';
 import { CopyComponent } from '@shared/components/copy/copy.component';
+import { DswLiveStatusCountsComponent } from './dsw-live-status-counts/dsw-live-status-counts.component';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { CopyComponent } from '@shared/components/copy/copy.component';
     DswLiveFiltersComponent,
     DswLiveBlocksMapComponent,
     DswLiveEventsTableComponent,
+    DswLiveStatusCountsComponent,
   ],
   imports: [
     SharedModule,

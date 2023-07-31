@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { selectDswLiveFilters } from '@dsw/live/dsw-live.state';
 import { DswLiveToggleFilter } from '@dsw/live/dsw-live.actions';
+import { DswDashboardNodeBlockStatus } from '@shared/types/dsw/dashboard/dsw-dashboard-block.type';
 
 @Component({
   selector: 'mina-dsw-live-filters',
@@ -12,7 +13,13 @@ import { DswLiveToggleFilter } from '@dsw/live/dsw-live.actions';
 })
 export class DswLiveFiltersComponent extends StoreDispatcher implements OnInit {
 
-  allFilters: string[] = ['best tip'];
+  readonly allFilters: string[] = [
+    'best tip',
+    DswDashboardNodeBlockStatus.FETCHING,
+    DswDashboardNodeBlockStatus.FETCHED,
+    DswDashboardNodeBlockStatus.APPLYING,
+    DswDashboardNodeBlockStatus.APPLIED,
+  ];
   activeFilters: string[] = [];
 
   ngOnInit(): void {

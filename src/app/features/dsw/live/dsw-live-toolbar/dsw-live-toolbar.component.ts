@@ -18,9 +18,9 @@ import { filter, take } from 'rxjs';
 })
 export class DswLiveToolbarComponent extends StoreDispatcher implements OnInit {
 
-  node: DswLiveNode;
+  node: DswLiveNode = {} as DswLiveNode;
 
-  private nodes: DswLiveNode[];
+  nodes: DswLiveNode[] = [];
   private tipFromRoute: string;
 
   constructor(private router: Router) {super();}
@@ -43,7 +43,7 @@ export class DswLiveToolbarComponent extends StoreDispatcher implements OnInit {
     this.select(selectDswLiveActiveNode, (node: DswLiveNode) => {
       this.node = node;
       this.detect();
-    });
+    }, filter(Boolean));
   }
 
   selectPreviousNode(): void {
@@ -75,5 +75,13 @@ export class DswLiveToolbarComponent extends StoreDispatcher implements OnInit {
         delete this.tipFromRoute;
       }
     }, filter(Boolean));
+  }
+
+  selectLastTip(): void {
+    this.selectNode(this.nodes[this.nodes.length - 1].bestTip);
+  }
+
+  selectFirstTip(): void {
+    this.selectNode(this.nodes[0].bestTip);
   }
 }

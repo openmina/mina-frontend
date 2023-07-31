@@ -15,11 +15,6 @@ import { lastItem } from '@shared/helpers/array.helper';
 export class DswLiveBlocksMapComponent extends StoreDispatcher implements OnInit {
 
   blocks: DswDashboardBlock[] = [];
-  missing: number = 0;
-  fetching: number = 0;
-  fetched: number = 0;
-  applying: number = 0;
-  applied: number = 0;
   rootBlock: DswDashboardBlock;
   bestTipBlock: DswDashboardBlock;
 
@@ -32,11 +27,6 @@ export class DswLiveBlocksMapComponent extends StoreDispatcher implements OnInit
       this.rootBlock = null;
       this.bestTipBlock = null;
       this.blocks = (node?.blocks || []).slice().reverse();
-      this.missing = node?.missingBlocks;
-      this.fetching = node?.fetchingBlocks;
-      this.fetched = node?.fetchedBlocks;
-      this.applying = node?.applyingBlocks;
-      this.applied = node?.appliedBlocks;
       if (this.blocks.length === 291) {
         this.rootBlock = this.blocks[0];
         this.blocks = this.blocks.slice(1);

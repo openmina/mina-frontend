@@ -5,7 +5,8 @@
   <span>
     <span class="height f-600">{{ row.height }}</span>
   </span>
-  <span class="fx-row-vert-cent">
+  <span class="fx-row-vert-cent"
+        [ngClass]="row.message">
     <span class="best-tip f-600" *ngIf="row.isBestTip">
       <span>Best Tip</span>
     </span>

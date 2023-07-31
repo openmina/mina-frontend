@@ -57,7 +57,7 @@
 				background-color: $warn-container;
 
 				&::before {
-					background-color: $warn-primary;
+					background-color: $warn-secondary;
 				}
 			}
 
@@ -65,7 +65,7 @@
 				background-color: $base-container;
 
 				&::before {
-					background-color: $base-secondary;
+					background-color: $base-tertiary
 				}
 			}
 
@@ -73,7 +73,7 @@
 				background-color: $base-container;
 
 				&::before {
-					background-color: $base-primary;
+					background-color: $base-secondary;
 				}
 			}
 
@@ -81,7 +81,7 @@
 				background-color: $selected-container;
 
 				&::before {
-					background-color: $selected-primary;
+					background-color: $selected-secondary
 				}
 			}
 
@@ -89,7 +89,7 @@
 				background-color: $success-container;
 
 				&::before {
-					background-color: $success-primary;
+					background-color: $success-secondary;
 				}
 			}
 		}

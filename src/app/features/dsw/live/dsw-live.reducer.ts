@@ -11,6 +11,7 @@ import {
   DswLiveActions,
 } from '@dsw/live/dsw-live.actions';
 import { DswLiveBlockEvent } from '@shared/types/dsw/live/dsw-live-block-event.type';
+import { DswDashboardNodeBlockStatus } from '@shared/types/dsw/dashboard/dsw-dashboard-block.type';
 
 const initialState: DswLiveState = {
   nodes: [],
@@ -89,6 +90,10 @@ function filterEvents(events: DswLiveBlockEvent[], filters: string[]): DswLiveBl
   }
   if (filters.includes('best tip')) {
     events = events.filter(event => event.isBestTip);
+  }
+
+  if (filters.some(f => Object.values(DswDashboardNodeBlockStatus).includes(f as DswDashboardNodeBlockStatus))) {
+    events = events.filter(event => filters.includes(event.message));
   }
 
   return events;
