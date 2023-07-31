@@ -30,7 +30,7 @@ export class DswLiveComponent extends StoreDispatcher implements OnInit, OnDestr
       this.dispatch(DswLiveGetNodes, { force: true });
     }, skip(1));
 
-    timer(0, 10000)
+    timer(0, 2000)
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.dispatch(DswLiveGetNodes);
