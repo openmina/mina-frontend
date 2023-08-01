@@ -15,7 +15,6 @@ import { selectDswLiveOpenSidePanel } from '@dsw/live/dsw-live.state';
 export class DswLiveComponent extends StoreDispatcher implements OnInit, OnDestroy {
 
   openSidePanel: boolean;
-  readonly halfWindow: number = window.innerWidth / 2;
 
   constructor(public el: ElementRef<HTMLElement>) { super(); }
 

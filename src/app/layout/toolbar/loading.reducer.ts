@@ -113,6 +113,7 @@ import { WEB_NODE_PEERS_CLOSE } from '@web-node/web-node-peers/web-node-peers.ac
 import { WEB_NODE_LOGS_CLOSE } from '@web-node/web-node-logs/web-node-logs.actions';
 import { DSW_DASHBOARD_CLOSE, DSW_DASHBOARD_GET_NODES_SUCCESS, DSW_DASHBOARD_INIT } from '@dsw/dashboard/dsw-dashboard.actions';
 import { DSW_BOOTSTRAP_CLOSE, DSW_BOOTSTRAP_GET_NODES_SUCCESS, DSW_BOOTSTRAP_INIT } from '@dsw/bootstrap/dsw-bootstrap.actions';
+import { DSW_LIVE_CLOSE, DSW_LIVE_GET_NODES_SUCCESS, DSW_LIVE_INIT } from '@dsw/live/dsw-live.actions';
 
 export type LoadingState = string[];
 
@@ -120,6 +121,7 @@ const initialState: LoadingState = [];
 
 export function reducer(state: LoadingState = initialState, action: FeatureAction<any>): LoadingState {
   switch (action.type) {
+    /* ------------ ADD ------------ */
     case APP_INIT:
 
     case DASHBOARD_NODES_INIT:
@@ -176,9 +178,10 @@ export function reducer(state: LoadingState = initialState, action: FeatureActio
 
     case DSW_DASHBOARD_INIT:
     case DSW_BOOTSTRAP_INIT:
+    case DSW_LIVE_INIT:
       return add(state, action);
 
-    /* ----------------------------- */
+    /* ------------ REMOVE ------------ */
     case APP_INIT_SUCCESS:
       return remove(state, APP_INIT);
 
@@ -312,6 +315,10 @@ export function reducer(state: LoadingState = initialState, action: FeatureActio
       return remove(state, DSW_BOOTSTRAP_INIT);
     case DSW_BOOTSTRAP_CLOSE:
       return remove(state, [DSW_BOOTSTRAP_INIT]);
+    case DSW_LIVE_GET_NODES_SUCCESS:
+      return remove(state, DSW_LIVE_INIT);
+    case DSW_LIVE_CLOSE:
+      return remove(state, [DSW_LIVE_INIT]);
     default:
       return state;
   }

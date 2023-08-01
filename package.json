@@ -4,7 +4,7 @@
   "type": "commonjs",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --port 1234",
     "start:cyp": "ng serve --configuration cyp",
     "start:phone": "ng serve --host 192.168.1.184",
     "build": "ng build",

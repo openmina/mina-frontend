@@ -1,93 +1,94 @@
 @import 'variables';
 
 .list-wrapper {
-	padding-bottom: 40px;
-	$leftPadding: 106px;
 
-	.fx-row-vert-cent {
-		height: 34px;
-		position: relative;
-
-		> span {
-			width: $leftPadding - 10px;
-		}
+	aside {
+		width: 100px;
+		position: absolute;
+		left: -100px;
+		height: calc(100% - 40px);
 
 		&::before {
 			content: '';
 			position: absolute;
 			top: 0;
-			left: 86px;
-			width: 1px;
-			height: 100%;
-			z-index: 1;
-		}
-
-		&:first-child {
-			&::before {
-				background-color: $special-selected-alt-2-primary;
-			}
-
-			.arrow {
-				border: solid $special-selected-alt-2-primary;
-				border-width: 0 1px 1px 0;
-			}
-		}
-
-		&:last-child {
-			&::before {
-				background-color: $special-selected-alt-1-primary;
-			}
-
-			.arrow {
-				border: solid $special-selected-alt-1-primary;
-				border-width: 0 1px 1px 0;
-			}
-		}
-
-		.arrow {
-			display: inline-block;
-			padding: 3px;
-			position: absolute;
-			left: 83px;
-			top: 27px;
-			transform: rotate(45deg);
-		}
-	}
-
-	.root span {
-		color: $special-selected-alt-2-primary;
-		background-color: $special-selected-alt-2-container;
-	}
-
-	.best-tip span {
-		color: $special-selected-alt-1-primary;
-		background-color: $special-selected-alt-1-container;
-	}
-
-	.root span, .best-tip span {
-		margin-right: 5px;
-		border-radius: 6px;
-		padding: 5px;
-	}
-
-	.block-list {
-		height: calc(100% - 34px - 34px);
-		position: relative;
-		margin-left: $leftPadding;
-
-		&::before {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: -20px;
+			right: 18px;
 			width: 1px;
 			height: 100%;
 			background-color: $base-tertiary;
 			z-index: 1;
 		}
 
-		> .p-absolute {
-			max-height: 100%;
+		.fx-row-vert-cent {
+			height: 34px;
+			position: relative;
+
+			&::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 81px;
+				width: 1px;
+				height: 100%;
+				z-index: 1;
+			}
+
+			&:first-child {
+				&::before {
+					background-color: $special-selected-alt-2-primary;
+				}
+
+				.arrow {
+					border: solid $special-selected-alt-2-primary;
+					border-width: 0 1px 1px 0;
+				}
+			}
+
+			&:last-child {
+				&::before {
+					background-color: $special-selected-alt-1-primary;
+				}
+
+				.arrow {
+					border: solid $special-selected-alt-1-primary;
+					border-width: 0 1px 1px 0;
+				}
+			}
+
+			.arrow {
+				display: inline-block;
+				padding: 3px;
+				position: absolute;
+				left: 78px;
+				top: 27px;
+				transform: rotate(45deg);
+			}
+		}
+
+		.root span {
+			color: $special-selected-alt-2-primary;
+			background-color: $special-selected-alt-2-container;
+		}
+
+		.best-tip span {
+			color: $special-selected-alt-1-primary;
+			background-color: $special-selected-alt-1-container;
+		}
+
+		.root span, .best-tip span {
+			margin-right: 5px;
+			border-radius: 6px;
+			padding: 5px;
+		}
+	}
+
+	.block-list {
+		position: relative;
+		width: 100%;
+		padding-left: 100px;
+
+		> div.p-relative {
+			padding-bottom: 40px;
 		}
 	}
 
@@ -123,6 +124,14 @@
 		&.Applied {
 			background-color: $success-container;
 			color: $success-primary;
+		}
+
+		&.root-block {
+			border-bottom: 4px solid $special-selected-alt-2-primary;
+		}
+
+		&.best-tip-block {
+			border-bottom: 4px solid $special-selected-alt-1-primary;
 		}
 	}
 }
