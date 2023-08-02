@@ -5,6 +5,8 @@ import { selectDswWorkPoolActiveWorkPool } from '@dsw/work-pool/dsw-work-pool.st
 import { WorkPool } from '@shared/types/dsw/work-pool/work-pool.type';
 import { DswWorkPoolSetActiveWorkPool } from '@dsw/work-pool/dsw-work-pool.actions';
 import { downloadJson } from '@app/shared/helpers/user-input.helper';
+import { Router } from '@angular/router';
+import { Routes } from '@shared/enums/routes.enum';
 
 @Component({
   selector: 'mina-dsw-work-pool-side-panel',
@@ -21,6 +23,8 @@ export class DswWorkPoolSidePanelComponent extends StoreDispatcher implements On
 
   @ViewChild(MinaJsonViewerComponent) private minaJsonViewer: MinaJsonViewerComponent;
 
+  constructor(private router: Router) { super(); }
+
   ngOnInit(): void {
     this.select(selectDswWorkPoolActiveWorkPool, (wp: WorkPool) => {
       this.activeWorkPool = { ...wp };
@@ -33,6 +37,7 @@ export class DswWorkPoolSidePanelComponent extends StoreDispatcher implements On
 
   closeSidePanel(): void {
     this.dispatch(DswWorkPoolSetActiveWorkPool, { id: undefined });
+    this.router.navigate([Routes.SNARK_WORKER, Routes.WORK_POOL], { queryParamsHandling: 'merge' });
   }
 
   downloadJson(): void {

@@ -36,11 +36,12 @@
   </cdk-virtual-scroll-viewport>
 
   <cdk-virtual-scroll-viewport *ngIf="isMobile" class="h-100 w-100 overflow-y-scroll mt-5 mb-5"
+                               (click)="onVsClick($event)"
                                [itemSize]="rowSize">
     <div *cdkVirtualFor="let row of rows; let i=index"
-         (click)="rowClickCallback(row)"
          [class.active]="activeRow && (propertyForActiveCheck ? activeRow[propertyForActiveCheck] === row[propertyForActiveCheck] : activeRow === row)"
          [class.row-even]="i % 2 === 0"
+         [attr.idx]="i"
          class="row">
       <div class="mob-row">
         <div class="th">
