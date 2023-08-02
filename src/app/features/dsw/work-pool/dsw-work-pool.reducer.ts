@@ -64,5 +64,5 @@ export function reducer(state: DswWorkPoolState = initialState, action: DswWorkP
 }
 
 function sortWorkPools(events: WorkPool[], tableSort: TableSort<WorkPool>): WorkPool[] {
-  return sort<WorkPool>(events, tableSort, ['id']);
+  return sort<WorkPool>(events, tableSort, ['id', 'typesSort']);
 }
