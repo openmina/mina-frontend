@@ -10,7 +10,7 @@ import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
 import { SortDirection, TableSort } from '@shared/types/shared/table-sort.type';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { MinaState } from '@app/app.setup';
-import { isMobile } from '@shared/helpers/values.helper';
+import { hasValue, isMobile } from '@shared/helpers/values.helper';
 
 const DESKTOP_ROW_HEIGHT = 36;
 
@@ -138,7 +138,20 @@ export class MinaTableComponent<T extends object> extends StoreDispatcher implem
   }
 
   onVsClick(event: MouseEvent): void {
-    const idx = Number((event.target as HTMLSpanElement).parentElement.getAttribute('idx'));
+    let target = event.target as any;
+    let idx: number = null;
+    while (target && target.getAttribute) {
+      let attrValue = target.getAttribute('idx');
+      if (attrValue) {
+        attrValue = Number(attrValue);
+        idx = attrValue;
+      }
+      if (hasValue(idx)) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
     this.rowClickCallback(this.rows[idx]);
   }
 }

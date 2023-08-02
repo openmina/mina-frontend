@@ -36,7 +36,7 @@ export class DswWorkPoolTableComponent extends MinaTableWrapper<WorkPool> implem
   }
 
   protected override setupTable(): void {
-    this.table.gridTemplateColumns = [165, 120, 200];
+    this.table.gridTemplateColumns = [165, 140, 200];
     this.table.propertyForActiveCheck = 'id';
     this.table.sortClz = DswWorkPoolSortWorkPool;
     this.table.sortSelector = selectDswWorkPoolSort;
@@ -79,7 +79,7 @@ export class DswWorkPoolTableComponent extends MinaTableWrapper<WorkPool> implem
 
   protected override onRowClick(row: WorkPool): void {
     if (this.table.activeRow?.id !== row?.id) {
-      this.dispatch(DswWorkPoolSetActiveWorkPool, row);
+      this.dispatch(DswWorkPoolSetActiveWorkPool, { id: row.id });
       this.router.navigate([Routes.SNARK_WORKER, Routes.WORK_POOL, row.id], { queryParamsHandling: 'merge' });
     }
   }

@@ -26,6 +26,6 @@ export class DswWorkPoolSidePanelComponent extends StoreDispatcher implements On
   }
 
   closeSidePanel(): void {
-    this.dispatch(DswWorkPoolSetActiveWorkPool, undefined);
+    this.dispatch(DswWorkPoolSetActiveWorkPool, { id: undefined });
   }
 }
