@@ -16,12 +16,17 @@ import { DswFrontierAction, DswFrontierActions } from '@dsw/frontier/dsw-frontie
 import * as fromLive from '@dsw/live/dsw-live.reducer';
 import { DswLiveAction, DswLiveActions } from '@dsw/live/dsw-live.actions';
 
+import * as fromWorkPool from '@dsw/work-pool/dsw-work-pool.reducer';
+import { DswWorkPoolAction, DswWorkPoolActions } from '@dsw/work-pool/dsw-work-pool.actions';
+
 export type DswActions =
   & DswDashboardActions
   & DswBootstrapActions
   & DswActionsActions
   & DswFrontierActions
   & DswLiveActions
+  & DswWorkPoolActions
+  & any
   ;
 export type DswAction =
   & DswDashboardAction
@@ -29,6 +34,7 @@ export type DswAction =
   & DswActionsAction
   & DswFrontierAction
   & DswLiveAction
+  & DswWorkPoolAction
   ;
 
 export const reducer: ActionReducer<DswState, DswActions> = combineReducers<DswState, DswActions>({
@@ -37,4 +43,5 @@ export const reducer: ActionReducer<DswState, DswActions> = combineReducers<DswS
   actions: fromActions.reducer,
   frontier: fromFrontier.reducer,
   live: fromLive.reducer,
+  workPool: fromWorkPool.reducer,
 });

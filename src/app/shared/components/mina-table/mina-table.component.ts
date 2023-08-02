@@ -136,4 +136,9 @@ export class MinaTableComponent<T extends object> extends StoreDispatcher implem
     this.toTop.nativeElement.style.top = `${rect.top + rect.height - 60}px`;
     this.toTop.nativeElement.style.left = `${rect.left + rect.width - 60}px`;
   }
+
+  onVsClick(event: MouseEvent): void {
+    const idx = Number((event.target as HTMLSpanElement).parentElement.getAttribute('idx'));
+    this.rowClickCallback(this.rows[idx]);
+  }
 }

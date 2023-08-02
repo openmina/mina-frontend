@@ -1,0 +1,11 @@
+<ng-container #minaTable></ng-container>
+
+<ng-template #rowTemplate let-row="row">
+  <span>{{ row.datetime }}</span>
+  <span>
+    <mina-copy [display]="row.id | truncateMid" [value]="row.id"></mina-copy>
+  </span>
+  <span>
+    <span *ngFor="let t of row.types" [ngClass]="t" class="mr-5 f-600">{{ t }}</span>
+  </span>
+</ng-template>

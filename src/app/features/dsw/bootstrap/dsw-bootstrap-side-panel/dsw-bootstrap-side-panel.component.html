@@ -14,7 +14,7 @@
 
 <ng-template #step1>
   <div class="fx-row-vert-cent flex-between h-xl lh-xl pl-12 pr-12">
-    <div class="f-600 secondary">{{ nodesCount }} rows overview</div>
+    <div class="f-600 secondary">{{ nodesCount }} attempts overview</div>
     <ng-container *ngTemplateOutlet="toggle"></ng-container>
   </div>
   <mina-dsw-bootstrap-overview></mina-dsw-bootstrap-overview>
@@ -26,7 +26,7 @@
       <span class="mina-icon icon-200 mr-10 tertiary primary-hover pointer"
             (click)="removeActiveNode()">arrow_back
       </span>
-      <div class="f-600 secondary">Blocks of row {{ activeNodeIndex + 1 || 0 }}</div>
+      <div class="f-600 secondary">Blocks of attempt {{ activeNodeIndex + 1 || 0 }}</div>
     </div>
     <ng-container *ngTemplateOutlet="toggle"></ng-container>
   </div>

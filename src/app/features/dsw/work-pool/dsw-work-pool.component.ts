@@ -1,34 +1,32 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
-import { selectDswDashboardActiveNode } from '@dsw/dashboard/dsw-dashboard.state';
-import { DswDashboardClose, DswDashboardGetNodes } from '@dsw/dashboard/dsw-dashboard.actions';
 import { timer } from 'rxjs';
 import { untilDestroyed } from '@ngneat/until-destroy';
+import { DswDashboardClose, DswDashboardGetNodes } from '@dsw/dashboard/dsw-dashboard.actions';
+import { selectDswDashboardActiveNode } from '@dsw/dashboard/dsw-dashboard.state';
+import { DswWorkPoolClose, DswWorkPoolGetWorkPool } from '@dsw/work-pool/dsw-work-pool.actions';
+import { selectDswWorkPoolActiveWorkPool } from '@dsw/work-pool/dsw-work-pool.state';
 
 @Component({
-  selector: 'mina-dsw-dashboard',
-  templateUrl: './dsw-dashboard.component.html',
-  styleUrls: ['./dsw-dashboard.component.scss'],
+  selector: 'mina-dsw-work-pool',
+  templateUrl: './dsw-work-pool.component.html',
+  styleUrls: ['./dsw-work-pool.component.scss'],
   host: { class: 'flex-column h-100' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DswDashboardComponent extends StoreDispatcher implements OnInit, OnDestroy {
+export class DswWorkPoolComponent extends StoreDispatcher implements OnInit, OnDestroy {
 
   isActiveRow: boolean;
 
   constructor(public el: ElementRef) { super(); }
 
   ngOnInit(): void {
-    timer(0, 10000).pipe(
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.dispatch(DswDashboardGetNodes)
-    });
+    this.dispatch(DswWorkPoolGetWorkPool);
     this.listenToSidePanelChange();
   }
 
   private listenToSidePanelChange(): void {
-    this.select(selectDswDashboardActiveNode, node => {
+    this.select(selectDswWorkPoolActiveWorkPool, node => {
       if (node && !this.isActiveRow) {
         this.isActiveRow = true;
         this.detect();
@@ -41,6 +39,6 @@ export class DswDashboardComponent extends StoreDispatcher implements OnInit, On
 
   override ngOnDestroy(): void {
     super.ngOnDestroy();
-    this.dispatch(DswDashboardClose);
+    this.dispatch(DswWorkPoolClose);
   }
 }

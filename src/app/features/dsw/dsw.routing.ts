@@ -34,6 +34,11 @@ const routes: Routes = [
         title: DSW_TITLE,
       },
       {
+        path: 'work-pool',
+        loadChildren: () => import('./work-pool/dsw-work-pool.module').then(m => m.DswWorkPoolModule),
+        title: DSW_TITLE,
+      },
+      {
         path: '**',
         redirectTo: 'dashboard',
         pathMatch: 'full',

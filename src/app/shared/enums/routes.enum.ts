@@ -31,4 +31,5 @@ export enum Routes {
   FRONTIER = 'frontier',
   BOOTSTRAP = 'bootstrap',
   LIVE = 'live',
+  WORK_POOL = 'work-pool',
 }

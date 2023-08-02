@@ -22,13 +22,14 @@
     </ng-template>
   </ng-container>
   <cdk-virtual-scroll-viewport *ngIf="!isMobile" class="border-bottom overflow-y-scroll h-minus-lg"
+                               (click)="onVsClick($event)"
                                [ngClass]="'h-minus-lg' + (thGroupsTemplate ? '-doubled' : '')"
                                [style.min-width.px]="minWidth"
                                [itemSize]="rowSize">
     <div *cdkVirtualFor="let row of rows; let i=index"
-         (click)="rowClickCallback(row)"
          [class.active]="activeRow && (propertyForActiveCheck ? activeRow[propertyForActiveCheck] === row[propertyForActiveCheck] : activeRow === row)"
          [class.row-even]="i % 2 === 0"
+         [attr.idx]="i"
          class="row">
       <ng-container *ngTemplateOutlet="rowTemplate; context: { row, i }"></ng-container>
     </div>
