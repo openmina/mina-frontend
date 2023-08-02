@@ -1,11 +1,20 @@
-<div class="flex-column">
-  <div class="flex-row flex-between p-12 h-xl">
-    <span class="secondary f-600">Work Pool details</span>
-    <span class="mina-icon pointer tertiary primary-hover f-18"
-          (click)="closeSidePanel()">close
-    </span>
+<div class="flex-row flex-between p-12 h-xl">
+  <span class="secondary f-600">Work Pool details</span>
+  <span class="mina-icon pointer tertiary primary-hover f-18"
+        (click)="closeSidePanel()">close</span>
+</div>
+<div class="flex-column h-minus-xl">
+
+  <div class="h-lg flex-row pl-12 pb-10">
+    <button class="btn-primary mr-8" (click)="expandEntireJSON()">Expand All</button>
+    <button class="btn-primary mr-8" (click)="collapseEntireJSON()">Collapse All</button>
+    <button class="btn-primary mr-8" [copyToClipboard]="jsonString">Copy</button>
+    <button class="btn-primary" (click)="downloadJson()">Save</button>
   </div>
-  <mina-json-viewer [json]="activeWorkPool || {}"
-                    [expandTracking]="expandTracking"
-                    [expanded]="false"></mina-json-viewer>
+  <div class="flex-column h-minus-lg overflow-y-auto">
+    <mina-json-viewer [json]="activeWorkPool || {}"
+                      [expandTracking]="expandTracking"
+                      [expanded]="false"></mina-json-viewer>
+  </div>
+
 </div>
