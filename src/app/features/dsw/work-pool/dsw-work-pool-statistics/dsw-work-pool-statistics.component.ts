@@ -25,13 +25,13 @@ export class DswWorkPoolStatisticsComponent extends StoreDispatcher implements O
   async ngOnInit(): Promise<void> {
     await import('@shared/components/bar-graph/bar-graph.component').then(c => {
       this.component1 = this.minaBarGraphRef1.createComponent<BarGraphComponent>(c.BarGraphComponent).instance;
-      this.component1.color = 'var(--base-primary)';
+      this.component1.color = 'var(--special-selected-alt-3-primary)';
       this.addBarGraphProperties(this.component1);
       this.component1.ngOnInit();
     });
     await import('@shared/components/bar-graph/bar-graph.component').then(c => {
       this.component2 = this.minaBarGraphRef2.createComponent<BarGraphComponent>(c.BarGraphComponent).instance;
-      this.component2.color = 'var(--success-primary)';
+      this.component2.color = 'var(--special-selected-alt-1-primary)';
       this.addBarGraphProperties(this.component2);
       this.component2.ngOnInit();
     });
