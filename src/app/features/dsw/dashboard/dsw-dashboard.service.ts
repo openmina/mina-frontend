@@ -7,6 +7,7 @@ import { DswDashboardBlock, DswDashboardNodeBlockStatus } from '@shared/types/ds
 import { ONE_BILLION, ONE_MILLION } from '@shared/constants/unit-measurements';
 import { DswDashboardLedger, DswDashboardLedgerStep, DswDashboardLedgerStepState } from '@shared/types/dsw/dashboard/dsw-dashboard-ledger.type';
 import { hasValue } from '@shared/helpers/values.helper';
+import { CONFIG } from '@shared/constants/config';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +29,7 @@ export class DswDashboardService {
 
   getNodeTips(nodeName: string, qp: string = ''): Observable<DswDashboardNode[]> {
     // return of(JSON.parse(JSON.stringify(mock2()))).pipe(delay(250))
-    return this.http.get<any[]>('http://webrtc2.webnode.openmina.com:10000/stats/sync' + qp)
+    return this.http.get<any[]>(CONFIG.rustNode + '/stats/sync' + qp)
       .pipe(
         map((response: any[]) => {
           return response.map((node: any) => {

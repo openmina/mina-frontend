@@ -15,7 +15,8 @@ export interface MinaEnv {
   firebase?: FirebaseOptions;
   globalConfig?: {
     features?: FeaturesConfig;
-  }
+  };
+  rustNode?: string;
 }
 
 export interface MinaNode {

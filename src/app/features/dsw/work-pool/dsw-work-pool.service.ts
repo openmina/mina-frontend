@@ -4,6 +4,7 @@ import { WorkPool } from '@shared/types/dsw/work-pool/work-pool.type';
 import { HttpClient } from '@angular/common/http';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { ONE_MILLION } from '@shared/constants/unit-measurements';
+import { CONFIG } from '@shared/constants/config';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,7 @@ export class DswWorkPoolService {
   constructor(private http: HttpClient) { }
 
   getWorkPool(): Observable<WorkPool[]> {
-    return this.http.get<any[]>('http://webrtc2.webnode.openmina.com:10000/snark-pool/jobs').pipe(
+    return this.http.get<any[]>(CONFIG.rustNode + '/snark-pool/jobs').pipe(
       map((response: any[]) => this.mapWorkPoolResponse(response)),
     );
   }

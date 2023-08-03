@@ -7,6 +7,7 @@ import { NANOSEC_IN_1_SEC, ONE_MILLION } from '@shared/constants/unit-measuremen
 import { HttpClient } from '@angular/common/http';
 import { DswActionsStats } from '@shared/types/dsw/actions/dsw-actions-stats.type';
 import { toReadableDate } from '@shared/helpers/date.helper';
+import { CONFIG } from '@shared/constants/config';
 
 @Injectable({
   providedIn: 'root',
@@ -16,14 +17,14 @@ export class DswActionsService {
   constructor(private http: HttpClient) { }
 
   getEarliestSlot(): Observable<number> {
-    return this.http.get<any>('http://webrtc2.webnode.openmina.com:10000/stats/actions?id=latest').pipe(
+    return this.http.get<any>(CONFIG.rustNode + '/stats/actions?id=latest').pipe(
       map(res => res.id),
     );
   }
 
   getActions(slot: number): Observable<[DswActionsStats, DswActionGroup[]]> {
     // return of(JSON.parse(JSON.stringify(mock))).pipe(
-    return this.http.get<any>(`http://webrtc2.webnode.openmina.com:10000/stats/actions?id=${slot}`).pipe(
+    return this.http.get<any>(CONFIG.rustNode + `/stats/actions?id=${slot}`).pipe(
       map(res => [this.mapDswStats(res), this.mapDswActions(res.stats)]),
     );
   }
