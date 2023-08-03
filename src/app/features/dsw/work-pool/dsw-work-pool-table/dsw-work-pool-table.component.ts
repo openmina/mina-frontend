@@ -26,10 +26,10 @@ export class DswWorkPoolTableComponent extends MinaTableWrapper<WorkPool> implem
     { name: 'status', sort: 'commitment' },
     { name: 'created latency', sort: 'commitmentCreatedLatency' },
     { name: 'received latency', sort: 'commitmentRecLatency' },
-    { name: 'origin', sort: 'snarkOrigin' },
+    { name: 'origin', sort: 'commitmentOrigin' },
     { name: 'status', sort: 'snark' },
     { name: 'received latency', sort: 'snarkRecLatency' },
-    { name: 'origin', sort: 'commitmentOrigin' },
+    { name: 'origin', sort: 'snarkOrigin' },
   ];
 
   openSidePanel: boolean;

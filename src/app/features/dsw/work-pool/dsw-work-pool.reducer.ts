@@ -49,7 +49,7 @@ export function reducer(state: DswWorkPoolState = initialState, action: DswWorkP
       return {
         ...state,
         sort: action.payload,
-        workPools: filterWorkPools(sortWorkPools(state.workPools, action.payload), state.filters),
+        filteredWorkPools: filterWorkPools(sortWorkPools(state.workPools, action.payload), state.filters),
       };
     }
 
