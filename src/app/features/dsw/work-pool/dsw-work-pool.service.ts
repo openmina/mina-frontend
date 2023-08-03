@@ -40,7 +40,7 @@ export class DswWorkPoolService {
           date: toReadableDate(commitment.timestamp),
         };
         work.commitmentRecLatency = (commitment.received_t - item.time) / ONE_BILLION;
-        work.commitmentCreatedLatency = ((item.time / ONE_MILLION) - commitment.timestamp);
+        work.commitmentCreatedLatency = ((item.time / ONE_MILLION) - commitment.commitment.timestamp);
         work.commitmentOrigin = [commitment.commitment.snarker, commitment.sender].includes(HASH) ? 'Local' : 'Remote';
       }
       if (item.snark) {
