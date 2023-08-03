@@ -23,10 +23,11 @@ export class DswWorkPoolTableComponent extends MinaTableWrapper<WorkPool> implem
   protected readonly tableHeads: TableColumnList<WorkPool> = [
     { name: 'datetime', sort: 'timestamp' },
     { name: 'id' },
-    { name: 'created', sort: 'commitment' },
+    { name: 'status', sort: 'commitment' },
+    { name: 'created latency', sort: 'commitmentCreatedLatency' },
     { name: 'received latency', sort: 'commitmentRecLatency' },
     { name: 'origin', sort: 'snarkOrigin' },
-    { name: 'created', sort: 'snark' },
+    { name: 'status', sort: 'snark' },
     { name: 'received latency', sort: 'snarkRecLatency' },
     { name: 'origin', sort: 'commitmentOrigin' },
   ];
@@ -48,7 +49,7 @@ export class DswWorkPoolTableComponent extends MinaTableWrapper<WorkPool> implem
   }
 
   protected override setupTable(): void {
-    this.table.gridTemplateColumns = [165, 140, 110, 150, 100, 110, 150, 100];
+    this.table.gridTemplateColumns = [165, 140, 110, 150, 150, 100, 110, 150, 100];
     this.table.propertyForActiveCheck = 'id';
     this.table.thGroupsTemplate = this.thGroupsTemplate;
     this.table.sortClz = DswWorkPoolSortWorkPool;

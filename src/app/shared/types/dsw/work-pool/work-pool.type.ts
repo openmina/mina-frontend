@@ -7,7 +7,8 @@ export interface WorkPool {
   commitment: any;
   snark: WorkPoolSnark;
   snarkRecLatency: number;
-  commitmentRecLatency: number;
   snarkOrigin: 'Local' | 'Remote';
+  commitmentRecLatency: number;
   commitmentOrigin: 'Local' | 'Remote';
+  commitmentCreatedLatency: number;
 }

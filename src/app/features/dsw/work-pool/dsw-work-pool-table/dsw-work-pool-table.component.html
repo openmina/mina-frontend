@@ -19,12 +19,14 @@
   <span>
     <mina-copy [display]="row.id | truncateMid" [value]="row.id"></mina-copy>
   </span>
-  <span>
+  <span [tooltip]="'Created at ' + (row.commitment?.commitment.timestamp | readableDate) + ', Received at: ' + (row.commitment?.received_t | readableDate)"
+        [showDelay]="200">
     <span *ngIf="row.commitment; else dash" class="committed">Committed</span>
   </span>
+  <span class="secondary" [innerHTML]="row.commitmentCreatedLatency | secDuration: secConfig"></span>
   <span class="secondary" [innerHTML]="row.commitmentRecLatency | secDuration: secConfig"></span>
   <span>{{ row.commitmentOrigin || '-' }}</span>
-  <span>
+  <span [tooltip]="'Received at ' + (row.snark?.received_t | readableDate)" [showDelay]="200">
     <span *ngIf="row.snark; else dash" class="snarked">Snarked</span>
   </span>
   <span class="secondary" [innerHTML]="row.snarkRecLatency | secDuration: secConfig"></span>

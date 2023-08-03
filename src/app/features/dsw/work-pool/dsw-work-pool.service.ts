@@ -33,13 +33,15 @@ export class DswWorkPoolService {
         timestamp: item.time,
         snark: item.snark,
       } as WorkPool;
-      if (item.commitment) {
+      const commitment = item.commitment;
+      if (commitment) {
         work.commitment = {
-          ...item.commitment,
-          date: toReadableDate(item.commitment.timestamp),
+          ...commitment,
+          date: toReadableDate(commitment.timestamp),
         };
-        work.commitmentRecLatency = (item.commitment.received_t - item.time) / ONE_BILLION;
-        work.commitmentOrigin = [item.commitment.commitment.snarker, item.commitment.sender].includes(HASH) ? 'Local' : 'Remote';
+        work.commitmentRecLatency = (commitment.received_t - item.time) / ONE_BILLION;
+        work.commitmentCreatedLatency = ((item.time / ONE_MILLION) - commitment.timestamp);
+        work.commitmentOrigin = [commitment.commitment.snarker, commitment.sender].includes(HASH) ? 'Local' : 'Remote';
       }
       if (item.snark) {
         work.snarkRecLatency = (item.snark.received_t - item.time) / ONE_BILLION;
