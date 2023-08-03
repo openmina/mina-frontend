@@ -1,0 +1,11 @@
+<div class="h-lg flex-row pl-12 pb-10">
+  <button class="btn-primary mr-8" (click)="downloadJson()">Save</button>
+  <button class="btn-primary mr-8" [copyToClipboard]="jsonString">Copy</button>
+  <button class="btn-primary mr-8" (click)="collapseEntireJSON()">Collapse All</button>
+  <button class="btn-primary" (click)="expandEntireJSON()">Expand All</button>
+</div>
+<div class="flex-column h-minus-lg overflow-y-auto pr-5">
+  <mina-json-viewer [json]="activeWorkPool || {}"
+                    [expandTracking]="expandTracking"
+                    [expanded]="false"></mina-json-viewer>
+</div>

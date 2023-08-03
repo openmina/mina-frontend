@@ -1,11 +1,34 @@
 <ng-container #minaTable></ng-container>
 
+<ng-template #thGroupsTemplate>
+  <div class="th-group h-lg lh-lg border-top tertiary f-600">
+    <span class="pl-12">Jobs</span>
+    <span class="pl-12">Commitments</span>
+    <span class="pl-12">SNARKs</span>
+    <span class="fx-row-vert-cent flex-end">
+      <button *ngIf="!openSidePanel"
+              class="h-sm w-sm fx-row-full-cent btn-selected p-0 mr-10"
+              (click)="toggleSidePanel()">
+        <span class="mina-icon f-20">view_sidebar</span>
+      </button>
+    </span>
+  </div>
+</ng-template>
 <ng-template #rowTemplate let-row="row">
   <span>{{ row.datetime }}</span>
   <span>
     <mina-copy [display]="row.id | truncateMid" [value]="row.id"></mina-copy>
   </span>
   <span>
-    <span *ngFor="let t of row.types" [ngClass]="t" class="mr-5 f-600">{{ t }}</span>
+    <span *ngIf="row.commitment; else dash" class="committed">Committed</span>
   </span>
+  <span class="secondary" [innerHTML]="row.commitmentRecLatency | secDuration: secConfig"></span>
+  <span>{{ row.commitmentOrigin || '-' }}</span>
+  <span>
+    <span *ngIf="row.snark; else dash" class="snarked">Snarked</span>
+  </span>
+  <span class="secondary" [innerHTML]="row.snarkRecLatency | secDuration: secConfig"></span>
+  <span>{{ row.snarkOrigin || '-' }}</span>
 </ng-template>
+
+<ng-template #dash>-</ng-template>

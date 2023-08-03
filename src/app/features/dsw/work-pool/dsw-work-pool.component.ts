@@ -1,11 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
-import { timer } from 'rxjs';
-import { untilDestroyed } from '@ngneat/until-destroy';
-import { DswDashboardClose, DswDashboardGetNodes } from '@dsw/dashboard/dsw-dashboard.actions';
-import { selectDswDashboardActiveNode } from '@dsw/dashboard/dsw-dashboard.state';
 import { DswWorkPoolClose, DswWorkPoolGetWorkPool } from '@dsw/work-pool/dsw-work-pool.actions';
-import { selectDswWorkPoolActiveWorkPool } from '@dsw/work-pool/dsw-work-pool.state';
+import { selectDswWorkPoolOpenSidePanel } from '@dsw/work-pool/dsw-work-pool.state';
 
 @Component({
   selector: 'mina-dsw-work-pool',
@@ -16,7 +12,7 @@ import { selectDswWorkPoolActiveWorkPool } from '@dsw/work-pool/dsw-work-pool.st
 })
 export class DswWorkPoolComponent extends StoreDispatcher implements OnInit, OnDestroy {
 
-  isActiveRow: boolean;
+  openSidePanel: boolean;
 
   constructor(public el: ElementRef) { super(); }
 
@@ -26,12 +22,12 @@ export class DswWorkPoolComponent extends StoreDispatcher implements OnInit, OnD
   }
 
   private listenToSidePanelChange(): void {
-    this.select(selectDswWorkPoolActiveWorkPool, node => {
-      if (node && !this.isActiveRow) {
-        this.isActiveRow = true;
+    this.select(selectDswWorkPoolOpenSidePanel, open => {
+      if (open && !this.openSidePanel) {
+        this.openSidePanel = true;
         this.detect();
-      } else if (!node && this.isActiveRow) {
-        this.isActiveRow = false;
+      } else if (!open && this.openSidePanel) {
+        this.openSidePanel = false;
         this.detect();
       }
     });

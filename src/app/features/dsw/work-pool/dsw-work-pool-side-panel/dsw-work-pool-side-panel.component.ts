@@ -1,10 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
-import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
 import { selectDswWorkPoolActiveWorkPool } from '@dsw/work-pool/dsw-work-pool.state';
 import { WorkPool } from '@shared/types/dsw/work-pool/work-pool.type';
-import { DswWorkPoolSetActiveWorkPool } from '@dsw/work-pool/dsw-work-pool.actions';
-import { downloadJson } from '@app/shared/helpers/user-input.helper';
+import { DswWorkPoolSetActiveWorkPool, DswWorkPoolToggleSidePanel } from '@dsw/work-pool/dsw-work-pool.actions';
 import { Router } from '@angular/router';
 import { Routes } from '@shared/enums/routes.enum';
 
@@ -18,37 +16,33 @@ import { Routes } from '@shared/enums/routes.enum';
 export class DswWorkPoolSidePanelComponent extends StoreDispatcher implements OnInit {
 
   activeWorkPool: WorkPool;
-  expandTracking: ExpandTracking = {};
-  jsonString: string;
-
-  @ViewChild(MinaJsonViewerComponent) private minaJsonViewer: MinaJsonViewerComponent;
+  activeScreen: number = 0;
 
   constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
+    this.listenToActiveNode();
+  }
+
+  private listenToActiveNode(): void {
     this.select(selectDswWorkPoolActiveWorkPool, (wp: WorkPool) => {
-      this.activeWorkPool = { ...wp };
-      delete this.activeWorkPool.types;
-      delete this.activeWorkPool.typesSort;
-      this.jsonString = JSON.stringify(this.activeWorkPool);
+      this.activeWorkPool = wp;
+      if (this.activeWorkPool) {
+        this.activeScreen = 1;
+      } else {
+        this.activeScreen = 0;
+      }
       this.detect();
     });
   }
 
-  closeSidePanel(): void {
+  toggleSidePanel(): void {
+    this.router.navigate([Routes.SNARK_WORKER, Routes.WORK_POOL], { queryParamsHandling: 'merge' });
+    this.dispatch(DswWorkPoolToggleSidePanel);
+  }
+
+  removeActiveWorkPool(): void {
     this.dispatch(DswWorkPoolSetActiveWorkPool, { id: undefined });
     this.router.navigate([Routes.SNARK_WORKER, Routes.WORK_POOL], { queryParamsHandling: 'merge' });
-  }
-
-  downloadJson(): void {
-    downloadJson(this.jsonString, 'work-pool.json');
-  }
-
-  expandEntireJSON(): void {
-    this.expandTracking = this.minaJsonViewer.toggleAll(true);
-  }
-
-  collapseEntireJSON(): void {
-    this.expandTracking = this.minaJsonViewer.toggleAll(false);
   }
 }

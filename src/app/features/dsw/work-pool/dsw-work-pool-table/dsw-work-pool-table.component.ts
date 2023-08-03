@@ -1,14 +1,15 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MinaTableWrapper } from '@shared/base-classes/mina-table-wrapper.class';
 import { TableColumnList } from '@shared/types/shared/table-head-sorting.type';
 import { Router } from '@angular/router';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
-import { filter, take } from 'rxjs';
+import { take } from 'rxjs';
 import { Routes } from '@shared/enums/routes.enum';
 import { WorkPool } from '@shared/types/dsw/work-pool/work-pool.type';
-import { DswWorkPoolSetActiveWorkPool, DswWorkPoolSortWorkPool } from '@dsw/work-pool/dsw-work-pool.actions';
-import { selectDswWorkPoolActiveWorkPool, selectDswWorkPools, selectDswWorkPoolSort } from '@dsw/work-pool/dsw-work-pool.state';
+import { DswWorkPoolSetActiveWorkPool, DswWorkPoolSortWorkPool, DswWorkPoolToggleSidePanel } from '@dsw/work-pool/dsw-work-pool.actions';
+import { selectDswWorkPoolActiveWorkPool, selectDswWorkPoolOpenSidePanel, selectDswWorkPools, selectDswWorkPoolSort } from '@dsw/work-pool/dsw-work-pool.state';
+import { SecDurationConfig } from '@shared/pipes/sec-duration.pipe';
 
 @Component({
   selector: 'mina-dsw-work-pool-table',
@@ -18,11 +19,21 @@ import { selectDswWorkPoolActiveWorkPool, selectDswWorkPools, selectDswWorkPoolS
 })
 export class DswWorkPoolTableComponent extends MinaTableWrapper<WorkPool> implements OnInit {
 
+  readonly secConfig: SecDurationConfig = { color: true, undefinedAlternative: '-', default: 100, warn: 500, severe: 1000 };
   protected readonly tableHeads: TableColumnList<WorkPool> = [
     { name: 'datetime', sort: 'timestamp' },
     { name: 'id' },
-    { name: 'types', sort: 'typesSort' },
+    { name: 'created', sort: 'commitment' },
+    { name: 'received latency', sort: 'commitmentRecLatency' },
+    { name: 'origin', sort: 'snarkOrigin' },
+    { name: 'created', sort: 'snark' },
+    { name: 'received latency', sort: 'snarkRecLatency' },
+    { name: 'origin', sort: 'commitmentOrigin' },
   ];
+
+  openSidePanel: boolean;
+
+  @ViewChild('thGroupsTemplate') private thGroupsTemplate: TemplateRef<void>;
 
   private wpFromRoute: string;
 
@@ -33,13 +44,19 @@ export class DswWorkPoolTableComponent extends MinaTableWrapper<WorkPool> implem
     this.listenToRouteChange();
     this.listenToNodesChanges();
     this.listenToActiveNodeChange();
+    this.listenToSidePanelToggling();
   }
 
   protected override setupTable(): void {
-    this.table.gridTemplateColumns = [165, 140, 200];
+    this.table.gridTemplateColumns = [165, 140, 110, 150, 100, 110, 150, 100];
     this.table.propertyForActiveCheck = 'id';
+    this.table.thGroupsTemplate = this.thGroupsTemplate;
     this.table.sortClz = DswWorkPoolSortWorkPool;
     this.table.sortSelector = selectDswWorkPoolSort;
+  }
+
+  toggleSidePanel(): void {
+    this.dispatch(DswWorkPoolToggleSidePanel);
   }
 
   private listenToRouteChange(): void {
@@ -54,11 +71,11 @@ export class DswWorkPoolTableComponent extends MinaTableWrapper<WorkPool> implem
     this.select(selectDswWorkPools, (wp: WorkPool[]) => {
       this.table.rows = wp;
       this.table.detect();
-      if (this.wpFromRoute) {
+      if (this.wpFromRoute && wp.length > 0) {
         this.scrollToElement();
       }
       this.detect();
-    }, filter(wp => wp.length > 0));
+    });
   }
 
   private listenToActiveNodeChange(): void {
@@ -82,5 +99,12 @@ export class DswWorkPoolTableComponent extends MinaTableWrapper<WorkPool> implem
       this.dispatch(DswWorkPoolSetActiveWorkPool, { id: row.id });
       this.router.navigate([Routes.SNARK_WORKER, Routes.WORK_POOL, row.id], { queryParamsHandling: 'merge' });
     }
+  }
+
+  private listenToSidePanelToggling(): void {
+    this.select(selectDswWorkPoolOpenSidePanel, (open: boolean) => {
+      this.openSidePanel = open;
+      this.detect();
+    });
   }
 }

@@ -1,25 +1,57 @@
 @import 'variables';
 
+.th-group {
+	display: grid;
+	grid-template-columns: 305px 360px 360px;
+
+	> span:nth-child(1) {
+		border-bottom: 1px solid $base-tertiary;
+	}
+
+	> span:nth-child(2) {
+		color: $special-selected-alt-3-primary;
+		border-bottom: 1px solid $special-selected-alt-3-primary;
+	}
+
+	> span:nth-child(3) {
+		color: $special-selected-alt-1-primary;
+		border-bottom: 1px solid $special-selected-alt-1-primary;
+	}
+
+	@media (max-width: 768px) {
+		grid-template-columns: 80px 1fr 1fr 50px;
+	}
+}
+
+:host ::ng-deep .mina-table .row .th {
+	@for $i from 5 through 8 {
+		span:nth-child(#{$i}) {
+			color: $base-primary !important;
+		}
+	}
+
+	@for $i from 9 through 12 {
+		span:nth-child(#{$i}) {
+			color: $success-primary !important;
+		}
+	}
+}
+
+
 span {
 
-	&.Jobs {
+	&.snarked {
 		background-color: $special-selected-alt-1-container;
 		color: $special-selected-alt-1-primary;
 	}
 
-	&.Commitment {
-		background-color: $special-selected-alt-2-container;
-		color: $special-selected-alt-2-primary;
-	}
-
-	&.Snark {
+	&.committed {
 		background-color: $special-selected-alt-3-container;
 		color: $special-selected-alt-3-primary;
 	}
 
-	&.Jobs,
-	&.Commitment,
-	&.Snark {
+	&.committed,
+	&.snarked {
 		padding: 2px 5px;
 		border-radius: 4px;
 	}

@@ -1,0 +1,25 @@
+<div class="h-lg tab-group pl-12 pb-10 pr-10">
+  <button class="tab mr-10" [class.selected]="selectedTabIndex === 0"
+          (click)="selectTab(0)">Overview
+  </button>
+  <button class="tab mr-10" [class.selected]="selectedTabIndex === 1"
+          (click)="selectTab(1)">Specs
+  </button>
+</div>
+
+<div class="flex-column p-relative flex-grow">
+  <div class="p-absolute-cover">
+    <ng-container [ngSwitch]="selectedTabIndex">
+      <ng-container *ngSwitchCase="0">
+        <div class="h-100 overflow-y-auto">
+          <mina-dsw-work-pool-details-overview></mina-dsw-work-pool-details-overview>
+        </div>
+      </ng-container>
+      <ng-container *ngSwitchCase="1">
+        <div class="h-100 overflow-y-auto">
+          <mina-dsw-work-pool-details-specs></mina-dsw-work-pool-details-specs>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

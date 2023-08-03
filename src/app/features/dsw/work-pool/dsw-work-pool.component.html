@@ -1,15 +1,18 @@
-<mina-horizontal-resizable-container [leftTemplate]="left"
-                                     [rightTemplate]="right"
-                                     [show]="isActiveRow"
-                                     [minWidth]="360"
-                                     [maxWidthElement]="el.nativeElement"
-                                     localStorageKey="dsw-work-pool-spw">
-</mina-horizontal-resizable-container>
+<mina-dsw-work-pool-toolbar></mina-dsw-work-pool-toolbar>
+<div class="flex-column h-minus-lg">
+  <mina-horizontal-resizable-container [leftTemplate]="left"
+                                       [rightTemplate]="right"
+                                       [show]="openSidePanel"
+                                       [minWidth]="360"
+                                       [maxWidthElement]="el.nativeElement"
+                                       localStorageKey="dsw-work-pool-spw">
+  </mina-horizontal-resizable-container>
 
-<ng-template #left>
-  <mina-dsw-work-pool-table></mina-dsw-work-pool-table>
-</ng-template>
+  <ng-template #left>
+    <mina-dsw-work-pool-table></mina-dsw-work-pool-table>
+  </ng-template>
 
-<ng-template #right>
-  <mina-dsw-work-pool-side-panel></mina-dsw-work-pool-side-panel>
-</ng-template>
+  <ng-template #right>
+    <mina-dsw-work-pool-side-panel></mina-dsw-work-pool-side-panel>
+  </ng-template>
+</div>
