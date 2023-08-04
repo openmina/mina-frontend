@@ -121,7 +121,7 @@ export class DashboardNodesTableComponent extends MinaTableWrapper<DashboardNode
     this.select(selectDashboardNodes, (nodes: DashboardNode[]) => {
       this.table.rows = nodes;
       this.table.detect();
-      if (this.nameFromRoute && nodes.length > 0) {
+      if (this.nameFromRoute && nodes.length > 0 && nodes.every(n => n.blockchainLength)) {
         this.scrollToElement();
       }
       this.detect();
