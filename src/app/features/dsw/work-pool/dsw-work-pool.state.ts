@@ -4,6 +4,7 @@ import { selectDswWorkPoolState } from '@dsw/dsw.state';
 import { TableSort } from '@shared/types/shared/table-sort.type';
 import { WorkPool } from '@shared/types/dsw/work-pool/work-pool.type';
 import { WorkPoolSpecs } from '@shared/types/dsw/work-pool/work-pool-specs.type';
+import { WorkPoolDetail } from '@shared/types/dsw/work-pool/work-pool-detail.type';
 
 export interface DswWorkPoolState {
   workPools: WorkPool[];
@@ -13,6 +14,7 @@ export interface DswWorkPoolState {
   sort: TableSort<WorkPool>;
   filters: string[];
   activeWorkPoolSpecs: WorkPoolSpecs;
+  activeWorkPoolDetail: WorkPoolDetail;
 }
 
 const select = <T>(selector: (state: DswWorkPoolState) => T): MemoizedSelector<MinaState, T> => createSelector(
@@ -26,3 +28,4 @@ export const selectDswWorkPoolOpenSidePanel = select((state: DswWorkPoolState): 
 export const selectDswWorkPoolSort = select((state: DswWorkPoolState): TableSort<WorkPool> => state.sort);
 export const selectDswWorkPoolFilters = select((state: DswWorkPoolState): string[] => state.filters);
 export const selectDswWorkPoolActiveWorkPoolSpecs = select((state: DswWorkPoolState): WorkPoolSpecs => state.activeWorkPoolSpecs);
+export const selectDswWorkPoolActiveWorkPoolDetail = select((state: DswWorkPoolState): WorkPoolDetail => state.activeWorkPoolDetail);

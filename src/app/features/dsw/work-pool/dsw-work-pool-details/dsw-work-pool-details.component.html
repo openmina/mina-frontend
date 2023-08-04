@@ -5,6 +5,9 @@
   <button class="tab mr-10" [class.selected]="selectedTabIndex === 1"
           (click)="selectTab(1)">Specs
   </button>
+  <button class="tab mr-10" [class.selected]="selectedTabIndex === 2"
+          (click)="selectTab(2)">Accounts ({{ accounts.length }})
+  </button>
 </div>
 
 <div class="flex-column p-relative flex-grow">
@@ -18,6 +21,11 @@
       <ng-container *ngSwitchCase="1">
         <div class="h-100 overflow-y-auto">
           <mina-dsw-work-pool-details-specs></mina-dsw-work-pool-details-specs>
+        </div>
+      </ng-container>
+      <ng-container *ngSwitchCase="2">
+        <div class="h-100 overflow-y-auto">
+          <mina-dsw-work-pool-details-accounts [accounts]="accounts"></mina-dsw-work-pool-details-accounts>
         </div>
       </ng-container>
     </ng-container>

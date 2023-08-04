@@ -31,6 +31,10 @@ const baseConfig: SecDurationConfig = {
 })
 export class SecDurationPipe implements PipeTransform {
 
+  /**
+   * @param value - number in seconds
+   * @param config - configuration object
+   * */
   transform(value: number, config: SecDurationConfig = baseConfig): string | number {
     let response;
 

@@ -3,7 +3,7 @@ import { sort, toggleItem } from '@shared/helpers/array.helper';
 import { isDesktop } from '@shared/helpers/values.helper';
 import { DswWorkPoolState } from '@dsw/work-pool/dsw-work-pool.state';
 import {
-  DSW_WORK_POOL_CLOSE, DSW_WORK_POOL_GET_WORK_POOL_SPECS_SUCCESS,
+  DSW_WORK_POOL_CLOSE, DSW_WORK_POOL_GET_WORK_POOL_DETAIL_SUCCESS,
   DSW_WORK_POOL_GET_WORK_POOL_SUCCESS,
   DSW_WORK_POOL_SET_ACTIVE_WORK_POOL,
   DSW_WORK_POOL_SORT_WORK_POOL, DSW_WORK_POOL_TOGGLE_FILTER,
@@ -23,6 +23,7 @@ const initialState: DswWorkPoolState = {
   },
   filters: [],
   activeWorkPoolSpecs: undefined,
+  activeWorkPoolDetail: undefined,
 };
 
 export function reducer(state: DswWorkPoolState = initialState, action: DswWorkPoolActions): DswWorkPoolState {
@@ -71,10 +72,11 @@ export function reducer(state: DswWorkPoolState = initialState, action: DswWorkP
       };
     }
 
-    case DSW_WORK_POOL_GET_WORK_POOL_SPECS_SUCCESS: {
+    case DSW_WORK_POOL_GET_WORK_POOL_DETAIL_SUCCESS: {
       return {
         ...state,
-        activeWorkPoolSpecs: action.payload,
+        activeWorkPoolSpecs: action.payload[0],
+        activeWorkPoolDetail: action.payload[1],
       }
     }
 

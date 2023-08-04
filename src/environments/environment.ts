@@ -4,12 +4,12 @@ export const environment: Readonly<MinaEnv> = {
   production: false,
   identifier: 'local',
   aggregator: 'http://1.k8.openmina.com:31308/aggregator',
-  nodeLister: {
-    domain: 'http://65.21.195.80',
-    port: 4000,
-  },
+  // nodeLister: {
+  //   domain: 'http://65.21.195.80',
+  //   port: 4000,
+  // },
   isVanilla: true,
-  // noServerStatus: true,
+  noServerStatus: true,
   globalConfig: {
     features: {
       dashboard: ['nodes', 'topology'],
@@ -23,7 +23,7 @@ export const environment: Readonly<MinaEnv> = {
       'web-node': ['wallet', 'peers', 'logs', 'state'],
     },
   },
-  // rustNode: 'http://webrtc2.webnode.openmina.com:10000',
+  rustNode: 'http://webrtc2.webnode.openmina.com:10001',
   configs: [
     // {
     //   "graphql": "mocked",
