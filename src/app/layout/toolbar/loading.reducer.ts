@@ -114,6 +114,12 @@ import { WEB_NODE_LOGS_CLOSE } from '@web-node/web-node-logs/web-node-logs.actio
 import { DSW_DASHBOARD_CLOSE, DSW_DASHBOARD_GET_NODES_SUCCESS, DSW_DASHBOARD_INIT } from '@dsw/dashboard/dsw-dashboard.actions';
 import { DSW_BOOTSTRAP_CLOSE, DSW_BOOTSTRAP_GET_NODES_SUCCESS, DSW_BOOTSTRAP_INIT } from '@dsw/bootstrap/dsw-bootstrap.actions';
 import { DSW_LIVE_CLOSE, DSW_LIVE_GET_NODES_SUCCESS, DSW_LIVE_INIT } from '@dsw/live/dsw-live.actions';
+import {
+  DSW_WORK_POOL_CLOSE, DSW_WORK_POOL_GET_WORK_POOL_SPECS_SUCCESS,
+  DSW_WORK_POOL_GET_WORK_POOL_SUCCESS,
+  DSW_WORK_POOL_INIT,
+  DSW_WORK_POOL_SET_ACTIVE_WORK_POOL,
+} from '@dsw/work-pool/dsw-work-pool.actions';
 
 export type LoadingState = string[];
 
@@ -179,6 +185,8 @@ export function reducer(state: LoadingState = initialState, action: FeatureActio
     case DSW_DASHBOARD_INIT:
     case DSW_BOOTSTRAP_INIT:
     case DSW_LIVE_INIT:
+    case DSW_WORK_POOL_INIT:
+    case DSW_WORK_POOL_SET_ACTIVE_WORK_POOL:
       return add(state, action);
 
     /* ------------ REMOVE ------------ */
@@ -319,6 +327,12 @@ export function reducer(state: LoadingState = initialState, action: FeatureActio
       return remove(state, DSW_LIVE_INIT);
     case DSW_LIVE_CLOSE:
       return remove(state, [DSW_LIVE_INIT]);
+    case DSW_WORK_POOL_GET_WORK_POOL_SUCCESS:
+      return remove(state, DSW_WORK_POOL_INIT);
+    case DSW_WORK_POOL_GET_WORK_POOL_SPECS_SUCCESS:
+      return remove(state, DSW_WORK_POOL_SET_ACTIVE_WORK_POOL);
+    case DSW_WORK_POOL_CLOSE:
+      return remove(state, [DSW_WORK_POOL_INIT, DSW_WORK_POOL_SET_ACTIVE_WORK_POOL]);
     default:
       return state;
   }

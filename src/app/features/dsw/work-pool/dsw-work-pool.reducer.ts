@@ -42,6 +42,7 @@ export function reducer(state: DswWorkPoolState = initialState, action: DswWorkP
         ...state,
         openSidePanel: true,
         activeWorkPool: state.workPools.find(w => w.id === action.payload.id),
+        activeWorkPoolSpecs: undefined,
       };
     }
 
