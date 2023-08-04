@@ -23,7 +23,7 @@ export const environment: Readonly<MinaEnv> = {
       'web-node': ['wallet', 'peers', 'logs', 'state'],
     },
   },
-  rustNode: 'http://webrtc2.webnode.openmina.com:10001',
+  rustNode: 'http://webrtc2.webnode.openmina.com:10000',
   configs: [
     // {
     //   "graphql": "mocked",
