@@ -4,7 +4,6 @@ import { toggleItem } from '@shared/helpers/array.helper';
 import { getMergedRoute } from '@shared/router/router-state.selectors';
 import { MergedRoute } from '@shared/router/merged-route';
 import { Router } from '@angular/router';
-import { take } from 'rxjs';
 
 @Component({
   selector: 'mina-dsw-work-pool-details-accounts',
@@ -16,7 +15,7 @@ export class DswWorkPoolDetailsAccountsComponent extends StoreDispatcher impleme
 
   @Input() accounts: { job: number, first: boolean, data: any }[];
 
-  opened: { job: number, first: boolean, data: any }[] = [];
+  opened: number[] = [];
 
   constructor(private router: Router) { super(); }
 
@@ -25,8 +24,8 @@ export class DswWorkPoolDetailsAccountsComponent extends StoreDispatcher impleme
   }
 
   toggleOpening(index: number): void {
-    this.opened = toggleItem(this.opened, this.accounts[index]);
-    if (this.opened.includes(this.accounts[index])) {
+    this.opened = toggleItem(this.opened, index);
+    if (this.opened.includes(index)) {
       this.routeToAccount(index);
     } else if (this.opened.length === 0) {
       this.routeToAccount(undefined);
@@ -43,8 +42,11 @@ export class DswWorkPoolDetailsAccountsComponent extends StoreDispatcher impleme
   private listenToTabFromRoute(): void {
     this.select(getMergedRoute, (route: MergedRoute) => {
       if (route.queryParams['account']) {
-        this.toggleOpening(Number(route.queryParams['account']));
+        const account = Number(route.queryParams['account']);
+        if (!this.opened.includes(account)) {
+          this.toggleOpening(account);
+        }
       }
-    }, take(1));
+    });
   }
 }
