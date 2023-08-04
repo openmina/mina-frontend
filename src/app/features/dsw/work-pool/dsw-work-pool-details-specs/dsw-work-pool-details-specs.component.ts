@@ -28,7 +28,7 @@ export class DswWorkPoolDetailsSpecsComponent extends StoreDispatcher implements
   }
 
   downloadJson(): void {
-    downloadJson(this.jsonString, 'work-pool.json');
+    downloadJson(this.jsonString, 'work-pool-specs.json');
   }
 
   expandEntireJSON(): void {

@@ -6,6 +6,7 @@ import { DashboardNodesSetActiveNode } from '@dashboard/nodes/dashboard-nodes.ac
 import { filter } from 'rxjs';
 import { DashboardNode } from '@shared/types/dashboard/nodes/dashboard-node.type';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'mina-dashboard-nodes-side-panel',
@@ -21,6 +22,8 @@ export class DashboardNodesSidePanelComponent extends StoreDispatcher implements
   @ViewChild('traces', { read: ViewContainerRef })
   private blockStructuredTrace: ViewContainerRef;
   private component: BlockStructuredTraceComponent;
+
+  constructor(private router: Router) { super(); }
 
   async ngOnInit(): Promise<void> {
     await import('@shared/components/block-structured-trace/block-structured-trace.component').then(c => {
@@ -46,5 +49,9 @@ export class DashboardNodesSidePanelComponent extends StoreDispatcher implements
 
   closeSidePanel(): void {
     this.dispatch(DashboardNodesSetActiveNode);
+    this.router.navigate([], {
+      queryParamsHandling: 'merge',
+      queryParams: { name: undefined },
+    });
   }
 }

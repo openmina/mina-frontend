@@ -42,7 +42,7 @@ export class DashboardNodesService {
         map((response: any[]) => {
           return response.map((node: any) => ({
             ...{} as any,
-            name: `${node.ip}:${node.graphql_port}`,
+            name: node.name,
             url: `${node.ip}:${node.graphql_port}/graphql`,
             tracingUrl: `${CONFIG.nodeLister.domain}:${node.internal_trace_port}/graphql`,
             status: AppNodeStatusTypes.SYNCED,

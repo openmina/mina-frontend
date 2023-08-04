@@ -23,7 +23,6 @@ import { AppNodeStatusTypes } from '@shared/types/app/app-node-status-types.enum
 import { ONE_THOUSAND } from '@shared/constants/unit-measurements';
 import { DashboardForkFilter } from '@shared/types/dashboard/nodes/dashboard-fork-filter.type';
 import { CONFIG } from '@shared/constants/config';
-import { MinaNode } from '@shared/types/core/environment/mina-env.type';
 
 const initialState: DashboardNodesState = {
   nodes: [],
