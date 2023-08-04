@@ -1,11 +1,14 @@
-<div class="h-lg flex-row pl-12 pb-10">
-  <button class="btn-primary mr-8" (click)="downloadJson()">Save</button>
-  <button class="btn-primary mr-8" [copyToClipboard]="jsonString">Copy</button>
-  <button class="btn-primary mr-8" (click)="collapseEntireJSON()">Collapse All</button>
-  <button class="btn-primary" (click)="expandEntireJSON()">Expand All</button>
-</div>
-<div class="flex-column h-minus-lg overflow-y-auto pr-5">
-  <mina-json-viewer [json]="accounts || []"
-                    [expandTracking]="expandTracking"
-                    [expanded]="false"></mina-json-viewer>
+<div *ngFor="let account of accounts; let i=index"
+     class="ml-5"
+     [class.open]="opened.includes(account)">
+  <div class="acc-row fx-row-vert-cent flex-between pl-12"
+       (click)="toggleOpening(i)">
+    Account - job {{ account.job }}, {{ account.first ? 'first' : 'second' }} ledger
+    <span class="mina-icon icon-300 ml-10 mr-5">chevron_right</span>
+  </div>
+  <div class="flex-column pr-5"
+       *ngIf="opened.includes(account)">
+    <mina-json-viewer [json]="account.data || {}"
+                      [expanded]="false"></mina-json-viewer>
+  </div>
 </div>

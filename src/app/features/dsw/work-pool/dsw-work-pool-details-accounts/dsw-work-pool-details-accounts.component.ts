@@ -1,7 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
-import { ExpandTracking, MinaJsonViewerComponent } from '@shared/components/mina-json-viewer/mina-json-viewer.component';
-import { downloadJson } from '@shared/helpers/user-input.helper';
+import { toggleItem } from '@shared/helpers/array.helper';
+import { getMergedRoute } from '@shared/router/router-state.selectors';
+import { MergedRoute } from '@shared/router/merged-route';
+import { Router } from '@angular/router';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'mina-dsw-work-pool-details-accounts',
@@ -9,29 +12,39 @@ import { downloadJson } from '@shared/helpers/user-input.helper';
   styleUrls: ['./dsw-work-pool-details-accounts.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DswWorkPoolDetailsAccountsComponent extends StoreDispatcher implements OnChanges {
+export class DswWorkPoolDetailsAccountsComponent extends StoreDispatcher implements OnInit {
 
-  @Input() accounts: any[];
+  @Input() accounts: { job: number, first: boolean, data: any }[];
 
-  expandTracking: ExpandTracking = {};
-  jsonString: string;
+  opened: { job: number, first: boolean, data: any }[] = [];
 
-  @ViewChild(MinaJsonViewerComponent) private minaJsonViewer: MinaJsonViewerComponent;
+  constructor(private router: Router) { super(); }
 
-  ngOnChanges(): void {
-    this.jsonString = JSON.stringify(this.accounts);
+  ngOnInit(): void {
+    this.listenToTabFromRoute();
   }
 
-  downloadJson(): void {
-    downloadJson(this.jsonString, 'work-pool-accounts.json');
+  toggleOpening(index: number): void {
+    this.opened = toggleItem(this.opened, this.accounts[index]);
+    if (this.opened.includes(this.accounts[index])) {
+      this.routeToAccount(index);
+    } else if (this.opened.length === 0) {
+      this.routeToAccount(undefined);
+    }
   }
 
-  expandEntireJSON(): void {
-    this.expandTracking = this.minaJsonViewer.toggleAll(true);
+  private routeToAccount(idx: number): void {
+    this.router.navigate([], {
+      queryParamsHandling: 'merge',
+      queryParams: { account: idx },
+    });
   }
 
-  collapseEntireJSON(): void {
-    this.expandTracking = this.minaJsonViewer.toggleAll(false);
+  private listenToTabFromRoute(): void {
+    this.select(getMergedRoute, (route: MergedRoute) => {
+      if (route.queryParams['account']) {
+        this.toggleOpening(Number(route.queryParams['account']));
+      }
+    }, take(1));
   }
-
 }

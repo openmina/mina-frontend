@@ -1,6 +1,6 @@
 @import 'variables';
 
-.tx-row {
+.acc-row {
 	height: 36px;
 	line-height: 36px;
 	display: grid;
@@ -33,7 +33,7 @@
 	background-color: $selected-container !important;
 	border-radius: 6px;
 
-	.tx-row {
+	.acc-row {
 		border-top-right-radius: 6px;
 		border-top-left-radius: 6px;
 

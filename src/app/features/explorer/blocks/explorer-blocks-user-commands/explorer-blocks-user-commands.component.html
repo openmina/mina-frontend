@@ -4,7 +4,7 @@
   <span class="text-right overflow-y-scroll">Amount</span>
 </div>
 <div class="h-minus-xl overflow-y-scroll flex-column secondary">
-  <div *ngFor="let tx of txs" class=""
+  <div *ngFor="let tx of txs"
        [class.open]="opened.includes(tx)">
     <div class="tx-row"
          (click)="toggleOpening(tx)">
