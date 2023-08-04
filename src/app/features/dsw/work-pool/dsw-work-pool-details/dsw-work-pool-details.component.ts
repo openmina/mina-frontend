@@ -75,6 +75,6 @@ export class DswWorkPoolDetailsComponent extends StoreDispatcher implements OnIn
       } else {
         this.selectTab(0);
       }
-    });
+    }, take(1));
   }
 }

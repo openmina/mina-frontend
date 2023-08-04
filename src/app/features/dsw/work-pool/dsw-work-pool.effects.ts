@@ -47,7 +47,7 @@ export class DswWorkPoolEffects extends MinaBaseEffect<DswWorkPoolActions> {
       this.latestActionState<DswWorkPoolGetWorkPool | DswWorkPoolClose>(),
       filter(({ action }) => !this.pendingRequest),
       tap(({ action }) => {
-        if (action.type === DSW_WORK_POOL_CLOSE) {
+        if (action.type === DSW_WORK_POOL_GET_WORK_POOL) {
           this.pendingRequest = true;
         }
       }),
