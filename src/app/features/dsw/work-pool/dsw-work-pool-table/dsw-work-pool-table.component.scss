@@ -2,7 +2,7 @@
 
 .th-group {
 	display: grid;
-	grid-template-columns: 305px 510px 360px;
+	grid-template-columns: 305px 510px 360px 1fr;
 
 	> span:nth-child(1) {
 		border-bottom: 1px solid $base-tertiary;
