@@ -62,9 +62,9 @@ export class DswWorkPoolService {
       }
       if (item.snark) {
         work.snarkRecLatency = (item.snark.received_t - item.time) / ONE_BILLION;
-        work.snarkOrigin = [item.snark.prover, item.snark.snarker].includes(this.snarkerHash) ? 'Local' : 'Remote';
+        work.snarkOrigin = [item.snark.snarker, item.snark.sender].includes(this.snarkerHash) ? 'Local' : 'Remote';
       }
-      work.notSameCommitter = commitment && item.snark && commitment.commitment.snarker !== item.snark.prover;
+      work.notSameCommitter = commitment && item.snark && commitment.commitment.snarker !== item.snark.snarker;
       return work;
     });
   }

@@ -1,5 +1,5 @@
 export interface WorkPoolSnark {
-  prover: string;
+  snarker: string;
   fee: string;
   received: string;
   sender: string;
