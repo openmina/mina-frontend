@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit } fro
 import { StoreDispatcher } from '@shared/base-classes/store-dispatcher.class';
 import { DswWorkPoolClose, DswWorkPoolGetWorkPool, DswWorkPoolInit } from '@dsw/work-pool/dsw-work-pool.actions';
 import { selectDswWorkPoolOpenSidePanel } from '@dsw/work-pool/dsw-work-pool.state';
+import { selectActiveNode } from '@app/app.state';
 
 @Component({
   selector: 'mina-dsw-work-pool',
@@ -17,8 +18,10 @@ export class DswWorkPoolComponent extends StoreDispatcher implements OnInit, OnD
   constructor(public el: ElementRef) { super(); }
 
   ngOnInit(): void {
-    this.dispatch(DswWorkPoolInit);
-    this.dispatch(DswWorkPoolGetWorkPool);
+    this.select(selectActiveNode, node => {
+      this.dispatch(DswWorkPoolInit);
+      this.dispatch(DswWorkPoolGetWorkPool);
+    });
     this.listenToSidePanelChange();
   }
 

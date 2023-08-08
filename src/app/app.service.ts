@@ -34,6 +34,9 @@ export class AppService {
 
     let onlineNode: MinaNode = nodeFromURL;
 
+    if (CONFIG.rustNodes) {
+      return of(onlineNode);
+    }
     return from(
       configs.map(node =>
         this.http
@@ -64,7 +67,12 @@ export class AppService {
   }
 
   getNodes(): Observable<MinaNode[]> {
-    if (CONFIG.nodeLister) {
+    if (CONFIG.rustNodes) {
+      return of(CONFIG.rustNodes.map((node: string) => ({
+        name: node,
+        graphql: node,
+      })));
+    }else if (CONFIG.nodeLister) {
       return this.getNodesHttp().pipe(
         map((response: any[]) => {
           return response.map((node: any) => ({

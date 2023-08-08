@@ -12,4 +12,5 @@ export interface WorkPool {
   commitmentRecLatency: number;
   commitmentOrigin: 'Local' | 'Remote';
   commitmentCreatedLatency: number;
+  notSameCommitter: boolean;
 }

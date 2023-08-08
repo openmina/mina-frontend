@@ -96,18 +96,22 @@ export class ServerStatusComponent extends ManualDetection implements OnInit, On
   private listenToNodeStatusChange(): void {
     this.store.select(selectAppNodeStatus)
       .pipe(
-        filter(node => this.status.toLowerCase() !== node.status.toLowerCase()
+        filter(node => this.status.toLowerCase() !== node.status?.toLowerCase()
           || this.timeReference !== node.timestamp,
         ),
       )
       .subscribe((node: NodeStatus) => {
-        this.timeIsPresent = !!node.timestamp;
-        this.timeReference = node.timestamp;
-        this.secondsPassed = (Date.now() - this.timeReference) / 1000;
-        this.elapsedTime$.next(ServerStatusComponent.getFormattedTimeToDisplay(this.secondsPassed));
+        if (CONFIG.rustNodes) {
+          this.status = AppNodeStatusTypes.SYNCED.toLowerCase();
+        } else {
+          this.timeIsPresent = !!node.timestamp;
+          this.timeReference = node.timestamp;
+          this.secondsPassed = (Date.now() - this.timeReference) / 1000;
+          this.elapsedTime$.next(ServerStatusComponent.getFormattedTimeToDisplay(this.secondsPassed));
 
-        this.blockLevel = node.blockLevel;
-        this.status = node.status.toLowerCase();
+          this.blockLevel = node.blockLevel;
+          this.status = node.status.toLowerCase();
+        }
         this.buildTooltipText();
         this.detect();
       });

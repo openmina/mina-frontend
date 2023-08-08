@@ -5,16 +5,19 @@ import { DswDashboardNode } from '@shared/types/dsw/dashboard/dsw-dashboard-node
 import { DswBootstrapNode } from '@shared/types/dsw/bootstrap/dsw-bootstrap-node.type';
 import { DswDashboardNodeBlockStatus } from '@shared/types/dsw/dashboard/dsw-dashboard-block.type';
 import { hasValue } from '@shared/helpers/values.helper';
+import { RustNodeService } from '@core/services/rust-node.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DswBootstrapService {
 
-  constructor(private dswDashboardService: DswDashboardService) { }
+  constructor(private dswDashboardService: DswDashboardService,
+              private rust: RustNodeService) { }
 
   getBootstrapNodeTips(): Observable<DswBootstrapNode[]> {
-    return this.dswDashboardService.getNodeTips('Node 1').pipe(
+    const port = this.rust.URL.split(':')[2];
+    return this.dswDashboardService.getNodeTips({ url: this.rust.URL, name: 'Node ' + port }).pipe(
       map((nodes: DswDashboardNode[]) => nodes.map((node: DswDashboardNode, index: number) => {
         const appliedBlocks = node.blocks.filter((block) => block.status === DswDashboardNodeBlockStatus.APPLIED && hasValue(block.applyStart));
         const fetchedBlocks = node.blocks.filter((block) => block.status === DswDashboardNodeBlockStatus.FETCHED && hasValue(block.fetchStart));

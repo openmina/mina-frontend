@@ -9,7 +9,7 @@ export const environment: Readonly<MinaEnv> = {
   //   port: 4000,
   // },
   isVanilla: true,
-  noServerStatus: true,
+  // noServerStatus: true,
   globalConfig: {
     features: {
       dashboard: ['nodes', 'topology'],
@@ -23,7 +23,11 @@ export const environment: Readonly<MinaEnv> = {
       'web-node': ['wallet', 'peers', 'logs', 'state'],
     },
   },
-  rustNode: 'http://webrtc2.webnode.openmina.com:10000',
+  rustNodes: [
+    'http://webrtc2.webnode.openmina.com:10000',
+    'http://webrtc2.webnode.openmina.com:10010',
+    'http://webrtc2.webnode.openmina.com:10011',
+  ],
   configs: [
     // {
     //   "graphql": "mocked",

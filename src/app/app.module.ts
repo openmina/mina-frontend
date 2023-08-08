@@ -30,6 +30,7 @@ import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import localeEn from '@angular/common/locales/en';
 import { HorizontalMenuComponent } from '@app/shared/components/horizontal-menu/horizontal-menu.component';
+import { SharedModule } from '@shared/shared.module';
 
 registerLocaleData(localeFr, 'fr');
 registerLocaleData(localeEn, 'en');
@@ -83,6 +84,7 @@ export class AppGlobalErrorhandler implements ErrorHandler {
     HttpClientModule,
     EagerSharedModule,
     HorizontalMenuComponent,
+    SharedModule,
   ],
   providers: [
     SENTRY_PROVIDER,

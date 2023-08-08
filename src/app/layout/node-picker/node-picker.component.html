@@ -28,7 +28,7 @@
             [class.selected-primary]="activeNode === node">check
       </span>
       <div class="names flex-column h-xl pl-8">
-        <span class="flex-row align-end">{{ node.name }}</span>
+        <span class="flex-row align-end">{{ node.name | truncateMid: 0: 35 }}</span>
         <span class="truncate w-100"
               [ngClass]="activeNode === node ? 'selected-secondary' : 'tertiary'">{{ node.graphql }}</span>
       </div>

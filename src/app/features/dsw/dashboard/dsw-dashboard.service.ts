@@ -17,19 +17,20 @@ export class DswDashboardService {
   constructor(private http: HttpClient) { }
 
   getNodes(): Observable<DswDashboardNode[]> {
-    const nodes = ['Node 1'];
+    const nodes = CONFIG.rustNodes;
     return forkJoin(
       nodes.map((node: string) => {
-        return this.getNodeTips(node, '?limit=1');
+        const port = node.split(':')[2];
+        return this.getNodeTips({ url: node, name: 'Node ' + port }, '?limit=1');
       }),
     ).pipe(
       map((nodes: DswDashboardNode[][]) => nodes.map(n => n[0])),
     );
   }
 
-  getNodeTips(nodeName: string, qp: string = ''): Observable<DswDashboardNode[]> {
+  getNodeTips(nodeParam: { url: string, name: string }, qp: string = ''): Observable<DswDashboardNode[]> {
     // return of(JSON.parse(JSON.stringify(mock2()))).pipe(delay(250))
-    return this.http.get<any[]>(CONFIG.rustNode + '/stats/sync' + qp)
+    return this.http.get<any[]>(nodeParam.url + '/stats/sync' + qp)
       .pipe(
         map((response: any[]) => {
           return response.map((node: any) => {
@@ -52,7 +53,7 @@ export class DswDashboardService {
               blocks[0].isBestTip = true;
             }
             return {
-              name: nodeName,
+              name: nodeParam.name,
               kind: hasValue(node.synced) ? DswDashboardNodeKindType.SYNCED : node.kind,
               bestTipReceived: toReadableDate(node.best_tip_received / ONE_MILLION),
               bestTipReceivedTimestamp: node.best_tip_received / ONE_MILLION,

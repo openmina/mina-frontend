@@ -50,8 +50,14 @@ span {
 		color: $special-selected-alt-3-primary;
 	}
 
+	&.aware-chip {
+		background-color: $aware-container;
+		color: $aware-primary !important;
+	}
+
 	&.committed,
 	&.snarked {
+		line-height: initial;
 		padding: 2px 5px;
 		border-radius: 4px;
 	}

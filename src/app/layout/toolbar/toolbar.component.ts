@@ -27,7 +27,6 @@ export class ToolbarComponent extends ManualDetection implements OnInit {
   definiteLoading: LoadingEvent;
   isMobile: boolean;
   switchForbidden: boolean;
-  noServerStatus: boolean = CONFIG.noServerStatus;
 
   @ViewChild('loadingRef') private loadingRef: ElementRef<HTMLDivElement>;
 

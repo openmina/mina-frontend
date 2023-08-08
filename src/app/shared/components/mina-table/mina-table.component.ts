@@ -146,12 +146,14 @@ export class MinaTableComponent<T extends object> extends StoreDispatcher implem
         attrValue = Number(attrValue);
         idx = attrValue;
       }
-      if (hasValue(idx)) {
+      if (hasValue(idx) || target === this.vs.elementRef.nativeElement) {
         break;
       }
       target = target.parentElement;
     }
 
-    this.rowClickCallback(this.rows[idx]);
+    if (hasValue(idx)) {
+      this.rowClickCallback(this.rows[idx]);
+    }
   }
 }

@@ -7,7 +7,7 @@ export const environment: Readonly<MinaEnv> = {
   //   tracingOrigins: ['https://openmina-webnode.web.app'],
   // },
   identifier: 'WebRtc2',
-  noServerStatus: true,
+  // noServerStatus: true,
   // aggregator: 'http://1.k8.openmina.com:31308/aggregator',
   // nodeLister: {
   //   domain: 'http://65.21.195.80',
@@ -27,7 +27,11 @@ export const environment: Readonly<MinaEnv> = {
       // 'web-node': ['wallet', 'peers', 'logs', 'state'],
     },
   },
-  rustNode: 'http://webrtc2.webnode.openmina.com:10000',
+  rustNodes: [
+    'http://webrtc2.webnode.openmina.com:10000',
+    'http://webrtc2.webnode.openmina.com:10010',
+    'http://webrtc2.webnode.openmina.com:10011',
+  ],
   configs: [
   ],
 };

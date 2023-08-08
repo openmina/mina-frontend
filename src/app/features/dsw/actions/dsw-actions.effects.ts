@@ -47,7 +47,7 @@ export class DswActionsEffects extends MinaBaseEffect<DswActionsActions> {
           : this.actionsService.getEarliestSlot().pipe(
             switchMap((payload: number) => {
               const actions: DswActionsActions[] = [{ type: DSW_ACTIONS_GET_EARLIEST_SLOT_SUCCESS, payload }];
-              if (state.dsw.actions.activeSlot === undefined) {
+              if (state.dsw.actions.activeSlot === undefined || state.dsw.actions.activeSlot > payload) {
                 this.router.navigate([Routes.SNARK_WORKER, Routes.ACTIONS, payload ?? ''], { queryParamsHandling: 'merge' });
                 actions.push({ type: DSW_ACTIONS_GET_ACTIONS, payload: { slot: payload } });
               }

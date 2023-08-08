@@ -16,7 +16,7 @@ export interface MinaEnv {
   globalConfig?: {
     features?: FeaturesConfig;
   };
-  rustNode?: string;
+  rustNodes?: string[];
 }
 
 export interface MinaNode {

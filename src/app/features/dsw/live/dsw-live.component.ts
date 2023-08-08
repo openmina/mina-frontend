@@ -19,13 +19,13 @@ export class DswLiveComponent extends StoreDispatcher implements OnInit, OnDestr
   constructor(public el: ElementRef<HTMLElement>) { super(); }
 
   ngOnInit(): void {
-    this.dispatch(DswLiveInit);
     this.listenToNodeChange();
     this.listenToSidePanelOpening();
   }
 
   private listenToNodeChange(): void {
     this.select(selectActiveNode, () => {
+      this.dispatch(DswLiveInit);
       this.dispatch(DswLiveGetNodes, { force: true });
     }, skip(1));
 

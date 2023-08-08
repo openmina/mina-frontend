@@ -4,7 +4,6 @@ import { DswBootstrapClose, DswBootstrapGetNodes, DswBootstrapInit } from '@dsw/
 import { selectDswBootstrapOpenSidePanel } from '@dsw/bootstrap/dsw-bootstrap.state';
 import { skip, timer } from 'rxjs';
 import { untilDestroyed } from '@ngneat/until-destroy';
-import { DswDashboardGetNodes } from '@dsw/dashboard/dsw-dashboard.actions';
 import { selectActiveNode } from '@app/app.state';
 
 @Component({
@@ -20,13 +19,13 @@ export class DswBootstrapComponent extends StoreDispatcher implements OnInit, On
   constructor(public el: ElementRef<HTMLElement>) { super(); }
 
   ngOnInit(): void {
-    this.dispatch(DswBootstrapInit);
     this.listenToNodeChange();
     this.listenToSidePanelOpening();
   }
 
   private listenToNodeChange(): void {
     this.select(selectActiveNode, () => {
+      this.dispatch(DswBootstrapInit);
       this.dispatch(DswBootstrapGetNodes, { force: true });
     }, skip(1));
 

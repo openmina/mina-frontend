@@ -36,6 +36,7 @@ import { removeParamsFromURL } from '@shared/helpers/router.helper';
 import { AppService } from './app.service';
 import { getFirstFeature, isFeatureEnabled } from '@shared/constants/config';
 import { TracingGraphQlService } from '@core/services/tracing-graph-ql.service';
+import { RustNodeService } from '@core/services/rust-node.service';
 
 const INIT_EFFECTS = '@ngrx/effects/init';
 
@@ -63,6 +64,7 @@ export class AppEffects extends MinaBaseEffect<AppActions> {
               private graphQL: GraphQLService,
               private tracingGQL: TracingGraphQlService,
               private blockService: BlockService,
+              private rustNode: RustNodeService,
               private router: Router,
               store: Store<MinaState>) {
 
@@ -176,5 +178,6 @@ export class AppEffects extends MinaBaseEffect<AppActions> {
   private changeGqlProvider(node: MinaNode): void {
     this.graphQL.changeGraphQlProvider(node);
     this.tracingGQL.changeGraphQlProvider(node);
+    this.rustNode.changeRustNode(node.name);
   }
 }

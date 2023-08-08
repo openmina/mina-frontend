@@ -7,16 +7,19 @@ import { DswLiveBlockEvent } from '@shared/types/dsw/live/dsw-live-block-event.t
 import { DswDashboardBlock, DswDashboardNodeBlockStatus } from '@shared/types/dsw/dashboard/dsw-dashboard-block.type';
 import { toReadableDate } from '@shared/helpers/date.helper';
 import { ONE_MILLION } from '@shared/constants/unit-measurements';
+import { RustNodeService } from '@core/services/rust-node.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DswLiveService {
 
-  constructor(private dswDashboardService: DswDashboardService) { }
+  constructor(private dswDashboardService: DswDashboardService,
+              private rust: RustNodeService) { }
 
   getLiveNodeTips(): Observable<DswLiveNode[]> {
-    return this.dswDashboardService.getNodeTips('Node 1').pipe(
+    const port = this.rust.URL.split(':')[2];
+    return this.dswDashboardService.getNodeTips({ url: this.rust.URL, name: 'Node ' + port }).pipe(
       map((nodes: DswDashboardNode[]) => nodes.reverse().map((node: DswDashboardNode, index: number) => {
         return ({
           ...node,
